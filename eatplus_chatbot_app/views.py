@@ -4,12 +4,20 @@ from django.http import JsonResponse
 
 import json
 
-@csrf_exempt
 def responseTest(request):
-  json_str = ((request.body).decode('utf-8'))
+  json_str           = ((request.body).decode('utf-8'))
   received_json_data = json.loads(json_str)
-  
-  print(received_json_data)
+
+  dataIntent        = received_json_data['intent']
+  dataUserRequest   = received_json_data['userRequest']
+  dataBot           = received_json_data['bot'] 
+  dataAction        = received_json_data['action'] 
+
+
+  print(dataIntent)
+  print(dataUserRequest)
+  print(dataBot)
+  print(dataAction)
 
   return JsonResponse({
     "version": "2.0",
@@ -126,7 +134,6 @@ def responseTest(request):
     }
   })
  
-@csrf_exempt
 def answer(request):
  
     json_str = ((request.body).decode('utf-8'))
