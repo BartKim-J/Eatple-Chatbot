@@ -40,7 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     
-    'eatplus_app',
+    'store_app',
 ]
 
 MIDDLEWARE = [
@@ -133,5 +133,5 @@ STATIC_URL = '/static/'
 
 # COOKIES
 #
-CSRF_COOKIE_SECURE = False
+CSRF_COOKIE_SECURE = True
 SESSION_COOKIE_SECURE = False
