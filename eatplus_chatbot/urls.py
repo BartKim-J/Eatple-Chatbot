@@ -23,7 +23,8 @@ from store_app import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('responseTest', views.responseTest),
+    path('storeList', views.storeList),
+    path('menuList', views.menuList),
     path('message', views.answer),
 ]
 

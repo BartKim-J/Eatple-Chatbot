@@ -73,6 +73,7 @@ class Store(models.Model):
 class Menu(models.Model):
     # Fields
     store         = models.ForeignKey('Store', on_delete=models.CASCADE)
+    
     menu_name     = models.CharField(max_length=STRING_LENGHT, help_text="메뉴명")
     menu_price    = models.IntegerField(help_text="가격") 
     
@@ -94,6 +95,9 @@ class Menu(models.Model):
             created_at=self.created_at,
             updated_at=self.updated_at,
         )
+
+    def getStore(self):
+        return self.store
 
     def get_absolute_url(self):
         """Returns the url to access a particular instance of the model."""
