@@ -34,9 +34,10 @@ STORE_CATEGORY_CHOICES = [
 
 class Store(models.Model):
     # Fields
-    store_name     = models.CharField(max_length=STRING_LENGHT, help_text="상호명")
-    store_addr     = models.CharField(max_length=STRING_LENGHT, help_text="주소") 
-    owner_name     = models.CharField(max_length=WORD_LENGHT, help_text="가맹주")
+    store_name        = models.CharField(default="상호", max_length=STRING_LENGHT, help_text="상호")
+    store_addr        = models.CharField(default="주소", max_length=STRING_LENGHT, help_text="주소") 
+    owner_name        = models.CharField(default="가게주", max_length=WORD_LENGHT, help_text="가게주")
+    store_description = models.TextField(default="가게 설명", help_text="가게 설명")
 
     store_category = models.CharField(
         max_length=WORD_LENGHT,
@@ -72,11 +73,13 @@ class Store(models.Model):
 
 class Menu(models.Model):
     # Fields
-    store         = models.ForeignKey('Store', on_delete=models.CASCADE)
-    
-    menu_name     = models.CharField(max_length=STRING_LENGHT, help_text="메뉴명")
-    menu_price    = models.IntegerField(help_text="가격") 
-    
+    store            = models.ForeignKey('Store', on_delete=models.CASCADE)
+
+    menu_name        = models.CharField(default="메뉴명", max_length=STRING_LENGHT, help_text="메뉴명")
+    menu_price       = models.IntegerField(default=0, help_text="가격") 
+    menu_discount    = models.IntegerField(default=0, help_text="가격")
+    menu_description = models.TextField(default="설명", help_text="메뉴 설명")
+
     image = models.ImageField(blank=True, upload_to="eatplus_chatot_app/DB/logo_img")
 
     created_at = models.DateTimeField(auto_now_add=True)
@@ -104,4 +107,5 @@ class Menu(models.Model):
         return reverse('model-detail-view', args=[str(self.id)])
 
     def __str__(self):
+        self.store_name = "{}".format(self.store)
         return "[ {} ] - {}".format(self.store_name, self.menu_name)

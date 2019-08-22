@@ -23,9 +23,9 @@ from store_app import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    
     path('storeList', views.storeList),
     path('menuList', views.menuList),
-    path('message', views.answer),
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
