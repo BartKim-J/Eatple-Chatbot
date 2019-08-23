@@ -2,7 +2,7 @@ from django.shortcuts import render
 from django.views.decorators.csrf import csrf_exempt
 from django.http import JsonResponse
 
-from .models  import Store, Menu 
+from .models  import Store
 
 import json
 
@@ -42,11 +42,13 @@ class KakaoBaseForm():
         self.data = _data
         self.UpdateForm()
 
+
+
 class Kakao_SimpleForm(KakaoBaseForm):
-    def __init__(self, _outputs=[]):
+    def __init__(self, _outputs=[], _quickReplies=[]):
         super().__init__()
         self.outputs = _outputs
-
+        self.quickReplies = _quickReplies
         self.UpdateTemplateForm()
 
         super().SetTemplateForm(self.template)
@@ -58,15 +60,25 @@ class Kakao_SimpleForm(KakaoBaseForm):
     def UpdateTemplateForm(self):
         self.template = {
             "outputs": self.outputs,
-            "quickReplies": [ { "action" : "message", "label" : "🏠홈", "messageText" : "다시 메인으로 돌아가줘 " } ],
+            "quickReplies": self.quickReplies,
         }
 
         super().SetTemplateForm(self.template)
 
+    # Quick Replies
+    def QuickReplies_Init(self):
+        self.quickReplies = []
+        self.UpdateTemplateForm()
+
+    def QuickReplies_Add(self, _action, _label, _messageText, _blockid, _extra):
+        self.quickReplies += { "action" : _action, "label" : _label, "messageText" : _messageText, "blockid": _blockid, "extra": _extra },
+        
+    # SimpleForm Common
     def SimpleForm_Init(self):
         self.outputs = []
         self.UpdateTemplateForm()
 
+    # SimpleForm Text
     def SimpleText_Add(self, _text):
         _params = { 
             "text": _text,
@@ -78,6 +90,7 @@ class Kakao_SimpleForm(KakaoBaseForm):
 
         self.UpdateTemplateForm()
 
+    # SimpleForm Image
     def SimpleImage_Add(self, _imgUrl, _altText):
         _params = { 
             "imageUrl": _imgUrl,
@@ -93,11 +106,15 @@ class Kakao_SimpleForm(KakaoBaseForm):
     def GetForm(self):
         return self.baseForm
 
+
+
 class Kakao_CarouselForm(KakaoBaseForm):
-    def __init__(self, _type='commerceCard', _items=[]):
+    def __init__(self, _type='commerceCard', _items=[], _quickReplies=[]):
         super().__init__()
         self.type     = _type
         self.items    = _items
+        self.quickReplies = _quickReplies
+
 
         self.UpdateTemplateForm()
 
@@ -116,19 +133,28 @@ class Kakao_CarouselForm(KakaoBaseForm):
                         "items": self.items
                     }
                 }
-            ]
+            ],
+            "quickReplies": self.quickReplies,
         }
         
         super().SetTemplateForm(self.template)
 
+    # Quick Replies
+    def QuickReplies_Init(self):
+        self.quickReplies = []
+        self.UpdateTemplateForm()
+
+    def QuickReplies_Add(self, _action, _label, _messageText, _blockid, _extra):
+        self.quickReplies += { "action" : _action, "label" : _label, "messageText" : _messageText, "blockid": _blockid, "extra": _extra },
 
     # Comerce Card 
     def ComerceCard_Init(self):
         self.type   = 'commerceCard'
         self.items  = []
+        self.quickReplies = []
         self.UpdateTemplateForm()
 
-    def ComerceCard_AddCard(self, _description, _price, _discount, _currency, _thumbnails, _profile, _buttons):
+    def ComerceCard_Add(self, _description, _price, _discount, _currency, _thumbnails, _profile, _buttons):
         self.items += {
             "description": _description,
             "price": _price,
@@ -147,7 +173,7 @@ class Kakao_CarouselForm(KakaoBaseForm):
         self.items  = []
         self.UpdateTemplateForm()
 
-    def BasicCard_AddCard(self, _title, _description, _thumbnail, _buttons):
+    def BasicCard_Add(self, _title, _description, _thumbnail, _buttons):
         self.items += {
             "title": _title,
             "description": _description,

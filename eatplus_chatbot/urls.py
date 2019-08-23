@@ -24,8 +24,14 @@ from store_app import views
 urlpatterns = [
     path('admin/', admin.site.urls),
     
-    path('storeList', views.storeList),
-    path('menuList', views.menuList),
+
+    path('home', views.home),
+
+    path('getMenuCategory', views.getMenuCategory),
+    path('ordering', views.ordering),
+    path('getPickupTime', views.getPickupTime),
+
+
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

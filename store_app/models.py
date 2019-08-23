@@ -5,6 +5,12 @@ from django_mysql.models import Model
 STRING_LENGHT = 255
 WORD_LENGHT   = 32
 
+MENU_CATEGORY_CHOICES = [
+    ('점심', '점심'),
+    ('저녁', '저녁'),
+    ('N/A', 'N/A'),
+]
+
 STORE_CATEGORY_CHOICES = [
     ('한식', (
             ('백반', '백반'),
@@ -47,6 +53,19 @@ class Store(models.Model):
 
     store_logo = models.ImageField(blank=True, upload_to="eatplus_chatot_app/DB/logo_img")
 
+
+    menu_name        = models.CharField(default="메뉴명", max_length=STRING_LENGHT, help_text="메뉴명")
+    menu_category = models.CharField(
+        max_length=WORD_LENGHT,
+        choices=MENU_CATEGORY_CHOICES,
+        default='N/A',
+    )
+    menu_price       = models.IntegerField(default=5500, help_text="가격") 
+    menu_discount    = models.IntegerField(default=0, help_text="가격")
+    menu_description = models.TextField(default="설명", help_text="메뉴 설명")
+
+    image = models.ImageField(blank=True, upload_to="eatplus_chatot_app/DB/logo_img")
+
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -69,43 +88,4 @@ class Store(models.Model):
         return reverse('model-detail-view', args=[str(self.id)])
 
     def __str__(self):
-        return self.store_name
-
-class Menu(models.Model):
-    # Fields
-    store            = models.ForeignKey('Store', on_delete=models.CASCADE)
-
-    menu_name        = models.CharField(default="메뉴명", max_length=STRING_LENGHT, help_text="메뉴명")
-    menu_price       = models.IntegerField(default=0, help_text="가격") 
-    menu_discount    = models.IntegerField(default=0, help_text="가격")
-    menu_description = models.TextField(default="설명", help_text="메뉴 설명")
-
-    image = models.ImageField(blank=True, upload_to="eatplus_chatot_app/DB/logo_img")
-
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
-    
-    # Metadata
-    class Meta: 
-        ordering = ['-store']
-
-    # Methods
-    def as_json(self):
-        return dict(
-            store_name=self.store,
-            menu_name =self.menu_name,
-            menu_price=self.menu_price,
-            created_at=self.created_at,
-            updated_at=self.updated_at,
-        )
-
-    def getStore(self):
-        return self.store
-
-    def get_absolute_url(self):
-        """Returns the url to access a particular instance of the model."""
-        return reverse('model-detail-view', args=[str(self.id)])
-
-    def __str__(self):
-        self.store_name = "{}".format(self.store)
         return "[ {} ] - {}".format(self.store_name, self.menu_name)
