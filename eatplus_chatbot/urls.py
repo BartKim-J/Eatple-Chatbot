@@ -21,17 +21,20 @@ from django.conf.urls.static import static
 
 from store_app import views
 
+# Urls
 urlpatterns = [
+    # Admin
     path('admin/', admin.site.urls),
-    
 
     path('home', views.home),
 
-    path('getMenuCategory', views.getMenuCategory),
-    path('ordering', views.ordering),
+    # Kakao Plus Skills
+    path('getMenuCategory', views.getSellingTime),
+    path('selectMenu', views.selectMenu),
     path('getPickupTime', views.getPickupTime),
-
+    path('orderConfirm', views.orderConfirm),
 
 ]
 
+# Media Link Url
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

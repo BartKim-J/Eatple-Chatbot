@@ -2,7 +2,7 @@ from django.shortcuts import render
 from django.views.decorators.csrf import csrf_exempt
 from django.http import JsonResponse
 
-from .models  import Store
+from .models_store  import Store
 
 import json
 
@@ -76,6 +76,7 @@ class Kakao_SimpleForm(KakaoBaseForm):
     # SimpleForm Common
     def SimpleForm_Init(self):
         self.outputs = []
+        self.quickReplies = []
         self.UpdateTemplateForm()
 
     # SimpleForm Text
@@ -171,6 +172,7 @@ class Kakao_CarouselForm(KakaoBaseForm):
     def BasicCard_Init(self):
         self.type   = 'basicCard'
         self.items  = []
+        self.quickReplies = []
         self.UpdateTemplateForm()
 
     def BasicCard_Add(self, _title, _description, _thumbnail, _buttons):
