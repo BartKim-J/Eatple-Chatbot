@@ -21,7 +21,7 @@ from .module_KakaoForm import Kakao_SimpleForm, Kakao_CarouselForm, KakaoPayLoad
 from .views_kakaoTool import getLatLng
 from .views_system import EatplusSkillLog, errorView
 
-ORDER_LIST_LENGTH = 5
+ORDER_LIST_LENGTH = 7
 
 def OrderListup(name):
     ORDER_LIST_QUICKREPLIES_MAP = [                
@@ -41,8 +41,7 @@ def OrderListup(name):
 
             kakaoMapUrl = "https://map.kakao.com/link/map/{},{}".format(order.storeInstance.name, getLatLng(order.storeInstance.addr))
 
-            if( Config.ORDER_STATUS_DICT[order.status] < Config.ORDER_STATUS_DICT['픽업 준비중']
-            ):
+            if( Config.ORDER_STATUS_DICT[order.status] < Config.ORDER_STATUS_DICT['픽업 준비중']):
                 buttons = [
                     {'action': "webLink", 'label': "위치보기",  "webLinkUrl": kakaoMapUrl},
                     {'action': "message", 'label': "결제 취소 하기",  'messageText': "결제 취소 하기", 'extra': { }}
