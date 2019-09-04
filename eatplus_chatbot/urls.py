@@ -29,11 +29,12 @@ urlpatterns = [
     path('home', views.home),
 
     # Kakao Plus Skills
-    path('getMenuCategory', views.getSellingTime),
+    path('getSellingTime', views.getSellingTime),
     path('selectMenu', views.selectMenu),
     path('getPickupTime', views.getPickupTime),
     path('orderConfirm', views.orderConfirm),
 
+    path('getOrderList', views.getOrderList),
 ]
 
 # Media Link Url

@@ -10,13 +10,15 @@ import json
 #Models 
 from .models_config import Config
 
+from .models_user  import User
 from .models_order import Order
 from .models_store import Store, Menu, Category, SubCategory
 
 #View Modules
-from .module_KakaoForm import Kakao_SimpleForm, Kakao_CarouselForm
+from .module_KakaoForm import Kakao_SimpleForm, Kakao_CarouselForm, KakaoPayLoad
 
 #View
+from .views_kakaoTool import getLatLng
 from .views_system import EatplusSkillLog, errorView
 
 MENU_LIST_LENGTH      = 10
@@ -27,63 +29,6 @@ CATEGORY_LIST_LENGTH  =  5
 # Static View
 #
 # # # # # # # # # # # # # # # # # # # # # # # # #
-class requestPayLoad:
-    def __init__(self, request):
-        self.json_str           = ((request.body).decode('utf-8'))
-        self.received_json_data = json.loads(self.json_str)
-
-        self.dataUserRequest    = self.received_json_data['userRequest']
-        self.dataBot            = self.received_json_data['bot']
-        
-        self.dataAction         = self.received_json_data['action']
-        self.dataActionExtra    = self.dataAction['clientExtra']
-        self.dataActionParams   = self.dataAction['detailParams']
-
-        # Get paramter
-        try:
-            self.storeName       = self.dataActionExtra[Config.KAKAO_EXTRA_STORE_NAME]
-            self.storeAddr       = self.dataActionExtra[Config.KAKAO_EXTRA_STORE_ADDR]
-
-            self.menuName        = self.dataActionExtra[Config.KAKAO_EXTRA_MENU_NAME]
-            self.menuPrice       = self.dataActionExtra[Config.KAKAO_EXTRA_MENU_PRICE]
-            self.menuDescription = self.dataActionExtra[Config.KAKAO_EXTRA_MENU_DESCRIPTION]
-
-        except (RuntimeError, TypeError, NameError, KeyError) as ex:
-            self.storeName       = Config.NOT_APPLICABLE
-            self.storeAddr       = Config.NOT_APPLICABLE
-
-            self.menuName        = Config.NOT_APPLICABLE
-            self.menuPrice       = Config.NOT_APPLICABLE
-            self.menuDescription = Config.NOT_APPLICABLE
-            pass
-            
-        try:
-            self.menuCategory    = self.dataActionExtra[Config.KAKAO_EXTRA_MENU_CATEGORY]
-        except (RuntimeError, TypeError, NameError, KeyError) as ex:
-            self.menuCategory    = Config.NOT_APPLICABLE
-            pass
-
-        try:
-            self.sellingTime     = self.dataActionExtra[Config.KAKAO_EXTRA_SELLING_TIME]
-        except (RuntimeError, TypeError, NameError, KeyError) as ex:
-            self.sellingTime     = Config.NOT_APPLICABLE
-            pass
-
-        try:
-            self.pickupTime       = self.dataActionParams[Config.KAKAO_EXTRA_PICKUP_TIME][Config.KAKAO_EXTRA_PICKUP_TIME_VALUE][:5]
-            self.dataActionExtra  = {**self.dataActionExtra, **{Config.KAKAO_EXTRA_PICKUP_TIME: self.pickupTime}}
-        except (RuntimeError, TypeError, NameError, KeyError) as ex:
-            self.pickupTime       = Config.NOT_APPLICABLE
-            pass
-        try:
-            self.pickupTime      = self.dataActionExtra[Config.KAKAO_EXTRA_PICKUP_TIME][:5]
-        except (RuntimeError, TypeError, NameError, KeyError) as ex:
-            pass
-        try:
-            self.location        = Config.NOT_APPLICABLE
-        except (RuntimeError, TypeError, NameError, KeyError) as ex:
-            self.location        = Config.NOT_APPLICABLE 
-            pass
 
 
 def MenuListup(menuCategory, sellingTime, location):
@@ -122,22 +67,24 @@ def MenuListup(menuCategory, sellingTime, location):
             
             profile = {
                 "imageUrl": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT4BJ9LU4Ikr_EvZLmijfcjzQKMRCJ2bO3A8SVKNuQ78zu2KOqM",
-                "nickname": menu.store_id.name
+                "nickname": menu.storeInstance.name
             }
             
-            kakaoMapUrl = "https://map.kakao.com/link/map/{},{}".format(menu.store_id.name, getLatLng(menu.store_id.addr))
+            kakaoMapUrl = "https://map.kakao.com/link/map/{},{}".format(menu.storeInstance.name, getLatLng(menu.storeInstance.addr))
             buttons = [
                 {'action': "message", 'label': "주문하기",  'messageText': "{} 픽업시간 설정".format(sellingTime), 
                  'extra': {
-                    Config.KAKAO_EXTRA_STORE_NAME: menu.store_id.name, 
-                    Config.KAKAO_EXTRA_STORE_ADDR: menu.store_id.addr, 
+                    Config.KAKAO_EXTRA_STORE_ID:         menu.storeInstance.id,
+                    Config.KAKAO_EXTRA_STORE_NAME:       menu.storeInstance.name, 
+                    Config.KAKAO_EXTRA_STORE_ADDR:       menu.storeInstance.addr, 
 
-                    Config.KAKAO_EXTRA_MENU_NAME: menu.name, 
-                    Config.KAKAO_EXTRA_MENU_PRICE: menu.price, 
+                    Config.KAKAO_EXTRA_MENU_ID:          menu.id,
+                    Config.KAKAO_EXTRA_MENU_NAME:        menu.name, 
+                    Config.KAKAO_EXTRA_MENU_PRICE:       menu.price, 
                     Config.KAKAO_EXTRA_MENU_DESCRIPTION: menu.description, 
-                    Config.KAKAO_EXTRA_MENU_CATEGORY: menuCategory, 
+                    Config.KAKAO_EXTRA_MENU_CATEGORY:    menuCategory, 
 
-                    Config.KAKAO_EXTRA_SELLING_TIME: sellingTime,  
+                    Config.KAKAO_EXTRA_SELLING_TIME:     sellingTime,  
                 }},
 
                 {'action': "webLink", 'label': "위치보기",  "webLinkUrl": kakaoMapUrl },
@@ -185,19 +132,6 @@ def MenuListup(menuCategory, sellingTime, location):
 
     return JsonResponse(KakaoForm.GetForm())
 
-def getLatLng(addr):
-    try:
-        url = 'https://dapi.kakao.com/v2/local/search/address.json?query='+addr
-        headers = {"Authorization": "KakaoAK d62991888c78ec58d809bdc591eb62f6"}
-        result = json.loads(str(requests.get(url,headers=headers).text))
-
-        match_first = result['documents'][0]['road_address']
-
-    except (RuntimeError, TypeError, NameError, KeyError, IndexError) as ex:
-        return errorView("Get Address Error\n- {} ".format(ex))
-
-    return "{},{}".format(float(match_first['y']),float(match_first['x']))
-
 # # # # # # # # # # # # # # # # # # # # # # # # #
 #
 # External View
@@ -206,7 +140,7 @@ def getLatLng(addr):
 @csrf_exempt
 def getSellingTime(request):
     try:
-        kakaoPayload = requestPayLoad(request)
+        kakaoPayload = KakaoPayLoad(request)
 
         EatplusSkillLog("Order Flow", "=> Enter Ordering Flow\n-  * Get Menu Category")
 
@@ -239,7 +173,7 @@ def getSellingTime(request):
 @csrf_exempt
 def selectMenu(request):
     try:
-        kakaoPayload = requestPayLoad(request)
+        kakaoPayload = KakaoPayLoad(request)
 
         EatplusSkillLog("Order Flow", "Select Menu [Category: {}, Selling Time : {}]".format(kakaoPayload.menuCategory, kakaoPayload.sellingTime))
 
@@ -251,7 +185,7 @@ def selectMenu(request):
 @csrf_exempt
 def getPickupTime(request):
     try:
-        kakaoPayload = requestPayLoad(request)
+        kakaoPayload = KakaoPayLoad(request)
 
         EatplusSkillLog("Order Flow", "Get Picktime")
 
@@ -260,8 +194,8 @@ def getPickupTime(request):
 
         KakaoForm.SimpleText_Add("픽업시간이 설정되었습니다!\n결제하기 전에 아래 주문 내역을 확인해주세요.")
         KakaoForm.SimpleText_Add(
-            " * {}\n-------------------- \n * 메뉴 이름: {}\n * 시간대  : {}\n * 픽업 시간: {} \n--------------------\n * 결제 금액: {}원".format(
-            kakaoPayload.storeName, kakaoPayload.menuName, kakaoPayload.sellingTime, kakaoPayload.pickupTime, kakaoPayload.menuPrice)
+            "{}\n - 메뉴: {}\n - 픽업 시간: {}\n\n - 결제 금액: {}원".format(
+            kakaoPayload.storeName, kakaoPayload.menuName, kakaoPayload.pickupTime, kakaoPayload.menuPrice)
         )
 
         ORDER_EXIT_QUICKREPLIES_MAP = [
@@ -285,10 +219,15 @@ def getPickupTime(request):
 @csrf_exempt
 def orderConfirm(request):
     try:
-        kakaoPayload = requestPayLoad(request)
+        kakaoPayload = KakaoPayLoad(request)
 
         EatplusSkillLog("Order Flow", "Order Confirm")
 
+        #@TODO: UserInstance Load User
+        pushedOrder = Order.pushOrder(userInstance=User.objects.get(name="잇플"),
+                                      storeInstance=Store.objects.get(id=kakaoPayload.storeID), 
+                                      menuInstance=Menu.objects.get(id=kakaoPayload.menuID))
+        
         KakaoForm = Kakao_CarouselForm()
         KakaoForm.BasicCard_Init()
 
@@ -304,13 +243,14 @@ def orderConfirm(request):
 
         KakaoForm.BasicCard_Add(
             "식권이 발급되었습니다.",
-            "주문번호: {}\n--------------------\n - 매장 이름: {} \n - 메뉴 이름: {}\n - 결제 금액: {}원\n - 픽업 시간: {}\n--------------------\n - 매장 위치: {}".format(
-                "ABCDE12345F",
-                kakaoPayload.storeName, 
-                kakaoPayload.menuName, 
-                kakaoPayload.menuPrice, 
+            "주문번호: {}\n--------------------\n - 주문자: {}\n\n - 매장: {} \n - 메뉴: {}\n\n - 결제 금액: {}원\n\n - 픽업 시간: {}\n--------------------\n - 매장 위치: {}".format(
+                pushedOrder.management_code,
+                pushedOrder.userInstance.name,
+                pushedOrder.storeInstance.name, 
+                pushedOrder.menuInstance.name, 
+                pushedOrder.menuInstance.price, 
                 kakaoPayload.pickupTime, 
-                kakaoPayload.storeAddr
+                pushedOrder.storeInstance.addr
             ),
             thumbnail, buttons
         )

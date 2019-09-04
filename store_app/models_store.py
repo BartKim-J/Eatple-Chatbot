@@ -1,9 +1,12 @@
+#Django Library
 from django.urls import reverse
 from django.db import models
 from django_mysql.models import Model
 
+#External Library
 import datetime
 
+#Models 
 from .models_config import Config
 
 
@@ -62,7 +65,7 @@ class Menu(models.Model):
         ordering = ['-name']
 
 
-    store_id         = models.ForeignKey('Store', on_delete=models.CASCADE, default=Config.DEFAULT_OBJECT_ID)
+    storeInstance         = models.ForeignKey('Store', on_delete=models.CASCADE, default=Config.DEFAULT_OBJECT_ID)
     
     # Menu Info
     management_code  = models.CharField(max_length=Config.MANAGEMENT_CODE_LENGTH, blank=True, null=True,
@@ -95,4 +98,4 @@ class Menu(models.Model):
 
     # Methods
     def __str__(self):
-        return "[{}] {} - {}".format(self.store_id.name, self.name, self.sellingTime)
+        return "[{}] {} - {}".format(self.storeInstance.name, self.name, self.sellingTime)
