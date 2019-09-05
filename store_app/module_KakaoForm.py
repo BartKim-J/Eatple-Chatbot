@@ -4,8 +4,6 @@ from django.views.decorators.csrf import csrf_exempt
 from django.http import JsonResponse
 
 #External Library
-import requests
-import json
 import datetime
 
 #Models 
@@ -14,69 +12,6 @@ from .models_config import Config
 from .models_user  import User
 from .models_order import Order
 from .models_store import Store, Menu, Category, SubCategory
-
-class KakaoPayLoad:
-    def __init__(self, request):
-        self.json_str           = ((request.body).decode('utf-8'))
-        self.received_json_data = json.loads(self.json_str)
-
-        self.dataUserRequest    = self.received_json_data['userRequest']
-        self.dataBot            = self.received_json_data['bot']
-        
-        self.dataAction         = self.received_json_data['action']
-        self.dataActionExtra    = self.dataAction['clientExtra']
-        self.dataActionParams   = self.dataAction['detailParams']
-
-        # Get paramter
-        try:
-            self.storeID         = self.dataActionExtra[Config.KAKAO_EXTRA_STORE_ID]
-            self.storeName       = self.dataActionExtra[Config.KAKAO_EXTRA_STORE_NAME]
-            self.storeAddr       = self.dataActionExtra[Config.KAKAO_EXTRA_STORE_ADDR]
-
-            self.menuID          = self.dataActionExtra[Config.KAKAO_EXTRA_MENU_ID]
-            self.menuName        = self.dataActionExtra[Config.KAKAO_EXTRA_MENU_NAME]
-            self.menuPrice       = self.dataActionExtra[Config.KAKAO_EXTRA_MENU_PRICE]
-            self.menuDescription = self.dataActionExtra[Config.KAKAO_EXTRA_MENU_DESCRIPTION]
-
-        except (RuntimeError, TypeError, NameError, KeyError) as ex:
-            self.storeID         = Config.NOT_APPLICABLE
-            self.storeName       = Config.NOT_APPLICABLE
-            self.storeAddr       = Config.NOT_APPLICABLE
-
-            self.menuID          = Config.NOT_APPLICABLE
-            self.menuName        = Config.NOT_APPLICABLE
-            self.menuPrice       = Config.NOT_APPLICABLE
-            self.menuDescription = Config.NOT_APPLICABLE
-            pass
-            
-        try:
-            self.menuCategory    = self.dataActionExtra[Config.KAKAO_EXTRA_MENU_CATEGORY]
-        except (RuntimeError, TypeError, NameError, KeyError) as ex:
-            self.menuCategory    = Config.NOT_APPLICABLE
-            pass
-
-        try:
-            self.sellingTime     = self.dataActionExtra[Config.KAKAO_EXTRA_SELLING_TIME]
-        except (RuntimeError, TypeError, NameError, KeyError) as ex:
-            self.sellingTime     = Config.NOT_APPLICABLE
-            pass
-
-        try:
-            self.pickupTime       = self.dataActionParams[Config.KAKAO_EXTRA_PICKUP_TIME][Config.KAKAO_EXTRA_PICKUP_TIME_VALUE][:5]
-            self.dataActionExtra  = {**self.dataActionExtra, **{Config.KAKAO_EXTRA_PICKUP_TIME: self.pickupTime}}
-        except (RuntimeError, TypeError, NameError, KeyError) as ex:
-            self.pickupTime       = Config.NOT_APPLICABLE
-            pass
-        try:
-            self.pickupTime      = self.dataActionExtra[Config.KAKAO_EXTRA_PICKUP_TIME][:5]
-        except (RuntimeError, TypeError, NameError, KeyError) as ex:
-            pass
-        try:
-            self.location        = Config.NOT_APPLICABLE
-        except (RuntimeError, TypeError, NameError, KeyError) as ex:
-            self.location        = Config.NOT_APPLICABLE 
-            pass
-
 
 class KakaoBaseForm():
     def __init__(self, _version="2.0", _template={"outputs": []}, _context={"values": []}, _data={"Status": 'OK'}):
@@ -222,8 +157,8 @@ class Kakao_CarouselForm(KakaoBaseForm):
 
     # Comerce Card 
     def ComerceCard_Init(self):
-        self.type   = 'commerceCard'
-        self.items  = []
+        self.type         = 'commerceCard'
+        self.items        = []
         self.quickReplies = []
         self.UpdateTemplateForm()
 
@@ -242,8 +177,8 @@ class Kakao_CarouselForm(KakaoBaseForm):
 
     # Basic Card 
     def BasicCard_Init(self):
-        self.type   = 'basicCard'
-        self.items  = []
+        self.type         = 'basicCard'
+        self.items        = []
         self.quickReplies = []
         self.UpdateTemplateForm()
 

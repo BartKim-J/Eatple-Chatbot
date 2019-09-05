@@ -9,28 +9,44 @@ import datetime
 #Models 
 from .models_config import Config
 
+#GLOBAL CONFIG
+NOT_APPLICABLE          = Config.NOT_APPLICABLE
+DEFAULT_OBJECT_ID       = Config.DEFAULT_OBJECT_ID
+
+ORDER_STATUS_DICT       = Config.ORDER_STATUS_DICT
+ORDER_STATUS            = Config.ORDER_STATUS
+
+MANAGEMENT_CODE_LENGTH  = Config.MANAGEMENT_CODE_LENGTH
+STRING_LENGTH           = Config.STRING_LENGTH
+
+MANAGEMENT_CODE_DEFAULT = Config.MANAGEMENT_CODE_DEFAULT
+
+#STATIC CONFIG
+
 class Order(models.Model):
     class Meta:
         ordering = ['-order_date']
 
-    userInstance     = models.ForeignKey('User',  on_delete=models.DO_NOTHING, default=Config.DEFAULT_OBJECT_ID)
-    storeInstance    = models.ForeignKey('Store',  on_delete=models.DO_NOTHING, default=Config.DEFAULT_OBJECT_ID)
-    menuInstance     = models.ForeignKey('Menu',  on_delete=models.DO_NOTHING, default=Config.DEFAULT_OBJECT_ID)
+    userInstance     = models.ForeignKey('User',  on_delete=models.DO_NOTHING, default=DEFAULT_OBJECT_ID)
+    storeInstance    = models.ForeignKey('Store',  on_delete=models.DO_NOTHING, default=DEFAULT_OBJECT_ID)
+    menuInstance     = models.ForeignKey('Menu',  on_delete=models.DO_NOTHING, default=DEFAULT_OBJECT_ID)
 
-    management_code  = models.CharField(max_length=Config.MANAGEMENT_CODE_LENGTH, blank=True, null=True,
+    management_code  = models.CharField(max_length=MANAGEMENT_CODE_LENGTH, blank=True, null=True,
                                         help_text="Menu Magement Code")
+
+    pickupTime       =  models.CharField(max_length=10, default="00:00")
 
     update_date      = models.DateTimeField(auto_now_add=False, auto_now=True)
     order_date       = models.DateTimeField(auto_now_add=True,  auto_now=False)
 
-    status           = models.CharField(max_length=Config.STRING_LENGTH, choices=Config.ORDER_STATUS, default=Config.ORDER_STATUS[0][0])
+    status           = models.CharField(max_length=STRING_LENGTH, choices=ORDER_STATUS, default=ORDER_STATUS[ORDER_STATUS_DICT['주문 확인중']][0])
 
     @classmethod
-    def pushOrder(cls, userInstance, storeInstance, menuInstance):
-        management_code = Config.MANAGEMENT_CODE_DEFAULT
+    def pushOrder(cls, userInstance, storeInstance, menuInstance, pickupTime):
+        management_code  = MANAGEMENT_CODE_DEFAULT
         order_date       = models.DateTimeField(auto_now=True)
 
-        pushedOrder = cls(userInstance=userInstance, storeInstance=storeInstance, menuInstance=menuInstance, management_code=management_code, order_date=order_date)
+        pushedOrder = cls(userInstance=userInstance, storeInstance=storeInstance, menuInstance=menuInstance, management_code=management_code, pickupTime=pickupTime, order_date=order_date)
         pushedOrder.save()
 
         return pushedOrder

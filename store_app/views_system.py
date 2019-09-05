@@ -16,6 +16,12 @@ from .models_store import Store, Menu
 #View Modules
 from .module_KakaoForm import Kakao_SimpleForm, Kakao_CarouselForm
 
+#GLOBAL CONFIG
+KAKAO_PARAM_STATUS          = Config.KAKAO_PARAM_STATUS
+KAKAO_PARAM_STATUS_OK       = Config.KAKAO_PARAM_STATUS_OK
+KAKAO_PARAM_STATUS_NOT_OK   = Config.KAKAO_PARAM_STATUS_NOT_OK
+
+
 # SKill Log
 def EatplusSkillLog(object, subject):
     print("- - - - - - - - - - - - - - - - - - - - - - - - -")
@@ -31,7 +37,7 @@ def errorView(error_log="error message"):
     KakaoForm.SimpleForm_Init()
 
     ERROR_QUICKREPLIES_MAP = [
-        {'action': "message", 'label': "홈으로 돌아가기",    'messageText': "홈으로 돌아가기", 'blockid': "none", 'extra': { Config.KAKAO_EXTRA_STATUS: Config.KAKAO_EXTRA_STATUS_OK }},
+        {'action': "message", 'label': "홈으로 돌아가기",    'messageText': "홈으로 돌아가기", 'blockid': "none", 'extra': { KAKAO_PARAM_STATUS: KAKAO_PARAM_STATUS_OK }},
     ]
 
     for entryPoint in ERROR_QUICKREPLIES_MAP:

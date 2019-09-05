@@ -9,14 +9,22 @@ import datetime
 #Models 
 from .models_config import Config
 
+#GLOBAL CONFIG
+NOT_APPLICABLE          = Config.NOT_APPLICABLE
+DEFAULT_OBJECT_ID       = Config.DEFAULT_OBJECT_ID
+
+USER_NICKNAME_LENGTH    = Config.USER_NICKNAME_LENGTH
+
+#STATIC CONFIG
+
 class User(models.Model):
     class Meta:
         ordering = ['-name']
 
-    name             = models.CharField(max_length=Config.USER_NICKNAME_LENGTH, help_text="User Name")
-    serial           = models.CharField(max_length=Config.USER_NICKNAME_LENGTH, help_text="User S/N")
+    name             = models.CharField(max_length=USER_NICKNAME_LENGTH, help_text="User Name")
+    serial           = models.CharField(max_length=USER_NICKNAME_LENGTH, help_text="User S/N")
 
-    email            = models.CharField(max_length=Config.USER_NICKNAME_LENGTH, help_text="User ID")
+    email            = models.CharField(max_length=USER_NICKNAME_LENGTH, help_text="User ID")
     create_date      = models.DateTimeField(auto_now=True)
 
     def createUser(self, _name, _email):

@@ -15,7 +15,9 @@ from .module_KakaoForm import Kakao_SimpleForm, Kakao_CarouselForm
 
 from .views_system import EatplusSkillLog, errorView
 from .views_ordering import getSellingTime, selectMenu, getPickupTime, orderConfirm
-from .views_orderCheck import getOrderList
+from .views_orderCheck import getOrderList, getCoupon
+from .views_orderChange import orderCancel, orderPickupTimeChange
+
 
 ### API Functions ###
 @csrf_exempt
@@ -25,9 +27,7 @@ def home(request):
     HOME_QUICKREPLIES_MAP = [
         {'action': "message", 'label': "주문 하기",    'messageText': "주문시간 선택", 'blockid': "none", 'extra': { 'Status': "OK" }},
         {'action': "message", 'label': "식권 조회",    'messageText': "식권 조회", 'blockid': "none", 'extra': { 'Status': "OK" }},
-        {'action': "message", 'label': "주문 변경",    'messageText': "주문 변경", 'blockid': "none", 'extra': { 'Status': "OK" }},
-        {'action': "message", 'label': "픽업시간 변경", 'messageText': "픽업시간 변경", 'blockid': "none", 'extra': { 'Status': "OK" }},
-        {'action': "message", 'label': "위치 변경",    'messageText': "위치 변경", 'blockid': "none", 'extra': { 'Status': "OK" }},
+        {'action': "message", 'label': "주문 내역",    'messageText': "주문 내역", 'blockid': "none", 'extra': { 'Status': "OK" }},
     ]
 
     try:
