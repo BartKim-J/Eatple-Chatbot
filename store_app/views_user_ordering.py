@@ -89,9 +89,6 @@ def MenuListup(menuCategory, sellingTime, location):
             thumbnails = [
                 {
                     "imageUrl": "http://k.kakaocdn.net/dn/83BvP/bl20duRC1Q1/lj3JUcmrzC53YIjNDkqbWK/i_6piz1p.jpg",
-                    "link": {
-                        "web": "https://store.kakaofriends.com/kr/products/1542"
-                    }
                 }
             ]
             
@@ -213,13 +210,14 @@ def selectMenu(request):
     except (RuntimeError, TypeError, NameError, KeyError) as ex:
         return errorView("Select Menu Error\n- {} ".format(ex))
 
+
 @csrf_exempt
 def getPickupTime(request):
     try:
         kakaoPayload = KakaoPayLoad(request)
 
         # Invalied Path Access
-        if(kakaoPayload.storeID == NOT_APPLICABLE) or (kakaoPayload.menuID  == NOT_APPLICABLE) or (kakaoPayload.pickupTime == NOT_APPLICABLE):
+        if(kakaoPayload.storeID == NOT_APPLICABLE) or (kakaoPayload.menuID  == NOT_APPLICABLE) or (kakaoPayload.sellingTime == NOT_APPLICABLE):
             return errorView("Get Pickup Time -> Parameter Error\n {} \n {}".format(kakaoPayload.storeID, kakaoPayload.menuID))
         else:
             storeInstance = Store.objects.get(id=kakaoPayload.storeID)
@@ -230,18 +228,72 @@ def getPickupTime(request):
         KakaoForm = Kakao_SimpleForm()
         KakaoForm.SimpleForm_Init()
 
-        KakaoForm.SimpleText_Add("픽업시간이 설정되었습니다!\n결제하기 전에 아래 주문 내역을 확인해주세요.")
-        KakaoForm.SimpleText_Add(
-            "{}\n - 메뉴: {}\n - 픽업 시간: {}\n\n - 결제 금액: {}원".format(
-            storeInstance.name, menuInstance.name, kakaoPayload.pickupTime, menuInstance.price)
-        )
+        KakaoForm.SimpleText_Add("{} 시간 픽업 시간을 설정해주세요.".format(kakaoPayload.sellingTime))
+
+        PICKUP_TIME_QUICKREPLIES_MAP = []
+
+        LUNCH_PICKUP_TIME_MAP  = [ "11:30", "11:45", "12:00", "12:15", "12:30", "12:45", "13:00", "13:15", "13:30" ]
+        DINNER_PICKUP_TIME_MAP = [ "17:30", "18:00", "18:30", "19:00", "19:30", "20:00", "20:30", "21:00" ]
+        if MENU_CATEGORY_DICT[kakaoPayload.sellingTime] == MENU_LUNCH:
+            ENTRY_PICKUP_TIME_MAP = LUNCH_PICKUP_TIME_MAP
+        else:
+            ENTRY_PICKUP_TIME_MAP = DINNER_PICKUP_TIME_MAP
+
+        allExtraData = kakaoPayload.dataActionExtra
+
+        for pickupTime in ENTRY_PICKUP_TIME_MAP:
+            PICKUP_TIME_QUICKREPLIES_MAP += {'action': "message", 'label': pickupTime, 'messageText': "픽업 시간 설정 완료", 'blockid': "none", 'extra': { **allExtraData, KAKAO_PARAM_PICKUP_TIME: pickupTime}},
+
+        for entryPoint in PICKUP_TIME_QUICKREPLIES_MAP:
+            KakaoForm.QuickReplies_Add(entryPoint['action'], entryPoint['label'], entryPoint['messageText'], entryPoint['blockid'], entryPoint['extra'])
+
+        return JsonResponse(KakaoForm.GetForm())
+
+    except (RuntimeError, TypeError, NameError, KeyError) as ex:
+        return errorView("Get Pickup Time Error\n- {} ".format(ex))
+
+@csrf_exempt
+def pickupTimeConfirm(request):
+    try:
+        kakaoPayload = KakaoPayLoad(request)
+
+        # Invalied Path Access
+        if(kakaoPayload.storeID == NOT_APPLICABLE) or (kakaoPayload.menuID  == NOT_APPLICABLE) or (kakaoPayload.pickupTime == NOT_APPLICABLE):
+            return errorView("Get Pickup Time -> Parameter Error\n {} \n {}".format(kakaoPayload.storeID, kakaoPayload.menuID))
+        else:
+            storeInstance = Store.objects.get(id=kakaoPayload.storeID)
+            menuInstance  = Menu.objects.get(id=kakaoPayload.menuID)
+
+        EatplusSkillLog("Order Flow", "Pickuptime Confirm")
+        KakaoForm = Kakao_CarouselForm()
+        KakaoForm.ComerceCard_Init()
+        
+        #Menu Carousel Card Add 
+        thumbnails = [
+            {
+                "imageUrl": "http://k.kakaocdn.net/dn/83BvP/bl20duRC1Q1/lj3JUcmrzC53YIjNDkqbWK/i_6piz1p.jpg",
+                "link": {
+                    "web": "https://store.kakaofriends.com/kr/products/1542"
+                }
+            }
+        ]
+        
+        profile = {
+            "imageUrl": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT4BJ9LU4Ikr_EvZLmijfcjzQKMRCJ2bO3A8SVKNuQ78zu2KOqM",
+            "nickname": menuInstance.storeInstance.name
+        }
+        
+        kakaoMapUrl = "https://map.kakao.com/link/map/{},{}".format(storeInstance.name, getLatLng(storeInstance.addr))
+        buttons = [
+            {'action': "message", 'label': "결제 하기",  'messageText': "결제 하기", 'extra': kakaoPayload.dataActionExtra},
+        ]
+
+        KakaoForm.ComerceCard_Add("메뉴명     : {}\n픽업 시간 : {}".format(menuInstance.name, kakaoPayload.pickupTime), 
+                                   menuInstance.price, menuInstance.discount, 'won', thumbnails, profile, buttons)
 
         GET_PICKUP_TIME_QUICKREPLIES_MAP = [
-            {'action': "message", 'label': "결제 하기",    'messageText': "결제 하기", 'blockid': "none", 
-            'extra': kakaoPayload.dataActionExtra},
-
-            {'action': "message", 'label': "돌아가기",    'messageText': "돌아가기", 'blockid': "none", 
-             'extra': { KAKAO_PARAM_STATUS: KAKAO_PARAM_STATUS_OK }},
+            {'action': "message", 'label': "픽업시간 변경하기",  'messageText': "{} 픽업시간 설정".format(kakaoPayload.sellingTime), 'blockid': "none", 'extra': kakaoPayload.dataActionExtra},
+            {'action': "message", 'label': "취소 하기",        'messageText': "취소 하기", 'blockid': "none", 'extra': { KAKAO_PARAM_STATUS: KAKAO_PARAM_STATUS_OK }},
         ]
 
         for entryPoint in GET_PICKUP_TIME_QUICKREPLIES_MAP:
@@ -250,7 +302,7 @@ def getPickupTime(request):
         return JsonResponse(KakaoForm.GetForm())
 
     except (RuntimeError, TypeError, NameError, KeyError) as ex:
-        return errorView("Get Pickup Time Error\n- {} ".format(ex))
+        return errorView("Pickuptime Confirm Error\n- {} ".format(ex))
 
 
 @csrf_exempt

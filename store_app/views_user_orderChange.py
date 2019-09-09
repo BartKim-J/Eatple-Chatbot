@@ -24,6 +24,11 @@ from .views_system import EatplusSkillLog, errorView
 #GLOBAL CONFIG
 NOT_APPLICABLE              = Config.NOT_APPLICABLE
 
+MENU_LUNCH                  = Config.MENU_LUNCH
+MENU_DINNER                 = Config.MENU_DINNER
+MENU_CATEGORY_DICT          = Config.MENU_CATEGORY_DICT
+MENU_CATEGORY               = Config.MENU_CATEGORY
+
 ORDER_STATUS                = Config.ORDER_STATUS
 ORDER_STATUS_DICT           = Config.ORDER_STATUS_DICT
 
@@ -31,6 +36,8 @@ KAKAO_PARAM_USER_ID         = Config.KAKAO_PARAM_USER_ID
 KAKAO_PARAM_ORDER_ID        = Config.KAKAO_PARAM_ORDER_ID
 KAKAO_PARAM_STORE_ID        = Config.KAKAO_PARAM_STORE_ID
 KAKAO_PARAM_MENU_ID         = Config.KAKAO_PARAM_MENU_ID
+
+KAKAO_PARAM_PICKUP_TIME     = Config.KAKAO_PARAM_PICKUP_TIME
 
 KAKAO_PARAM_STATUS          = Config.KAKAO_PARAM_STATUS
 KAKAO_PARAM_STATUS_OK       = Config.KAKAO_PARAM_STATUS_OK
@@ -116,6 +123,47 @@ def orderCancel(request):
 
     except (RuntimeError, TypeError, NameError, KeyError) as ex:
         return errorView("Order Cancel Error\n- {} ".format(ex))
+
+
+@csrf_exempt
+def getOrderPickupTime(request):
+    try:
+        kakaoPayload = KakaoPayLoad(request)
+
+        # Invalied Path Access
+        if(kakaoPayload.orderID == NOT_APPLICABLE) or (kakaoPayload.sellingTime == NOT_APPLICABLE):
+            return errorView("Get Pickup Time -> Parameter Error\n {} \n {}".format(kakaoPayload.storeID, kakaoPayload.menuID))
+        else:
+            orderInstance = Order.objects.get(id=kakaoPayload.orderID)
+
+        EatplusSkillLog("Order Flow", "Get Order Picktime")
+
+        KakaoForm = Kakao_SimpleForm()
+        KakaoForm.SimpleForm_Init()
+
+        KakaoForm.SimpleText_Add("변경 하실 픽업 시간을 설정해주세요.")
+
+        PICKUP_TIME_QUICKREPLIES_MAP = []
+
+        LUNCH_PICKUP_TIME_MAP  = [ "11:30", "11:45", "12:00", "12:15", "12:30", "12:45", "13:00", "13:15", "13:30" ]
+        DINNER_PICKUP_TIME_MAP = [ "17:30", "18:00", "18:30", "19:00", "19:30", "20:00", "20:30", "21:00" ]
+        if MENU_CATEGORY_DICT[kakaoPayload.sellingTime] == MENU_LUNCH:
+            ENTRY_PICKUP_TIME_MAP = LUNCH_PICKUP_TIME_MAP
+        else:
+            ENTRY_PICKUP_TIME_MAP = DINNER_PICKUP_TIME_MAP
+
+        allExtraData = kakaoPayload.dataActionExtra
+
+        for pickupTime in ENTRY_PICKUP_TIME_MAP:
+            PICKUP_TIME_QUICKREPLIES_MAP += {'action': "message", 'label': pickupTime, 'messageText': "픽업 시간 변경 완료", 'blockid': "none", 'extra': { **allExtraData, KAKAO_PARAM_PICKUP_TIME: pickupTime}},
+
+        for entryPoint in PICKUP_TIME_QUICKREPLIES_MAP:
+            KakaoForm.QuickReplies_Add(entryPoint['action'], entryPoint['label'], entryPoint['messageText'], entryPoint['blockid'], entryPoint['extra'])
+
+        return JsonResponse(KakaoForm.GetForm())
+
+    except (RuntimeError, TypeError, NameError, KeyError) as ex:
+        return errorView("Get Pickup Time Error\n- {} ".format(ex))
 
 
 '''

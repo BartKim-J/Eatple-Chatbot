@@ -4,7 +4,7 @@ from django.db import models
 from django_mysql.models import Model
 
 #External Library
-import datetime
+from datetime import datetime
 
 #Models 
 from .models_config import Config
@@ -21,8 +21,17 @@ STRING_LENGTH           = Config.STRING_LENGTH
 
 MANAGEMENT_CODE_DEFAULT = Config.MANAGEMENT_CODE_DEFAULT
 
-#STATIC CONFIG
 
+def OrderManagementCodeGenerator(storeInstance, menuInstance, userInstance, order_date):
+    management_code = ''
+    management_code += '{:02d}'.format(storeInstance.id % 10)
+    management_code += '{:02d}'.format(menuInstance.id % 10)
+    management_code += '{:02d}'.format(userInstance.id % 10)
+    management_code += order_date.strftime("%M%H%S")
+
+    return management_code
+
+#STATIC CONFIG
 class Order(models.Model):
     class Meta:
         ordering = ['-order_date']
@@ -43,8 +52,8 @@ class Order(models.Model):
 
     @classmethod
     def pushOrder(cls, userInstance, storeInstance, menuInstance, pickupTime):
-        management_code  = MANAGEMENT_CODE_DEFAULT
-        order_date       = models.DateTimeField(auto_now=True)
+        order_date       = models.DateTimeField(default=datetime.now())
+        management_code  = OrderManagementCodeGenerator(storeInstance, menuInstance, userInstance, datetime.now())
 
         pushedOrder = cls(userInstance=userInstance, storeInstance=storeInstance, menuInstance=menuInstance, management_code=management_code, pickupTime=pickupTime, order_date=order_date)
         pushedOrder.save()

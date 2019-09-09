@@ -26,13 +26,14 @@ urlpatterns = [
     # Admin
     path('admin/', admin.site.urls),
 
-    path('home', views.home),
-
-    # Kakao Plus Skills
+    # Kakao Plus User Skills
+    ## Home
+    path('userHome', views.userHome),
     ## Order Flow
     path('getSellingTime', views.getSellingTime),
     path('selectMenu', views.selectMenu),
     path('getPickupTime', views.getPickupTime),
+    path('pickupTimeConfirm', views.pickupTimeConfirm),
     path('orderConfirm', views.orderConfirm),
 
     ## Order Check Flow
@@ -43,9 +44,17 @@ urlpatterns = [
     path('orderCancel', views.orderCancel),
 
     ## Order Pickup Time Change Flow
+    path('getOrderPickupTime', views.getOrderPickupTime),
     path('orderPickupTimeChange', views.orderPickupTimeChange),
-
     ## Location Change Flow
+
+    ## User Manual
+    path('userManual', views.userManual),
+
+
+    # Kakao Plus Partner Skills
+    ## Home
+    path('partnerHome', views.partnerHome),
 ]
 
 # Media Link Url

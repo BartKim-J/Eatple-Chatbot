@@ -59,7 +59,7 @@ def OrderListup(name, status):
         ORDER_LIST_QUICKREPLIES_MAP.append({'action': "message", 'label': "새로고침",    'messageText': "주문 내역", 'blockid': "none", 'extra': { KAKAO_PARAM_STATUS: KAKAO_PARAM_STATUS_OK }})        
     
     else: # Coupon List
-        ORDER_LIST_QUICKREPLIES_MAP.append({'action': "message", 'label': "새로고침",    'messageText': "식권 조회", 'blockid': "none", 'extra': { KAKAO_PARAM_STATUS: KAKAO_PARAM_STATUS_OK }})
+        ORDER_LIST_QUICKREPLIES_MAP.append({'action': "message", 'label': "새로고침",    'messageText': "식권 보기", 'blockid': "none", 'extra': { KAKAO_PARAM_STATUS: KAKAO_PARAM_STATUS_OK }})
 
     OrderList = Order.objects.filter(userInstance__name=name)[:ORDER_LIST_LENGTH]
     if OrderList:
@@ -97,9 +97,11 @@ def OrderListup(name, status):
                     if ORDER_STATUS_DICT[order.status] < ORDER_STATUS_DICT['픽업 준비중']:
                         buttons.append({'action': "message", 'label': "주문 취소 하기",  'messageText': "주문 취소 하기", 
                         'extra': { KAKAO_PARAM_ORDER_ID: order.id }})
-                        buttons.append({'action': "message", 'label': "픽업 시간 변경",  'messageText': "{} 주문 픽업시간 변경".format(order.menuInstance.sellingTime), 
+                        buttons.append({'action': "message", 'label': "픽업 시간 변경",  'messageText': "{} 픽업시간 변경".format(order.menuInstance.sellingTime), 
                         'extra': { KAKAO_PARAM_ORDER_ID: order.id }})
-  
+                    else:
+                        buttons.append({'action': "message", 'label': "식권 사용하기",  'messageText': "식권 사용하기", 
+                        'extra': { KAKAO_PARAM_ORDER_ID: order.id }})
                     #if CAN CHANGE PICKUP TIME:
                     #    buttons.append({'action': "message", 'label': "픽업 시간 변경",  'messageText': "픽업 시간 변경", 'extra': { }})
 
