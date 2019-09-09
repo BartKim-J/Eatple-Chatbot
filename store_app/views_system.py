@@ -5,6 +5,7 @@ from django.http import JsonResponse
 
 #External Library
 import json
+import sys
 
 #Models
 from .models_config import Config
@@ -23,16 +24,20 @@ KAKAO_PARAM_STATUS_NOT_OK   = Config.KAKAO_PARAM_STATUS_NOT_OK
 
 
 # SKill Log
-def EatplusSkillLog(object, subject):
+def EatplusSkillLog(flow="some flow"):
     print("- - - - - - - - - - - - - - - - - - - - - - - - -")
-    print("- [ {} ]".format(object))
-    print("-  * {}   ".format(subject))
+    print("- [ {} ]".format(flow))
+    print("-  func() => {}   ".format(sys._getframe(1).f_code.co_name + "()"))
     print("- - - - - - - - - - - - - - - - - - - - - - - - -")
 
 # Error View
 def errorView(error_log="error message"):
-    EatplusSkillLog("ERROR!", error_log)
-
+    print("- - - - - - - - - - - - - - - - - - - - - - - - -")
+    print("- [ ERROR! ]")
+    print("-  func() => {}   ".format(sys._getframe(1).f_code.co_name + "()"))
+    print("-  error  => {}   ".format(error_log))
+    print("- - - - - - - - - - - - - - - - - - - - - - - - -")
+    
     KakaoForm = Kakao_SimpleForm()
     KakaoForm.SimpleForm_Init()
 

@@ -6,6 +6,7 @@ from django.http import JsonResponse
 #External Library
 import requests
 import json
+import sys
 
 #Models 
 from .models_config import Config
@@ -49,10 +50,7 @@ ORDER_LIST_LENGTH           = 10
     @todo userName to real username, now just use super user("잇플").
 '''
 def OrderListup(name, status):
-    ORDER_LIST_QUICKREPLIES_MAP = [                
-        {'action': "message", 'label': "홈으로 돌아가기",    'messageText': "홈으로 돌아가기", 'blockid': "none", 
-         'extra': { KAKAO_PARAM_STATUS: KAKAO_PARAM_STATUS_OK }},
-    ]
+    ORDER_LIST_QUICKREPLIES_MAP = [{'action': "message", 'label': "홈으로 돌아가기",    'messageText': "홈으로 돌아가기", 'blockid': "none", 'extra': { KAKAO_PARAM_STATUS: KAKAO_PARAM_STATUS_OK }},]
 
     
     if status == NOT_APPLICABLE: # Order List
@@ -100,7 +98,7 @@ def OrderListup(name, status):
                         buttons.append({'action': "message", 'label': "픽업 시간 변경",  'messageText': "{} 픽업시간 변경".format(order.menuInstance.sellingTime), 
                         'extra': { KAKAO_PARAM_ORDER_ID: order.id }})
                     else:
-                        buttons.append({'action': "message", 'label': "식권 사용하기",  'messageText': "식권 사용하기", 
+                        buttons.append({'action': "message", 'label': "식권 사용하기",  'messageText': "식권 사용 확인", 
                         'extra': { KAKAO_PARAM_ORDER_ID: order.id }})
                     #if CAN CHANGE PICKUP TIME:
                     #    buttons.append({'action': "message", 'label': "픽업 시간 변경",  'messageText': "픽업 시간 변경", 'extra': { }})
@@ -139,7 +137,7 @@ def OrderListup(name, status):
 
 '''
     @name getOrderList
-    @param name
+    @param userID
 
     @note
     @bug
@@ -150,16 +148,26 @@ def getOrderList(request):
     try:
         kakaoPayload = KakaoPayLoad(request)
 
-        EatplusSkillLog("Order Check Flow", "Get Order List")
+        # Invalied Path Access
+        #if(kakaoPayload.userID == NOT_APPLICABLE):
+        #    return errorView("Parameter Invalid")
+        #else:
+        #    UserInstance = User.objects.get(id=kakaoPayload.userID)
 
-        return OrderListup(ORDER_SUPER_USER_NAME, NOT_APPLICABLE)
+        EatplusSkillLog("Order Check Flow")
+
+        KakaoForm = Kakao_CarouselForm()
+        KakaoForm.BasicCard_Init()
+
+        return JsonResponse(KakaoForm.GetForm())
 
     except (RuntimeError, TypeError, NameError, KeyError) as ex:
-        return errorView("Get Order List Error\n- {} ".format(ex))
+        return errorView("{} ".format(ex))
+
 
 '''
     @name getCoupon
-    @param name
+    @param userID
 
     @note
     @bug
@@ -170,10 +178,65 @@ def getCoupon(request):
     try:
         kakaoPayload = KakaoPayLoad(request)
 
-        EatplusSkillLog("Order Check Flow", "Get Coupon")
+        # Invalied Path Access
+        #if(kakaoPayload.userID == NOT_APPLICABLE):
+        #    return errorView("Parameter Invalid")
+        #else:
+        #    UserInstance = User.objects.get(id=kakaoPayload.userID)
+
+
+        EatplusSkillLog("Order Check Flow")
 
         return OrderListup(ORDER_SUPER_USER_NAME, ORDER_STATUS[ORDER_STATUS_DICT['픽업 준비중']][0])
 
     except (RuntimeError, TypeError, NameError, KeyError) as ex:
-        return errorView("Get Coupon Error\n- {} ".format(ex))
+        return errorView("{} ".format(ex))
 
+'''
+    @name useCoupon
+    @param orderID
+
+    @note
+    @bug
+    @tood
+'''
+@csrf_exempt
+def confirmUseCoupon(request):
+    try:
+        kakaoPayload = KakaoPayLoad(request)
+
+        # Invalied Path Access
+        #if(kakaoPayload.userID == NOT_APPLICABLE):
+        #    return errorView("Parameter Invalid")
+        #else:
+        #    UserInstance = User.objects.get(id=kakaoPayload.userID)
+        if(kakaoPayload.orderID == NOT_APPLICABLE):
+            return errorView("Parameter Invalid")
+        else:
+            OrderInstance = Order.objects.get(id=kakaoPayload.orderID)
+
+        USE_COUPON_QUICKREPLIES_MAP = [                
+            {'action': "message", 'label': "사용하기",    'messageText': "식권 사용", 'blockid': "none", 'extra': { KAKAO_PARAM_ORDER_ID: OrderInstance.id }},
+            {'action': "message", 'label': "취소하기",    'messageText': "식권 사용 취소", 'blockid': "none", 'extra': { KAKAO_PARAM_STATUS: KAKAO_PARAM_STATUS_OK }},
+        ]
+
+        EatplusSkillLog("Order Check Flow")
+
+        KakaoForm = Kakao_SimpleForm()
+        KakaoForm.SimpleForm_Init()
+
+        thumbnail = { "imageUrl": "" }
+
+        buttons = [
+            # No Buttons
+        ]
+
+        KakaoForm.SimpleText_Add("식권을 사용하시겠습니까?")
+
+        for entryPoint in USE_COUPON_QUICKREPLIES_MAP:
+            KakaoForm.QuickReplies_Add(entryPoint['action'], entryPoint['label'], entryPoint['messageText'], entryPoint['blockid'], entryPoint['extra'])
+        
+        return JsonResponse(KakaoForm.GetForm())
+
+    except (RuntimeError, TypeError, NameError, KeyError) as ex:
+        return errorView("{} ".format(ex))

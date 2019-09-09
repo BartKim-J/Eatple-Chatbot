@@ -39,7 +39,7 @@ class Config():
     KAKAO_PARAM_ORDER_ID          = 'orderID'
     KAKAO_PARAM_USER_ID           = 'userID'
     KAKAO_PARAM_STORE_ID          = 'storeID'
-    KAKAO_PARAM_MENU_ID           = 'menuID'
+    KAKAO_PARAM_MENU_ID           = 'menuID' 
 
     KAKAO_PARAM_MENU_CATEGORY     = 'menuCategory'
     KAKAO_PARAM_SELLING_TIME      = 'sellingTime'

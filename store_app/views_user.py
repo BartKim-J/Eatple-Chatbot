@@ -15,15 +15,9 @@ from .module_KakaoForm import Kakao_SimpleForm, Kakao_CarouselForm
 
 from .views_system import EatplusSkillLog, errorView
 
-
-from .views_user_manual import userManual
-from .views_user_ordering import getSellingTime, selectMenu, getPickupTime, orderConfirm, pickupTimeConfirm
-from .views_user_orderCheck import getOrderList, getCoupon
-from .views_user_orderChange import orderCancel, orderPickupTimeChange, getOrderPickupTime
-
 @csrf_exempt
 def userHome(request):
-    EatplusSkillLog("Home", "Main")
+    EatplusSkillLog("Home")
 
     HOME_QUICKREPLIES_MAP = [
         {'action': "message", 'label': "주문 하기",    'messageText': "주문시간 선택", 'blockid': "none", 'extra': { 'Status': "OK" }},
@@ -35,7 +29,6 @@ def userHome(request):
     try:
         KakaoForm = Kakao_SimpleForm()
         KakaoForm.SimpleForm_Init()
-        KakaoForm.QuickReplies_Init()
 
         KakaoForm.SimpleText_Add("잇플 홈 화면입니다! 아래 명령어 중에 골라주세요!")
 
@@ -45,7 +38,7 @@ def userHome(request):
 
         return JsonResponse(KakaoForm.GetForm())
 
-    except (RuntimeError, TypeError, NameError):
-        return errorView()
+    except (RuntimeError, TypeError, NameError, KeyError) as ex:
+        return errorView("{}".format(ex))
 
 

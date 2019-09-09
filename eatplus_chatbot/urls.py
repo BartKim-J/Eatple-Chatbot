@@ -33,15 +33,17 @@ urlpatterns = [
     path('getSellingTime', views.getSellingTime),
     path('selectMenu', views.selectMenu),
     path('getPickupTime', views.getPickupTime),
-    path('pickupTimeConfirm', views.pickupTimeConfirm),
     path('orderConfirm', views.orderConfirm),
+    path('orderPush', views.orderPush),
 
     ## Order Check Flow
     path('getOrderList', views.getOrderList),
     path('getCoupon', views.getCoupon),
+    path('confirmUseCoupon', views.confirmUseCoupon), 
 
-    ## Order Cancel Flow
+    ## Order Change Flow
     path('orderCancel', views.orderCancel),
+    path('useCoupon', views.useCoupon),
 
     ## Order Pickup Time Change Flow
     path('getOrderPickupTime', views.getOrderPickupTime),

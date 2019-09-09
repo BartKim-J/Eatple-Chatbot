@@ -17,7 +17,7 @@ from .views_system import EatplusSkillLog, errorView
 
 @csrf_exempt
 def partnerHome(request):
-    EatplusSkillLog("Home", "Main")
+    EatplusSkillLog("Home")
 
     HOME_QUICKREPLIES_MAP = [
         {'action': "message", 'label': "주문 조회",    'messageText': "주문 조회", 'blockid': "none", 'extra': { 'Status': "OK" }},
@@ -27,17 +27,15 @@ def partnerHome(request):
     try:
         KakaoForm = Kakao_SimpleForm()
         KakaoForm.SimpleForm_Init()
-        KakaoForm.QuickReplies_Init()
 
         KakaoForm.SimpleText_Add("잇플 파트너 홈 화면입니다! 아래 명령어 중에 골라주세요!")
-
 
         for entryPoint in HOME_QUICKREPLIES_MAP:
             KakaoForm.QuickReplies_Add(entryPoint['action'], entryPoint['label'], entryPoint['messageText'], entryPoint['blockid'], entryPoint['extra'])
 
         return JsonResponse(KakaoForm.GetForm())
 
-    except (RuntimeError, TypeError, NameError):
-        return errorView()
+    except (RuntimeError, TypeError, NameError, KeyError) as ex:
+        return errorView("{}".format(ex))
 
 

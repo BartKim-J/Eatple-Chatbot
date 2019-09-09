@@ -15,7 +15,15 @@ from .module_KakaoForm import Kakao_SimpleForm, Kakao_CarouselForm
 
 from .views_system import EatplusSkillLog, errorView
 
-from .views_user import userHome, getSellingTime, selectMenu, getPickupTime, orderConfirm, pickupTimeConfirm, getOrderList, getCoupon, orderCancel, orderPickupTimeChange, userManual, getOrderPickupTime
+# Eatplus for Partner 
 from .views_partner import partnerHome
+
+# Eatplus for User 
+from .views_user import userHome
+from .views_user_manual import userManual
+from .views_user_ordering import getSellingTime, selectMenu, getPickupTime, orderConfirm, orderPush
+from .views_user_orderCheck import getOrderList, getCoupon, confirmUseCoupon
+from .views_user_orderChange import useCoupon, orderCancel, orderPickupTimeChange, getOrderPickupTime
+
 
 ### API Functions ###

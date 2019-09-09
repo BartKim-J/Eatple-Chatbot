@@ -85,7 +85,7 @@ def userManual(request):
         #else:
         #    
 
-        EatplusSkillLog("User Manual Flow", "User Manual")
+        EatplusSkillLog("User Manual Flow")
         
         KakaoForm = Kakao_CarouselForm()
         KakaoForm.BasicCard_Init()
@@ -105,7 +105,7 @@ def userManual(request):
         return JsonResponse(KakaoForm.GetForm())
 
     except (RuntimeError, TypeError, NameError, KeyError) as ex:
-        return errorView("Order Cancel Error\n- {} ".format(ex))
+        return errorView("{}".format(ex))
 
 
 

@@ -7,6 +7,7 @@ from django.http import JsonResponse
 import datetime
 import requests
 import json
+import sys
 
 #Models 
 from .models_config import Config
@@ -162,7 +163,7 @@ def getSellingTime(request):
     try:
         kakaoPayload = KakaoPayLoad(request)
 
-        EatplusSkillLog("Order Flow", "=> Enter Ordering Flow\n-  * Get Menu Category")
+        EatplusSkillLog("Order Flow")
 
         KakaoForm = Kakao_CarouselForm()
         KakaoForm.BasicCard_Init()
@@ -192,7 +193,8 @@ def getSellingTime(request):
         return JsonResponse(KakaoForm.GetForm())
 
     except (RuntimeError, TypeError, NameError, KeyError) as ex:
-        return errorView("Get Selling Time Error\n- {} ".format(ex))
+        return errorView("{}".format(ex))
+
 
 @csrf_exempt
 def selectMenu(request):
@@ -201,14 +203,14 @@ def selectMenu(request):
 
         # Invalied Path Access
         if kakaoPayload.sellingTime == NOT_APPLICABLE: #and (kakaoPayload.menuCategory == NOT_APPLICABLE) => "ALL MENU"
-            return errorView("Select Menu -> Parameter Error")
+            return errorView("Parameter Error")
       
-        EatplusSkillLog("Order Flow", "Select Menu [Category: {}, Selling Time : {}]".format(kakaoPayload.menuCategory, kakaoPayload.sellingTime))
+        EatplusSkillLog("Order Flow")
 
         return MenuListup(kakaoPayload.menuCategory, kakaoPayload.sellingTime, kakaoPayload.location)
 
     except (RuntimeError, TypeError, NameError, KeyError) as ex:
-        return errorView("Select Menu Error\n- {} ".format(ex))
+        return errorView("{}".format(ex))
 
 
 @csrf_exempt
@@ -218,12 +220,12 @@ def getPickupTime(request):
 
         # Invalied Path Access
         if(kakaoPayload.storeID == NOT_APPLICABLE) or (kakaoPayload.menuID  == NOT_APPLICABLE) or (kakaoPayload.sellingTime == NOT_APPLICABLE):
-            return errorView("Get Pickup Time -> Parameter Error\n {} \n {}".format(kakaoPayload.storeID, kakaoPayload.menuID))
+            return errorView("Parameter Error")
         else:
             storeInstance = Store.objects.get(id=kakaoPayload.storeID)
             menuInstance  = Menu.objects.get(id=kakaoPayload.menuID)
 
-        EatplusSkillLog("Order Flow", "Get Picktime")
+        EatplusSkillLog("Order Flow")
 
         KakaoForm = Kakao_SimpleForm()
         KakaoForm.SimpleForm_Init()
@@ -250,21 +252,30 @@ def getPickupTime(request):
         return JsonResponse(KakaoForm.GetForm())
 
     except (RuntimeError, TypeError, NameError, KeyError) as ex:
-        return errorView("Get Pickup Time Error\n- {} ".format(ex))
+        return errorView("{}".format(ex))
 
+'''
+    @name orderConfirm
+    @param storeID, menuID, userID, pickupTime
+
+    @note
+    @bug
+    @tood
+'''
 @csrf_exempt
-def pickupTimeConfirm(request):
+def orderConfirm(request):
     try:
         kakaoPayload = KakaoPayLoad(request)
 
         # Invalied Path Access
         if(kakaoPayload.storeID == NOT_APPLICABLE) or (kakaoPayload.menuID  == NOT_APPLICABLE) or (kakaoPayload.pickupTime == NOT_APPLICABLE):
-            return errorView("Get Pickup Time -> Parameter Error\n {} \n {}".format(kakaoPayload.storeID, kakaoPayload.menuID))
+            return errorView("Parameter Error")
         else:
             storeInstance = Store.objects.get(id=kakaoPayload.storeID)
             menuInstance  = Menu.objects.get(id=kakaoPayload.menuID)
 
-        EatplusSkillLog("Order Flow", "Pickuptime Confirm")
+        EatplusSkillLog("Order Flow")
+
         KakaoForm = Kakao_CarouselForm()
         KakaoForm.ComerceCard_Init()
         
@@ -272,9 +283,6 @@ def pickupTimeConfirm(request):
         thumbnails = [
             {
                 "imageUrl": "http://k.kakaocdn.net/dn/83BvP/bl20duRC1Q1/lj3JUcmrzC53YIjNDkqbWK/i_6piz1p.jpg",
-                "link": {
-                    "web": "https://store.kakaofriends.com/kr/products/1542"
-                }
             }
         ]
         
@@ -302,22 +310,30 @@ def pickupTimeConfirm(request):
         return JsonResponse(KakaoForm.GetForm())
 
     except (RuntimeError, TypeError, NameError, KeyError) as ex:
-        return errorView("Pickuptime Confirm Error\n- {} ".format(ex))
+        return errorView("{}".format(ex))
 
 
+'''
+    @name orderPush
+    @param storeID, menuID, userID, pickupTime
+
+    @note
+    @bug
+    @tood
+'''
 @csrf_exempt
-def orderConfirm(request):
+def orderPush(request):
     try:
         kakaoPayload = KakaoPayLoad(request)
 
         # Invalied Path Access
         if(kakaoPayload.storeID == NOT_APPLICABLE) and (kakaoPayload.menuID  == NOT_APPLICABLE) and (kakaoPayload.pickupTime == NOT_APPLICABLE):
-            return errorView("Order Confirm Time -> Parameter Error")
+            return errorView("Parameter Invalid")
         else:
             storeInstance = Store.objects.get(id=kakaoPayload.storeID)
             menuInstance  = Menu.objects.get(id=kakaoPayload.menuID)
 
-        EatplusSkillLog("Order Flow", "Order Confirm")
+        EatplusSkillLog("Order Flow")
 
         #@TODO: UserInstance Load User
         pushedOrder = Order.pushOrder(userInstance=User.objects.get(name="잇플"),
@@ -358,7 +374,8 @@ def orderConfirm(request):
         return JsonResponse(KakaoForm.GetForm())
 
     except (RuntimeError, TypeError, NameError, KeyError) as ex:
-        return errorView("Get Pickup Time Error\n- {} ".format(ex))
+        return errorView("{}".format(ex))
+
 
 
 
