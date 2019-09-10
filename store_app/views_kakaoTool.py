@@ -65,7 +65,7 @@ class KakaoPayLoad():
 
 
         try:
-            self.userID         = self.dataActionExtra[Config.KAKAO_PARAM_ORDER_ID]
+            self.userID         = self.dataActionExtra[Config.KAKAO_PARAM_USER_ID]
         except (RuntimeError, TypeError, NameError, KeyError) as ex:
             self.userID         = Config.NOT_APPLICABLE
 

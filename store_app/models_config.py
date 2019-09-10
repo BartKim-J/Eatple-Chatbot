@@ -1,7 +1,10 @@
 class Config():
     #SYSTEM
-    NOT_APPLICABLE = "N/A"
-    DEFAULT_OBJECT_ID = 1
+    TIME_ZONE            = 'Asia/Seoul'
+
+    NOT_APPLICABLE       = "N/A"
+    DEFAULT_OBJECT_ID    = 1
+    DEFAULT_USER_ID      = 2
 
     #USER LENGTH
     USER_NICKNAME_LENGTH = 18
@@ -25,11 +28,12 @@ class Config():
     ]
 
     #ORDERING
-    ORDER_STATUS_DICT = {'주문 확인중': 0, '주문완료': 1, '픽업 준비중': 2, '픽업 완료': 3, '주문 만료': 4, '주문 취소': 5}
+    ORDER_STATUS_DICT = {'주문 확인중': 0, '주문 완료': 1, '픽업 준비중': 2, '픽업 가능': 3, '픽업 완료': 4, '주문 만료': 5, '주문 취소': 6}
     ORDER_STATUS = [
         ('주문 확인중',  '주문 확인중'),
         ('주문 완료',   '주문 완료'),
         ('픽업 준비중',  '픽업 준비중'),
+        ('픽업 가능',   '픽업 가능'),
         ('픽업 완료',   '픽업 완료'),
         ('주문 만료',   '주문 만료'),
         ('주문 취소',   '주문 취소'),

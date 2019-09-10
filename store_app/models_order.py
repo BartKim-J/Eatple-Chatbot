@@ -4,7 +4,7 @@ from django.db import models
 from django_mysql.models import Model
 
 #External Library
-from datetime import datetime
+from datetime import datetime, timedelta
 
 #Models 
 from .models_config import Config
@@ -43,22 +43,26 @@ class Order(models.Model):
     management_code  = models.CharField(max_length=MANAGEMENT_CODE_LENGTH, blank=True, null=True,
                                         help_text="Menu Magement Code")
 
-    pickupTime       =  models.CharField(max_length=10, default="00:00")
+    pickupTime       = models.DateTimeField(default=datetime.now())
 
     update_date      = models.DateTimeField(auto_now_add=False, auto_now=True)
-    order_date       = models.DateTimeField(auto_now_add=True,  auto_now=False)
+    order_date       = models.DateTimeField(default=datetime.now())
 
-    status           = models.CharField(max_length=STRING_LENGTH, choices=ORDER_STATUS, default=ORDER_STATUS[ORDER_STATUS_DICT['주문 확인중']][0])
+    status           = models.CharField(max_length=STRING_LENGTH, choices=ORDER_STATUS, default=ORDER_STATUS[ORDER_STATUS_DICT['주문 완료']][0])
 
     @classmethod
     def pushOrder(cls, userInstance, storeInstance, menuInstance, pickupTime):
-        order_date       = models.DateTimeField(default=datetime.now())
+        order_date       = datetime.now()
+        pickupTime       = cls.localePickupTimeToDatetime(pickupTime)
         management_code  = OrderManagementCodeGenerator(storeInstance, menuInstance, userInstance, datetime.now())
 
         pushedOrder = cls(userInstance=userInstance, storeInstance=storeInstance, menuInstance=menuInstance, management_code=management_code, pickupTime=pickupTime, order_date=order_date)
         pushedOrder.save()
 
         return pushedOrder
+    
+    def localePickupTimeToDatetime(pickupTime):
+        return datetime.now().replace(hour=0, minute=0, second=0, microsecond=0) + timedelta(hours=int(pickupTime[0:2]), minutes=int(pickupTime[3:5]))
 
     # Methods
     def __str__(self):

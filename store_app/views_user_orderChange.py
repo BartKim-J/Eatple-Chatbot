@@ -6,6 +6,7 @@ from django.http import JsonResponse
 #External Library
 import requests
 import json
+from datetime import datetime, timedelta
 
 #Models 
 from .models_config import Config
@@ -43,8 +44,9 @@ KAKAO_PARAM_STATUS          = Config.KAKAO_PARAM_STATUS
 KAKAO_PARAM_STATUS_OK       = Config.KAKAO_PARAM_STATUS_OK
 KAKAO_PARAM_STATUS_NOT_OK   = Config.KAKAO_PARAM_STATUS_NOT_OK
 
-#STATIC CONFIG
+ORDER_SUPER_USER_ID         = Config.DEFAULT_USER_ID
 
+#STATIC CONFIG
 DEFAULT_QUICKREPLIES_MAP = [                
     {'action': "message", 'label': "홈으로 돌아가기",    'messageText': "홈으로 돌아가기", 'blockid': "none", 
         'extra': { KAKAO_PARAM_STATUS: KAKAO_PARAM_STATUS_OK }},
@@ -84,19 +86,19 @@ def orderCancel(request):
         if(kakaoPayload.orderID == NOT_APPLICABLE):
             return errorView("Parameter Invalid")
         else:
-            OrderInstance = Order.objects.get(id=kakaoPayload.orderID)
+            orderInstance = Order.objects.get(id=kakaoPayload.orderID)
 
         EatplusSkillLog("Order Change Flow")
 
-        OrderInstance.status = ORDER_STATUS[ORDER_STATUS_DICT['주문 취소']][0]
-        OrderInstance.save()
+        orderInstance.status = ORDER_STATUS[ORDER_STATUS_DICT['주문 취소']][0]
+        orderInstance.save()
         
         KakaoForm = Kakao_CarouselForm()
         KakaoForm.BasicCard_Init()
 
         thumbnail = { "imageUrl": "" }
 
-        kakaoMapUrl = "https://map.kakao.com/link/map/{},{}".format(OrderInstance.storeInstance.name, getLatLng(OrderInstance.storeInstance.addr))
+        kakaoMapUrl = "https://map.kakao.com/link/map/{},{}".format(orderInstance.storeInstance.name, getLatLng(orderInstance.storeInstance.addr))
 
         buttons = [
             {'action': "webLink", 'label': "위치보기",  "webLinkUrl": kakaoMapUrl},
@@ -105,13 +107,13 @@ def orderCancel(request):
         KakaoForm.BasicCard_Add(
             "식권이 취소되었습니다.",
             "주문번호: {}\n--------------------\n - 주문자: {}\n\n - 매장: {} \n - 메뉴: {}\n\n - 결제 금액: {}원\n\n - 픽업 시간: {}\n--------------------\n - 매장 위치: {}".format(
-                OrderInstance.management_code,
-                OrderInstance.userInstance.name,
-                OrderInstance.storeInstance.name, 
-                OrderInstance.menuInstance.name, 
-                OrderInstance.menuInstance.price, 
-                OrderInstance.pickupTime, 
-                OrderInstance.storeInstance.addr
+                orderInstance.management_code,
+                orderInstance.userInstance.name,
+                orderInstance.storeInstance.name, 
+                orderInstance.menuInstance.name, 
+                orderInstance.menuInstance.price, 
+                orderInstance.pickupTime.strftime('%H시%M분 %m월%d일'), 
+                orderInstance.storeInstance.addr
             ),
             thumbnail, buttons
         )
@@ -190,35 +192,35 @@ def orderPickupTimeChange(request):
         if (kakaoPayload.orderID == NOT_APPLICABLE) or kakaoPayload.pickupTime == NOT_APPLICABLE:
             return errorView("Parameter Invalid")
         else:
-            OrderInstance = Order.objects.get(id=kakaoPayload.orderID)
+            orderInstance = Order.objects.get(id=kakaoPayload.orderID)
 
         EatplusSkillLog("Order Change Flow")
 
-        beforePickupTime = OrderInstance.pickupTime
-        OrderInstance.pickupTime = kakaoPayload.pickupTime
-        OrderInstance.save()
+        beforePickupTime         = orderInstance.pickupTime
+        orderInstance.pickupTime = orderInstance.localePickupTimeToDatetime(kakaoPayload.pickupTime)
+        orderInstance.save()
         
         KakaoForm = Kakao_CarouselForm()
         KakaoForm.BasicCard_Init()
 
         thumbnail = { "imageUrl": "" }
 
-        kakaoMapUrl = "https://map.kakao.com/link/map/{},{}".format(OrderInstance.storeInstance.name, getLatLng(OrderInstance.storeInstance.addr))
+        kakaoMapUrl = "https://map.kakao.com/link/map/{},{}".format(orderInstance.storeInstance.name, getLatLng(orderInstance.storeInstance.addr))
 
         buttons = [
             {'action': "webLink", 'label': "위치보기",  "webLinkUrl": kakaoMapUrl},
         ]
 
         KakaoForm.BasicCard_Add(
-            "픽업 시간이 {} 에서 {} 으로 변경되었습니다.".format(beforePickupTime, OrderInstance.pickupTime),
+            "픽업 시간이 {} 에서 {} 으로 변경되었습니다.".format(beforePickupTime.strftime('%H:%M'), orderInstance.pickupTime.strftime('%H:%M')),
             "주문번호: {}\n--------------------\n - 주문자: {}\n\n - 매장: {} \n - 메뉴: {}\n\n - 결제 금액: {}원\n\n - 픽업 시간: {}\n--------------------\n - 매장 위치: {}".format(
-                OrderInstance.management_code,
-                OrderInstance.userInstance.name,
-                OrderInstance.storeInstance.name, 
-                OrderInstance.menuInstance.name, 
-                OrderInstance.menuInstance.price, 
-                OrderInstance.pickupTime, 
-                OrderInstance.storeInstance.addr
+                orderInstance.management_code,
+                orderInstance.userInstance.name,
+                orderInstance.storeInstance.name, 
+                orderInstance.menuInstance.name, 
+                orderInstance.menuInstance.price, 
+                orderInstance.pickupTime.strftime('%H시%M분 %m월%d일'), 
+                orderInstance.storeInstance.addr
             ),
             thumbnail, buttons
         )
@@ -249,19 +251,19 @@ def useCoupon(request):
         if (kakaoPayload.orderID == NOT_APPLICABLE):
             return errorView("Parameter Invalid")
         else:
-            OrderInstance = Order.objects.get(id=kakaoPayload.orderID)
+            orderInstance = Order.objects.get(id=kakaoPayload.orderID)
 
         EatplusSkillLog("Order Change Flow")
 
-        OrderInstance.status = ORDER_STATUS[ORDER_STATUS_DICT['픽업 완료']][0]
-        OrderInstance.save()
+        orderInstance.status = ORDER_STATUS[ORDER_STATUS_DICT['픽업 완료']][0]
+        orderInstance.save()
         
         KakaoForm = Kakao_CarouselForm()
         KakaoForm.BasicCard_Init()
 
         thumbnail = { "imageUrl": "" }
 
-        kakaoMapUrl = "https://map.kakao.com/link/map/{},{}".format(OrderInstance.storeInstance.name, getLatLng(OrderInstance.storeInstance.addr))
+        kakaoMapUrl = "https://map.kakao.com/link/map/{},{}".format(orderInstance.storeInstance.name, getLatLng(orderInstance.storeInstance.addr))
 
         buttons = [
             # No Buttons
@@ -270,13 +272,13 @@ def useCoupon(request):
         KakaoForm.BasicCard_Add(
             "식권이 사용되었습니다.",
             "주문번호: {}\n--------------------\n - 주문자: {}\n\n - 매장: {} \n - 메뉴: {}\n\n - 결제 금액: {}원\n\n - 픽업 시간: {}\n--------------------\n - 매장 위치: {}".format(
-                OrderInstance.management_code,
-                OrderInstance.userInstance.name,
-                OrderInstance.storeInstance.name, 
-                OrderInstance.menuInstance.name, 
-                OrderInstance.menuInstance.price, 
-                OrderInstance.pickupTime, 
-                OrderInstance.storeInstance.addr
+                orderInstance.management_code,
+                orderInstance.userInstance.name,
+                orderInstance.storeInstance.name, 
+                orderInstance.menuInstance.name, 
+                orderInstance.menuInstance.price, 
+                orderInstance.pickupTime.strftime('%H시%M분 %m월%d일'), 
+                orderInstance.storeInstance.addr
             ),
             thumbnail, buttons
         )
