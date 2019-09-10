@@ -27,13 +27,14 @@ STRING_LENGTH           = Config.STRING_LENGTH
 
 MANAGEMENT_CODE_DEFAULT = Config.MANAGEMENT_CODE_DEFAULT
 
+
 def orderStatusUpdateByTime(orderInstance):
     menuInstance              = orderInstance.menuInstance
 
     orderDate                 = orderInstance.order_date
     orderDateWithoutTime      = orderDate.replace(hour=0, minute=0, second=0, microsecond=0)
 
-    nowDate                   = timezone.now()
+    nowDate                   = dateNowByTimeZone()
     nowDateWithoutTime        = nowDate.replace(hour=0, minute=0, second=0, microsecond=0)
 
     # Prev Lunch Order Edit Time 16:30 ~ 9:30(~ 10:30)
@@ -126,18 +127,29 @@ class Order(models.Model):
 
     @classmethod
     def pushOrder(cls, userInstance, storeInstance, menuInstance, pickupTime):
-        order_date       = timezone.now()
-        pickupTime       = cls.localePickupTimeToDatetime(pickupTime)
+        orderDate             = timezone.now()
+        orderDateWithoutTime  = orderDate.replace(hour=0, minute=0, second=0, microsecond=0)
 
-        management_code  = OrderManagementCodeGenerator(storeInstance, menuInstance, userInstance, timezone.now())
+        pickupTime            = cls.rowPickupTimeToDatetime(pickupTime)
 
-        pushedOrder = cls(userInstance=userInstance, storeInstance=storeInstance, menuInstance=menuInstance, management_code=management_code, pickupTime=pickupTime, order_date=order_date)
+        # Next Lunch Order Edit Time 16:30 ~ 9:30(~ 10:30)
+        nextlunchOrderEditTimeStart   = orderDateWithoutTime + timedelta(hours=16, minutes=30)
+        nextlunchOrderTimeEnd         = orderDateWithoutTime + timedelta(hours=10, minutes=30, days=1)
+
+        if(nextlunchOrderEditTimeStart <= orderDate) and (orderDate <= nextlunchOrderTimeEnd):
+            orderDate += timedelta(days=1)
+
+        managementCode  = OrderManagementCodeGenerator(storeInstance, menuInstance, userInstance, dateNowByTimeZone())
+
+        print(pickupTime)
+
+        pushedOrder = cls(userInstance=userInstance, storeInstance=storeInstance, menuInstance=menuInstance, management_code=managementCode, pickupTime=pickupTime, order_date=orderDate)
         pushedOrder.save()
 
         return pushedOrder
     
-    def localePickupTimeToDatetime(self, pickupTime):
-        return timezone.now().replace(hour=0, minute=0, second=0, microsecond=0) + timedelta(hours=int(pickupTime[0:2]), minutes=int(pickupTime[3:5]))
+    def rowPickupTimeToDatetime(rowPickupTime="00:00"):
+        return timezone.now().replace(hour=0, minute=0, second=0, microsecond=0) + timedelta(hours=int(rowPickupTime[0:2]), minutes=int(rowPickupTime[3:5]))
 
     # Methods
     def __str__(self):
@@ -178,12 +190,12 @@ class OrderManager():
         )
         return availableCoupons
 
-    def isExistAvailableLunchCouponPurchased(self):
+    def getAvailableLunchCouponPurchased(self):
         availableCoupons = self.getAvailableCoupons()
-        lunchCoupon      = availableCoupons.exclude(menuInstance__sellingTime=SELLING_TIME_CATEGORY[SELLING_TIME_LUNCH][0])
-        return lunchCoupon
+        lunchCoupons     = availableCoupons.filter(menuInstance__sellingTime=SELLING_TIME_CATEGORY[SELLING_TIME_LUNCH][0])
+        return lunchCoupons
 
-    def isExistAvailableDinnerCouponPurchased(self):
+    def getAvailableDinnerCouponPurchased(self):
         availableCoupons = self.getAvailableCoupons()
-        dinnerCoupon     = availableCoupons.exclude(menuInstance__sellingTime=SELLING_TIME_CATEGORY[SELLING_TIME_DINNER][0])
-        return dinnerCoupon
+        dinnerCoupons    = availableCoupons.filter(menuInstance__sellingTime=SELLING_TIME_CATEGORY[SELLING_TIME_DINNER][0])
+        return dinnerCoupons

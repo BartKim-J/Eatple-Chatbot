@@ -95,7 +95,6 @@ def CouponListup(userID):
 
             #if CAN CHANGE PICKUP TIME:
             #    buttons.append({'action': "message", 'label': "픽업 시간 변경",  'messageText': "픽업 시간 변경", 'extra': { }})
-
             KakaoForm.BasicCard_Add(
                 "주문번호: {}".format(orderInstance.management_code),
                 " - 주문자: {}\n\n - 매장: {} \n - 메뉴: {}\n\n - 결제 금액: {}원\n - 픽업 시간: {}\n\n - 주문 상태: {}".format(

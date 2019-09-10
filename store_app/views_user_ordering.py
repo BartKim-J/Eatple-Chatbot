@@ -110,7 +110,7 @@ def MenuListup(userID, menuCategory, sellingTime, currentSellingTime, location):
         'extra': { KAKAO_PARAM_STATUS: KAKAO_PARAM_STATUS_OK }},
     ]
 
-    # if now time is not selling time for user select selling time
+    # Check Selling Time
     if SELLING_TIME_CATEGORY[currentSellingTime][0] != sellingTime:
         KakaoForm = Kakao_SimpleForm()
         KakaoForm.SimpleForm_Init()
@@ -121,6 +121,24 @@ def MenuListup(userID, menuCategory, sellingTime, currentSellingTime, location):
             KakaoForm.QuickReplies_Add(entryPoint['action'], entryPoint['label'], entryPoint['messageText'], entryPoint['blockid'], entryPoint['extra'])
 
         return JsonResponse(KakaoForm.GetForm())
+
+    # Check User Order
+    OrderManagerInstance = OrderManager(userID)
+
+    if OrderManagerInstance.availableCouponStatusUpdate().exists():
+        KakaoForm = Kakao_SimpleForm()
+        KakaoForm.SimpleForm_Init()
+
+        for entryPoint in DEFAULT_QUICKREPLIES_MAP:
+            KakaoForm.QuickReplies_Add(entryPoint['action'], entryPoint['label'], entryPoint['messageText'], entryPoint['blockid'], entryPoint['extra'])        
+
+        if OrderManagerInstance.getAvailableLunchCouponPurchased().exists() and (sellingTime == SELLING_TIME_CATEGORY[SELLING_TIME_LUNCH][0]):
+            KakaoForm.SimpleText_Add("이미 점심 주문을 해주셨네요! 저녁시간 혹은 내일 다시 잇플과 함께해주세요.")
+            return JsonResponse(KakaoForm.GetForm())
+
+        elif OrderManagerInstance.getAvailableDinnerCouponPurchased().exists() and (sellingTime == SELLING_TIME_CATEGORY[SELLING_TIME_DINNER][0]):
+            KakaoForm.SimpleText_Add("이미 저녁 주문을 해주셨네요! 곧 있을 내일 점심 주문시간에 잇플과 다시 함께해주세요.")
+            return JsonResponse(KakaoForm.GetForm())
 
     CategoryList = Category.objects.all()[:CATEGORY_LIST_LENGTH]
     for category in CategoryList:
@@ -219,9 +237,7 @@ def getSellingTime(request):
         EatplusSkillLog("Order Flow")
 
         OrderManagerInstance = OrderManager(kakaoPayload.userID)
-        OrderManagerInstance.availableCouponStatusUpdate()
-        
-        if OrderManagerInstance.isExistAvailableDinnerCouponPurchased() and OrderManagerInstance.isExistAvailableLunchCouponPurchased():
+        if OrderManagerInstance.getAvailableLunchCouponPurchased().exists() and OrderManagerInstance.getAvailableDinnerCouponPurchased().exists():
             KakaoForm = Kakao_SimpleForm()
             KakaoForm.SimpleForm_Init()
 
@@ -253,7 +269,6 @@ def getSellingTime(request):
                             KAKAO_PARAM_USER_ID: KAKAO_SUPER_USER_ID }
                 }
             ]
-
 	
             KakaoForm.BasicCard_Add("점심 또는 저녁을 선택해 주세요!", "한 사람당 하루에 점심 1회, 저녁 1회 주문이 가능해요!\n주문 가능 시간\n- 점심 : 전날 16:30 ~ 당일 10:30까지\n- 저녁 : 당일 10:30 ~ 16:30", thumbnail, buttons)
         
@@ -281,7 +296,7 @@ def selectMenu(request):
         EatplusSkillLog("Order Flow")
 
         currentSellingTime = sellingTimeCheck()
-
+        
         return MenuListup(userInstance.id, kakaoPayload.menuCategory, kakaoPayload.sellingTime, currentSellingTime, kakaoPayload.location)
 
     except (RuntimeError, TypeError, NameError, KeyError) as ex:
