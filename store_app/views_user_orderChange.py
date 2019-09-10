@@ -6,7 +6,6 @@ from django.http import JsonResponse
 #External Library
 import requests
 import json
-from datetime import datetime, timedelta
 
 #Models 
 from .models_config import Config
@@ -25,10 +24,10 @@ from .views_system import EatplusSkillLog, errorView
 #GLOBAL CONFIG
 NOT_APPLICABLE              = Config.NOT_APPLICABLE
 
-MENU_LUNCH                  = Config.MENU_LUNCH
-MENU_DINNER                 = Config.MENU_DINNER
-MENU_CATEGORY_DICT          = Config.MENU_CATEGORY_DICT
-MENU_CATEGORY               = Config.MENU_CATEGORY
+SELLING_TIME_LUNCH          = Config.SELLING_TIME_LUNCH
+SELLING_TIME_DINNER         = Config.SELLING_TIME_DINNER
+SELLING_TIME_CATEGORY_DICT  = Config.SELLING_TIME_CATEGORY_DICT
+SELLING_TIME_CATEGORY       = Config.SELLING_TIME_CATEGORY
 
 ORDER_STATUS                = Config.ORDER_STATUS
 ORDER_STATUS_DICT           = Config.ORDER_STATUS_DICT
@@ -156,7 +155,7 @@ def getOrderPickupTime(request):
 
         LUNCH_PICKUP_TIME_MAP  = [ "11:30", "11:45", "12:00", "12:15", "12:30", "12:45", "13:00", "13:15", "13:30" ]
         DINNER_PICKUP_TIME_MAP = [ "17:30", "18:00", "18:30", "19:00", "19:30", "20:00", "20:30", "21:00" ]
-        if MENU_CATEGORY_DICT[kakaoPayload.sellingTime] == MENU_LUNCH:
+        if SELLING_TIME_CATEGORY_DICT[kakaoPayload.sellingTime] == SELLING_TIME_LUNCH:
             ENTRY_PICKUP_TIME_MAP = LUNCH_PICKUP_TIME_MAP
         else:
             ENTRY_PICKUP_TIME_MAP = DINNER_PICKUP_TIME_MAP

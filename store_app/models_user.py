@@ -4,7 +4,6 @@ from django.db import models
 from django_mysql.models import Model
 
 #External Library
-import datetime
 
 #Models 
 from .models_config import Config

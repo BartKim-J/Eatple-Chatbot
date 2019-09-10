@@ -6,24 +6,33 @@ from django.http import JsonResponse
 #External Library
 import json
 
-#Models
-from .models_order import Order
-from .models_store import Store, Menu
+#Models 
+from .models_config import Config
+
+from .models_user  import User
+from .models_order import Order, OrderManager
+from .models_store import Store, Menu, Category, SubCategory
 
 #View Modules
 from .module_KakaoForm import Kakao_SimpleForm, Kakao_CarouselForm
 
 from .views_system import EatplusSkillLog, errorView
 
+
+KAKAO_PARAM_USER_ID         = Config.KAKAO_PARAM_USER_ID
+
+ORDER_SUPER_USER_ID         = Config.DEFAULT_USER_ID
+
 @csrf_exempt
 def userHome(request):
     EatplusSkillLog("Home")
 
     HOME_QUICKREPLIES_MAP = [
-        {'action': "message", 'label': "주문 하기",    'messageText': "주문시간 선택", 'blockid': "none", 'extra': { 'Status': "OK" }},
-        {'action': "message", 'label': "식권 보기",    'messageText': "식권 보기", 'blockid': "none", 'extra': { 'Status': "OK" }},
-        {'action': "message", 'label': "주문 내역",    'messageText': "주문 내역", 'blockid': "none", 'extra': { 'Status': "OK" }},
-        {'action': "message", 'label': "위치 변경",    'messageText': "위치 변경", 'blockid': "none", 'extra': { 'Status': "OK" }},
+        {'action': "message", 'label': "주문하기",      'messageText': "주문시간 선택", 'blockid': "none", 'extra': { KAKAO_PARAM_USER_ID: ORDER_SUPER_USER_ID }},
+        {'action': "message", 'label': "주문 상태 확인", 'messageText': "주문 상태 확인",    'blockid': "none", 'extra': { KAKAO_PARAM_USER_ID: ORDER_SUPER_USER_ID }},
+        {'action': "message", 'label': "최근 구매내역",  'messageText': "최근 구매내역",    'blockid': "none", 'extra': { KAKAO_PARAM_USER_ID: ORDER_SUPER_USER_ID }},
+        {'action': "message", 'label': "위치변경",      'messageText': "위치변경",    'blockid': "none", 'extra': { KAKAO_PARAM_USER_ID: ORDER_SUPER_USER_ID }},
+        {'action': "message", 'label': "사용방법",      'messageText': "사용방법",    'blockid': "none", 'extra': { KAKAO_PARAM_USER_ID: ORDER_SUPER_USER_ID }},
     ]
 
     try:

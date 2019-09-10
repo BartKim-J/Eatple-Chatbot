@@ -4,7 +4,7 @@ from django.db import models
 from django_mysql.models import Model
 
 #External Library
-import datetime
+
 
 #Models 
 from .models_config import Config
@@ -18,8 +18,10 @@ WORD_LENGTH             = Config.WORD_LENGTH
 
 MANAGEMENT_CODE_LENGTH  = Config.MANAGEMENT_CODE_LENGTH
 
-MENU_LUNCH              = Config.MENU_LUNCH
-MENU_CATEGORY           = Config.MENU_CATEGORY
+SELLING_TIME_LUNCH          = Config.SELLING_TIME_LUNCH
+SELLING_TIME_DINNER         = Config.SELLING_TIME_DINNER
+SELLING_TIME_CATEGORY_DICT  = Config.SELLING_TIME_CATEGORY_DICT
+SELLING_TIME_CATEGORY       = Config.SELLING_TIME_CATEGORY
 
 #STATIC CONFIG
 
@@ -86,7 +88,7 @@ class Menu(models.Model):
     name             = models.CharField(default="Menu Name", max_length=STRING_LENGTH, 
                                         help_text="Menu Name")
 
-    sellingTime      = models.CharField(max_length=STRING_LENGTH, choices=MENU_CATEGORY, default=MENU_CATEGORY[MENU_LUNCH])
+    sellingTime      = models.CharField(max_length=STRING_LENGTH, choices=SELLING_TIME_CATEGORY, default=SELLING_TIME_CATEGORY[SELLING_TIME_LUNCH])
     categories       = models.ManyToManyField(Category)
     sub_categories   = models.ManyToManyField(SubCategory)
 

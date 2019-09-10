@@ -5,16 +5,19 @@ from django.http import JsonResponse
 from django.utils import timezone
 
 #External Library
+from datetime import datetime, timedelta
+import pytz
+
 import requests
 import json
 import sys
-from datetime import datetime, timedelta
+
 
 #Models 
-from .models_config import Config
+from .models_config import Config, dateNowByTimeZone
 
 from .models_user  import User
-from .models_order import Order
+from .models_order import Order, OrderManager
 from .models_store import Store, Menu, Category, SubCategory
 
 #View Modules
@@ -24,15 +27,13 @@ from .module_KakaoForm import Kakao_SimpleForm, Kakao_CarouselForm
 from .views_kakaoTool import getLatLng, KakaoPayLoad
 from .views_system import EatplusSkillLog, errorView
 
-from .views_user_orderCheck import sellingTimeCheck
-
 #GLOBAL DEFINE
 NOT_APPLICABLE              = Config.NOT_APPLICABLE
 
-MENU_LUNCH                  = Config.MENU_LUNCH
-MENU_DINNER                 = Config.MENU_DINNER
-MENU_CATEGORY_DICT          = Config.MENU_CATEGORY_DICT
-MENU_CATEGORY               = Config.MENU_CATEGORY
+SELLING_TIME_LUNCH          = Config.SELLING_TIME_LUNCH
+SELLING_TIME_DINNER         = Config.SELLING_TIME_DINNER
+SELLING_TIME_CATEGORY_DICT  = Config.SELLING_TIME_CATEGORY_DICT
+SELLING_TIME_CATEGORY       = Config.SELLING_TIME_CATEGORY
 
 ORDER_STATUS                = Config.ORDER_STATUS
 ORDER_STATUS_DICT           = Config.ORDER_STATUS_DICT
@@ -66,6 +67,31 @@ DEFAULT_QUICKREPLIES_MAP = [
 # Static View
 #
 # # # # # # # # # # # # # # # # # # # # # # # # #
+def sellingTimeCheck():
+    nowDate               = dateNowByTimeZone()
+    nowDateWithoutTime    = nowDate.replace(hour=0, minute=0, second=0, microsecond=0)
+
+    # Prev Lunch Order Time 16:30 ~ 10:30
+    prevlunchOrderTimeStart   = nowDateWithoutTime + timedelta(hours=16, minutes=30, days=-1) 
+    prevlunchOrderTimeEnd     = nowDateWithoutTime + timedelta(hours=10, minutes=30)
+
+    # Dinner Order Time 10:30 ~ 16:30
+    dinnerOrderTimeStart  = nowDateWithoutTime + timedelta(hours=10, minutes=30)
+    dinnerOrderTimeEnd    = nowDateWithoutTime + timedelta(hours=16, minutes=30)
+
+    # Next Lunch Order Time 16:30 ~ 10:30
+    nextlunchOrderTimeStart   = nowDateWithoutTime + timedelta(hours=16, minutes=30) 
+    nextlunchOrderTimeEnd     = nowDateWithoutTime + timedelta(hours=10, minutes=30, days=1)
+
+    if(dinnerOrderTimeStart <= nowDate) and (nowDate <=  dinnerOrderTimeEnd):
+        return SELLING_TIME_DINNER
+    elif(prevlunchOrderTimeStart < nowDate) and (nowDate <  prevlunchOrderTimeEnd):
+        return SELLING_TIME_LUNCH
+    elif(nextlunchOrderTimeStart < nowDate) and (nowDate <  nextlunchOrderTimeEnd):
+        return SELLING_TIME_LUNCH
+    else:
+        return None
+
 def MenuListup(userID, menuCategory, sellingTime, currentSellingTime, location):
     ALL_MENU = '전체'
 
@@ -85,7 +111,7 @@ def MenuListup(userID, menuCategory, sellingTime, currentSellingTime, location):
     ]
 
     # if now time is not selling time for user select selling time
-    if MENU_CATEGORY[currentSellingTime][0] != sellingTime:
+    if SELLING_TIME_CATEGORY[currentSellingTime][0] != sellingTime:
         KakaoForm = Kakao_SimpleForm()
         KakaoForm.SimpleForm_Init()
 
@@ -99,7 +125,7 @@ def MenuListup(userID, menuCategory, sellingTime, currentSellingTime, location):
     CategoryList = Category.objects.all()[:CATEGORY_LIST_LENGTH]
     for category in CategoryList:
         STORE_CATEGORY_QUICKREPLIES_MAP.append({'action': "message", 'label': category.name, 'messageText': "{} {} 메뉴 보기".format(sellingTime, category.name), 'blockid': "none", 
-                                                'extra': { KAKAO_PARAM_MENU_CATEGORY: category.name, KAKAO_PARAM_SELLING_TIME: sellingTime }})
+                                                'extra': { KAKAO_PARAM_USER_ID: userID, KAKAO_PARAM_MENU_CATEGORY: category.name, KAKAO_PARAM_SELLING_TIME: sellingTime }})
         
     if(menuCategory == NOT_APPLICABLE) or (menuCategory == ALL_MENU):
         MenuList     = Menu.objects.filter(sellingTime=sellingTime)[:MENU_LIST_LENGTH]
@@ -181,37 +207,61 @@ def getSellingTime(request):
     try:
         kakaoPayload = KakaoPayLoad(request)
 
+        # Invalied Path Access
+        if(kakaoPayload.userID == NOT_APPLICABLE):
+            #return errorView("Parameter Error")
+            #FOR DEBUG
+            kakaoPayload.userID = KAKAO_SUPER_USER_ID
+            userInstance  = User.objects.get(id=kakaoPayload.userID)
+        else:
+            userInstance  = User.objects.get(id=kakaoPayload.userID)
+
         EatplusSkillLog("Order Flow")
 
-        KakaoForm = Kakao_CarouselForm()
-        KakaoForm.BasicCard_Init()
-
-        thumbnail = { "imageUrl": "" }
-
-        LUNCH  = MENU_CATEGORY[MENU_LUNCH][0]
-        DINNER = MENU_CATEGORY[MENU_DINNER][0]
-
-        buttons = [
-            {'action': "message", 'label': LUNCH,  'messageText': "{} 주문 하기".format(LUNCH), 
-             'extra': { KAKAO_PARAM_MENU_CATEGORY: NOT_APPLICABLE, 
-                        KAKAO_PARAM_SELLING_TIME: LUNCH,
-                        KAKAO_PARAM_USER_ID: KAKAO_SUPER_USER_ID }
-            },
-
-            {'action': "message", 'label': DINNER,  'messageText': "{} 주문 하기".format(DINNER), 
-             'extra': { KAKAO_PARAM_MENU_CATEGORY: NOT_APPLICABLE, 
-                        KAKAO_PARAM_SELLING_TIME: DINNER, 
-                        KAKAO_PARAM_USER_ID: KAKAO_SUPER_USER_ID }
-            }
-        ]
-
-        KakaoForm.BasicCard_Add("점심 또는 저녁을 선택해 주세요!", " * 예약 가능 시간대 \n - 점심 : 20:00 ~ 10:30\n - 저녁 : 10:30 ~ 20:00", thumbnail, buttons)
-    
-        for entryPoint in DEFAULT_QUICKREPLIES_MAP:
-            KakaoForm.QuickReplies_Add(entryPoint['action'], entryPoint['label'], entryPoint['messageText'], entryPoint['blockid'], entryPoint['extra'])
+        OrderManagerInstance = OrderManager(kakaoPayload.userID)
+        OrderManagerInstance.availableCouponStatusUpdate()
         
+        if OrderManagerInstance.isExistAvailableDinnerCouponPurchased() and OrderManagerInstance.isExistAvailableLunchCouponPurchased():
+            KakaoForm = Kakao_SimpleForm()
+            KakaoForm.SimpleForm_Init()
 
-        return JsonResponse(KakaoForm.GetForm())
+            KakaoForm.SimpleText_Add("오늘 하루, 잇플로 맛있는 식사를 즐겨주셔서 감사해요. 내일도 잇플과 함께 해주실거죠?")
+            
+            for entryPoint in DEFAULT_QUICKREPLIES_MAP:
+                KakaoForm.QuickReplies_Add(entryPoint['action'], entryPoint['label'], entryPoint['messageText'], entryPoint['blockid'], entryPoint['extra'])
+                
+            return JsonResponse(KakaoForm.GetForm())
+        else:
+            KakaoForm = Kakao_CarouselForm()
+            KakaoForm.BasicCard_Init()
+
+            thumbnail = { "imageUrl": "" }
+
+            LUNCH  = SELLING_TIME_CATEGORY[SELLING_TIME_LUNCH][0]
+            DINNER = SELLING_TIME_CATEGORY[SELLING_TIME_DINNER][0]
+
+            buttons = [
+                {'action': "message", 'label': LUNCH,  'messageText': "{} 주문 하기".format(LUNCH), 
+                'extra': { KAKAO_PARAM_MENU_CATEGORY: NOT_APPLICABLE, 
+                            KAKAO_PARAM_SELLING_TIME: LUNCH,
+                            KAKAO_PARAM_USER_ID: KAKAO_SUPER_USER_ID }
+                },
+
+                {'action': "message", 'label': DINNER,  'messageText': "{} 주문 하기".format(DINNER), 
+                'extra': { KAKAO_PARAM_MENU_CATEGORY: NOT_APPLICABLE, 
+                            KAKAO_PARAM_SELLING_TIME: DINNER, 
+                            KAKAO_PARAM_USER_ID: KAKAO_SUPER_USER_ID }
+                }
+            ]
+
+	
+            KakaoForm.BasicCard_Add("점심 또는 저녁을 선택해 주세요!", "한 사람당 하루에 점심 1회, 저녁 1회 주문이 가능해요!\n주문 가능 시간\n- 점심 : 전날 16:30 ~ 당일 10:30까지\n- 저녁 : 당일 10:30 ~ 16:30", thumbnail, buttons)
+        
+            for entryPoint in DEFAULT_QUICKREPLIES_MAP:
+                KakaoForm.QuickReplies_Add(entryPoint['action'], entryPoint['label'], entryPoint['messageText'], entryPoint['blockid'], entryPoint['extra'])
+            
+
+            return JsonResponse(KakaoForm.GetForm())
 
     except (RuntimeError, TypeError, NameError, KeyError) as ex:
         return errorView("{}".format(ex))
@@ -262,7 +312,7 @@ def getPickupTime(request):
 
         LUNCH_PICKUP_TIME_MAP  = [ "11:30", "11:45", "12:00", "12:15", "12:30", "12:45", "13:00", "13:15", "13:30" ]
         DINNER_PICKUP_TIME_MAP = [ "17:30", "18:00", "18:30", "19:00", "19:30", "20:00", "20:30", "21:00" ]
-        if MENU_CATEGORY_DICT[kakaoPayload.sellingTime] == MENU_LUNCH:
+        if SELLING_TIME_CATEGORY_DICT[kakaoPayload.sellingTime] == SELLING_TIME_LUNCH:
             ENTRY_PICKUP_TIME_MAP = LUNCH_PICKUP_TIME_MAP
         else:
             ENTRY_PICKUP_TIME_MAP = DINNER_PICKUP_TIME_MAP

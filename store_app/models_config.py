@@ -1,6 +1,14 @@
+#Django Library
+from django.conf import settings
+
+#External Library
+from datetime import datetime, timedelta
+import pytz
+
 class Config():
     #SYSTEM
-    TIME_ZONE            = 'Asia/Seoul'
+    USE_TZ               = settings.USE_TZ
+    TIME_ZONE            = settings.TIME_ZONE
 
     NOT_APPLICABLE       = "N/A"
     DEFAULT_OBJECT_ID    = 1
@@ -12,17 +20,17 @@ class Config():
     USER_SERIAL_LENGTH   = 12
 
     #STRING LENGTH
-    STRING_LENGTH = 255
-    WORD_LENGTH   = 32
+    STRING_LENGTH        = 255
+    WORD_LENGTH          = 32
 
     #MENU
-    MANAGEMENT_CODE_DEFAULT = "ABCDEF123456"
-    MANAGEMENT_CODE_LENGTH  = 12
+    MANAGEMENT_CODE_DEFAULT    = "ABCDEF123456"
+    MANAGEMENT_CODE_LENGTH     = 12
 
-    MENU_LUNCH    = 0
-    MENU_DINNER   = 1
-    MENU_CATEGORY_DICT = {'점심': MENU_LUNCH, '저녁': MENU_DINNER}
-    MENU_CATEGORY = [
+    SELLING_TIME_LUNCH         = 0
+    SELLING_TIME_DINNER        = 1
+    SELLING_TIME_CATEGORY_DICT = {'점심': SELLING_TIME_LUNCH, '저녁': SELLING_TIME_DINNER}
+    SELLING_TIME_CATEGORY      = [
         ('점심', '점심'),
         ('저녁', '저녁'),
     ]
@@ -52,3 +60,14 @@ class Config():
     KAKAO_PARAM_STATUS            = 'status'
     KAKAO_PARAM_STATUS_OK         = True
     KAKAO_PARAM_STATUS_NOT_OK     = False
+
+
+def dateNowByTimeZone():
+    """
+    Returns an aware or naive datetime.datetime, depending on settings.USE_TZ.
+    """
+    if settings.USE_TZ:
+        tz = pytz.timezone(settings.TIME_ZONE)
+        return tz.localize(datetime.now())
+    else:
+        return datetime.now()
