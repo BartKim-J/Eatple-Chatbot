@@ -17,7 +17,7 @@ from .models_store import Store, Menu, Category, SubCategory
 from .module_KakaoForm import Kakao_SimpleForm, Kakao_CarouselForm
 
 from .views_system import EatplusSkillLog, errorView
-
+from .views_wording import wordings
 
 KAKAO_PARAM_USER_ID         = Config.KAKAO_PARAM_USER_ID
 
@@ -28,18 +28,27 @@ def userHome(request):
     EatplusSkillLog("Home")
 
     HOME_QUICKREPLIES_MAP = [
-        {'action': "message", 'label': "주문하기",      'messageText': "주문시간 선택", 'blockid': "none", 'extra': { KAKAO_PARAM_USER_ID: ORDER_SUPER_USER_ID }},
-        {'action': "message", 'label': "주문 상태 확인", 'messageText': "주문 상태 확인",    'blockid': "none", 'extra': { KAKAO_PARAM_USER_ID: ORDER_SUPER_USER_ID }},
-        {'action': "message", 'label': "최근 구매내역",  'messageText': "최근 구매내역",    'blockid': "none", 'extra': { KAKAO_PARAM_USER_ID: ORDER_SUPER_USER_ID }},
-        {'action': "message", 'label': "위치변경",      'messageText': "위치변경",    'blockid': "none", 'extra': { KAKAO_PARAM_USER_ID: ORDER_SUPER_USER_ID }},
-        {'action': "message", 'label': "사용방법",      'messageText': "사용방법",    'blockid': "none", 'extra': { KAKAO_PARAM_USER_ID: ORDER_SUPER_USER_ID }},
+        {'action': "message", 'label': "주문하기",      'messageText': wordings.GET_SELLING_TIEM_COMMAND, 'blockid': "none", 
+        'extra': { KAKAO_PARAM_USER_ID: ORDER_SUPER_USER_ID }},
+
+        {'action': "message", 'label': wordings.GET_COUPON_COMMAND, 'messageText': wordings.GET_COUPON_COMMAND,    'blockid': "none", 
+        'extra': { KAKAO_PARAM_USER_ID: ORDER_SUPER_USER_ID }},
+
+        {'action': "message", 'label': wordings.GET_ORDER_LIST_COMMAND,  'messageText': wordings.GET_ORDER_LIST_COMMAND,    'blockid': "none", 
+        'extra': { KAKAO_PARAM_USER_ID: ORDER_SUPER_USER_ID }},
+
+        {'action': "message", 'label': "위치변경",      'messageText': "위치변경",    'blockid': "none", 
+        'extra': { KAKAO_PARAM_USER_ID: ORDER_SUPER_USER_ID }},
+
+        {'action': "message", 'label': wordings.USER_MANUAL_COMMAND,      'messageText': wordings.USER_MANUAL_COMMAND,    'blockid': "none", 
+        'extra': { KAKAO_PARAM_USER_ID: ORDER_SUPER_USER_ID }},
     ]
 
     try:
         KakaoForm = Kakao_SimpleForm()
         KakaoForm.SimpleForm_Init()
 
-        KakaoForm.SimpleText_Add("잇플 홈 화면입니다! 아래 명령어 중에 골라주세요!")
+        KakaoForm.SimpleText_Add(wordings.HOME_TEXT)
 
 
         for entryPoint in HOME_QUICKREPLIES_MAP:

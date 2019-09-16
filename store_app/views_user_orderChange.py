@@ -20,6 +20,7 @@ from .module_KakaoForm import Kakao_SimpleForm, Kakao_CarouselForm
 #View
 from .views_kakaoTool import getLatLng, KakaoPayLoad
 from .views_system import EatplusSkillLog, errorView
+from .views_wording import wordings
 
 #GLOBAL CONFIG
 NOT_APPLICABLE              = Config.NOT_APPLICABLE
@@ -45,29 +46,21 @@ KAKAO_PARAM_STATUS_NOT_OK   = Config.KAKAO_PARAM_STATUS_NOT_OK
 
 ORDER_SUPER_USER_ID         = Config.DEFAULT_USER_ID
 
-#STATIC CONFIG
-DEFAULT_QUICKREPLIES_MAP = [                
-    {'action': "message", 'label': "홈으로 돌아가기",    'messageText': "홈으로 돌아가기", 'blockid': "none", 
-        'extra': { KAKAO_PARAM_STATUS: KAKAO_PARAM_STATUS_OK }},
-]
-
-
 # # # # # # # # # # # # # # # # # # # # # # # # #
 #
 # Static View
 #
 # # # # # # # # # # # # # # # # # # # # # # # # #
+DEFAULT_QUICKREPLIES_MAP = [                
+    {'action': "message", 'label': wordings.RETURN_HOME_QUICK_REPLISE,    'messageText': wordings.RETURN_HOME_QUICK_REPLISE, 'blockid': "none", 
+        'extra': { KAKAO_PARAM_STATUS: KAKAO_PARAM_STATUS_OK }},
+]
 
 # # # # # # # # # # # # # # # # # # # # # # # # #
 #
 # External View
 #
 # # # # # # # # # # # # # # # # # # # # # # # # #
-DEFAULT_QUICKREPLIES_MAP = [                
-    {'action': "message", 'label': "홈으로 돌아가기",    'messageText': "홈으로 돌아가기", 'blockid': "none", 
-        'extra': { KAKAO_PARAM_STATUS: KAKAO_PARAM_STATUS_OK }},
-]
-
 '''
     @name orderCancle
     @param orderID
@@ -100,11 +93,11 @@ def orderCancel(request):
         kakaoMapUrl = "https://map.kakao.com/link/map/{},{}".format(orderInstance.storeInstance.name, getLatLng(orderInstance.storeInstance.addr))
 
         buttons = [
-            {'action': "webLink", 'label': "위치보기",  "webLinkUrl": kakaoMapUrl},
+            {'action': "webLink", 'label': wordings.SHOW_LOCATION_BTN,  "webLinkUrl": kakaoMapUrl},
         ]
 
         KakaoForm.BasicCard_Add(
-            "식권이 취소되었습니다.",
+            "주문이 취소되었습니다. ",
             "주문번호: {}\n--------------------\n - 주문자: {}\n\n - 매장: {} \n - 메뉴: {}\n\n - 결제 금액: {}원\n\n - 픽업 시간: {}\n--------------------\n - 매장 위치: {}".format(
                 orderInstance.management_code,
                 orderInstance.userInstance.name,
@@ -163,7 +156,7 @@ def getOrderPickupTime(request):
         allExtraData = kakaoPayload.dataActionExtra
 
         for pickupTime in ENTRY_PICKUP_TIME_MAP:
-            PICKUP_TIME_QUICKREPLIES_MAP += {'action': "message", 'label': pickupTime, 'messageText': "픽업 시간 변경 완료", 'blockid': "none", 'extra': { **allExtraData, KAKAO_PARAM_PICKUP_TIME: pickupTime}},
+            PICKUP_TIME_QUICKREPLIES_MAP += {'action': "message", 'label': pickupTime, 'messageText': wordings.ORDER_PICKUP_TIME_CHANGE_CONFIRM_COMMAND, 'blockid': "none", 'extra': { **allExtraData, KAKAO_PARAM_PICKUP_TIME: pickupTime}},
 
         for entryPoint in PICKUP_TIME_QUICKREPLIES_MAP:
             KakaoForm.QuickReplies_Add(entryPoint['action'], entryPoint['label'], entryPoint['messageText'], entryPoint['blockid'], entryPoint['extra'])
@@ -196,7 +189,7 @@ def orderPickupTimeChange(request):
         EatplusSkillLog("Order Change Flow")
 
         beforePickupTime         = orderInstance.pickupTime
-        orderInstance.pickupTime = orderInstance.localePickupTimeToDatetime(kakaoPayload.pickupTime)
+        orderInstance.pickupTime = orderInstance.rowPickupTimeToDatetime(kakaoPayload.pickupTime)
         orderInstance.save()
         
         KakaoForm = Kakao_CarouselForm()

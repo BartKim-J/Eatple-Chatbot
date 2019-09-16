@@ -29,6 +29,7 @@ from .module_KakaoForm import Kakao_SimpleForm, Kakao_CarouselForm
 #View
 from .views_kakaoTool import getLatLng, KakaoPayLoad
 from .views_system import EatplusSkillLog, errorView
+from .views_wording import wordings
 
 #GLOBAL CONFIG
 TIME_ZONE                   = Config.TIME_ZONE
@@ -54,11 +55,11 @@ KAKAO_PARAM_STATUS_NOT_OK   = Config.KAKAO_PARAM_STATUS_NOT_OK
 ORDER_SUPER_USER_ID         = Config.DEFAULT_USER_ID
 
 #STATIC CONFIG
-ORDER_LIST_LENGTH           = 10
+ORDER_LIST_LENGTH           = 5
 
 def CouponListup(userID):
-    ORDER_LIST_QUICKREPLIES_MAP = [{'action': "message", 'label': "홈으로 돌아가기",    'messageText': "홈으로 돌아가기", 'blockid': "none", 'extra': { KAKAO_PARAM_STATUS: KAKAO_PARAM_STATUS_OK }},
-                                   {'action': "message", 'label': "새로고침",         'messageText': "주문 상태 확인", 'blockid': "none", 'extra': { KAKAO_PARAM_STATUS: KAKAO_PARAM_STATUS_OK }}]
+    ORDER_LIST_QUICKREPLIES_MAP = [{'action': "message", 'label': wordings.RETURN_HOME_QUICK_REPLISE, 'messageText': wordings.RETURN_HOME_QUICK_REPLISE, 'blockid': "none", 'extra': { KAKAO_PARAM_STATUS: KAKAO_PARAM_STATUS_OK }},
+                                   {'action': "message", 'label': wordings.REFRESH_BTN, 'messageText': wordings.GET_COUPON_COMMAND, 'blockid': "none", 'extra': { KAKAO_PARAM_STATUS: KAKAO_PARAM_STATUS_OK }}]
 
     OrderManagerInstance = OrderManager(userID)
 
@@ -75,19 +76,19 @@ def CouponListup(userID):
             kakaoMapUrl = "https://map.kakao.com/link/map/{},{}".format(orderInstance.storeInstance.name, getLatLng(orderInstance.storeInstance.addr))
 
             buttons = [
-                {'action': "webLink", 'label': "위치보기",  "webLinkUrl": kakaoMapUrl},
+                {'action': "webLink", 'label': wordings.SHOW_LOCATION_BTN,  "webLinkUrl": kakaoMapUrl},
             ]
 
             # CAN EDIT COUPONS
             if ORDER_STATUS_DICT[orderInstance.status] <= ORDER_STATUS_DICT['주문 완료']: 
-                buttons.append({'action': "message", 'label': "주문 취소 하기",  'messageText': "주문 취소 하기", 
+                buttons.append({'action': "message", 'label': wordings.ORDER_CANCEL_COMMAND,  'messageText': wordings.ORDER_CANCEL_COMMAND, 
                 'extra': { KAKAO_PARAM_ORDER_ID: orderInstance.id }})
-                buttons.append({'action': "message", 'label': "픽업 시간 변경",  'messageText': "{} 픽업시간 변경".format(orderInstance.menuInstance.sellingTime), 
+                buttons.append({'action': "message", 'label': wordings.ORDER_PICKUP_TIME_CHANGE_COMMAND,  'messageText': "{} {}".format(orderInstance.menuInstance.sellingTime, wordings.ORDER_PICKUP_TIME_CHANGE_COMMAND), 
                 'extra': { KAKAO_PARAM_ORDER_ID: orderInstance.id }})
                 
             # CAN'T EDIT COUPONS
             elif ORDER_STATUS_DICT[orderInstance.status] == ORDER_STATUS_DICT['픽업 가능']: 
-                buttons.append({'action': "message", 'label': "식권 사용하기",  'messageText': "식권 사용 확인", 
+                buttons.append({'action': "message", 'label': "식권 사용하기",  'messageText': wordings.CONFIRM_USE_COUPON_COMMAND, 
                 'extra': { KAKAO_PARAM_ORDER_ID: orderInstance.id }})
 
             else:
@@ -113,9 +114,10 @@ def CouponListup(userID):
         KakaoForm = Kakao_SimpleForm()
         KakaoForm.SimpleForm_Init()
 
-        ORDER_LIST_QUICKREPLIES_MAP.append({'action': "message", 'label': "주문 하기",    'messageText': "주문시간 선택", 'blockid': "none", 'extra': { KAKAO_PARAM_STATUS: KAKAO_PARAM_STATUS_OK, KAKAO_PARAM_USER_ID: ORDER_SUPER_USER_ID }})
+        ORDER_LIST_QUICKREPLIES_MAP.append({'action': "message", 'label': "주문하기",    'messageText': wordings.GET_SELLING_TIEM_COMMAND, 'blockid': "none", 
+        'extra': { KAKAO_PARAM_STATUS: KAKAO_PARAM_STATUS_OK, KAKAO_PARAM_USER_ID: ORDER_SUPER_USER_ID }})
         
-        KakaoForm.SimpleText_Add("현재 조회 가능한 식권이 없습니다!\n주문하시려면 아래 [주문 하기]를 눌러주세요!")
+        KakaoForm.SimpleText_Add(wordings.GET_COUPON_EMPTY_TEXT)
 
     for entryPoint in ORDER_LIST_QUICKREPLIES_MAP:
         KakaoForm.QuickReplies_Add(entryPoint['action'], entryPoint['label'], entryPoint['messageText'], entryPoint['blockid'], entryPoint['extra'])
@@ -130,8 +132,8 @@ def CouponListup(userID):
     @todo userName to real username, now just use super user("잇플").
 '''
 def OrderListup(userID):
-    ORDER_LIST_QUICKREPLIES_MAP = [{'action': "message", 'label': "홈으로 돌아가기",    'messageText': "홈으로 돌아가기", 'blockid': "none", 'extra': { KAKAO_PARAM_STATUS: KAKAO_PARAM_STATUS_OK }},
-                                   {'action': "message", 'label': "새로고침",    'messageText': "최근 구매내역", 'blockid': "none", 'extra': { KAKAO_PARAM_STATUS: KAKAO_PARAM_STATUS_OK }}]
+    ORDER_LIST_QUICKREPLIES_MAP = [{'action': "message", 'label': wordings.RETURN_HOME_QUICK_REPLISE, 'messageText': wordings.RETURN_HOME_QUICK_REPLISE, 'blockid': "none", 'extra': { KAKAO_PARAM_STATUS: KAKAO_PARAM_STATUS_OK }},
+                                   {'action': "message", 'label': wordings.REFRESH_BTN, 'messageText': wordings.GET_ORDER_LIST_COMMAND, 'blockid': "none", 'extra': { KAKAO_PARAM_STATUS: KAKAO_PARAM_STATUS_OK }}]
 
     OrderManagerInstance = OrderManager(userID)
     
@@ -171,7 +173,7 @@ def OrderListup(userID):
 
         ORDER_LIST_QUICKREPLIES_MAP.append({'action': "message", 'label': "주문 하기",    'messageText': "주문시간 선택", 'blockid': "none", 'extra': { KAKAO_PARAM_STATUS: KAKAO_PARAM_STATUS_OK, KAKAO_PARAM_USER_ID: ORDER_SUPER_USER_ID }})
 
-        KakaoForm.SimpleText_Add("주문 내역이 존재하지 않습니다!\n주문하시려면 아래 [주문 하기]를 눌러주세요!")
+        KakaoForm.SimpleText_Add(wordings.GET_ORDER_LIST_EMPTY_TEXT)
  
     for entryPoint in ORDER_LIST_QUICKREPLIES_MAP:
         KakaoForm.QuickReplies_Add(entryPoint['action'], entryPoint['label'], entryPoint['messageText'], entryPoint['blockid'], entryPoint['extra'])
@@ -256,8 +258,8 @@ def confirmUseCoupon(request):
             OrderInstance = Order.objects.get(id=kakaoPayload.orderID)
 
         USE_COUPON_QUICKREPLIES_MAP = [                
-            {'action': "message", 'label': "사용하기",    'messageText': "식권 사용", 'blockid': "none", 'extra': { KAKAO_PARAM_ORDER_ID: OrderInstance.id }},
-            {'action': "message", 'label': "취소하기",    'messageText': "식권 사용 취소", 'blockid': "none", 'extra': { KAKAO_PARAM_STATUS: KAKAO_PARAM_STATUS_OK }},
+            {'action': "message", 'label': "사용하기",    'messageText': wordings.USE_COUPON_COMMAND, 'blockid': "none", 'extra': { KAKAO_PARAM_ORDER_ID: OrderInstance.id }},
+            {'action': "message", 'label': wordings.RETURN_HOME_QUICK_REPLISE,    'messageText': wordings.RETURN_HOME_QUICK_REPLISE, 'blockid': "none", 'extra': { KAKAO_PARAM_STATUS: KAKAO_PARAM_STATUS_OK }},
         ]
 
         EatplusSkillLog("Order Check Flow")

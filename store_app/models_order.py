@@ -141,14 +141,13 @@ class Order(models.Model):
 
         managementCode  = OrderManagementCodeGenerator(storeInstance, menuInstance, userInstance, dateNowByTimeZone())
 
-        print(pickupTime)
-
         pushedOrder = cls(userInstance=userInstance, storeInstance=storeInstance, menuInstance=menuInstance, management_code=managementCode, pickupTime=pickupTime, order_date=orderDate)
         pushedOrder.save()
 
         return pushedOrder
-    
-    def rowPickupTimeToDatetime(rowPickupTime="00:00"):
+
+    @staticmethod
+    def rowPickupTimeToDatetime(rowPickupTime):
         return timezone.now().replace(hour=0, minute=0, second=0, microsecond=0) + timedelta(hours=int(rowPickupTime[0:2]), minutes=int(rowPickupTime[3:5]))
 
     # Methods
