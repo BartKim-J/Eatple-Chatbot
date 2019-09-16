@@ -88,7 +88,7 @@ def CouponListup(userID):
                 
             # CAN'T EDIT COUPONS
             elif ORDER_STATUS_DICT[orderInstance.status] == ORDER_STATUS_DICT['픽업 가능']: 
-                buttons.append({'action': "message", 'label': "식권 사용하기",  'messageText': wordings.CONFIRM_USE_COUPON_COMMAND, 
+                buttons.append({'action': "message", 'label': "{}하기".format(wordings.USE_COUPON_COMMAND),  'messageText': wordings.CONFIRM_USE_COUPON_COMMAND, 
                 'extra': { KAKAO_PARAM_ORDER_ID: orderInstance.id }})
 
             else:
@@ -114,7 +114,7 @@ def CouponListup(userID):
         KakaoForm = Kakao_SimpleForm()
         KakaoForm.SimpleForm_Init()
 
-        ORDER_LIST_QUICKREPLIES_MAP.append({'action': "message", 'label': "주문하기",    'messageText': wordings.GET_SELLING_TIEM_COMMAND, 'blockid': "none", 
+        ORDER_LIST_QUICKREPLIES_MAP.append({'action': "message", 'label': wordings.ORDER_BTN, 'messageText': wordings.GET_SELLING_TIEM_COMMAND, 'blockid': "none", 
         'extra': { KAKAO_PARAM_STATUS: KAKAO_PARAM_STATUS_OK, KAKAO_PARAM_USER_ID: ORDER_SUPER_USER_ID }})
         
         KakaoForm.SimpleText_Add(wordings.GET_COUPON_EMPTY_TEXT)
@@ -149,7 +149,7 @@ def OrderListup(userID):
             kakaoMapUrl = "https://map.kakao.com/link/map/{},{}".format(orderInstance.storeInstance.name, getLatLng(orderInstance.storeInstance.addr))
 
             buttons = [
-                {'action': "webLink", 'label': "위치보기",  "webLinkUrl": kakaoMapUrl},
+                {'action': "webLink", 'label': wordings.SHOW_LOCATION_BTN,  "webLinkUrl": kakaoMapUrl},
             ]
 
 
@@ -171,7 +171,7 @@ def OrderListup(userID):
         KakaoForm = Kakao_SimpleForm()
         KakaoForm.SimpleForm_Init()
 
-        ORDER_LIST_QUICKREPLIES_MAP.append({'action': "message", 'label': "주문 하기",    'messageText': "주문시간 선택", 'blockid': "none", 'extra': { KAKAO_PARAM_STATUS: KAKAO_PARAM_STATUS_OK, KAKAO_PARAM_USER_ID: ORDER_SUPER_USER_ID }})
+        ORDER_LIST_QUICKREPLIES_MAP.append({'action': "message", 'label': wordings.ORDER_BTN, 'messageText': wordings.GET_SELLING_TIEM_COMMAND, 'blockid': "none", 'extra': { KAKAO_PARAM_STATUS: KAKAO_PARAM_STATUS_OK, KAKAO_PARAM_USER_ID: ORDER_SUPER_USER_ID }})
 
         KakaoForm.SimpleText_Add(wordings.GET_ORDER_LIST_EMPTY_TEXT)
  

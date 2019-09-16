@@ -200,11 +200,11 @@ def orderPickupTimeChange(request):
         kakaoMapUrl = "https://map.kakao.com/link/map/{},{}".format(orderInstance.storeInstance.name, getLatLng(orderInstance.storeInstance.addr))
 
         buttons = [
-            {'action': "webLink", 'label': "위치보기",  "webLinkUrl": kakaoMapUrl},
+            {'action': "webLink", 'label': wordings.SHOW_LOCATION_BTN,  "webLinkUrl": kakaoMapUrl},
         ]
 
         KakaoForm.BasicCard_Add(
-            "픽업 시간이 {} 에서 {} 으로 변경되었습니다.".format(beforePickupTime.strftime('%H:%M'), orderInstance.pickupTime.strftime('%H:%M')),
+            "픽업시간이 {} 에서 {} 으로 변경되었습니다.".format(beforePickupTime.strftime('%H:%M'), orderInstance.pickupTime.strftime('%H:%M')),
             "주문번호: {}\n--------------------\n - 주문자: {}\n\n - 매장: {} \n - 메뉴: {}\n\n - 결제 금액: {}원\n\n - 픽업 시간: {}\n--------------------\n - 매장 위치: {}".format(
                 orderInstance.management_code,
                 orderInstance.userInstance.name,

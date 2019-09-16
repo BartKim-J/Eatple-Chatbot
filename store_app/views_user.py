@@ -28,7 +28,7 @@ def userHome(request):
     EatplusSkillLog("Home")
 
     HOME_QUICKREPLIES_MAP = [
-        {'action': "message", 'label': "주문하기",      'messageText': wordings.GET_SELLING_TIEM_COMMAND, 'blockid': "none", 
+        {'action': "message", 'label': wordings.ORDER_BTN,      'messageText': wordings.GET_SELLING_TIEM_COMMAND, 'blockid': "none", 
         'extra': { KAKAO_PARAM_USER_ID: ORDER_SUPER_USER_ID }},
 
         {'action': "message", 'label': wordings.GET_COUPON_COMMAND, 'messageText': wordings.GET_COUPON_COMMAND,    'blockid': "none", 
@@ -37,7 +37,7 @@ def userHome(request):
         {'action': "message", 'label': wordings.GET_ORDER_LIST_COMMAND,  'messageText': wordings.GET_ORDER_LIST_COMMAND,    'blockid': "none", 
         'extra': { KAKAO_PARAM_USER_ID: ORDER_SUPER_USER_ID }},
 
-        {'action': "message", 'label': "위치변경",      'messageText': "위치변경",    'blockid': "none", 
+        {'action': "message", 'label': wordings.CHANGE_LOCATION_BTN,      'messageText': wordings.CHANGE_LOCATION_COMMAND,    'blockid': "none", 
         'extra': { KAKAO_PARAM_USER_ID: ORDER_SUPER_USER_ID }},
 
         {'action': "message", 'label': wordings.USER_MANUAL_COMMAND,      'messageText': wordings.USER_MANUAL_COMMAND,    'blockid': "none", 

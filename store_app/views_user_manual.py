@@ -91,7 +91,7 @@ def userManual(request):
         #    
 
         EatplusSkillLog("User Manual Flow")
-        
+
         KakaoForm = Kakao_CarouselForm()
         KakaoForm.BasicCard_Init()
 
@@ -108,7 +108,7 @@ def userManual(request):
             KakaoForm.QuickReplies_Add(entryPoint['action'], entryPoint['label'], entryPoint['messageText'], entryPoint['blockid'], entryPoint['extra'])
         
         return JsonResponse(KakaoForm.GetForm())
-
+  
     except (RuntimeError, TypeError, NameError, KeyError) as ex:
         return errorView("{}".format(ex))
 

@@ -135,7 +135,10 @@ def MenuListup(userID, menuCategory, sellingTime, currentSellingTime, location):
         KakaoForm = Kakao_SimpleForm()
         KakaoForm.SimpleForm_Init()
 
-        KakaoForm.SimpleText_Add("{} 판매 시간이 아니에요ㅠㅜ".format(sellingTime))
+        if SELLING_TIME_CATEGORY[currentSellingTime][0] != LUNCH:
+            KakaoForm.SimpleText_Add(wordings.GET_SELLING_TIME_LUNCH_FINISH_TEXT)
+        else:
+            KakaoForm.SimpleText_Add(wordings.GET_SELLING_TIME_DINNER_FINISH_TEXT)
 
         for entryPoint in ORDER_EXIT_QUICKREPLIES_MAP:
             KakaoForm.QuickReplies_Add(entryPoint['action'], entryPoint['label'], entryPoint['messageText'], entryPoint['blockid'], entryPoint['extra'])
@@ -198,7 +201,7 @@ def MenuListup(userID, menuCategory, sellingTime, currentSellingTime, location):
                     KAKAO_PARAM_SELLING_TIME:     sellingTime,  
                 }},
 
-                {'action': "webLink", 'label': "위치보기",  "webLinkUrl": kakaoMapUrl },
+                {'action': "webLink", 'label': wordings.SHOW_LOCATION_BTN,  "webLinkUrl": kakaoMapUrl },
             ]
 
             KakaoForm.ComerceCard_Add(menu.name, menu.price, menu.discount, 'won', thumbnails, profile, buttons)
@@ -361,7 +364,7 @@ def getPickupTime(request):
         KakaoForm = Kakao_SimpleForm()
         KakaoForm.SimpleForm_Init()
 
-        KakaoForm.SimpleText_Add("{} 시간 픽업 시간을 설정해주세요.".format(kakaoPayload.sellingTime))
+        KakaoForm.SimpleText_Add("{} 픽업시간을 설정해주세요.".format(kakaoPayload.sellingTime))
 
         PICKUP_TIME_QUICKREPLIES_MAP = []
 
