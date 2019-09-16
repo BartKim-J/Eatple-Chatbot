@@ -2,7 +2,7 @@
 from django.urls import reverse
 from django.db import models
 from django_mysql.models import Model
-
+from django.core.validators import MaxValueValidator, MinValueValidator
 #External Library
 
 
@@ -16,7 +16,10 @@ DEFAULT_OBJECT_ID       = Config.DEFAULT_OBJECT_ID
 STRING_LENGTH           = Config.STRING_LENGTH
 WORD_LENGTH             = Config.WORD_LENGTH
 
-MANAGEMENT_CODE_LENGTH  = Config.MANAGEMENT_CODE_LENGTH
+LUNCH_PICKUP_TIME           = Config.LUNCH_PICKUP_TIME
+DINNER_PICKUP_TIME          = Config.DINNER_PICKUP_TIME
+
+MANAGEMENT_CODE_LENGTH      = Config.MANAGEMENT_CODE_LENGTH
 
 SELLING_TIME_LUNCH          = Config.SELLING_TIME_LUNCH
 SELLING_TIME_DINNER         = Config.SELLING_TIME_DINNER
@@ -70,6 +73,13 @@ class Store(models.Model):
 
     logo         = models.ImageField(blank=True, upload_to="eatplus_chatot_app/DB/logo_img")
 
+    lunch_pickupTime_start  = models.IntegerField(default=0, choices=LUNCH_PICKUP_TIME, help_text="")
+    lunch_pickupTime_end    = models.IntegerField(default=len(LUNCH_PICKUP_TIME) - 1, choices=LUNCH_PICKUP_TIME, help_text="")
+
+    dinner_pickupTime_start = models.IntegerField(default=0, choices=DINNER_PICKUP_TIME, help_text="")
+    dinner_pickupTime_end   = models.IntegerField(default=len(DINNER_PICKUP_TIME) - 1, choices=DINNER_PICKUP_TIME, help_text="")
+
+
     # Methods
     def __str__(self):
         return "{}".format(self.name)
@@ -107,9 +117,7 @@ class Menu(models.Model):
     logistics_code   = models.CharField(max_length=MANAGEMENT_CODE_LENGTH, blank=True, null=True,
                                         help_text="Menu Logistics Code")
 
-    is_status        = models.IntegerField(default=0, choices=(
-
-    ), help_text="")
+    is_status        = models.IntegerField(default=0, choices=(), help_text="")
 
     # Methods
     def __str__(self):

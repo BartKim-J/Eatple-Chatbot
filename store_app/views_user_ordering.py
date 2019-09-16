@@ -36,8 +36,11 @@ SELLING_TIME_DINNER         = Config.SELLING_TIME_DINNER
 SELLING_TIME_CATEGORY_DICT  = Config.SELLING_TIME_CATEGORY_DICT
 SELLING_TIME_CATEGORY       = Config.SELLING_TIME_CATEGORY
 
-LUNCH  = SELLING_TIME_CATEGORY[SELLING_TIME_LUNCH][0]
-DINNER = SELLING_TIME_CATEGORY[SELLING_TIME_DINNER][0]
+LUNCH                       = SELLING_TIME_CATEGORY[SELLING_TIME_LUNCH][0]
+DINNER                      = SELLING_TIME_CATEGORY[SELLING_TIME_DINNER][0]
+
+LUNCH_PICKUP_TIME           = Config.LUNCH_PICKUP_TIME
+DINNER_PICKUP_TIME          = Config.DINNER_PICKUP_TIME
 
 ORDER_STATUS                = Config.ORDER_STATUS
 ORDER_STATUS_DICT           = Config.ORDER_STATUS_DICT
@@ -175,20 +178,11 @@ def MenuListup(userID, menuCategory, sellingTime, currentSellingTime, location):
 
     if MenuList:
         KakaoForm = Kakao_CarouselForm()
-        KakaoForm.ComerceCard_Init()
-        
+        KakaoForm.BasicCard_Init()
+
         #Menu Carousel Card Add 
         for menu in MenuList:
-            thumbnails = [
-                {
-                    "imageUrl": "http://k.kakaocdn.net/dn/83BvP/bl20duRC1Q1/lj3JUcmrzC53YIjNDkqbWK/i_6piz1p.jpg",
-                }
-            ]
-            
-            profile = {
-                "imageUrl": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT4BJ9LU4Ikr_EvZLmijfcjzQKMRCJ2bO3A8SVKNuQ78zu2KOqM",
-                "nickname": menu.storeInstance.name
-            }
+            thumbnail = { "imageUrl": "http://k.kakaocdn.net/dn/83BvP/bl20duRC1Q1/lj3JUcmrzC53YIjNDkqbWK/i_6piz1p.jpg" }
             
             kakaoMapUrl = "https://map.kakao.com/link/map/{},{}".format(menu.storeInstance.name, getLatLng(menu.storeInstance.addr))
             buttons = [
@@ -204,8 +198,11 @@ def MenuListup(userID, menuCategory, sellingTime, currentSellingTime, location):
                 {'action': "webLink", 'label': wordings.SHOW_LOCATION_BTN,  "webLinkUrl": kakaoMapUrl },
             ]
 
-            KakaoForm.ComerceCard_Add(menu.name, menu.price, menu.discount, 'won', thumbnails, profile, buttons)
-
+            KakaoForm.BasicCard_Add("{}".format(menu.name),"{} - {}원".format(
+                menu.storeInstance.name,
+                menu.price
+            ), thumbnail, buttons)
+        
         #Quick Replise Add
         for entryPoint in STORE_CATEGORY_QUICKREPLIES_MAP:
             KakaoForm.QuickReplies_Add(entryPoint['action'], entryPoint['label'], entryPoint['messageText'], entryPoint['blockid'], entryPoint['extra'])
@@ -365,20 +362,23 @@ def getPickupTime(request):
         KakaoForm.SimpleForm_Init()
 
         KakaoForm.SimpleText_Add("{} 픽업시간을 설정해주세요.".format(kakaoPayload.sellingTime))
+        
+        allExtraData = kakaoPayload.dataActionExtra
 
         PICKUP_TIME_QUICKREPLIES_MAP = []
 
-        LUNCH_PICKUP_TIME_MAP  = [ "11:30", "11:45", "12:00", "12:15", "12:30", "12:45", "13:00", "13:15", "13:30" ]
-        DINNER_PICKUP_TIME_MAP = [ "17:30", "18:00", "18:30", "19:00", "19:30", "20:00", "20:30", "21:00" ]
         if SELLING_TIME_CATEGORY_DICT[kakaoPayload.sellingTime] == SELLING_TIME_LUNCH:
-            ENTRY_PICKUP_TIME_MAP = LUNCH_PICKUP_TIME_MAP
+            ENTRY_PICKUP_TIME_MAP = LUNCH_PICKUP_TIME
+            pikcupTime_Start      = storeInstance.lunch_pickupTime_start
+            pikcupTime_End        = storeInstance.lunch_pickupTime_end
         else:
-            ENTRY_PICKUP_TIME_MAP = DINNER_PICKUP_TIME_MAP
+            ENTRY_PICKUP_TIME_MAP = DINNER_PICKUP_TIME
+            pikcupTime_Start      = storeInstance.dinner_pickupTime_start
+            pikcupTime_End        = storeInstance.dinner_pickupTime_end
 
-        allExtraData = kakaoPayload.dataActionExtra
-
-        for pickupTime in ENTRY_PICKUP_TIME_MAP:
-            PICKUP_TIME_QUICKREPLIES_MAP += {'action': "message", 'label': pickupTime, 'messageText': wordings.ORDER_CONFIRM_COMMAND, 'blockid': "none", 'extra': { **allExtraData, KAKAO_PARAM_PICKUP_TIME: pickupTime}},
+        for index, pickupTime in ENTRY_PICKUP_TIME_MAP:
+            if(pikcupTime_Start <= index) and (index <= pikcupTime_End):
+                PICKUP_TIME_QUICKREPLIES_MAP += {'action': "message", 'label': pickupTime, 'messageText': wordings.ORDER_CONFIRM_COMMAND, 'blockid': "none", 'extra': { **allExtraData, KAKAO_PARAM_PICKUP_TIME: pickupTime}},
 
         for entryPoint in PICKUP_TIME_QUICKREPLIES_MAP:
             KakaoForm.QuickReplies_Add(entryPoint['action'], entryPoint['label'], entryPoint['messageText'], entryPoint['blockid'], entryPoint['extra'])
@@ -412,27 +412,24 @@ def orderConfirm(request):
         EatplusSkillLog("Order Flow")
 
         KakaoForm = Kakao_CarouselForm()
-        KakaoForm.ComerceCard_Init()
+        KakaoForm.BasicCard_Init()
         
         #Menu Carousel Card Add 
-        thumbnails = [
-            {
-                "imageUrl": "http://k.kakaocdn.net/dn/83BvP/bl20duRC1Q1/lj3JUcmrzC53YIjNDkqbWK/i_6piz1p.jpg",
-            }
-        ]
-        
-        profile = {
-            "imageUrl": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT4BJ9LU4Ikr_EvZLmijfcjzQKMRCJ2bO3A8SVKNuQ78zu2KOqM",
-            "nickname": menuInstance.storeInstance.name
+        thumbnail = {
+            "imageUrl": "http://k.kakaocdn.net/dn/83BvP/bl20duRC1Q1/lj3JUcmrzC53YIjNDkqbWK/i_6piz1p.jpg",
         }
+        
         
         kakaoMapUrl = "https://map.kakao.com/link/map/{},{}".format(storeInstance.name, getLatLng(storeInstance.addr))
         buttons = [
             {'action': "message", 'label': wordings.ORDER_PUSH_COMMAND,  'messageText': wordings.ORDER_PUSH_COMMAND, 'extra': kakaoPayload.dataActionExtra},
         ]
 
-        KakaoForm.ComerceCard_Add("메뉴명      : {}\n픽업 시간 : {}".format(menuInstance.name, kakaoPayload.pickupTime), 
-                                   menuInstance.price, menuInstance.discount, 'won', thumbnails, profile, buttons)
+        KakaoForm.BasicCard_Add("{}".format(menuInstance.name),"{} - {}원\n - 픽업시간 [ {} ]".format(
+            storeInstance.name,
+            menuInstance.price,
+            kakaoPayload.pickupTime
+        ), thumbnail, buttons)
 
         GET_PICKUP_TIME_QUICKREPLIES_MAP = [
             {'action': "message", 'label': "{}하기".format(wordings.ORDER_PICKUP_TIME_CHANGE_COMMAND),  'messageText': "{} {}".format(kakaoPayload.sellingTime, wordings.GET_PICKUP_TIME_COMMAND), 'blockid': "none", 'extra': kakaoPayload.dataActionExtra},

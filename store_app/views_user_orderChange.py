@@ -30,6 +30,9 @@ SELLING_TIME_DINNER         = Config.SELLING_TIME_DINNER
 SELLING_TIME_CATEGORY_DICT  = Config.SELLING_TIME_CATEGORY_DICT
 SELLING_TIME_CATEGORY       = Config.SELLING_TIME_CATEGORY
 
+LUNCH_PICKUP_TIME           = Config.LUNCH_PICKUP_TIME
+DINNER_PICKUP_TIME          = Config.DINNER_PICKUP_TIME
+
 ORDER_STATUS                = Config.ORDER_STATUS
 ORDER_STATUS_DICT           = Config.ORDER_STATUS_DICT
 
@@ -144,19 +147,22 @@ def getOrderPickupTime(request):
 
         KakaoForm.SimpleText_Add("변경 하실 픽업 시간을 설정해주세요.")
 
-        PICKUP_TIME_QUICKREPLIES_MAP = []
-
-        LUNCH_PICKUP_TIME_MAP  = [ "11:30", "11:45", "12:00", "12:15", "12:30", "12:45", "13:00", "13:15", "13:30" ]
-        DINNER_PICKUP_TIME_MAP = [ "17:30", "18:00", "18:30", "19:00", "19:30", "20:00", "20:30", "21:00" ]
-        if SELLING_TIME_CATEGORY_DICT[kakaoPayload.sellingTime] == SELLING_TIME_LUNCH:
-            ENTRY_PICKUP_TIME_MAP = LUNCH_PICKUP_TIME_MAP
-        else:
-            ENTRY_PICKUP_TIME_MAP = DINNER_PICKUP_TIME_MAP
-
         allExtraData = kakaoPayload.dataActionExtra
 
-        for pickupTime in ENTRY_PICKUP_TIME_MAP:
-            PICKUP_TIME_QUICKREPLIES_MAP += {'action': "message", 'label': pickupTime, 'messageText': wordings.ORDER_PICKUP_TIME_CHANGE_CONFIRM_COMMAND, 'blockid': "none", 'extra': { **allExtraData, KAKAO_PARAM_PICKUP_TIME: pickupTime}},
+        PICKUP_TIME_QUICKREPLIES_MAP = []
+
+        if SELLING_TIME_CATEGORY_DICT[kakaoPayload.sellingTime] == SELLING_TIME_LUNCH:
+            ENTRY_PICKUP_TIME_MAP = LUNCH_PICKUP_TIME
+            pikcupTime_Start      = orderInstance.storeInstance.lunch_pickupTime_start
+            pikcupTime_End        = orderInstance.storeInstance.lunch_pickupTime_end
+        else:
+            ENTRY_PICKUP_TIME_MAP = DINNER_PICKUP_TIME
+            pikcupTime_Start      = orderInstance.storeInstance.dinner_pickupTime_start
+            pikcupTime_End        = orderInstance.storeInstance.dinner_pickupTime_end
+
+        for index, pickupTime in ENTRY_PICKUP_TIME_MAP:
+            if(pikcupTime_Start <= index) and (index <= pikcupTime_End):
+                PICKUP_TIME_QUICKREPLIES_MAP += {'action': "message", 'label': pickupTime, 'messageText': wordings.ORDER_CONFIRM_COMMAND, 'blockid': "none", 'extra': { **allExtraData, KAKAO_PARAM_PICKUP_TIME: pickupTime}},
 
         for entryPoint in PICKUP_TIME_QUICKREPLIES_MAP:
             KakaoForm.QuickReplies_Add(entryPoint['action'], entryPoint['label'], entryPoint['messageText'], entryPoint['blockid'], entryPoint['extra'])
