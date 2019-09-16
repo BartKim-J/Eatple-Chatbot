@@ -17,7 +17,7 @@ import sys
 
 
 #Models 
-from .models_config import Config, dateNowByTimeZone
+from .models_config import Config, dateNowByTimeZone, dateByTimeZone
 
 from .models_user  import User
 from .models_order import Order, OrderManager
@@ -90,7 +90,8 @@ def CouponListup(userID):
             elif ORDER_STATUS_DICT[orderInstance.status] == ORDER_STATUS_DICT['픽업 가능']: 
                 buttons.append({'action': "message", 'label': "{}하기".format(wordings.USE_COUPON_COMMAND),  'messageText': wordings.CONFIRM_USE_COUPON_COMMAND, 
                 'extra': { KAKAO_PARAM_ORDER_ID: orderInstance.id }})
-
+            elif ORDER_STATUS_DICT[orderInstance.status] == ORDER_STATUS_DICT['픽업 준비중']: 
+                pass
             else:
                 errorView("Invalid Case on order status check by now time.")
 
@@ -103,7 +104,7 @@ def CouponListup(userID):
                     orderInstance.storeInstance.name, 
                     orderInstance.menuInstance.name, 
                     orderInstance.menuInstance.price, 
-                    orderInstance.pickupTime.strftime('%H시%M분 %m월%d일'),
+                    orderInstance.pickupTime.astimezone().strftime('%H시%M분 %m월%d일'),
                     orderInstance.status
                 ),
                 thumbnail, buttons
@@ -162,7 +163,7 @@ def OrderListup(userID):
                         orderInstance.storeInstance.name, 
                         orderInstance.menuInstance.name, 
                         orderInstance.menuInstance.price, 
-                        orderInstance.pickupTime.strftime('%H시%M분 %m월%d일'),
+                        orderInstance.pickupTime.astimezone().strftime('%H시%M분 %m월%d일'),
                         orderInstance.status
                     ),
                     thumbnail, buttons

@@ -2,7 +2,7 @@
 from django.conf import settings
 
 #External Library
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 import pytz
 
 class Config():
@@ -71,3 +71,11 @@ def dateNowByTimeZone():
         return tz.localize(datetime.now())
     else:
         return datetime.now()
+
+def dateByTimeZone(datetime):
+    try:
+        tz = pytz.timezone(settings.TIME_ZONE)
+        return tz.localize(datetime)
+    except ValueError as ex:
+        KST = timezone(timedelta(hours=9))
+        return datetime.replace(tzinfo=KST) # TO Korea

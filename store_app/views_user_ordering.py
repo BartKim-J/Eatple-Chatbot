@@ -498,7 +498,7 @@ def orderPush(request):
                 pushedOrder.storeInstance.name, 
                 pushedOrder.menuInstance.name, 
                 pushedOrder.menuInstance.price, 
-                pushedOrder.pickupTime.strftime('%H시%M분 %m월%d일'), 
+                pushedOrder.pickupTime.astimezone().strftime('%H시%M분 %m월%d일'), 
                 pushedOrder.storeInstance.addr
             ),
             thumbnail, buttons

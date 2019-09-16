@@ -104,7 +104,7 @@ def orderCancel(request):
                 orderInstance.storeInstance.name, 
                 orderInstance.menuInstance.name, 
                 orderInstance.menuInstance.price, 
-                orderInstance.pickupTime.strftime('%H시%M분 %m월%d일'), 
+                orderInstance.pickupTime.astimezone().strftime('%H시%M분 %m월%d일'), 
                 orderInstance.storeInstance.addr
             ),
             thumbnail, buttons
@@ -204,14 +204,14 @@ def orderPickupTimeChange(request):
         ]
 
         KakaoForm.BasicCard_Add(
-            "픽업시간이 {} 에서 {} 으로 변경되었습니다.".format(beforePickupTime.strftime('%H:%M'), orderInstance.pickupTime.strftime('%H:%M')),
+            "픽업시간이 {} 에서 {} 으로 변경되었습니다.".format(beforePickupTime.astimezone().strftime('%H:%M'), orderInstance.pickupTime.astimezone().strftime('%H:%M')),
             "주문번호: {}\n--------------------\n - 주문자: {}\n\n - 매장: {} \n - 메뉴: {}\n\n - 결제 금액: {}원\n\n - 픽업 시간: {}\n--------------------\n - 매장 위치: {}".format(
                 orderInstance.management_code,
                 orderInstance.userInstance.name,
                 orderInstance.storeInstance.name, 
                 orderInstance.menuInstance.name, 
                 orderInstance.menuInstance.price, 
-                orderInstance.pickupTime.strftime('%H시%M분 %m월%d일'), 
+                orderInstance.pickupTime.astimezone().strftime('%H시%M분 %m월%d일'), 
                 orderInstance.storeInstance.addr
             ),
             thumbnail, buttons
@@ -269,7 +269,7 @@ def useCoupon(request):
                 orderInstance.storeInstance.name, 
                 orderInstance.menuInstance.name, 
                 orderInstance.menuInstance.price, 
-                orderInstance.pickupTime.strftime('%H시%M분 %m월%d일'), 
+                orderInstance.pickupTime.astimezone().strftime('%H시%M분 %m월%d일'), 
                 orderInstance.storeInstance.addr
             ),
             thumbnail, buttons
