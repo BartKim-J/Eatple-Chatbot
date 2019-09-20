@@ -4,7 +4,7 @@ from django.db import models
 from django_mysql.models import Model
 from django.core.validators import MaxValueValidator, MinValueValidator
 #External Library
-
+import os
 
 #Models 
 from .models_config import Config
@@ -27,6 +27,31 @@ SELLING_TIME_CATEGORY_DICT  = Config.SELLING_TIME_CATEGORY_DICT
 SELLING_TIME_CATEGORY       = Config.SELLING_TIME_CATEGORY
 
 #STATIC CONFIG
+
+def set_filename_format(instance, filename, toFilename):
+    return "{filename}{extension}".format(
+        filename=toFilename,
+        extension=os.path.splitext(filename)[1],
+    )
+
+
+def menu_directory_path(instance, filename):
+    path = "STORE_DB/images/{storename}/{menuname}/{filename}".format(
+        storename=instance.storeInstance.name,
+        menuname=instance.name,
+        filename=set_filename_format(instance, filename, "menuImg"),
+    )
+
+    return path
+
+def logo_directory_path(instance, filename):
+    path = "STORE_DB/images/{storename}/{filename}".format(
+        storename=instance.storeInstance.name,
+        menuname=instance.name,
+        filename=set_filename_format(instance, filename, "logoImg"),
+    )
+
+    return path
 
 class Category(models.Model):
     # Metadata
@@ -71,7 +96,7 @@ class Store(models.Model):
 
     menus        = models.ManyToManyField('Menu')
 
-    logo         = models.ImageField(blank=True, upload_to="eatplus_chatot_app/DB/logo_img")
+    logo         = models.ImageField(default="STORE_DB/default/logoImg.png", upload_to=logo_directory_path)
 
     lunch_pickupTime_start  = models.IntegerField(default=0, choices=LUNCH_PICKUP_TIME, help_text="")
     lunch_pickupTime_end    = models.IntegerField(default=len(LUNCH_PICKUP_TIME) - 1, choices=LUNCH_PICKUP_TIME, help_text="")
@@ -97,6 +122,8 @@ class Menu(models.Model):
                                         help_text="Menu Magement Code")
     name             = models.CharField(default="Menu Name", max_length=STRING_LENGTH, 
                                         help_text="Menu Name")
+
+    image            = models.ImageField(default="STORE_DB/default/menuImg.png", upload_to=menu_directory_path)
 
     sellingTime      = models.CharField(max_length=STRING_LENGTH, choices=SELLING_TIME_CATEGORY, default=SELLING_TIME_CATEGORY[SELLING_TIME_LUNCH])
     categories       = models.ManyToManyField(Category)

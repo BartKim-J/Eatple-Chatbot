@@ -9,6 +9,7 @@ class Config():
     #SYSTEM
     USE_TZ               = settings.USE_TZ
     TIME_ZONE            = settings.TIME_ZONE
+    HOST_URL             = "http://54.65.75.156:8000"
 
     NOT_APPLICABLE       = "N/A"
     DEFAULT_OBJECT_ID    = 1

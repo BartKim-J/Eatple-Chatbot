@@ -162,7 +162,7 @@ def getOrderPickupTime(request):
 
         for index, pickupTime in ENTRY_PICKUP_TIME_MAP:
             if(pikcupTime_Start <= index) and (index <= pikcupTime_End):
-                PICKUP_TIME_QUICKREPLIES_MAP += {'action': "message", 'label': pickupTime, 'messageText': wordings.ORDER_CONFIRM_COMMAND, 'blockid': "none", 'extra': { **allExtraData, KAKAO_PARAM_PICKUP_TIME: pickupTime}},
+                PICKUP_TIME_QUICKREPLIES_MAP += {'action': "message", 'label': pickupTime, 'messageText': wordings.ORDER_PICKUP_TIME_CHANGE_CONFIRM_COMMAND, 'blockid': "none", 'extra': { **allExtraData, KAKAO_PARAM_PICKUP_TIME: pickupTime}},
 
         for entryPoint in PICKUP_TIME_QUICKREPLIES_MAP:
             KakaoForm.QuickReplies_Add(entryPoint['action'], entryPoint['label'], entryPoint['messageText'], entryPoint['blockid'], entryPoint['extra'])

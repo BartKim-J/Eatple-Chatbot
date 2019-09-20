@@ -48,7 +48,7 @@ class wordings():
 
     ORDER_CANCEL_COMMAND                      = "주문 취소하기"
     ORDER_PICKUP_TIME_CHANGE_COMMAND          = "픽업시간 변경"
-    ORDER_PICKUP_TIME_CHANGE_CONFIRM_COMMAND  = "픽업시간 변경완료"
+    ORDER_PICKUP_TIME_CHANGE_CONFIRM_COMMAND  = "픽업시간 변경 완료"
 
     GET_COUPON_COMMAND                        = "주문 상태 확인"
     GET_ORDER_LIST_COMMAND                    = "최근 구매내역"

@@ -29,6 +29,8 @@ from .views_system import EatplusSkillLog, errorView
 from .views_wording import wordings
 
 #GLOBAL DEFINE
+HOST_URL                    = Config.HOST_URL
+
 NOT_APPLICABLE              = Config.NOT_APPLICABLE
 
 SELLING_TIME_LUNCH          = Config.SELLING_TIME_LUNCH
@@ -182,8 +184,7 @@ def MenuListup(userID, menuCategory, sellingTime, currentSellingTime, location):
 
         #Menu Carousel Card Add 
         for menu in MenuList:
-            thumbnail = { "imageUrl": "http://k.kakaocdn.net/dn/83BvP/bl20duRC1Q1/lj3JUcmrzC53YIjNDkqbWK/i_6piz1p.jpg" }
-            
+            thumbnail = { "imageUrl": "{}{}".format(HOST_URL, menu.image.url) }
             kakaoMapUrl = "https://map.kakao.com/link/map/{},{}".format(menu.storeInstance.name, getLatLng(menu.storeInstance.addr))
             buttons = [
                 {'action': "message", 'label': wordings.ORDER_BTN,  'messageText': "{} {}".format(sellingTime, wordings.GET_PICKUP_TIME_COMMAND), 

@@ -8,7 +8,7 @@ from django.utils import timezone
 from datetime import datetime, timedelta
 
 #Models 
-from .models_config import Config, dateNowByTimeZone
+from .models_config import Config, dateNowByTimeZone, dateByTimeZone
 
 #GLOBAL CONFIG
 NOT_APPLICABLE          = Config.NOT_APPLICABLE
@@ -31,47 +31,53 @@ MANAGEMENT_CODE_DEFAULT = Config.MANAGEMENT_CODE_DEFAULT
 def orderStatusUpdateByTime(orderInstance):
     menuInstance              = orderInstance.menuInstance
 
-    orderDate                 = orderInstance.order_date
+    orderDate                 = dateByTimeZone(orderInstance.order_date)
     orderDateWithoutTime      = orderDate.replace(hour=0, minute=0, second=0, microsecond=0)
 
     orderPickupTime           = orderInstance.pickupTime
     
-    nowDate                   = dateNowByTimeZone()
-    nowDateWithoutTime        = nowDate.replace(hour=0, minute=0, second=0, microsecond=0)
+    currentDate                   = dateNowByTimeZone()
+    currentDateWithoutTime        = currentDate.replace(hour=0, minute=0, second=0, microsecond=0)
+
+    YESTERDAY = currentDateWithoutTime + timedelta(days=-1) # Yesterday start 
+    TODAY     = currentDateWithoutTime
+    TOMORROW  = currentDateWithoutTime + timedelta(days=1) # Tommorrow start
 
     # Prev Lunch Order Edit Time 16:30 ~ 9:30(~ 10:30)
-    prevlunchOrderEditTimeStart   = nowDateWithoutTime + timedelta(hours=16, minutes=30, days=-1)
-    prevlunchOrderEditTimeEnd     = nowDateWithoutTime + timedelta(hours=9, minutes=30)
-    prevlunchOrderTimeEnd         = nowDateWithoutTime + timedelta(hours=10, minutes=30)
+    prevlunchOrderEditTimeStart   = currentDateWithoutTime + timedelta(hours=16, minutes=30, days=-1)
+    prevlunchOrderEditTimeEnd     = currentDateWithoutTime + timedelta(hours=9, minutes=30)
+    prevlunchOrderTimeEnd         = currentDateWithoutTime + timedelta(hours=10, minutes=30)
 
     # Dinner Order Edit Time 10:30 ~ 15:30(~ 16:30)
-    dinnerOrderEditTimeStart      = nowDateWithoutTime + timedelta(hours=10, minutes=30)
-    dinnerOrderEditTimeEnd        = nowDateWithoutTime + timedelta(hours=15, minutes=30)
-    dinnerOrderTimeEnd            = nowDateWithoutTime + timedelta(hours=16, minutes=30)
+    dinnerOrderEditTimeStart      = currentDateWithoutTime + timedelta(hours=10, minutes=30)
+    dinnerOrderEditTimeEnd        = currentDateWithoutTime + timedelta(hours=15, minutes=30)
+    dinnerOrderTimeEnd            = currentDateWithoutTime + timedelta(hours=16, minutes=30)
 
     # Next Lunch Order Edit Time 16:30 ~ 9:30(~ 10:30)
-    nextlunchOrderEditTimeStart   = nowDateWithoutTime + timedelta(hours=16, minutes=30)
-    nextlunchOrderEditTimeEnd     = nowDateWithoutTime + timedelta(hours=9, minutes=30, days=1)
-    nextlunchOrderTimeEnd         = nowDateWithoutTime + timedelta(hours=10, minutes=30, days=1)
+    nextlunchOrderEditTimeStart   = currentDateWithoutTime + timedelta(hours=16, minutes=30)
+    nextlunchOrderEditTimeEnd     = currentDateWithoutTime + timedelta(hours=9, minutes=30, days=1)
+    nextlunchOrderTimeEnd         = currentDateWithoutTime + timedelta(hours=10, minutes=30, days=1)
 
     # Lunch Order Pickup Time (10:30 ~)11:30 ~ 13:30
-    lunchOrderPickupTimeStart     = nowDateWithoutTime + timedelta(hours=11, minutes=30)
-    lunchOrderPickupTimeEnd       = nowDateWithoutTime + timedelta(hours=13, minutes=30)
+    lunchOrderPickupTimeStart     = currentDateWithoutTime + timedelta(hours=11, minutes=30)
+    lunchOrderPickupTimeEnd       = currentDateWithoutTime + timedelta(hours=13, minutes=30)
 
     # Dinner Order Pickup Time (16:30 ~)17:30 ~ 21:00
-    dinnerOrderPickupTimeStart    = nowDateWithoutTime + timedelta(hours=17, minutes=30)
-    dinnerOrderPickupTimeEnd      = nowDateWithoutTime + timedelta(hours=21, minutes=0)
+    dinnerOrderPickupTimeStart    = currentDateWithoutTime + timedelta(hours=17, minutes=30)
+    dinnerOrderPickupTimeEnd      = currentDateWithoutTime + timedelta(hours=21, minutes=0)
 
     # Lunch Order
-    if SELLING_TIME_CATEGORY[SELLING_TIME_LUNCH][0] == menuInstance.sellingTime:
+    if (SELLING_TIME_CATEGORY[SELLING_TIME_LUNCH][0] == menuInstance.sellingTime) and \
+        ((YESTERDAY <= orderDateWithoutTime) and (orderDateWithoutTime <= TODAY)):
+
         # Out PickupTime Range
-        if(prevlunchOrderTimeEnd <= nowDate) and (nowDate <= lunchOrderPickupTimeStart):
+        if(prevlunchOrderTimeEnd <= currentDate) and (currentDate <= lunchOrderPickupTimeStart):
             orderInstance.status = ORDER_STATUS[ORDER_STATUS_DICT['픽업 준비중']][0]
             orderInstance.save()
         # In PickupTime Range
-        elif(lunchOrderPickupTimeStart <= nowDate) and (nowDate <= lunchOrderPickupTimeEnd):
+        elif(lunchOrderPickupTimeStart <= currentDate) and (currentDate <= lunchOrderPickupTimeEnd) :
             # Over Order Pickup Time
-            if(nowDate >= orderPickupTime):
+            if(currentDate >= orderPickupTime):
                 orderInstance.status = ORDER_STATUS[ORDER_STATUS_DICT['픽업 가능']][0]
                 orderInstance.save()
             else:
@@ -79,8 +85,8 @@ def orderStatusUpdateByTime(orderInstance):
                 orderInstance.save()
         else:
             # prev phase Order
-            if(prevlunchOrderEditTimeStart <= nowDate) and (nowDate <= prevlunchOrderTimeEnd):
-                if nowDate <= prevlunchOrderEditTimeEnd:
+            if(prevlunchOrderEditTimeStart <= currentDate) and (currentDate <= prevlunchOrderTimeEnd):
+                if currentDate <= prevlunchOrderEditTimeEnd:
                     orderInstance.status = ORDER_STATUS[ORDER_STATUS_DICT['주문 완료']][0]
                     orderInstance.save()
                 
@@ -89,7 +95,7 @@ def orderStatusUpdateByTime(orderInstance):
                     orderInstance.save()
 
             # next phase Lunch order
-            elif nextlunchOrderTimeEnd >= nowDate:
+            elif (nextlunchOrderTimeEnd >= currentDate):
                 orderInstance.status = ORDER_STATUS[ORDER_STATUS_DICT['주문 완료']][0]
                 orderInstance.save()
 
@@ -99,15 +105,15 @@ def orderStatusUpdateByTime(orderInstance):
                 orderInstance.save()
 
     # Dinner Order
-    elif SELLING_TIME_CATEGORY[SELLING_TIME_DINNER][0] == menuInstance.sellingTime:
+    elif (SELLING_TIME_CATEGORY[SELLING_TIME_DINNER][0] == menuInstance.sellingTime) and (orderDateWithoutTime == TODAY):
         # Out PickupTime Range
-        if(dinnerOrderTimeEnd <= nowDate) and (nowDate <= dinnerOrderPickupTimeStart):
+        if(dinnerOrderTimeEnd <= currentDate) and (currentDate <= dinnerOrderPickupTimeStart):
             orderInstance.status = ORDER_STATUS[ORDER_STATUS_DICT['픽업 준비중']][0]
             orderInstance.save()
         # In PickupTime Range
-        elif(dinnerOrderPickupTimeStart <= nowDate) and (nowDate <= dinnerOrderPickupTimeEnd):
+        elif(dinnerOrderPickupTimeStart <= currentDate) and (currentDate <= dinnerOrderPickupTimeEnd):
             # Over Order Pickup Time
-            if(nowDate >= orderPickupTime):
+            if(currentDate >= orderPickupTime):
                 orderInstance.status = ORDER_STATUS[ORDER_STATUS_DICT['픽업 가능']][0]
                 orderInstance.save()
             else:
@@ -115,7 +121,7 @@ def orderStatusUpdateByTime(orderInstance):
                 orderInstance.save()
         else:
             # Today Order
-            if(dinnerOrderEditTimeStart < nowDate) and (nowDate < dinnerOrderTimeEnd):
+            if(dinnerOrderEditTimeStart < currentDate) and (currentDate < dinnerOrderTimeEnd):
 
                 if orderDate <= dinnerOrderEditTimeEnd:
                     orderInstance.status = ORDER_STATUS[ORDER_STATUS_DICT['주문 완료']][0]
