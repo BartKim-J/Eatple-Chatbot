@@ -130,9 +130,6 @@ def MenuListup(userID, menuCategory, sellingTime, currentSellingTime, location):
     ORDER_EXIT_QUICKREPLIES_MAP = [
     {'action': "message", 'label': wordings.RETURN_HOME_QUICK_REPLISE,                 'messageText': wordings.RETURN_HOME_QUICK_REPLISE, 'blockid': "none", 
         'extra': { KAKAO_PARAM_STATUS: KAKAO_PARAM_STATUS_OK }},
-
-    {'action': "message", 'label': wordings.CHECK_OTHER_SELLING_TIME_QUICK_REPLISE,    'messageText': wordings.GET_SELLING_TIEM_COMMAND, 'blockid': "none", 
-        'extra': { KAKAO_PARAM_STATUS: KAKAO_PARAM_STATUS_OK }},
     ]
 
     # Check Selling Time
@@ -142,8 +139,16 @@ def MenuListup(userID, menuCategory, sellingTime, currentSellingTime, location):
 
         if SELLING_TIME_CATEGORY[currentSellingTime][0] != LUNCH:
             KakaoForm.SimpleText_Add(wordings.GET_SELLING_TIME_LUNCH_FINISH_TEXT)
+            ORDER_EXIT_QUICKREPLIES_MAP.append({'action': "message", 'label': wordings.GET_SELLING_TIME_LUNCH_BTN,    'messageText': wordings.GET_SELLING_TIME_LUNCH_BTN, 'blockid': "none", 
+                                                'extra': {  KAKAO_PARAM_MENU_CATEGORY: NOT_APPLICABLE, 
+                                                            KAKAO_PARAM_SELLING_TIME: DINNER, 
+                                                            KAKAO_PARAM_USER_ID: KAKAO_SUPER_USER_ID }})
         else:
             KakaoForm.SimpleText_Add(wordings.GET_SELLING_TIME_DINNER_FINISH_TEXT)
+            ORDER_EXIT_QUICKREPLIES_MAP.append({'action': "message", 'label': wordings.GET_SELLING_TIME_LUNCH_BTN,    'messageText': wordings.GET_SELLING_TIME_LUNCH_BTN, 'blockid': "none", 
+                                                'extra': {  KAKAO_PARAM_MENU_CATEGORY: NOT_APPLICABLE, 
+                                                            KAKAO_PARAM_SELLING_TIME: DINNER, 
+                                                            KAKAO_PARAM_USER_ID: KAKAO_SUPER_USER_ID }})
 
         for entryPoint in ORDER_EXIT_QUICKREPLIES_MAP:
             KakaoForm.QuickReplies_Add(entryPoint['action'], entryPoint['label'], entryPoint['messageText'], entryPoint['blockid'], entryPoint['extra'])
@@ -424,7 +429,7 @@ def orderConfirm(request):
             {'action': "message", 'label': wordings.ORDER_PUSH_COMMAND,  'messageText': wordings.ORDER_PUSH_COMMAND, 'extra': kakaoPayload.dataActionExtra},
         ]
 
-        KakaoForm.BasicCard_Add("{}".format(menuInstance.name),"{} - {}원\n - 픽업시간 [ {} ]".format(
+        KakaoForm.BasicCard_Add("{}".format(menuInstance.name),"{} - {}원\n - 픽업대 [ {} ]".format(
             storeInstance.name,
             menuInstance.price,
             kakaoPayload.pickupTime

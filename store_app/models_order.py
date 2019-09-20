@@ -70,11 +70,11 @@ def orderStatusUpdateByTime(orderInstance):
     if (SELLING_TIME_CATEGORY[SELLING_TIME_LUNCH][0] == menuInstance.sellingTime) and \
         ((YESTERDAY <= orderDateWithoutTime) and (orderDateWithoutTime <= TODAY)):
 
-        # Out PickupTime Range
+        # Meal Pre- 
         if(prevlunchOrderTimeEnd <= currentDate) and (currentDate <= lunchOrderPickupTimeStart):
             orderInstance.status = ORDER_STATUS[ORDER_STATUS_DICT['픽업 준비중']][0]
             orderInstance.save()
-        # In PickupTime Range
+        # PickupTime Range
         elif(lunchOrderPickupTimeStart <= currentDate) and (currentDate <= lunchOrderPickupTimeEnd) :
             # Over Order Pickup Time
             if(currentDate >= orderPickupTime):
@@ -83,6 +83,7 @@ def orderStatusUpdateByTime(orderInstance):
             else:
                 orderInstance.status = ORDER_STATUS[ORDER_STATUS_DICT['픽업 준비중']][0]
                 orderInstance.save()
+        # Order Time Range
         else:
             # prev phase Order
             if(prevlunchOrderEditTimeStart <= currentDate) and (currentDate <= prevlunchOrderTimeEnd):
@@ -106,11 +107,11 @@ def orderStatusUpdateByTime(orderInstance):
 
     # Dinner Order
     elif (SELLING_TIME_CATEGORY[SELLING_TIME_DINNER][0] == menuInstance.sellingTime) and (orderDateWithoutTime == TODAY):
-        # Out PickupTime Range
+        # Meal Pre- 
         if(dinnerOrderTimeEnd <= currentDate) and (currentDate <= dinnerOrderPickupTimeStart):
             orderInstance.status = ORDER_STATUS[ORDER_STATUS_DICT['픽업 준비중']][0]
             orderInstance.save()
-        # In PickupTime Range
+        # PickupTime Range
         elif(dinnerOrderPickupTimeStart <= currentDate) and (currentDate <= dinnerOrderPickupTimeEnd):
             # Over Order Pickup Time
             if(currentDate >= orderPickupTime):
@@ -154,7 +155,7 @@ def OrderManagementCodeGenerator(storeInstance, menuInstance, userInstance, orde
 #STATIC CONFIG
 class Order(models.Model):
     class Meta:
-        ordering = ['-order_date']
+        ordering = ['-pickupTime']
 
     userInstance     = models.ForeignKey('User',  on_delete=models.DO_NOTHING, default=DEFAULT_OBJECT_ID)
     storeInstance    = models.ForeignKey('Store',  on_delete=models.DO_NOTHING, default=DEFAULT_OBJECT_ID)
@@ -197,7 +198,7 @@ class Order(models.Model):
 
     # Methods
     def __str__(self):
-        return "{} - {} :: {}".format(self.management_code, self.status, self.order_date)
+        return "{} - {} :: {} ----- {}".format(self.management_code, self.status, self.pickupTime, self.order_date)
 
 class OrderManager():
     def __init__(self, userID):
