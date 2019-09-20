@@ -416,9 +416,7 @@ def orderConfirm(request):
         KakaoForm.BasicCard_Init()
         
         #Menu Carousel Card Add 
-        thumbnail = {
-            "imageUrl": "http://k.kakaocdn.net/dn/83BvP/bl20duRC1Q1/lj3JUcmrzC53YIjNDkqbWK/i_6piz1p.jpg",
-        }
+        thumbnail = { "imageUrl": "{}{}".format(HOST_URL, menuInstance.image.url) }
         
         
         kakaoMapUrl = "https://map.kakao.com/link/map/{},{}".format(storeInstance.name, getLatLng(storeInstance.addr))

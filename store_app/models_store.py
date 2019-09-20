@@ -31,7 +31,7 @@ SELLING_TIME_CATEGORY       = Config.SELLING_TIME_CATEGORY
 def set_filename_format(instance, filename, toFilename):
     return "{filename}{extension}".format(
         filename=toFilename,
-        extension=os.path.splitext(filename)[1],
+        extension=".png",
     )
 
 
@@ -52,6 +52,21 @@ def logo_directory_path(instance, filename):
     )
 
     return path
+
+def default_directory_path(instance, filename):
+    path = "STORE_DB/images/default/{filename}".format(
+        filename=set_filename_format(instance, filename, instance.filename),
+    )
+
+    return path
+
+class DefaultImage(models.Model):
+    filename     = models.CharField(max_length=STRING_LENGTH, help_text="Category")
+    image        = models.ImageField(blank=False, upload_to=default_directory_path)
+
+    # Methods
+    def __str__(self):
+        return "{}".format(self.filename)
 
 class Category(models.Model):
     # Metadata
@@ -96,7 +111,7 @@ class Store(models.Model):
 
     menus        = models.ManyToManyField('Menu')
 
-    logo         = models.ImageField(default="STORE_DB/default/logoImg.png", upload_to=logo_directory_path)
+    logo         = models.ImageField(default="STORE_DB/images/default/logoImg.png", upload_to=logo_directory_path)
 
     lunch_pickupTime_start  = models.IntegerField(default=0, choices=LUNCH_PICKUP_TIME, help_text="")
     lunch_pickupTime_end    = models.IntegerField(default=len(LUNCH_PICKUP_TIME) - 1, choices=LUNCH_PICKUP_TIME, help_text="")
@@ -123,7 +138,7 @@ class Menu(models.Model):
     name             = models.CharField(default="Menu Name", max_length=STRING_LENGTH, 
                                         help_text="Menu Name")
 
-    image            = models.ImageField(default="STORE_DB/default/menuImg.png", upload_to=menu_directory_path)
+    image            = models.ImageField(default="STORE_DB/images/default/menuImg.png", upload_to=menu_directory_path)
 
     sellingTime      = models.CharField(max_length=STRING_LENGTH, choices=SELLING_TIME_CATEGORY, default=SELLING_TIME_CATEGORY[SELLING_TIME_LUNCH])
     categories       = models.ManyToManyField(Category)

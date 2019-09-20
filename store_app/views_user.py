@@ -27,7 +27,7 @@ ORDER_SUPER_USER_ID         = Config.DEFAULT_USER_ID
 def userHome(request):
     EatplusSkillLog("Home")
 
-    HOME_QUICKREPLIES_MAP = [
+    HOME_BTN_MAP = [
         {'action': "message", 'label': wordings.ORDER_BTN,      'messageText': wordings.GET_SELLING_TIEM_COMMAND, 'blockid': "none", 
         'extra': { KAKAO_PARAM_USER_ID: ORDER_SUPER_USER_ID }},
 
@@ -37,6 +37,8 @@ def userHome(request):
         {'action': "message", 'label': wordings.GET_ORDER_LIST_COMMAND,  'messageText': wordings.GET_ORDER_LIST_COMMAND,    'blockid': "none", 
         'extra': { KAKAO_PARAM_USER_ID: ORDER_SUPER_USER_ID }},
 
+    ]
+    HOME_QUICKREPLIES_MAP = [
         {'action': "message", 'label': wordings.CHANGE_LOCATION_BTN,      'messageText': wordings.CHANGE_LOCATION_COMMAND,    'blockid': "none", 
         'extra': { KAKAO_PARAM_USER_ID: ORDER_SUPER_USER_ID }},
 
@@ -44,12 +46,15 @@ def userHome(request):
         'extra': { KAKAO_PARAM_USER_ID: ORDER_SUPER_USER_ID }},
     ]
 
+    thumbnail = {"imageUrl": ""}
+    
+    buttons = HOME_BTN_MAP
+
     try:
-        KakaoForm = Kakao_SimpleForm()
-        KakaoForm.SimpleForm_Init()
+        KakaoForm = Kakao_CarouselForm()
+        KakaoForm.BasicCard_Init()
 
-        KakaoForm.SimpleText_Add(wordings.HOME_TEXT)
-
+        KakaoForm.BasicCard_Add(wordings.HOME_TITLE_TEXT, wordings.HOME_DESCRIPT_TEXT, thumbnail, buttons)
 
         for entryPoint in HOME_QUICKREPLIES_MAP:
             KakaoForm.QuickReplies_Add(entryPoint['action'], entryPoint['label'], entryPoint['messageText'], entryPoint['blockid'], entryPoint['extra'])
