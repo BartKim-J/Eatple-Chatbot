@@ -6,7 +6,10 @@ from django.http import JsonResponse
 #External Library
 import json
 
+
 #Models
+from .eatplus_define import EP_define
+
 from .models_order import Order
 from .models_store import Store, Menu
 

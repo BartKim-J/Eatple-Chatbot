@@ -1,3 +1,11 @@
+'''
+    Author : Ben Kim
+
+    @NOTE
+    @BUG
+    @TODO
+ 
+'''
 from django.contrib import admin
 
 from .models_store import DefaultImage

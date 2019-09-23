@@ -16,7 +16,7 @@ import sys
 
 
 #Models 
-from .models_config import Config, dateNowByTimeZone, dateByTimeZone
+from .eatplus_define import EP_define, dateNowByTimeZone, dateByTimeZone
 
 from .models_user  import User
 from .models_order import Order, OrderManager
@@ -30,29 +30,29 @@ from .views_kakaoTool import getLatLng, KakaoPayLoad
 from .views_system import EatplusSkillLog, errorView
 from .views_wording import wordings
 
-#GLOBAL CONFIG
-TIME_ZONE                   = Config.TIME_ZONE
-NOT_APPLICABLE              = Config.NOT_APPLICABLE
+#GLOBAL EP_define
+TIME_ZONE                   = EP_define.TIME_ZONE
+NOT_APPLICABLE              = EP_define.NOT_APPLICABLE
 
-SELLING_TIME_LUNCH          = Config.SELLING_TIME_LUNCH
-SELLING_TIME_DINNER         = Config.SELLING_TIME_DINNER
-SELLING_TIME_CATEGORY_DICT  = Config.SELLING_TIME_CATEGORY_DICT
-SELLING_TIME_CATEGORY       = Config.SELLING_TIME_CATEGORY
+SELLING_TIME_LUNCH          = EP_define.SELLING_TIME_LUNCH
+SELLING_TIME_DINNER         = EP_define.SELLING_TIME_DINNER
+SELLING_TIME_CATEGORY_DICT  = EP_define.SELLING_TIME_CATEGORY_DICT
+SELLING_TIME_CATEGORY       = EP_define.SELLING_TIME_CATEGORY
 
-ORDER_STATUS                = Config.ORDER_STATUS
-ORDER_STATUS_DICT           = Config.ORDER_STATUS_DICT
+ORDER_STATUS                = EP_define.ORDER_STATUS
+ORDER_STATUS_DICT           = EP_define.ORDER_STATUS_DICT
 
-KAKAO_PARAM_ORDER_ID        = Config.KAKAO_PARAM_ORDER_ID
-KAKAO_PARAM_STORE_ID        = Config.KAKAO_PARAM_STORE_ID
-KAKAO_PARAM_MENU_ID         = Config.KAKAO_PARAM_MENU_ID
+KAKAO_PARAM_ORDER_ID        = EP_define.KAKAO_PARAM_ORDER_ID
+KAKAO_PARAM_STORE_ID        = EP_define.KAKAO_PARAM_STORE_ID
+KAKAO_PARAM_MENU_ID         = EP_define.KAKAO_PARAM_MENU_ID
 
-KAKAO_PARAM_STATUS          = Config.KAKAO_PARAM_STATUS
-KAKAO_PARAM_STATUS_OK       = Config.KAKAO_PARAM_STATUS_OK
-KAKAO_PARAM_STATUS_NOT_OK   = Config.KAKAO_PARAM_STATUS_NOT_OK
+KAKAO_PARAM_STATUS          = EP_define.KAKAO_PARAM_STATUS
+KAKAO_PARAM_STATUS_OK       = EP_define.KAKAO_PARAM_STATUS_OK
+KAKAO_PARAM_STATUS_NOT_OK   = EP_define.KAKAO_PARAM_STATUS_NOT_OK
 
-ORDER_SUPER_USER_ID         = Config.DEFAULT_USER_ID
+ORDER_SUPER_USER_ID         = EP_define.DEFAULT_USER_ID
 
-#STATIC CONFIG
+#STATIC EP_define
 ORDER_LIST_LENGTH           = 5
 
 def CouponListup(userID):

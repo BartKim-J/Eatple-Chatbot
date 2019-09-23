@@ -41,7 +41,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     # local-app
-    'store_app',
+    'eatplus_app',
 ]
 
 MIDDLEWARE = [

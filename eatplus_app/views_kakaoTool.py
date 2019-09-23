@@ -8,7 +8,7 @@ import requests
 import json
 
 #Models
-from .models_config import Config
+from .eatplus_define import EP_define
 
 #View
 from .views_system import EatplusSkillLog, errorView
@@ -59,72 +59,72 @@ class KakaoPayLoad():
 
         #ID Parsing
         try:
-            self.orderID         = self.dataActionExtra[Config.KAKAO_PARAM_ORDER_ID]
+            self.orderID         = self.dataActionExtra[EP_define.KAKAO_PARAM_ORDER_ID]
         except (RuntimeError, TypeError, NameError, KeyError) as ex:
-            self.orderID         = Config.NOT_APPLICABLE
+            self.orderID         = EP_define.NOT_APPLICABLE
 
 
         try:
             self.userID = self.dataUserRequest['user']['id']
         except (RuntimeError, TypeError, NameError, KeyError) as ex:
-            self.userID         = Config.NOT_APPLICABLE
+            self.userID         = EP_define.NOT_APPLICABLE
 
 
         try:
-            self.storeID         = self.dataActionExtra[Config.KAKAO_PARAM_STORE_ID]
+            self.storeID         = self.dataActionExtra[EP_define.KAKAO_PARAM_STORE_ID]
         except (RuntimeError, TypeError, NameError, KeyError) as ex:
-            self.storeID         = Config.NOT_APPLICABLE
+            self.storeID         = EP_define.NOT_APPLICABLE
 
         try:
-            self.menuID          = self.dataActionExtra[Config.KAKAO_PARAM_MENU_ID]
+            self.menuID          = self.dataActionExtra[EP_define.KAKAO_PARAM_MENU_ID]
         except (RuntimeError, TypeError, NameError, KeyError) as ex:
-            self.menuID          = Config.NOT_APPLICABLE
+            self.menuID          = EP_define.NOT_APPLICABLE
 
         #Menu Category
         try:
-            self.menuCategory      = self.dataActionParams[Config.KAKAO_PARAM_MENU_CATEGORY]['origin']
+            self.menuCategory      = self.dataActionParams[EP_define.KAKAO_PARAM_MENU_CATEGORY]['origin']
             if not self.dataActionExtra is None: 
-                self.dataActionExtra[Config.KAKAO_PARAM_MENU_CATEGORY] = self.menuCategory
+                self.dataActionExtra[EP_define.KAKAO_PARAM_MENU_CATEGORY] = self.menuCategory
         except (RuntimeError, TypeError, NameError, KeyError) as ex:
-            self.menuCategory       = Config.NOT_APPLICABLE
+            self.menuCategory       = EP_define.NOT_APPLICABLE
             pass
         if not self.dataActionExtra is None:
             try:
-                self.menuCategory      = self.dataActionExtra[Config.KAKAO_PARAM_MENU_CATEGORY]
+                self.menuCategory      = self.dataActionExtra[EP_define.KAKAO_PARAM_MENU_CATEGORY]
             except (RuntimeError, TypeError, NameError, KeyError) as ex:
                 pass
 
         #Selling Time
         try:
-            self.sellingTime      = self.dataActionParams[Config.KAKAO_PARAM_SELLING_TIME]['origin']
+            self.sellingTime      = self.dataActionParams[EP_define.KAKAO_PARAM_SELLING_TIME]['origin']
             if not self.dataActionExtra is None: 
-                self.dataActionExtra[Config.KAKAO_PARAM_SELLING_TIME] = self.sellingTime
+                self.dataActionExtra[EP_define.KAKAO_PARAM_SELLING_TIME] = self.sellingTime
         except (RuntimeError, TypeError, NameError, KeyError) as ex:
-            self.sellingTime       = Config.NOT_APPLICABLE
+            self.sellingTime       = EP_define.NOT_APPLICABLE
             pass
         if not self.dataActionExtra is None:
             try:
-                self.sellingTime      = self.dataActionExtra[Config.KAKAO_PARAM_SELLING_TIME]
+                self.sellingTime      = self.dataActionExtra[EP_define.KAKAO_PARAM_SELLING_TIME]
             except (RuntimeError, TypeError, NameError, KeyError) as ex:
                 pass
 
         #Pickup Time Parsing
         try:
-            self.pickupTime       = self.dataActionParams[Config.KAKAO_PARAM_PICKUP_TIME]['origin'][:5]
+            self.pickupTime       = self.dataActionParams[EP_define.KAKAO_PARAM_PICKUP_TIME]['origin'][:5]
             if not self.dataActionExtra is None:
-                self.dataActionExtra[Config.KAKAO_PARAM_PICKUP_TIME] = self.pickupTime
+                self.dataActionExtra[EP_define.KAKAO_PARAM_PICKUP_TIME] = self.pickupTime
         except (RuntimeError, TypeError, NameError, KeyError) as ex:
-            self.pickupTime       = Config.NOT_APPLICABLE
+            self.pickupTime       = EP_define.NOT_APPLICABLE
             pass
         if not self.dataActionExtra is None:
             try:
-                self.pickupTime      = self.dataActionExtra[Config.KAKAO_PARAM_PICKUP_TIME]
+                self.pickupTime      = self.dataActionExtra[EP_define.KAKAO_PARAM_PICKUP_TIME]
             except (RuntimeError, TypeError, NameError, KeyError) as ex:
                 pass
 
         #Location Parsing
         try:
-            self.location        = Config.NOT_APPLICABLE
+            self.location        = EP_define.NOT_APPLICABLE
         except (RuntimeError, TypeError, NameError, KeyError) as ex:
-            self.location        = Config.NOT_APPLICABLE 
+            self.location        = EP_define.NOT_APPLICABLE 
             pass

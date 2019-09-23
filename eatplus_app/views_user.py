@@ -9,7 +9,7 @@ import json
 from random import *
 
 #Models 
-from .models_config import Config
+from .eatplus_define import EP_define
 
 from .models_user  import User
 from .models_order import Order, OrderManager
@@ -20,9 +20,6 @@ from .module_KakaoForm import Kakao_SimpleForm, Kakao_CarouselForm
 from .views_kakaoTool import getLatLng, KakaoPayLoad
 from .views_system import EatplusSkillLog, errorView
 from .views_wording import wordings
-
-
-ORDER_SUPER_USER_ID         = Config.DEFAULT_USER_ID
 
 
 def registerUser(userIdentifier):

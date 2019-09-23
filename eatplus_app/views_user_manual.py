@@ -8,7 +8,7 @@ import requests
 import json
 
 #Models 
-from .models_config import Config
+from .eatplus_define import EP_define
 
 from .models_user  import User
 from .models_order import Order
@@ -23,19 +23,19 @@ from .views_system import EatplusSkillLog, errorView
 from .views_wording import wordings
 
 #GLOBAL DEFINE
-HOST_URL                    = Config.HOST_URL
-NOT_APPLICABLE              = Config.NOT_APPLICABLE
+HOST_URL                    = EP_define.HOST_URL
+NOT_APPLICABLE              = EP_define.NOT_APPLICABLE
 
-ORDER_STATUS                = Config.ORDER_STATUS
-ORDER_STATUS_DICT           = Config.ORDER_STATUS_DICT
+ORDER_STATUS                = EP_define.ORDER_STATUS
+ORDER_STATUS_DICT           = EP_define.ORDER_STATUS_DICT
 
-KAKAO_PARAM_ORDER_ID        = Config.KAKAO_PARAM_ORDER_ID
-KAKAO_PARAM_STORE_ID        = Config.KAKAO_PARAM_STORE_ID
-KAKAO_PARAM_MENU_ID         = Config.KAKAO_PARAM_MENU_ID
+KAKAO_PARAM_ORDER_ID        = EP_define.KAKAO_PARAM_ORDER_ID
+KAKAO_PARAM_STORE_ID        = EP_define.KAKAO_PARAM_STORE_ID
+KAKAO_PARAM_MENU_ID         = EP_define.KAKAO_PARAM_MENU_ID
 
-KAKAO_PARAM_STATUS          = Config.KAKAO_PARAM_STATUS
-KAKAO_PARAM_STATUS_OK       = Config.KAKAO_PARAM_STATUS_OK
-KAKAO_PARAM_STATUS_NOT_OK   = Config.KAKAO_PARAM_STATUS_NOT_OK
+KAKAO_PARAM_STATUS          = EP_define.KAKAO_PARAM_STATUS
+KAKAO_PARAM_STATUS_OK       = EP_define.KAKAO_PARAM_STATUS_OK
+KAKAO_PARAM_STATUS_NOT_OK   = EP_define.KAKAO_PARAM_STATUS_NOT_OK
 
 
 # # # # # # # # # # # # # # # # # # # # # # # # #

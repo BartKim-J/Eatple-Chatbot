@@ -1,3 +1,11 @@
+'''
+    Author : Ben Kim
+
+    @NOTE
+    @BUG
+    @TODO
+ 
+'''
 #Django Library
 from django.shortcuts import render
 from django.views.decorators.csrf import csrf_exempt
@@ -15,10 +23,18 @@ from .module_KakaoForm import Kakao_SimpleForm, Kakao_CarouselForm
 
 from .views_system import EatplusSkillLog, errorView
 
-# Eatplus for Partner 
-from .views_partner import partnerHome
 
-# Eatplus for User 
+### API Functions ###
+
+
+'''
+    Eatplus API for User
+
+    @NOTE
+    @BUG
+    @TODO
+
+'''
 from .views_user import userHome
 from .views_user_manual import userManual
 from .views_user_ordering import getSellingTime, selectMenu, getPickupTime, orderConfirm, orderPush
@@ -26,4 +42,12 @@ from .views_user_orderCheck import getOrderList, getCoupon, confirmUseCoupon
 from .views_user_orderChange import useCoupon, orderCancel, orderPickupTimeChange, getOrderPickupTime
 
 
-### API Functions ###
+'''
+    Eatplus API for Partner
+
+    @NOTE
+    @BUG
+    @TODO
+    
+'''
+from .views_partner import partnerHome

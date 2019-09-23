@@ -1,3 +1,11 @@
+'''
+    Author : Ben Kim
+
+    @NOTE
+    @BUG
+    @TODO
+ 
+'''
 #Django Library
 from django.shortcuts import render
 from django.views.decorators.csrf import csrf_exempt
@@ -7,7 +15,7 @@ from django.http import JsonResponse
 import datetime
 
 #Models 
-from .models_config import Config
+from .eatplus_define import EP_define
 
 from .models_user  import User
 from .models_order import Order

@@ -1,3 +1,11 @@
+'''
+    Author : Ben Kim
+
+    @NOTE
+    @BUG
+    @TODO
+ 
+'''
 #Django Library
 from django.urls import reverse
 from django.db import models
@@ -6,14 +14,14 @@ from django_mysql.models import Model
 #External Library
 
 #Models 
-from .models_config import Config
+from .eatplus_define import EP_define
 
 #GLOBAL CONFIG
-NOT_APPLICABLE          = Config.NOT_APPLICABLE
-DEFAULT_OBJECT_ID       = Config.DEFAULT_OBJECT_ID
+NOT_APPLICABLE          = EP_define.NOT_APPLICABLE
+DEFAULT_OBJECT_ID       = EP_define.DEFAULT_OBJECT_ID
 
-USER_NICKNAME_LENGTH    = Config.USER_NICKNAME_LENGTH
-USER_ID_CODE_LENGTH    = Config.USER_ID_CODE_LENGTH
+USER_NICKNAME_LENGTH    = EP_define.USER_NICKNAME_LENGTH
+USER_ID_CODE_LENGTH     = EP_define.USER_ID_CODE_LENGTH
 
 #STATIC CONFIG
 

@@ -1,3 +1,12 @@
+'''
+    Author : Ben Kim
+
+    @NOTE
+    @BUG
+    @TODO
+ 
+'''
+
 #Django Library
 from django.conf import settings
 
@@ -9,7 +18,7 @@ STRING_32BIT  = 31
 STRING_256BIT = 255
 
 
-class Config():
+class EP_define():
     #SYSTEM
     USE_TZ               = settings.USE_TZ
     TIME_ZONE            = settings.TIME_ZONE

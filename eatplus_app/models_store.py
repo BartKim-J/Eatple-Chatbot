@@ -1,3 +1,11 @@
+'''
+    Author : Ben Kim
+
+    @NOTE
+    @BUG
+    @TODO
+ 
+'''
 #Django Library
 from django.db import models
 from django.conf import settings
@@ -10,24 +18,24 @@ from django.core.validators import MaxValueValidator, MinValueValidator
 import os
 
 #Models 
-from .models_config import Config
+from .eatplus_define import EP_define
 
 #GLOBAL CONFIG
-NOT_APPLICABLE              = Config.NOT_APPLICABLE
-DEFAULT_OBJECT_ID           = Config.DEFAULT_OBJECT_ID
+NOT_APPLICABLE              = EP_define.NOT_APPLICABLE
+DEFAULT_OBJECT_ID           = EP_define.DEFAULT_OBJECT_ID
 
-STRING_LENGTH               = Config.STRING_LENGTH
-WORD_LENGTH                 = Config.WORD_LENGTH
+STRING_LENGTH               = EP_define.STRING_LENGTH
+WORD_LENGTH                 = EP_define.WORD_LENGTH
 
-LUNCH_PICKUP_TIME           = Config.LUNCH_PICKUP_TIME
-DINNER_PICKUP_TIME          = Config.DINNER_PICKUP_TIME
+LUNCH_PICKUP_TIME           = EP_define.LUNCH_PICKUP_TIME
+DINNER_PICKUP_TIME          = EP_define.DINNER_PICKUP_TIME
 
-MANAGEMENT_CODE_LENGTH      = Config.MANAGEMENT_CODE_LENGTH
+MANAGEMENT_CODE_LENGTH      = EP_define.MANAGEMENT_CODE_LENGTH
 
-SELLING_TIME_LUNCH          = Config.SELLING_TIME_LUNCH
-SELLING_TIME_DINNER         = Config.SELLING_TIME_DINNER
-SELLING_TIME_CATEGORY_DICT  = Config.SELLING_TIME_CATEGORY_DICT
-SELLING_TIME_CATEGORY       = Config.SELLING_TIME_CATEGORY
+SELLING_TIME_LUNCH          = EP_define.SELLING_TIME_LUNCH
+SELLING_TIME_DINNER         = EP_define.SELLING_TIME_DINNER
+SELLING_TIME_CATEGORY_DICT  = EP_define.SELLING_TIME_CATEGORY_DICT
+SELLING_TIME_CATEGORY       = EP_define.SELLING_TIME_CATEGORY
 
 #STATIC CONFIG
 class OverwriteStorage(FileSystemStorage):

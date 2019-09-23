@@ -1,3 +1,11 @@
+'''
+    Author : Ben Kim
+
+    @NOTE
+    @BUG
+    @TODO
+ 
+'''
 #Django Library
 from django.urls import reverse
 from django.db import models
@@ -8,24 +16,24 @@ from django.utils import timezone
 from datetime import datetime, timedelta
 
 #Models 
-from .models_config import Config, dateNowByTimeZone, dateByTimeZone
+from .eatplus_define import EP_define, dateNowByTimeZone, dateByTimeZone
 
-#GLOBAL CONFIG
-NOT_APPLICABLE          = Config.NOT_APPLICABLE
-DEFAULT_OBJECT_ID       = Config.DEFAULT_OBJECT_ID
+#GLOBAL DEFINE
+NOT_APPLICABLE              = EP_define.NOT_APPLICABLE
+DEFAULT_OBJECT_ID           = EP_define.DEFAULT_OBJECT_ID
 
-SELLING_TIME_LUNCH          = Config.SELLING_TIME_LUNCH
-SELLING_TIME_DINNER         = Config.SELLING_TIME_DINNER
-SELLING_TIME_CATEGORY_DICT  = Config.SELLING_TIME_CATEGORY_DICT
-SELLING_TIME_CATEGORY       = Config.SELLING_TIME_CATEGORY
+SELLING_TIME_LUNCH          = EP_define.SELLING_TIME_LUNCH
+SELLING_TIME_DINNER         = EP_define.SELLING_TIME_DINNER
+SELLING_TIME_CATEGORY_DICT  = EP_define.SELLING_TIME_CATEGORY_DICT
+SELLING_TIME_CATEGORY       = EP_define.SELLING_TIME_CATEGORY
 
-ORDER_STATUS_DICT       = Config.ORDER_STATUS_DICT
-ORDER_STATUS            = Config.ORDER_STATUS
+ORDER_STATUS_DICT           = EP_define.ORDER_STATUS_DICT
+ORDER_STATUS                = EP_define.ORDER_STATUS
 
-MANAGEMENT_CODE_LENGTH  = Config.MANAGEMENT_CODE_LENGTH
-STRING_LENGTH           = Config.STRING_LENGTH
+MANAGEMENT_CODE_LENGTH      = EP_define.MANAGEMENT_CODE_LENGTH
+STRING_LENGTH               = EP_define.STRING_LENGTH
 
-MANAGEMENT_CODE_DEFAULT = Config.MANAGEMENT_CODE_DEFAULT
+MANAGEMENT_CODE_DEFAULT     = EP_define.MANAGEMENT_CODE_DEFAULT
 
 
 def orderStatusUpdateByTime(orderInstance):
@@ -36,8 +44,8 @@ def orderStatusUpdateByTime(orderInstance):
 
     orderPickupTime           = orderInstance.pickupTime
     
-    currentDate                   = dateNowByTimeZone()
-    currentDateWithoutTime        = currentDate.replace(hour=0, minute=0, second=0, microsecond=0)
+    currentDate               = dateNowByTimeZone()
+    currentDateWithoutTime    = currentDate.replace(hour=0, minute=0, second=0, microsecond=0)
 
     YESTERDAY = currentDateWithoutTime + timedelta(days=-1) # Yesterday start 
     TODAY     = currentDateWithoutTime
@@ -152,7 +160,7 @@ def OrderManagementCodeGenerator(storeInstance, menuInstance, userInstance, orde
 
     return management_code
 
-#STATIC CONFIG
+#STATIC EP_define
 class Order(models.Model):
     class Meta:
         ordering = ['-pickupTime']

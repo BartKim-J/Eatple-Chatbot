@@ -8,7 +8,7 @@ import json
 import sys
 
 #Models
-from .models_config import Config
+from .eatplus_define import EP_define
 
 
 from .models_order import Order
@@ -17,10 +17,10 @@ from .models_store import Store, Menu
 #View Modules
 from .module_KakaoForm import Kakao_SimpleForm, Kakao_CarouselForm
 
-#GLOBAL CONFIG
-KAKAO_PARAM_STATUS          = Config.KAKAO_PARAM_STATUS
-KAKAO_PARAM_STATUS_OK       = Config.KAKAO_PARAM_STATUS_OK
-KAKAO_PARAM_STATUS_NOT_OK   = Config.KAKAO_PARAM_STATUS_NOT_OK
+#GLOBAL EP_define
+KAKAO_PARAM_STATUS          = EP_define.KAKAO_PARAM_STATUS
+KAKAO_PARAM_STATUS_OK       = EP_define.KAKAO_PARAM_STATUS_OK
+KAKAO_PARAM_STATUS_NOT_OK   = EP_define.KAKAO_PARAM_STATUS_NOT_OK
 
 
 # SKill Log
