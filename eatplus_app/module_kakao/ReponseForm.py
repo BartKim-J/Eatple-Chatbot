@@ -15,11 +15,12 @@ from django.http import JsonResponse
 import datetime
 
 #Models 
-from .eatplus_define import EP_define
+from eatplus_app.define import EP_define
 
-from .models_user  import User
-from .models_order import Order
-from .models_store import Store, Menu, Category, SubCategory
+from eatplus_app.models import User
+from eatplus_app.models import Order
+from eatplus_app.models import Category, SubCategory
+from eatplus_app.models import Store, Menu
 
 class KakaoBaseForm():
     def __init__(self, _version="2.0", _template={"outputs": []}, _context={"values": []}, _data={"Status": 'OK'}):

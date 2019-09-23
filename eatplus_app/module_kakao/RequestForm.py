@@ -8,10 +8,10 @@ import requests
 import json
 
 #Models
-from .eatplus_define import EP_define
+from eatplus_app.define import EP_define
 
 #View
-from .views_system import EatplusSkillLog, errorView
+from eatplus_app.views_system.debugger import EatplusSkillLog, errorView
 
 '''
     @name getLatLng

@@ -2,21 +2,27 @@
 from django.shortcuts import render
 from django.views.decorators.csrf import csrf_exempt
 from django.http import JsonResponse
+from django.shortcuts import get_object_or_404
 
 #External Library
 import json
+from random import *
 
+#Models 
+from eatplus_app.define import EP_define
 
-#Models
-from .eatplus_define import EP_define
-
-from .models_order import Order
-from .models_store import Store, Menu
+from eatplus_app.models import User
+from eatplus_app.models import Order
+from eatplus_app.models import Category, SubCategory
+from eatplus_app.models import Store, Menu
 
 #View Modules
-from .module_KakaoForm import Kakao_SimpleForm, Kakao_CarouselForm
+from eatplus_app.module_kakao.ReponseForm import Kakao_SimpleForm, Kakao_CarouselForm
+from eatplus_app.module_kakao.RequestForm import getLatLng, KakaoPayLoad
 
-from .views_system import EatplusSkillLog, errorView
+#View
+#from eatplus_app.views_user import wordings
+from eatplus_app.views_system.debugger import EatplusSkillLog, errorView
 
 @csrf_exempt
 def partnerHome(request):

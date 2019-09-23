@@ -9,17 +9,20 @@ import json
 from random import *
 
 #Models 
-from .eatplus_define import EP_define
+from eatplus_app.define import EP_define
 
-from .models_user  import User
-from .models_order import Order, OrderManager
-from .models_store import Store, Menu, Category, SubCategory
+from eatplus_app.models import User
+from eatplus_app.models import Order
+from eatplus_app.models import Category, SubCategory
+from eatplus_app.models import Store, Menu
 
 #View Modules
-from .module_KakaoForm import Kakao_SimpleForm, Kakao_CarouselForm
-from .views_kakaoTool import getLatLng, KakaoPayLoad
-from .views_system import EatplusSkillLog, errorView
-from .views_wording import wordings
+from eatplus_app.module_kakao.ReponseForm import Kakao_SimpleForm, Kakao_CarouselForm
+from eatplus_app.module_kakao.RequestForm import getLatLng, KakaoPayLoad
+
+#View
+from eatplus_app.views_user.wording import wordings
+from eatplus_app.views_system.debugger import EatplusSkillLog, errorView
 
 
 def registerUser(userIdentifier):

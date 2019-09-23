@@ -8,11 +8,11 @@
 '''
 from django.contrib import admin
 
-from .models_store import DefaultImage
-from .models_store import Store, Menu 
-from .models_store import Category, SubCategory
-from .models_order import Order
-from .models_user  import User
+from .models import DefaultImage
+from .models import Store, Menu 
+from .models import Category, SubCategory
+from .models import Order
+from .models import User
 
 
 admin.site.register(User)

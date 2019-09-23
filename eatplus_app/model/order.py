@@ -16,7 +16,7 @@ from django.utils import timezone
 from datetime import datetime, timedelta
 
 #Models 
-from .eatplus_define import EP_define, dateNowByTimeZone, dateByTimeZone
+from eatplus_app.define import EP_define, dateNowByTimeZone, dateByTimeZone
 
 #GLOBAL DEFINE
 NOT_APPLICABLE              = EP_define.NOT_APPLICABLE

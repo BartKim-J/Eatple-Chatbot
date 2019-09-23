@@ -7,15 +7,16 @@ from django.http import JsonResponse
 import json
 import sys
 
-#Models
-from .eatplus_define import EP_define
+#Models 
+from eatplus_app.define import EP_define
 
-
-from .models_order import Order
-from .models_store import Store, Menu
+from eatplus_app.models import User
+from eatplus_app.models import Order
+from eatplus_app.models import Category, SubCategory
+from eatplus_app.models import Store, Menu
 
 #View Modules
-from .module_KakaoForm import Kakao_SimpleForm, Kakao_CarouselForm
+from eatplus_app.module_kakao.ReponseForm import Kakao_SimpleForm, Kakao_CarouselForm
 
 #GLOBAL EP_define
 KAKAO_PARAM_STATUS          = EP_define.KAKAO_PARAM_STATUS

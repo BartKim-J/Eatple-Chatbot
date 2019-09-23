@@ -6,7 +6,7 @@
     @TODO
  
 '''
-from .eatplus_define import EP_define
+from eatplus_app.define import EP_define
 
 #GLOBAL DEFINE
 NOT_APPLICABLE              = EP_define.NOT_APPLICABLE
