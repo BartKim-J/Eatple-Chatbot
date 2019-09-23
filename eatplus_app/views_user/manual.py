@@ -1,3 +1,11 @@
+'''
+    Author : Ben Kim
+
+    @NOTE
+    @BUG
+    @TODO
+ 
+'''
 #System
 import sys
 import os
@@ -14,22 +22,24 @@ import requests
 import json
 
 #Models 
-from eatplus_app.define import EP_define
-
 from eatplus_app.models import User
-from eatplus_app.models import Order
+from eatplus_app.models import Order, OrderManager
 from eatplus_app.models import Category, SubCategory
 from eatplus_app.models import Store, Menu
 
-#View Modules
+#Modules
 from eatplus_app.module_kakao.ReponseForm import Kakao_SimpleForm, Kakao_CarouselForm
 from eatplus_app.module_kakao.RequestForm import getLatLng, KakaoPayLoad
 
-#View
-from eatplus_app.views_user.wording import wordings
+#View-System
 from eatplus_app.views_system.debugger import EatplusSkillLog, errorView
 
-#GLOBAL DEFINE
+#Wordings
+from eatplus_app.views_user.wording import wordings
+
+#Define
+from eatplus_app.define import EP_define
+
 HOST_URL                    = EP_define.HOST_URL
 NOT_APPLICABLE              = EP_define.NOT_APPLICABLE
 
@@ -47,13 +57,9 @@ KAKAO_PARAM_STATUS_NOT_OK   = EP_define.KAKAO_PARAM_STATUS_NOT_OK
 
 # # # # # # # # # # # # # # # # # # # # # # # # #
 #
-# Static View
+# Static Functions
 #
 # # # # # # # # # # # # # # # # # # # # # # # # #
-DEFAULT_QUICKREPLIES_MAP = [                
-    {'action': "message", 'label': wordings.RETURN_HOME_QUICK_REPLISE, 'messageText': wordings.RETURN_HOME_QUICK_REPLISE, 'blockid': "none", 
-        'extra': { KAKAO_PARAM_STATUS: KAKAO_PARAM_STATUS_OK }},
-]
 
 # # # # # # # # # # # # # # # # # # # # # # # # #
 #
@@ -77,7 +83,10 @@ USER_MANUAL_MAP = [
     {'title': "식사에 가치를 더하다, 잇플", 'description': "평범했던 식사시간에 의미를 더하는 잇플과 새로운 가치를 찾아보세요! "},
 ]
 
-
+DEFAULT_QUICKREPLIES_MAP = [                
+    {'action': "message", 'label': wordings.RETURN_HOME_QUICK_REPLISE, 'messageText': wordings.RETURN_HOME_QUICK_REPLISE, 'blockid': "none", 
+        'extra': { KAKAO_PARAM_STATUS: KAKAO_PARAM_STATUS_OK }},
+]
 '''
     @name orderPickupTimeChange
     @param name
@@ -90,12 +99,6 @@ USER_MANUAL_MAP = [
 def userManual(request):
     try:
         kakaoPayload = KakaoPayLoad(request)
-
-        # Invalied Path Access
-        #if (kakaoPayload.orderID == NOT_APPLICABLE) or kakaoPayload.pickupTime == NOT_APPLICABLE:
-        #    
-        #else:
-        #    
 
         EatplusSkillLog("User Manual Flow")
 

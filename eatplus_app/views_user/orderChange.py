@@ -1,35 +1,43 @@
+'''
+    Author : Ben Kim
+
+    @NOTE
+    @BUG
+    @TODO
+ 
+'''
 #System
 import sys
 import os
-
-sys.path.append(os.path.dirname(os.path.abspath(os.path.dirname(__file__))))
 
 #Django Library
 from django.shortcuts import render
 from django.views.decorators.csrf import csrf_exempt
 from django.http import JsonResponse
+from django.shortcuts import get_object_or_404, render
 
 #External Library
 import requests
 import json
 
 #Models 
-from eatplus_app.define import EP_define
-
 from eatplus_app.models import User
 from eatplus_app.models import Order, OrderManager
 from eatplus_app.models import Category, SubCategory
 from eatplus_app.models import Store, Menu
 
-#View Modules
+#Modules
 from eatplus_app.module_kakao.ReponseForm import Kakao_SimpleForm, Kakao_CarouselForm
 from eatplus_app.module_kakao.RequestForm import getLatLng, KakaoPayLoad
 
-#View
-from eatplus_app.views_user.wording import wordings
+#View-System
 from eatplus_app.views_system.debugger import EatplusSkillLog, errorView
 
-#GLOBAL EP_define
+#Wordings
+from eatplus_app.views_user.wording import wordings
+
+#Define
+from eatplus_app.define import EP_define
 NOT_APPLICABLE              = EP_define.NOT_APPLICABLE
 
 SELLING_TIME_LUNCH          = EP_define.SELLING_TIME_LUNCH
@@ -55,15 +63,17 @@ KAKAO_PARAM_STATUS_NOT_OK   = EP_define.KAKAO_PARAM_STATUS_NOT_OK
 
 ORDER_SUPER_USER_ID         = EP_define.DEFAULT_USER_ID
 
+DEFAULT_QUICKREPLIES_MAP = [                
+    {'action': "message", 'label': wordings.RETURN_HOME_QUICK_REPLISE,    'messageText': wordings.RETURN_HOME_QUICK_REPLISE, 'blockid': "none", 
+        'extra': { KAKAO_PARAM_STATUS: KAKAO_PARAM_STATUS_OK }},
+]
+
 # # # # # # # # # # # # # # # # # # # # # # # # #
 #
 # Static View
 #
 # # # # # # # # # # # # # # # # # # # # # # # # #
-DEFAULT_QUICKREPLIES_MAP = [                
-    {'action': "message", 'label': wordings.RETURN_HOME_QUICK_REPLISE,    'messageText': wordings.RETURN_HOME_QUICK_REPLISE, 'blockid': "none", 
-        'extra': { KAKAO_PARAM_STATUS: KAKAO_PARAM_STATUS_OK }},
-]
+
 
 # # # # # # # # # # # # # # # # # # # # # # # # #
 #
@@ -107,14 +117,13 @@ def orderCancel(request):
 
         KakaoForm.BasicCard_Add(
             "주문이 취소되었습니다. ",
-            "주문번호: {}\n--------------------\n - 주문자: {}\n\n - 매장: {} \n - 메뉴: {}\n\n - 결제 금액: {}원\n\n - 픽업 시간: {}\n--------------------\n - 매장 위치: {}".format(
+            "주문번호: {}\n--------------------\n - 주문자: {}\n\n - 매장: {} \n - 메뉴: {}\n\n - 결제 금액: {}원\n\n - 픽업 시간: {}\n--------------------".format(
                 orderInstance.management_code,
                 orderInstance.userInstance.name,
                 orderInstance.storeInstance.name, 
                 orderInstance.menuInstance.name, 
                 orderInstance.menuInstance.price, 
-                orderInstance.pickupTime.astimezone().strftime('%H시%M분 %m월%d일'), 
-                orderInstance.storeInstance.addr
+                orderInstance.pickupTime.astimezone().strftime('%H시%M분 %m월%d일'),
             ),
             thumbnail, buttons
         )
@@ -200,8 +209,8 @@ def orderPickupTimeChange(request):
 
         EatplusSkillLog("Order Change Flow")
 
-        beforePickupTime         = orderInstance.pickupTime
-        orderInstance.pickupTime = orderInstance.rowPickupTimeToDatetime(kakaoPayload.pickupTime)
+        beforePickupTime = orderInstance.pickupTime
+        orderInstance.pickupTime = orderInstance.rowPickupTimeToDatetime(kakaoPayload.pickupTime).replace(day=beforePickupTime.day)
         orderInstance.save()
         
         KakaoForm = Kakao_CarouselForm()
@@ -216,15 +225,14 @@ def orderPickupTimeChange(request):
         ]
 
         KakaoForm.BasicCard_Add(
-            "픽업시간이 {} 에서 {} 으로 변경되었습니다.".format(beforePickupTime.astimezone().strftime('%H:%M'), orderInstance.pickupTime.astimezone().strftime('%H:%M')),
-            "주문번호: {}\n--------------------\n - 주문자: {}\n\n - 매장: {} \n - 메뉴: {}\n\n - 결제 금액: {}원\n\n - 픽업 시간: {}\n--------------------\n - 매장 위치: {}".format(
+            "{}시 {}분으로 변경되었습니다.".format(orderInstance.pickupTime.astimezone().strftime('%H'), orderInstance.pickupTime.astimezone().strftime('%M')),
+            "주문번호: {}\n--------------------\n - 주문자: {}\n\n - 매장: {} \n - 메뉴: {}\n\n - 결제 금액: {}원\n\n - 픽업 시간: {}\n--------------------".format(
                 orderInstance.management_code,
                 orderInstance.userInstance.name,
                 orderInstance.storeInstance.name, 
                 orderInstance.menuInstance.name, 
                 orderInstance.menuInstance.price, 
                 orderInstance.pickupTime.astimezone().strftime('%H시%M분 %m월%d일'), 
-                orderInstance.storeInstance.addr
             ),
             thumbnail, buttons
         )
@@ -275,14 +283,13 @@ def useCoupon(request):
 
         KakaoForm.BasicCard_Add(
             "식권이 사용되었습니다.",
-            "주문번호: {}\n--------------------\n - 주문자: {}\n\n - 매장: {} \n - 메뉴: {}\n\n - 결제 금액: {}원\n\n - 픽업 시간: {}\n--------------------\n - 매장 위치: {}".format(
+            "주문번호: {}\n--------------------\n - 주문자: {}\n\n - 매장: {} \n - 메뉴: {}\n\n - 결제 금액: {}원\n\n - 픽업 시간: {}\n--------------------".format(
                 orderInstance.management_code,
                 orderInstance.userInstance.name,
                 orderInstance.storeInstance.name, 
                 orderInstance.menuInstance.name, 
                 orderInstance.menuInstance.price, 
                 orderInstance.pickupTime.astimezone().strftime('%H시%M분 %m월%d일'), 
-                orderInstance.storeInstance.addr
             ),
             thumbnail, buttons
         )

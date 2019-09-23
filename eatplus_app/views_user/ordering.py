@@ -1,35 +1,45 @@
+'''
+    Author : Ben Kim
+
+    @NOTE
+    @BUG
+    @TODO
+ 
+'''
+#System
+import sys
+import os
+
 #Django Library
 from django.shortcuts import render
 from django.views.decorators.csrf import csrf_exempt
 from django.http import JsonResponse
-from django.utils import timezone
-from django.shortcuts import get_list_or_404, get_object_or_404
+from django.shortcuts import get_object_or_404, render
 
 #External Library
-from datetime import datetime, timedelta
-import pytz
-
 import requests
 import json
-import sys
+from datetime import timedelta
 
 #Models 
-from eatplus_app.define import EP_define, dateNowByTimeZone
-
 from eatplus_app.models import User
 from eatplus_app.models import Order, OrderManager
 from eatplus_app.models import Category, SubCategory
 from eatplus_app.models import Store, Menu
 
-#View Modules
+#Modules
 from eatplus_app.module_kakao.ReponseForm import Kakao_SimpleForm, Kakao_CarouselForm
 from eatplus_app.module_kakao.RequestForm import getLatLng, KakaoPayLoad
 
-#View
-from eatplus_app.views_user.wording import wordings
+#View-System
 from eatplus_app.views_system.debugger import EatplusSkillLog, errorView
 
-#GLOBAL DEFINE
+#Wordings
+from eatplus_app.views_user.wording import wordings
+
+#Define
+from eatplus_app.define import EP_define, dateNowByTimeZone
+
 HOST_URL                    = EP_define.HOST_URL
 
 NOT_APPLICABLE              = EP_define.NOT_APPLICABLE
@@ -330,9 +340,6 @@ def selectMenu(request):
             return errorView("Parameter Error")
         else:
             userInstance = get_object_or_404(User, identifier_code=kakaoPayload.userID)
-
-        print(userInstance)
-        print(kakaoPayload.userID)
         
         EatplusSkillLog("Order Flow")
 
@@ -431,7 +438,7 @@ def orderConfirm(request):
             {'action': "message", 'label': wordings.ORDER_PUSH_COMMAND,  'messageText': wordings.ORDER_PUSH_COMMAND, 'extra': kakaoPayload.dataActionExtra},
         ]
 
-        KakaoForm.BasicCard_Add("{}".format(menuInstance.name),"{} - {}원\n - 픽업대 [ {} ]".format(
+        KakaoForm.BasicCard_Add("{}".format(menuInstance.name),"{} - {}원\n - 픽업 시간 [ {} ]".format(
             storeInstance.name,
             menuInstance.price,
             kakaoPayload.pickupTime
@@ -474,7 +481,6 @@ def orderPush(request):
 
         EatplusSkillLog("Order Flow")
 
-        #@TODO: UserInstance Load User
         pushedOrder = Order.pushOrder(userInstance=userInstance,
                                       storeInstance=storeInstance, 
                                       menuInstance=menuInstance,

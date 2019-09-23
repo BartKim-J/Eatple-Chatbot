@@ -6,7 +6,6 @@
     @TODO
  
 '''
-
 #Django Library
 from django.conf import settings
 
@@ -14,10 +13,12 @@ from django.conf import settings
 from datetime import datetime, timedelta, timezone
 import pytz
 
+#SYSTEM LOCAL DEFINE
 STRING_32BIT  = 31
 STRING_256BIT = 255
 
 
+#Eatplus App Global Defines
 class EP_define():
     #SYSTEM
     USE_TZ               = settings.USE_TZ
@@ -72,6 +73,7 @@ class EP_define():
     KAKAO_PARAM_STATUS_NOT_OK     = False
 
 
+#Time Functions
 def dateNowByTimeZone():
     """
     Returns an aware or naive datetime.datetime, depending on settings.USE_TZ.

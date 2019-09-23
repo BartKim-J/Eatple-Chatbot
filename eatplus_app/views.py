@@ -1,10 +1,6 @@
 '''
     Author : Ben Kim
-
-    @NOTE
-    @BUG
-    @TODO
- 
+    
 '''
 ### API Functions ###
 '''

@@ -6,9 +6,9 @@
     @TODO
  
 '''
+#Define
 from eatplus_app.define import EP_define
 
-#GLOBAL DEFINE
 NOT_APPLICABLE              = EP_define.NOT_APPLICABLE
 
 SELLING_TIME_LUNCH          = EP_define.SELLING_TIME_LUNCH
