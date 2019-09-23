@@ -13,6 +13,7 @@ NOT_APPLICABLE          = Config.NOT_APPLICABLE
 DEFAULT_OBJECT_ID       = Config.DEFAULT_OBJECT_ID
 
 USER_NICKNAME_LENGTH    = Config.USER_NICKNAME_LENGTH
+USER_ID_CODE_LENGTH    = Config.USER_ID_CODE_LENGTH
 
 #STATIC CONFIG
 
@@ -21,16 +22,16 @@ class User(models.Model):
         ordering = ['-name']
 
     name             = models.CharField(max_length=USER_NICKNAME_LENGTH, help_text="User Name")
-    serial           = models.CharField(max_length=USER_NICKNAME_LENGTH, help_text="User S/N")
+    identifier_code  = models.CharField(max_length=USER_ID_CODE_LENGTH, help_text="User ID", default='')
 
-    email            = models.CharField(max_length=USER_NICKNAME_LENGTH, help_text="User ID")
     create_date      = models.DateTimeField(auto_now=True)
 
-    def createUser(self, _name, _email):
-        name  = _name
-        email = _email
-        self.save()
-        return "{}".format(self.name)
+    @classmethod
+    def registerUser(cls, _name, _identifier_code):
+        registedUser = cls(name=_name, identifier_code=_identifier_code)
+        registedUser.save();
+
+        return registedUser
 
             # Methods
     def __str__(self):

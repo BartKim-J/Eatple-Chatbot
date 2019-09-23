@@ -9,6 +9,7 @@ class Config():
     #SYSTEM
     USE_TZ               = settings.USE_TZ
     TIME_ZONE            = settings.TIME_ZONE
+    
     HOST_URL             = "http://54.65.75.156:8000"
 
     NOT_APPLICABLE       = "N/A"
@@ -18,7 +19,7 @@ class Config():
     #USER LENGTH
     USER_NICKNAME_LENGTH = 18
     USER_ID_LENGTH       = 18
-    USER_SERIAL_LENGTH   = 12
+    USER_ID_CODE_LENGTH  = 255
 
     #STRING LENGTH
     STRING_LENGTH        = 255

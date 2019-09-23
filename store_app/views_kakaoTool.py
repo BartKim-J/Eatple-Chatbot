@@ -29,11 +29,9 @@ def getLatLng(addr):
 
         match_first = result['documents'][0]['road_address']
 
+        return "{},{}".format(float(match_first['y']),float(match_first['x']))
     except (RuntimeError, TypeError, NameError, KeyError, IndexError) as ex:
         return errorView("Get Address Error\n- {} ".format(ex))
-
-    return "{},{}".format(float(match_first['y']),float(match_first['x']))
-
 
 '''
     @name KakaoPayload
@@ -57,6 +55,8 @@ class KakaoPayLoad():
         self.dataActionExtra    = self.dataAction['clientExtra']
         self.dataActionParams   = self.dataAction['detailParams']
 
+
+
         #ID Parsing
         try:
             self.orderID         = self.dataActionExtra[Config.KAKAO_PARAM_ORDER_ID]
@@ -65,7 +65,7 @@ class KakaoPayLoad():
 
 
         try:
-            self.userID         = self.dataActionExtra[Config.KAKAO_PARAM_USER_ID]
+            self.userID = self.dataUserRequest['user']['id']
         except (RuntimeError, TypeError, NameError, KeyError) as ex:
             self.userID         = Config.NOT_APPLICABLE
 

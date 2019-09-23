@@ -3,7 +3,7 @@ from django.shortcuts import render
 from django.views.decorators.csrf import csrf_exempt
 from django.http import JsonResponse
 from django.utils import timezone
-
+from django.shortcuts import get_list_or_404, get_object_or_404
 from django.conf import settings
 
 #External Library
@@ -42,7 +42,6 @@ SELLING_TIME_CATEGORY       = Config.SELLING_TIME_CATEGORY
 ORDER_STATUS                = Config.ORDER_STATUS
 ORDER_STATUS_DICT           = Config.ORDER_STATUS_DICT
 
-KAKAO_PARAM_USER_ID         = Config.KAKAO_PARAM_USER_ID
 KAKAO_PARAM_ORDER_ID        = Config.KAKAO_PARAM_ORDER_ID
 KAKAO_PARAM_STORE_ID        = Config.KAKAO_PARAM_STORE_ID
 KAKAO_PARAM_MENU_ID         = Config.KAKAO_PARAM_MENU_ID
@@ -115,7 +114,7 @@ def CouponListup(userID):
         KakaoForm.SimpleForm_Init()
 
         ORDER_LIST_QUICKREPLIES_MAP.append({'action': "message", 'label': wordings.ORDER_BTN, 'messageText': wordings.GET_SELLING_TIEM_COMMAND, 'blockid': "none", 
-        'extra': { KAKAO_PARAM_STATUS: KAKAO_PARAM_STATUS_OK, KAKAO_PARAM_USER_ID: ORDER_SUPER_USER_ID }})
+        'extra': { KAKAO_PARAM_STATUS: KAKAO_PARAM_STATUS_OK }})
         
         KakaoForm.SimpleText_Add(wordings.GET_COUPON_EMPTY_TEXT)
 
@@ -171,7 +170,7 @@ def OrderListup(userID):
         KakaoForm = Kakao_SimpleForm()
         KakaoForm.SimpleForm_Init()
 
-        ORDER_LIST_QUICKREPLIES_MAP.append({'action': "message", 'label': wordings.ORDER_BTN, 'messageText': wordings.GET_SELLING_TIEM_COMMAND, 'blockid': "none", 'extra': { KAKAO_PARAM_STATUS: KAKAO_PARAM_STATUS_OK, KAKAO_PARAM_USER_ID: ORDER_SUPER_USER_ID }})
+        ORDER_LIST_QUICKREPLIES_MAP.append({'action': "message", 'label': wordings.ORDER_BTN, 'messageText': wordings.GET_SELLING_TIEM_COMMAND, 'blockid': "none", 'extra': { KAKAO_PARAM_STATUS: KAKAO_PARAM_STATUS_OK }})
 
         KakaoForm.SimpleText_Add(wordings.GET_ORDER_LIST_EMPTY_TEXT)
  
@@ -194,14 +193,14 @@ def getOrderList(request):
         kakaoPayload = KakaoPayLoad(request)
 
         # Invalied Path Access
-        #if(kakaoPayload.userID == NOT_APPLICABLE):
-        #    return errorView("Parameter Invalid")
-        #else:
-        #    UserInstance = User.objects.get(id=kakaoPayload.userID)
+        if(kakaoPayload.userID == NOT_APPLICABLE):
+            return errorView("Parameter Invalid")
+        else:
+            userInstance = get_object_or_404(User, identifier_code=kakaoPayload.userID)
 
         EatplusSkillLog("Order Check Flow")
 
-        return OrderListup(ORDER_SUPER_USER_ID)
+        return OrderListup(kakaoPayload.userID)
 
     except (RuntimeError, TypeError, NameError, KeyError) as ex:
         return errorView("{} ".format(ex))
@@ -221,15 +220,15 @@ def getCoupon(request):
         kakaoPayload = KakaoPayLoad(request)
 
         # Invalied Path Access
-        #if(kakaoPayload.userID == NOT_APPLICABLE):
-        #    return errorView("Parameter Invalid")
-        #else:
-        #    UserInstance = User.objects.get(id=kakaoPayload.userID)
+        if(kakaoPayload.userID == NOT_APPLICABLE):
+            return errorView("Parameter Invalid")
+        else:
+            userInstance = get_object_or_404(User, identifier_code=kakaoPayload.userID)
 
 
         EatplusSkillLog("Order Check Flow")
 
-        return CouponListup(ORDER_SUPER_USER_ID)
+        return CouponListup(kakaoPayload.userID)
 
     except (RuntimeError, TypeError, NameError, KeyError) as ex:
         return errorView("{} ".format(ex))

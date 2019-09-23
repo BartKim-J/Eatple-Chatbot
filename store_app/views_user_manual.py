@@ -22,7 +22,8 @@ from .views_kakaoTool import getLatLng, KakaoPayLoad
 from .views_system import EatplusSkillLog, errorView
 from .views_wording import wordings
 
-#GLOBAL CONFIG
+#GLOBAL DEFINE
+HOST_URL                    = Config.HOST_URL
 NOT_APPLICABLE              = Config.NOT_APPLICABLE
 
 ORDER_STATUS                = Config.ORDER_STATUS
@@ -95,7 +96,7 @@ def userManual(request):
         KakaoForm = Kakao_CarouselForm()
         KakaoForm.BasicCard_Init()
 
-        thumbnail = { "imageUrl": "http://k.kakaocdn.net/dn/83BvP/bl20duRC1Q1/lj3JUcmrzC53YIjNDkqbWK/i_6piz1p.jpg" }
+        thumbnail = { "imageUrl": "{}{}".format(HOST_URL, '/media/STORE_DB/images/default/defaultImg.png') }
 
         buttons = [
             # No Buttons

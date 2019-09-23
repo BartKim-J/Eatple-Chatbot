@@ -63,7 +63,7 @@ class wordings():
     HOME_DESCRIPT_TEXT                              = "아래 명령어 중에 골라주세요!"
 
     GET_SELLING_TIME_SELECT_TITLE_TEXT              = "점심 또는 저녁을 선택해 주세요!"
-    GET_SELLING_TIME_SELECT_DESCRIPT_TEXT           = "한 사람당 하루에 점심 1회, 저녁 1회 주문이 가능해요!\n주문 가능 시간\n- 점심 : 전날 16:30 ~ 당일 10:30까지\n- 저녁 : 당일 10:30 ~ 16:30"
+    GET_SELLING_TIME_SELECT_DESCRIPT_TEXT           = "한 사람당 하루에\n점심 1회, 저녁 1회 주문이 가능해요!\n\n - 주문 가능 시간 - \n+ 점심 : 전날 16:30 ~ 당일 10:30까지\n+ 저녁 : 당일 10:30 ~ 16:30"
     GET_SELLING_TIME_LUNCH_BTN                      = "{} {}".format(LUNCH, GET_MENU_COMMAND)
     GET_SELLING_TIME_DINNER_BTN                     = "{} {}".format(DINNER, GET_MENU_COMMAND)
 

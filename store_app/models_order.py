@@ -202,7 +202,7 @@ class Order(models.Model):
 
 class OrderManager():
     def __init__(self, userID):
-        self.userOrderList = Order.objects.filter(userInstance__id=userID)
+        self.userOrderList = Order.objects.filter(userInstance__identifier_code=userID)
 
     def availableCouponStatusUpdate(self):
         availableCoupons = self.getAvailableCoupons()

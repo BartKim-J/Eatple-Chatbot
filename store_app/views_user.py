@@ -2,9 +2,11 @@
 from django.shortcuts import render
 from django.views.decorators.csrf import csrf_exempt
 from django.http import JsonResponse
+from django.shortcuts import get_object_or_404
 
 #External Library
 import json
+from random import *
 
 #Models 
 from .models_config import Config
@@ -15,7 +17,7 @@ from .models_store import Store, Menu, Category, SubCategory
 
 #View Modules
 from .module_KakaoForm import Kakao_SimpleForm, Kakao_CarouselForm
-
+from .views_kakaoTool import getLatLng, KakaoPayLoad
 from .views_system import EatplusSkillLog, errorView
 from .views_wording import wordings
 
@@ -23,6 +25,12 @@ KAKAO_PARAM_USER_ID         = Config.KAKAO_PARAM_USER_ID
 
 ORDER_SUPER_USER_ID         = Config.DEFAULT_USER_ID
 
+
+def registerUser(userIdentifier):
+    userInstance = User.registerUser("잇플 유저 {}".format(randint(1,10000)), userIdentifier)
+    
+    return userInstance
+ 
 @csrf_exempt
 def userHome(request):
     EatplusSkillLog("Home")
@@ -51,6 +59,13 @@ def userHome(request):
     buttons = HOME_BTN_MAP
 
     try:
+        kakaoPayload = KakaoPayLoad(request)
+
+        userInstance = User.objects.filter(identifier_code=kakaoPayload.userID)
+
+        if not userInstance.exists():
+            userInstance = registerUser(kakaoPayload.userID)
+            
         KakaoForm = Kakao_CarouselForm()
         KakaoForm.BasicCard_Init()
 

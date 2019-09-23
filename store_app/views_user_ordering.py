@@ -3,6 +3,7 @@ from django.shortcuts import render
 from django.views.decorators.csrf import csrf_exempt
 from django.http import JsonResponse
 from django.utils import timezone
+from django.shortcuts import get_list_or_404, get_object_or_404
 
 #External Library
 from datetime import datetime, timedelta
@@ -47,7 +48,6 @@ DINNER_PICKUP_TIME          = Config.DINNER_PICKUP_TIME
 ORDER_STATUS                = Config.ORDER_STATUS
 ORDER_STATUS_DICT           = Config.ORDER_STATUS_DICT
 
-KAKAO_PARAM_USER_ID         = Config.KAKAO_PARAM_USER_ID
 KAKAO_PARAM_ORDER_ID        = Config.KAKAO_PARAM_ORDER_ID
 KAKAO_PARAM_STORE_ID        = Config.KAKAO_PARAM_STORE_ID
 KAKAO_PARAM_MENU_ID         = Config.KAKAO_PARAM_MENU_ID
@@ -63,8 +63,8 @@ KAKAO_PARAM_STATUS_NOT_OK   = Config.KAKAO_PARAM_STATUS_NOT_OK
 KAKAO_SUPER_USER_ID         = Config.DEFAULT_USER_ID
 
 #STATIC CONFIG
-MENU_LIST_LENGTH      = 10
-CATEGORY_LIST_LENGTH  =  5
+MENU_LIST_LENGTH      = 5
+CATEGORY_LIST_LENGTH  = 5
 
 DEFAULT_QUICKREPLIES_MAP = [                
     {'action': "message", 'label': wordings.RETURN_HOME_QUICK_REPLISE,    'messageText': wordings.RETURN_HOME_QUICK_REPLISE, 'blockid': "none", 
@@ -121,14 +121,14 @@ def MenuListup(userID, menuCategory, sellingTime, currentSellingTime, location):
     ALL_MENU = '전체'
 
     STORE_CATEGORY_QUICKREPLIES_MAP = [                
-        {'action': "message", 'label': wordings.HOME_QUICK_REPLISE,    'messageText': wordings.HOME_QUICK_REPLISE, 'blockid': "none", 
+        {'action': "message", 'label': wordings.HOME_QUICK_REPLISE, 'messageText': wordings.HOME_QUICK_REPLISE, 'blockid': "none", 
          'extra': { KAKAO_PARAM_STATUS: KAKAO_PARAM_STATUS_OK }},
         {'action': "message", 'label': "전체",    'messageText': "{} {} 메뉴보기".format(sellingTime, ALL_MENU), 'blockid': "none", 
         'extra': { KAKAO_PARAM_MENU_CATEGORY: NOT_APPLICABLE, KAKAO_PARAM_SELLING_TIME: sellingTime, }},
     ]
 
     ORDER_EXIT_QUICKREPLIES_MAP = [
-    {'action': "message", 'label': wordings.RETURN_HOME_QUICK_REPLISE,                 'messageText': wordings.RETURN_HOME_QUICK_REPLISE, 'blockid': "none", 
+    {'action': "message", 'label': wordings.RETURN_HOME_QUICK_REPLISE, 'messageText': wordings.RETURN_HOME_QUICK_REPLISE, 'blockid': "none", 
         'extra': { KAKAO_PARAM_STATUS: KAKAO_PARAM_STATUS_OK }},
     ]
 
@@ -139,16 +139,14 @@ def MenuListup(userID, menuCategory, sellingTime, currentSellingTime, location):
 
         if SELLING_TIME_CATEGORY[currentSellingTime][0] != LUNCH:
             KakaoForm.SimpleText_Add(wordings.GET_SELLING_TIME_LUNCH_FINISH_TEXT)
-            ORDER_EXIT_QUICKREPLIES_MAP.append({'action': "message", 'label': wordings.GET_SELLING_TIME_LUNCH_BTN,    'messageText': wordings.GET_SELLING_TIME_LUNCH_BTN, 'blockid': "none", 
+            ORDER_EXIT_QUICKREPLIES_MAP.append({'action': "message", 'label': wordings.GET_SELLING_TIME_DINNER_BTN,    'messageText': wordings.GET_SELLING_TIME_DINNER_BTN, 'blockid': "none", 
                                                 'extra': {  KAKAO_PARAM_MENU_CATEGORY: NOT_APPLICABLE, 
-                                                            KAKAO_PARAM_SELLING_TIME: DINNER, 
-                                                            KAKAO_PARAM_USER_ID: KAKAO_SUPER_USER_ID }})
+                                                            KAKAO_PARAM_SELLING_TIME: DINNER, }})
         else:
             KakaoForm.SimpleText_Add(wordings.GET_SELLING_TIME_DINNER_FINISH_TEXT)
             ORDER_EXIT_QUICKREPLIES_MAP.append({'action': "message", 'label': wordings.GET_SELLING_TIME_LUNCH_BTN,    'messageText': wordings.GET_SELLING_TIME_LUNCH_BTN, 'blockid': "none", 
                                                 'extra': {  KAKAO_PARAM_MENU_CATEGORY: NOT_APPLICABLE, 
-                                                            KAKAO_PARAM_SELLING_TIME: DINNER, 
-                                                            KAKAO_PARAM_USER_ID: KAKAO_SUPER_USER_ID }})
+                                                            KAKAO_PARAM_SELLING_TIME: DINNER, }})
 
         for entryPoint in ORDER_EXIT_QUICKREPLIES_MAP:
             KakaoForm.QuickReplies_Add(entryPoint['action'], entryPoint['label'], entryPoint['messageText'], entryPoint['blockid'], entryPoint['extra'])
@@ -156,8 +154,11 @@ def MenuListup(userID, menuCategory, sellingTime, currentSellingTime, location):
         return JsonResponse(KakaoForm.GetForm())
 
     # Check User Order
-    OrderManagerInstance = OrderManager(userID)
-
+    try:
+        OrderManagerInstance = OrderManager(userID)
+    except () as ex:
+        print(ex)
+        
     if OrderManagerInstance.availableCouponStatusUpdate().exists():
         KakaoForm = Kakao_SimpleForm()
         KakaoForm.SimpleForm_Init()
@@ -176,12 +177,12 @@ def MenuListup(userID, menuCategory, sellingTime, currentSellingTime, location):
     CategoryList = Category.objects.all()[:CATEGORY_LIST_LENGTH]
     for category in CategoryList:
         STORE_CATEGORY_QUICKREPLIES_MAP.append({'action': "message", 'label': category.name, 'messageText': "{} {} {}".format(sellingTime, category.name, wordings.GET_MENU_COMMAND), 'blockid': "none", 
-                                                'extra': { KAKAO_PARAM_USER_ID: userID, KAKAO_PARAM_MENU_CATEGORY: category.name, KAKAO_PARAM_SELLING_TIME: sellingTime }})
+                                                'extra': { KAKAO_PARAM_MENU_CATEGORY: category.name, KAKAO_PARAM_SELLING_TIME: sellingTime }})
         
     if(menuCategory == NOT_APPLICABLE) or (menuCategory == ALL_MENU):
         MenuList     = Menu.objects.filter(sellingTime=sellingTime)[:MENU_LIST_LENGTH]
     else:
-        MenuList     = Menu.objects.filter(categories__name=menuCategory, sellingTime=sellingTime)[:MENU_LIST_LENGTH]
+        MenuList     = Menu.objects.filter(categories__category__name=menuCategory, sellingTime=sellingTime)[:MENU_LIST_LENGTH]
 
     if MenuList:
         KakaoForm = Kakao_CarouselForm()
@@ -189,12 +190,15 @@ def MenuListup(userID, menuCategory, sellingTime, currentSellingTime, location):
 
         #Menu Carousel Card Add 
         for menu in MenuList:
-            thumbnail = { "imageUrl": "{}{}".format(HOST_URL, menu.image.url) }
-            kakaoMapUrl = "https://map.kakao.com/link/map/{},{}".format(menu.storeInstance.name, getLatLng(menu.storeInstance.addr))
+            try:
+                thumbnail = {"imageUrl": "{}{}".format(HOST_URL, menu.image.url)}
+                kakaoMapUrl = "https://map.kakao.com/link/map/{},{}".format(menu.storeInstance.name, getLatLng(menu.storeInstance.addr))
+            except () as ex:
+                return print(ex)
+
             buttons = [
                 {'action': "message", 'label': wordings.ORDER_BTN,  'messageText': "{} {}".format(sellingTime, wordings.GET_PICKUP_TIME_COMMAND), 
                  'extra': {
-                    KAKAO_PARAM_USER_ID:          userID,
                     KAKAO_PARAM_STORE_ID:         menu.storeInstance.id,
                     KAKAO_PARAM_MENU_ID:          menu.id,
                     KAKAO_PARAM_MENU_CATEGORY:    menuCategory, 
@@ -261,12 +265,9 @@ def getSellingTime(request):
 
         # Invalied Path Access
         if(kakaoPayload.userID == NOT_APPLICABLE):
-            #return errorView("Parameter Error")
-            #FOR DEBUG
-            kakaoPayload.userID = KAKAO_SUPER_USER_ID
-            userInstance  = User.objects.get(id=kakaoPayload.userID)
+            return errorView("Parameter Error")
         else:
-            userInstance  = User.objects.get(id=kakaoPayload.userID)
+            userInstance = get_object_or_404(User, identifier_code=kakaoPayload.userID)
 
         EatplusSkillLog("Order Flow")
 
@@ -290,14 +291,12 @@ def getSellingTime(request):
             buttons = [
                 {'action': "message", 'label': wordings.GET_SELLING_TIME_LUNCH_BTN,  'messageText': wordings.GET_SELLING_TIME_LUNCH_BTN, 
                 'extra': {  KAKAO_PARAM_MENU_CATEGORY: NOT_APPLICABLE, 
-                            KAKAO_PARAM_SELLING_TIME: LUNCH,
-                            KAKAO_PARAM_USER_ID: KAKAO_SUPER_USER_ID }
+                            KAKAO_PARAM_SELLING_TIME: LUNCH, }
                 },
 
                 {'action': "message", 'label': wordings.GET_SELLING_TIME_DINNER_BTN,  'messageText': wordings.GET_SELLING_TIME_DINNER_BTN, 
                 'extra': {  KAKAO_PARAM_MENU_CATEGORY: NOT_APPLICABLE, 
-                            KAKAO_PARAM_SELLING_TIME: DINNER, 
-                            KAKAO_PARAM_USER_ID: KAKAO_SUPER_USER_ID }
+                            KAKAO_PARAM_SELLING_TIME: DINNER, }
                 }
             ]
 	
@@ -330,15 +329,18 @@ def selectMenu(request):
         if(kakaoPayload.userID == NOT_APPLICABLE) or (kakaoPayload.sellingTime == NOT_APPLICABLE): #and (kakaoPayload.menuCategory == NOT_APPLICABLE) => "ALL MENU"
             return errorView("Parameter Error")
         else:
-            userInstance = User.objects.get(id=kakaoPayload.userID)
+            userInstance = get_object_or_404(User, identifier_code=kakaoPayload.userID)
 
+        print(userInstance)
+        print(kakaoPayload.userID)
+        
         EatplusSkillLog("Order Flow")
 
         currentSellingTime = sellingTimeCheck()
         
-        return MenuListup(userInstance.id, kakaoPayload.menuCategory, kakaoPayload.sellingTime, currentSellingTime, kakaoPayload.location)
+        return MenuListup(userInstance.identifier_code, kakaoPayload.menuCategory, kakaoPayload.sellingTime, currentSellingTime, kakaoPayload.location)
 
-    except (RuntimeError, TypeError, NameError, KeyError) as ex:
+    except (RuntimeError, TypeError, NameError, KeyError, AttributeError, ValueError) as ex:
         return errorView("{}".format(ex))
 
 '''
@@ -358,7 +360,7 @@ def getPickupTime(request):
         if(kakaoPayload.userID == NOT_APPLICABLE) or (kakaoPayload.storeID == NOT_APPLICABLE) or (kakaoPayload.menuID  == NOT_APPLICABLE) or (kakaoPayload.sellingTime == NOT_APPLICABLE):
             return errorView("Parameter Error")
         else:
-            userInstance = User.objects.get(id=kakaoPayload.userID)
+            userInstance = get_object_or_404(User, identifier_code=kakaoPayload.userID)
             storeInstance = Store.objects.get(id=kakaoPayload.storeID)
             menuInstance  = Menu.objects.get(id=kakaoPayload.menuID)
 
@@ -411,7 +413,7 @@ def orderConfirm(request):
         if(kakaoPayload.userID == NOT_APPLICABLE) or (kakaoPayload.storeID == NOT_APPLICABLE) or (kakaoPayload.menuID  == NOT_APPLICABLE) or (kakaoPayload.pickupTime == NOT_APPLICABLE):
             return errorView("Parameter Error")
         else:
-            userInstance  = User.objects.get(id=kakaoPayload.userID)
+            User.objects.filter(identifier_code=kakaoPayload.userID)
             storeInstance = Store.objects.get(id=kakaoPayload.storeID)
             menuInstance  = Menu.objects.get(id=kakaoPayload.menuID)
 
@@ -466,16 +468,16 @@ def orderPush(request):
         if(kakaoPayload.userID == NOT_APPLICABLE) or (kakaoPayload.storeID == NOT_APPLICABLE) or (kakaoPayload.menuID  == NOT_APPLICABLE) or (kakaoPayload.pickupTime == NOT_APPLICABLE):
             return errorView("Parameter Invalid")
         else:
-            userInstance  = User.objects.get(id=kakaoPayload.userID)
+            userInstance = get_object_or_404(User, identifier_code=kakaoPayload.userID)
             storeInstance = Store.objects.get(id=kakaoPayload.storeID)
             menuInstance  = Menu.objects.get(id=kakaoPayload.menuID)
 
         EatplusSkillLog("Order Flow")
 
         #@TODO: UserInstance Load User
-        pushedOrder = Order.pushOrder(userInstance=User.objects.get(id=kakaoPayload.userID),
-                                      storeInstance=Store.objects.get(id=kakaoPayload.storeID), 
-                                      menuInstance=Menu.objects.get(id=kakaoPayload.menuID),
+        pushedOrder = Order.pushOrder(userInstance=userInstance,
+                                      storeInstance=storeInstance, 
+                                      menuInstance=menuInstance,
                                       pickupTime=kakaoPayload.pickupTime)
         
         KakaoForm = Kakao_CarouselForm()

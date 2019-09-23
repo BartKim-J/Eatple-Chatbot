@@ -1,8 +1,11 @@
 #Django Library
-from django.urls import reverse
 from django.db import models
+from django.conf import settings
+from django.urls import reverse
+from django.core.files.storage import FileSystemStorage
 from django_mysql.models import Model
 from django.core.validators import MaxValueValidator, MinValueValidator
+
 #External Library
 import os
 
@@ -10,11 +13,11 @@ import os
 from .models_config import Config
 
 #GLOBAL CONFIG
-NOT_APPLICABLE          = Config.NOT_APPLICABLE
-DEFAULT_OBJECT_ID       = Config.DEFAULT_OBJECT_ID
+NOT_APPLICABLE              = Config.NOT_APPLICABLE
+DEFAULT_OBJECT_ID           = Config.DEFAULT_OBJECT_ID
 
-STRING_LENGTH           = Config.STRING_LENGTH
-WORD_LENGTH             = Config.WORD_LENGTH
+STRING_LENGTH               = Config.STRING_LENGTH
+WORD_LENGTH                 = Config.WORD_LENGTH
 
 LUNCH_PICKUP_TIME           = Config.LUNCH_PICKUP_TIME
 DINNER_PICKUP_TIME          = Config.DINNER_PICKUP_TIME
@@ -27,7 +30,16 @@ SELLING_TIME_CATEGORY_DICT  = Config.SELLING_TIME_CATEGORY_DICT
 SELLING_TIME_CATEGORY       = Config.SELLING_TIME_CATEGORY
 
 #STATIC CONFIG
-
+class OverwriteStorage(FileSystemStorage):
+    def get_available_name(self, name, max_length=None):
+        print(self)
+        print("HISIDFJAISF")
+        # If the filename already exists, remove it as if it was a true file system
+        if self.exists(name):
+            print(os.path.join(settings.MEDIA_ROOT, name))
+            os.remove(os.path.join(settings.MEDIA_ROOT, name))
+        return name
+        
 def set_filename_format(instance, filename, toFilename):
     return "{filename}{extension}".format(
         filename=toFilename,
@@ -62,7 +74,7 @@ def default_directory_path(instance, filename):
 
 class DefaultImage(models.Model):
     filename     = models.CharField(max_length=STRING_LENGTH, help_text="Category")
-    image        = models.ImageField(blank=False, upload_to=default_directory_path)
+    image        = models.ImageField(blank=False, upload_to=default_directory_path, storage=OverwriteStorage())
 
     # Methods
     def __str__(self):
@@ -109,9 +121,7 @@ class Store(models.Model):
     description  = models.TextField(default="Store Dscription",
                                     help_text="Store Dscription")
 
-    menus        = models.ManyToManyField('Menu')
-
-    logo         = models.ImageField(default="STORE_DB/images/default/logoImg.png", upload_to=logo_directory_path)
+    logo         = models.ImageField(default="STORE_DB/images/default/logoImg.png", upload_to=logo_directory_path, storage=OverwriteStorage())
 
     lunch_pickupTime_start  = models.IntegerField(default=0, choices=LUNCH_PICKUP_TIME, help_text="")
     lunch_pickupTime_end    = models.IntegerField(default=len(LUNCH_PICKUP_TIME) - 1, choices=LUNCH_PICKUP_TIME, help_text="")
@@ -130,35 +140,30 @@ class Menu(models.Model):
         ordering = ['-name']
 
 
-    storeInstance         = models.ForeignKey('Store', on_delete=models.CASCADE, default=DEFAULT_OBJECT_ID)
+    storeInstance    = models.ForeignKey('Store', on_delete=models.CASCADE, default=DEFAULT_OBJECT_ID)
     
     # Menu Info
-    management_code  = models.CharField(max_length=MANAGEMENT_CODE_LENGTH, blank=True, null=True,
-                                        help_text="Menu Magement Code")
-    name             = models.CharField(default="Menu Name", max_length=STRING_LENGTH, 
-                                        help_text="Menu Name")
-
-    image            = models.ImageField(default="STORE_DB/images/default/menuImg.png", upload_to=menu_directory_path)
 
     sellingTime      = models.CharField(max_length=STRING_LENGTH, choices=SELLING_TIME_CATEGORY, default=SELLING_TIME_CATEGORY[SELLING_TIME_LUNCH])
-    categories       = models.ManyToManyField(Category)
-    sub_categories   = models.ManyToManyField(SubCategory)
-
-    price            = models.IntegerField(default=5500, 
-                                           help_text="Price") 
-    discount         = models.IntegerField(default=0,
-                                           help_text="Discount")
-    description      = models.TextField(default="Description", 
-                                        help_text="Description")
 
 
-    sales_count      = models.IntegerField(default=0,
-                                           help_text="Total Sales Count")
-    current_stock    = models.IntegerField(default=0,
-                                           help_text="Current Stock")                                           
-    logistics_code   = models.CharField(max_length=MANAGEMENT_CODE_LENGTH, blank=True, null=True,
-                                        help_text="Menu Logistics Code")
+    name             = models.CharField(default="Menu Name", max_length=STRING_LENGTH, help_text="Menu Name")
+    description      = models.TextField(default="Description", help_text="Description")
 
+    categories       = models.ManyToManyField(SubCategory)
+    
+    image            = models.ImageField(default="STORE_DB/images/default/menuImg.png", upload_to=menu_directory_path, storage=OverwriteStorage())
+
+    price            = models.IntegerField(default=5500, help_text="Price") 
+    discount         = models.IntegerField(default=0, help_text="Discount")
+
+
+    sales_count      = models.IntegerField(default=0, help_text="Total Sales Count")
+    current_stock    = models.IntegerField(default=0, help_text="Current Stock")
+
+
+    management_code  = models.CharField(max_length=MANAGEMENT_CODE_LENGTH, blank=True, null=True,
+                                        help_text="Menu Magement Code")
     is_status        = models.IntegerField(default=0, choices=(), help_text="")
 
     # Methods
