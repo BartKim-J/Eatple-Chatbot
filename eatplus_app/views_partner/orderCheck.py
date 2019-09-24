@@ -77,7 +77,6 @@ def StoreOrderListup(uniqueNumber):
     
     availableCoupons = OrderManagerInstance.getAvailableCoupons()[:ORDER_LIST_LENGTH]
 
-    print(availableCoupons)
     if availableCoupons:
         KakaoForm = Kakao_CarouselForm()
         KakaoForm.BasicCard_Init()

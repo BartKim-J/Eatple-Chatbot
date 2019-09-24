@@ -37,6 +37,7 @@ from eatplus_app.views_user.wording import wordings
 
 #Define
 from eatplus_app.define import EP_define
+
 TIME_ZONE                   = EP_define.TIME_ZONE
 NOT_APPLICABLE              = EP_define.NOT_APPLICABLE
 

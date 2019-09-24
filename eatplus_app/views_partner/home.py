@@ -15,9 +15,6 @@ from django.http import JsonResponse
 import json
 from random import *
 
-#Define
-from eatplus_app.define import EP_define
-
 #Models 
 from eatplus_app.models import Partner
 from eatplus_app.models import Order
@@ -29,8 +26,13 @@ from eatplus_app.module_kakao.ReponseForm import Kakao_SimpleForm, Kakao_Carouse
 from eatplus_app.module_kakao.RequestForm import getLatLng, KakaoPayLoad
 
 #View
-#from eatplus_app.views_user import wordings
+from eatplus_app.views_partner.wording import wordings
 from eatplus_app.views_system.debugger import EatplusSkillLog, errorView
+
+#Define
+from eatplus_app.define import EP_define
+
+DEFAULT_STORE_KEY = "0015"
 
 #Static Functions
 def registerPartner(partnerIdentifier, storeKey):
@@ -38,13 +40,26 @@ def registerPartner(partnerIdentifier, storeKey):
     
     return partnerInstance
 
+#Viewset
+'''
+    @name GET_PartnerHome
+    @param userID
+
+    @note
+    @bug
+    @todo
+'''
 @csrf_exempt
-def partnerHome(request):
+def GET_PartnerHome(request):
     EatplusSkillLog("Home")
 
+    HOME_BTN_MAP = [
+        {'action': "message", 'label': wordings.GET_ORDER_LIST_COMMAND, 'messageText': wordings.GET_ORDER_LIST_COMMAND, 'blockid': "none", 'extra': { 'Status': "OK" }},
+        {'action': "message", 'label': wordings.GET_CALCULATE_CHECK_COMMAND, 'messageText': wordings.GET_CALCULATE_CHECK_COMMAND, 'blockid': "none", 'extra': { 'Status': "OK" }},
+    ]
+
     HOME_QUICKREPLIES_MAP = [
-        {'action': "message", 'label': "주문 조회", 'messageText': "주문 조회", 'blockid': "none", 'extra': { 'Status': "OK" }},
-        {'action': "message", 'label': "정산 조회", 'messageText': "정산 조회", 'blockid': "none", 'extra': { 'Status': "OK" }},
+        {'action': "message", 'label': wordings.STORE_MANUAL_COMMAND,      'messageText': wordings.STORE_MANUAL_COMMAND,    'blockid': "none", 'extra': {}},
     ]
 
     try:
@@ -53,16 +68,19 @@ def partnerHome(request):
         try:
             partnerInstance = Partner.objects.get(identifier_code=kakaoPayload.userID)
         except Partner.DoesNotExist:
-            print("Create Partner Account!!")
-            storeKey = "0015"
+            storeKey = DEFAULT_STORE_KEY
             partnerInstance = registerPartner(kakaoPayload.userID, "{}".format(storeKey))
             if (partnerInstance == None):
                 return errorView("partner register failed.")
+            
+        KakaoForm = Kakao_CarouselForm()
+        KakaoForm.BasicCard_Init()
 
-        KakaoForm = Kakao_SimpleForm()
-        KakaoForm.SimpleForm_Init()
-
-        KakaoForm.SimpleText_Add("잇플 파트너 홈 화면입니다! 아래 명령어 중에 골라주세요!")
+        thumbnail = {"imageUrl": ""}
+        
+        buttons = HOME_BTN_MAP
+        
+        KakaoForm.BasicCard_Add(wordings.HOME_TITLE_TEXT, wordings.HOME_DESCRIPT_TEXT, thumbnail, buttons)
 
         for entryPoint in HOME_QUICKREPLIES_MAP:
             KakaoForm.QuickReplies_Add(entryPoint['action'], entryPoint['label'], entryPoint['messageText'], entryPoint['blockid'], entryPoint['extra'])

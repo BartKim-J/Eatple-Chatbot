@@ -28,7 +28,7 @@ urlpatterns = [
 
     # Kakao Plus User Skills
     ## Home
-    path('skill/user/home', views.userHome),
+    path('skill/user/home', views.GET_UserHome),
     
     ## Order Flow
     path('skill/user/order/get_sellingTime',  views.GET_SellingTime),
@@ -50,15 +50,22 @@ urlpatterns = [
     path('skill/user/orderEdit/get_pickupTimeForChange', views.GET_PickupTimeForChange),
     path('skill/user/orderEdit/set_pickupTimeByChanged', views.SET_PickupTimeByChanged),
 
-    ## User Manual
+    ## ETC
     path('skill/user/etc/get_userManual', views.GET_UserManual),
+    path('skill/user/etc/get_userIntro', views.GET_UserIntro),
 
 
     # Kakao Plus Partner Skills
     ## Home
-    path('skill/partner/home', views.partnerHome),
-
+    path('skill/partner/home', views.GET_PartnerHome),
+    
+    ## Order View Flow
     path('skill/partner/orderView/get_orderList', views.GET_StoreOrderList),
+    path('skill/partner/orderView/get_calculateCheck', views.GET_CalculateCheck),
+
+    ## ETC
+    path('skill/partner/etc/get_partnerManual', views.GET_PartnerManual),
+    path('skill/partner/etc/get_partnerIntro', views.GET_PartnerIntro),
 ]
 
 # Media Link Url

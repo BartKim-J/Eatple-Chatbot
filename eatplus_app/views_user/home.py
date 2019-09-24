@@ -48,8 +48,16 @@ def registerUser(userIdentifier):
     return userInstance
  
 #Viewset
+'''
+    @name GET_UserHomes
+    @param userID
+
+    @note
+    @bug
+    @todo
+'''
 @csrf_exempt
-def userHome(request):
+def GET_UserHome(request):
     EatplusSkillLog("Home")
 
     HOME_BTN_MAP = [
@@ -76,7 +84,6 @@ def userHome(request):
         try:
             userInstance = User.objects.get(identifier_code=kakaoPayload.userID)
         except User.DoesNotExist:
-            print("Create User Account!!")
             userInstance = registerUser(kakaoPayload.userID)
             
         KakaoForm = Kakao_CarouselForm()

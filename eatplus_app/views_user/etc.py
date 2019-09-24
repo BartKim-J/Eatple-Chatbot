@@ -76,7 +76,7 @@ USER_MANUAL_MAP = [
     {'title': "잇플에 궁금한 점이 생겼어요!", 'description': "문의사항이 있는 경우에는 ‘상담원으로 전환하기’를 누르신 후 카카오톡으로 말씀해주세요."},
 ]
 
-USER_MANUAL_MAP = [
+USER_INTRO_MAP = [
     {'title': "한 끼 식사가 매일 5,500원!", 'description': "내가 평소 자주가던 식당의 메뉴들을 5,500원에 즐길 수 있어요!"},
     {'title': "잇플로 시간도 절약하세요.", 'description': "미리 주문하고 픽업시간을 예약하여 기다림없이 맛있는 식사를!"},
     {'title': "가성비 있는 식사가 가능해집니다.", 'description': "꼼꼼하게 검수한 음식만을 제공하며, 다양한 식사를 선택할 수 있어요."},
@@ -122,6 +122,40 @@ def GET_UserManual(request):
     except (RuntimeError, TypeError, NameError, KeyError) as ex:
         return errorView("{}".format(ex))
 
+'''
+    @name GET_UserIntro
+    @param name
+
+    @note
+    @bug
+    @tood
+'''
+@csrf_exempt
+def GET_UserIntro(request):
+    try:
+        kakaoPayload = KakaoPayLoad(request)
+
+        EatplusSkillLog("Partner Manual Flow")
+
+        KakaoForm = Kakao_CarouselForm()
+        KakaoForm.BasicCard_Init()
+
+        thumbnail = { "imageUrl": "{}{}".format(HOST_URL, '/media/STORE_DB/images/default/defaultImg.png') }
+
+        buttons = [
+            # No Buttons
+        ]
+
+        for entryPoint in USER_INTRO_MAP:
+            KakaoForm.BasicCard_Add(entryPoint['title'], entryPoint['description'], thumbnail, buttons)
+
+        for entryPoint in DEFAULT_QUICKREPLIES_MAP:
+            KakaoForm.QuickReplies_Add(entryPoint['action'], entryPoint['label'], entryPoint['messageText'], entryPoint['blockid'], entryPoint['extra'])
+        
+        return JsonResponse(KakaoForm.GetForm())
+  
+    except (RuntimeError, TypeError, NameError, KeyError) as ex:
+        return errorView("{}".format(ex))
 
 
 
