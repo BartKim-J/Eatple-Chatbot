@@ -10,16 +10,16 @@
 from django.shortcuts import render
 from django.views.decorators.csrf import csrf_exempt
 from django.http import JsonResponse
-from django.shortcuts import get_object_or_404
 
 #External Library
 import json
 from random import *
 
-#Models 
+#Define
 from eatplus_app.define import EP_define
 
-from eatplus_app.models import User
+#Models 
+from eatplus_app.models import Partner
 from eatplus_app.models import Order
 from eatplus_app.models import Category, SubCategory
 from eatplus_app.models import Store, Menu
@@ -32,16 +32,33 @@ from eatplus_app.module_kakao.RequestForm import getLatLng, KakaoPayLoad
 #from eatplus_app.views_user import wordings
 from eatplus_app.views_system.debugger import EatplusSkillLog, errorView
 
+#Static Functions
+def registerPartner(partnerIdentifier, storeKey):
+    partnerInstance = Partner.registerPartner("잇플 파트너 {}".format(randint(1,10000)), partnerIdentifier, storeKey)
+    
+    return partnerInstance
+
 @csrf_exempt
 def partnerHome(request):
     EatplusSkillLog("Home")
 
     HOME_QUICKREPLIES_MAP = [
-        {'action': "message", 'label': "주문 조회",    'messageText': "주문 조회", 'blockid': "none", 'extra': { 'Status': "OK" }},
-        {'action': "message", 'label': "정산 조회",    'messageText': "정산 조회", 'blockid': "none", 'extra': { 'Status': "OK" }},
+        {'action': "message", 'label': "주문 조회", 'messageText': "주문 조회", 'blockid': "none", 'extra': { 'Status': "OK" }},
+        {'action': "message", 'label': "정산 조회", 'messageText': "정산 조회", 'blockid': "none", 'extra': { 'Status': "OK" }},
     ]
 
     try:
+        kakaoPayload = KakaoPayLoad(request)
+
+        try:
+            partnerInstance = Partner.objects.get(identifier_code=kakaoPayload.userID)
+        except Partner.DoesNotExist:
+            print("Create Partner Account!!")
+            storeKey = "0015"
+            partnerInstance = registerPartner(kakaoPayload.userID, "{}".format(storeKey))
+            if (partnerInstance == None):
+                return errorView("partner register failed.")
+
         KakaoForm = Kakao_SimpleForm()
         KakaoForm.SimpleForm_Init()
 

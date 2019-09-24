@@ -73,9 +73,10 @@ def userHome(request):
     try:
         kakaoPayload = KakaoPayLoad(request)
 
-        userInstance = User.objects.filter(identifier_code=kakaoPayload.userID)
-
-        if not userInstance.exists():
+        try:
+            userInstance = User.objects.get(identifier_code=kakaoPayload.userID)
+        except User.DoesNotExist:
+            print("Create User Account!!")
             userInstance = registerUser(kakaoPayload.userID)
             
         KakaoForm = Kakao_CarouselForm()

@@ -14,7 +14,6 @@ import os
 from django.shortcuts import render
 from django.views.decorators.csrf import csrf_exempt
 from django.http import JsonResponse
-from django.shortcuts import get_object_or_404, render
 
 #External Library
 import requests
@@ -164,10 +163,7 @@ def MenuListup(userID, menuCategory, sellingTime, currentSellingTime, location):
         return JsonResponse(KakaoForm.GetForm())
 
     # Check User Order
-    try:
-        OrderManagerInstance = OrderManager(userID)
-    except () as ex:
-        print(ex)
+    OrderManagerInstance = OrderManager(userID)
         
     if OrderManagerInstance.availableCouponStatusUpdate().exists():
         KakaoForm = Kakao_SimpleForm()
@@ -261,7 +257,7 @@ def MenuListup(userID, menuCategory, sellingTime, currentSellingTime, location):
 #
 # # # # # # # # # # # # # # # # # # # # # # # # #
 '''
-    @name getSellingTime
+    @name GET_SellingTime
     @param userID
 
     @note
@@ -269,7 +265,7 @@ def MenuListup(userID, menuCategory, sellingTime, currentSellingTime, location):
     @todo
 '''
 @csrf_exempt
-def getSellingTime(request):
+def GET_SellingTime(request):
     try:
         kakaoPayload = KakaoPayLoad(request)
 
@@ -277,7 +273,10 @@ def getSellingTime(request):
         if(kakaoPayload.userID == NOT_APPLICABLE):
             return errorView("Parameter Error")
         else:
-            userInstance = get_object_or_404(User, identifier_code=kakaoPayload.userID)
+            try:
+                userInstance = User.objects.get(identifier_code=kakaoPayload.userID)
+            except User.DoesNotExist:
+                return errorView("User ID is Invalid")
 
         EatplusSkillLog("Order Flow")
 
@@ -323,7 +322,7 @@ def getSellingTime(request):
 
 
 '''
-    @name selectMenu
+    @name GET_Menu
     @param userID, sellingTime 
 
     @note
@@ -331,7 +330,7 @@ def getSellingTime(request):
     @todo
 '''
 @csrf_exempt
-def selectMenu(request):
+def GET_Menu(request):
     try:
         kakaoPayload = KakaoPayLoad(request)
 
@@ -339,19 +338,26 @@ def selectMenu(request):
         if(kakaoPayload.userID == NOT_APPLICABLE) or (kakaoPayload.sellingTime == NOT_APPLICABLE): #and (kakaoPayload.menuCategory == NOT_APPLICABLE) => "ALL MENU"
             return errorView("Parameter Error")
         else:
-            userInstance = get_object_or_404(User, identifier_code=kakaoPayload.userID)
+            try:
+                userInstance = User.objects.get(identifier_code=kakaoPayload.userID)
+            except User.DoesNotExist:
+                return errorView("User ID is Invalid")
+            
         
         EatplusSkillLog("Order Flow")
 
+        # Selling Time Check
         currentSellingTime = sellingTimeCheck()
-        
+        if currentSellingTime == None:
+            return errorView("Get Invalid Selling Time")
+
         return MenuListup(userInstance.identifier_code, kakaoPayload.menuCategory, kakaoPayload.sellingTime, currentSellingTime, kakaoPayload.location)
 
     except (RuntimeError, TypeError, NameError, KeyError, AttributeError, ValueError) as ex:
         return errorView("{}".format(ex))
 
 '''
-    @name getPickupTime
+    @name GET_PickupTime
     @param userID, storeID, menuID, sellingTime 
 
     @note
@@ -359,7 +365,7 @@ def selectMenu(request):
     @todo
 '''
 @csrf_exempt
-def getPickupTime(request):
+def GET_PickupTime(request):
     try:
         kakaoPayload = KakaoPayLoad(request)
 
@@ -367,7 +373,11 @@ def getPickupTime(request):
         if(kakaoPayload.userID == NOT_APPLICABLE) or (kakaoPayload.storeID == NOT_APPLICABLE) or (kakaoPayload.menuID  == NOT_APPLICABLE) or (kakaoPayload.sellingTime == NOT_APPLICABLE):
             return errorView("Parameter Error")
         else:
-            userInstance = get_object_or_404(User, identifier_code=kakaoPayload.userID)
+            try:
+                userInstance = User.objects.get(identifier_code=kakaoPayload.userID)
+            except User.DoesNotExist:
+                return errorView("User ID is Invalid")
+
             storeInstance = Store.objects.get(id=kakaoPayload.storeID)
             menuInstance  = Menu.objects.get(id=kakaoPayload.menuID)
 
@@ -404,7 +414,7 @@ def getPickupTime(request):
         return errorView("{}".format(ex))
 
 '''
-    @name orderConfirm
+    @name SET_OrderSheet
     @param storeID, menuID, userID, pickupTime
 
     @note
@@ -412,7 +422,7 @@ def getPickupTime(request):
     @todo
 '''
 @csrf_exempt
-def orderConfirm(request):
+def SET_OrderSheet(request):
     try:
         kakaoPayload = KakaoPayLoad(request)
 
@@ -420,7 +430,11 @@ def orderConfirm(request):
         if(kakaoPayload.userID == NOT_APPLICABLE) or (kakaoPayload.storeID == NOT_APPLICABLE) or (kakaoPayload.menuID  == NOT_APPLICABLE) or (kakaoPayload.pickupTime == NOT_APPLICABLE):
             return errorView("Parameter Error")
         else:
-            User.objects.filter(identifier_code=kakaoPayload.userID)
+            try:
+                userInstance = User.objects.get(identifier_code=kakaoPayload.userID)
+            except User.DoesNotExist:
+                return errorView("User ID is Invalid")
+
             storeInstance = Store.objects.get(id=kakaoPayload.storeID)
             menuInstance  = Menu.objects.get(id=kakaoPayload.menuID)
 
@@ -459,7 +473,7 @@ def orderConfirm(request):
 
 
 '''
-    @name orderPush
+    @name POST_Order
     @param storeID, menuID, userID, pickupTime
 
     @note
@@ -467,7 +481,7 @@ def orderConfirm(request):
     @todo
 '''
 @csrf_exempt
-def orderPush(request):
+def POST_Order(request):
     try:
         kakaoPayload = KakaoPayLoad(request)
 
@@ -475,7 +489,11 @@ def orderPush(request):
         if(kakaoPayload.userID == NOT_APPLICABLE) or (kakaoPayload.storeID == NOT_APPLICABLE) or (kakaoPayload.menuID  == NOT_APPLICABLE) or (kakaoPayload.pickupTime == NOT_APPLICABLE):
             return errorView("Parameter Invalid")
         else:
-            userInstance = get_object_or_404(User, identifier_code=kakaoPayload.userID)
+            try:
+                userInstance = User.objects.get(identifier_code=kakaoPayload.userID)
+            except User.DoesNotExist:
+                return errorView("User ID is Invalid")
+
             storeInstance = Store.objects.get(id=kakaoPayload.storeID)
             menuInstance  = Menu.objects.get(id=kakaoPayload.menuID)
 
@@ -500,7 +518,7 @@ def orderPush(request):
         ]
 
         KakaoForm.BasicCard_Add(
-            "식권이 발급되었습니다.",
+            "잇플패스가 발급되었습니다.",
             "주문번호: {}\n--------------------\n - 주문자: {}\n\n - 매장: {} \n - 메뉴: {}\n\n - 결제 금액: {}원\n\n - 픽업 시간: {}\n--------------------\n - 매장 위치: {}".format(
                 pushedOrder.management_code,
                 pushedOrder.userInstance.name,

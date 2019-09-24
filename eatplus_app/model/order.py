@@ -15,10 +15,9 @@ from django.utils import timezone
 #External Library
 from datetime import datetime, timedelta
 
-#Models 
+#Define 
 from eatplus_app.define import EP_define, dateNowByTimeZone, dateByTimeZone
 
-#GLOBAL DEFINE
 NOT_APPLICABLE              = EP_define.NOT_APPLICABLE
 DEFAULT_OBJECT_ID           = EP_define.DEFAULT_OBJECT_ID
 
@@ -35,7 +34,7 @@ STRING_LENGTH               = EP_define.STRING_LENGTH
 
 MANAGEMENT_CODE_DEFAULT     = EP_define.MANAGEMENT_CODE_DEFAULT
 
-
+#Static Functions
 def orderStatusUpdateByTime(orderInstance):
     menuInstance              = orderInstance.menuInstance
 
@@ -160,7 +159,7 @@ def OrderManagementCodeGenerator(storeInstance, menuInstance, userInstance, orde
 
     return management_code
 
-#STATIC EP_define
+#Models
 class Order(models.Model):
     class Meta:
         ordering = ['-pickupTime']
@@ -207,6 +206,43 @@ class Order(models.Model):
     # Methods
     def __str__(self):
         return "{} - {} :: {} ----- {}".format(self.management_code, self.status, self.pickupTime, self.order_date)
+
+class storeOrderManager():
+    def __init__(self, uniqueNumber):
+        self.storeOrderList = Order.objects.filter(storeInstance__uniqueNumber=uniqueNumber)
+
+    def availableCouponStatusUpdate(self):
+        availableCoupons = self.getAvailableCoupons()
+
+        # Order Status Update
+        for orderInstance in availableCoupons:
+            orderStatusUpdateByTime(orderInstance)
+
+        return self.getAvailableCoupons()
+
+    def getUnavailableCoupons(self):
+        unavailableCoupons = self.storeOrderList.exclude(
+            status=ORDER_STATUS[ORDER_STATUS_DICT['주문 확인중']][0]
+        ).exclude(
+            status=ORDER_STATUS[ORDER_STATUS_DICT['주문 완료']][0]
+        ).exclude(
+            status=ORDER_STATUS[ORDER_STATUS_DICT['픽업 준비중']][0]
+        ).exclude(
+            status=ORDER_STATUS[ORDER_STATUS_DICT['픽업 가능']][0]
+        )
+        return unavailableCoupons
+
+    def getAvailableCoupons(self):
+        availableCoupons = self.storeOrderList.exclude(
+            status=ORDER_STATUS[ORDER_STATUS_DICT['픽업 완료']][0]
+        ).exclude(
+            status=ORDER_STATUS[ORDER_STATUS_DICT['주문 만료']][0]
+        ).exclude(
+            status=ORDER_STATUS[ORDER_STATUS_DICT['주문 취소']][0]
+        )
+        return availableCoupons
+
+
 
 class OrderManager():
     def __init__(self, userID):

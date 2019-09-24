@@ -14,7 +14,6 @@ import os
 from django.shortcuts import render
 from django.views.decorators.csrf import csrf_exempt
 from django.http import JsonResponse
-from django.shortcuts import get_object_or_404, render
 
 #External Library
 import requests
@@ -81,63 +80,7 @@ DEFAULT_QUICKREPLIES_MAP = [
 #
 # # # # # # # # # # # # # # # # # # # # # # # # #
 '''
-    @name orderCancle
-    @param orderID
-
-    @note
-    @bug
-    @tood
-'''
-@csrf_exempt
-def orderCancel(request):
-    try:
-        kakaoPayload = KakaoPayLoad(request)
-
-        # Invalied Path Access
-        if(kakaoPayload.orderID == NOT_APPLICABLE):
-            return errorView("Parameter Invalid")
-        else:
-            orderInstance = Order.objects.get(id=kakaoPayload.orderID)
-
-        EatplusSkillLog("Order Change Flow")
-
-        orderInstance.status = ORDER_STATUS[ORDER_STATUS_DICT['주문 취소']][0]
-        orderInstance.save()
-        
-        KakaoForm = Kakao_CarouselForm()
-        KakaoForm.BasicCard_Init()
-
-        thumbnail = { "imageUrl": "" }
-
-        kakaoMapUrl = "https://map.kakao.com/link/map/{},{}".format(orderInstance.storeInstance.name, getLatLng(orderInstance.storeInstance.addr))
-
-        buttons = [
-            {'action': "webLink", 'label': wordings.SHOW_LOCATION_BTN,  "webLinkUrl": kakaoMapUrl},
-        ]
-
-        KakaoForm.BasicCard_Add(
-            "주문이 취소되었습니다. ",
-            "주문번호: {}\n--------------------\n - 주문자: {}\n\n - 매장: {} \n - 메뉴: {}\n\n - 결제 금액: {}원\n\n - 픽업 시간: {}\n--------------------".format(
-                orderInstance.management_code,
-                orderInstance.userInstance.name,
-                orderInstance.storeInstance.name, 
-                orderInstance.menuInstance.name, 
-                orderInstance.menuInstance.price, 
-                orderInstance.pickupTime.astimezone().strftime('%H시%M분 %m월%d일'),
-            ),
-            thumbnail, buttons
-        )
-
-        for entryPoint in DEFAULT_QUICKREPLIES_MAP:
-            KakaoForm.QuickReplies_Add(entryPoint['action'], entryPoint['label'], entryPoint['messageText'], entryPoint['blockid'], entryPoint['extra'])
-        
-        return JsonResponse(KakaoForm.GetForm())
-
-    except (RuntimeError, TypeError, NameError, KeyError) as ex:
-        return errorView("{} ".format(ex))
-
-'''
-    @name getOrderPickupTime
+    @name GET_PickupTimeForChange
     @param orderID, sellingTime
 
     @note
@@ -145,7 +88,7 @@ def orderCancel(request):
     @tood
 '''
 @csrf_exempt
-def getOrderPickupTime(request):
+def GET_PickupTimeForChange(request):
     try:
         kakaoPayload = KakaoPayLoad(request)
 
@@ -197,7 +140,7 @@ def getOrderPickupTime(request):
     @tood
 '''
 @csrf_exempt
-def orderPickupTimeChange(request):
+def SET_PickupTimeByChanged(request):
     try:
         kakaoPayload = KakaoPayLoad(request)
 
@@ -245,9 +188,8 @@ def orderPickupTimeChange(request):
     except (RuntimeError, TypeError, NameError, KeyError) as ex:
         return errorView("{}".format(ex))
 
-
 '''
-    @name useCoupon
+    @name GET_ConfirmUserCoupon
     @param orderID
 
     @note
@@ -255,7 +197,57 @@ def orderPickupTimeChange(request):
     @tood
 '''
 @csrf_exempt
-def useCoupon(request):
+def GET_ConfirmUserCoupon(request):
+    try:
+        kakaoPayload = KakaoPayLoad(request)
+
+        # Invalied Path Access
+        if(kakaoPayload.orderID == NOT_APPLICABLE):
+            return errorView("Parameter Invalid")
+        else:
+            try:
+                userInstance = User.objects.get(identifier_code=kakaoPayload.userID)
+            except User.DoesNotExist:
+                return errorView("User ID is Invalid")
+                
+            OrderInstance = Order.objects.get(id=kakaoPayload.orderID)
+
+        USE_COUPON_QUICKREPLIES_MAP = [                
+            {'action': "message", 'label': "사용하기",    'messageText': wordings.USE_COUPON_COMMAND, 'blockid': "none", 'extra': { KAKAO_PARAM_ORDER_ID: OrderInstance.id }},
+            {'action': "message", 'label': wordings.RETURN_HOME_QUICK_REPLISE,    'messageText': wordings.RETURN_HOME_QUICK_REPLISE, 'blockid': "none", 'extra': { KAKAO_PARAM_STATUS: KAKAO_PARAM_STATUS_OK }},
+        ]
+
+        EatplusSkillLog("Order Check Flow")
+
+        KakaoForm = Kakao_SimpleForm()
+        KakaoForm.SimpleForm_Init()
+
+        thumbnail = { "imageUrl": "" }
+
+        buttons = [
+            # No Buttons
+        ]
+
+        KakaoForm.SimpleText_Add("잇플패스를 사용하시겠습니까?")
+
+        for entryPoint in USE_COUPON_QUICKREPLIES_MAP:
+            KakaoForm.QuickReplies_Add(entryPoint['action'], entryPoint['label'], entryPoint['messageText'], entryPoint['blockid'], entryPoint['extra'])
+        
+        return JsonResponse(KakaoForm.GetForm())
+
+    except (RuntimeError, TypeError, NameError, KeyError) as ex:
+        return errorView("{} ".format(ex))
+
+'''
+    @name POST_UseCoupon
+    @param orderID
+
+    @note
+    @bug
+    @tood
+'''
+@csrf_exempt
+def POST_UseCoupon(request):
     try:
         kakaoPayload = KakaoPayLoad(request)
 
@@ -282,7 +274,7 @@ def useCoupon(request):
         ]
 
         KakaoForm.BasicCard_Add(
-            "식권이 사용되었습니다.",
+            "잇플패스가 사용되었습니다.",
             "주문번호: {}\n--------------------\n - 주문자: {}\n\n - 매장: {} \n - 메뉴: {}\n\n - 결제 금액: {}원\n\n - 픽업 시간: {}\n--------------------".format(
                 orderInstance.management_code,
                 orderInstance.userInstance.name,
@@ -302,8 +294,58 @@ def useCoupon(request):
     except (RuntimeError, TypeError, NameError, KeyError) as ex:
         return errorView("{}".format(ex))
 
+'''
+    @name POST_OrderCancel
+    @param orderID
 
+    @note
+    @bug
+    @tood
+'''
+@csrf_exempt
+def POST_OrderCancel(request):
+    try:
+        kakaoPayload = KakaoPayLoad(request)
 
+        # Invalied Path Access
+        if(kakaoPayload.orderID == NOT_APPLICABLE):
+            return errorView("Parameter Invalid")
+        else:
+            orderInstance = Order.objects.get(id=kakaoPayload.orderID)
 
+        EatplusSkillLog("Order Change Flow")
 
+        orderInstance.status = ORDER_STATUS[ORDER_STATUS_DICT['주문 취소']][0]
+        orderInstance.save()
+        
+        KakaoForm = Kakao_CarouselForm()
+        KakaoForm.BasicCard_Init()
 
+        thumbnail = { "imageUrl": "" }
+
+        kakaoMapUrl = "https://map.kakao.com/link/map/{},{}".format(orderInstance.storeInstance.name, getLatLng(orderInstance.storeInstance.addr))
+
+        buttons = [
+            {'action': "webLink", 'label': wordings.SHOW_LOCATION_BTN,  "webLinkUrl": kakaoMapUrl},
+        ]
+
+        KakaoForm.BasicCard_Add(
+            "주문이 취소되었습니다. ",
+            "주문번호: {}\n--------------------\n - 주문자: {}\n\n - 매장: {} \n - 메뉴: {}\n\n - 결제 금액: {}원\n\n - 픽업 시간: {}\n--------------------".format(
+                orderInstance.management_code,
+                orderInstance.userInstance.name,
+                orderInstance.storeInstance.name, 
+                orderInstance.menuInstance.name, 
+                orderInstance.menuInstance.price, 
+                orderInstance.pickupTime.astimezone().strftime('%H시%M분 %m월%d일'),
+            ),
+            thumbnail, buttons
+        )
+
+        for entryPoint in DEFAULT_QUICKREPLIES_MAP:
+            KakaoForm.QuickReplies_Add(entryPoint['action'], entryPoint['label'], entryPoint['messageText'], entryPoint['blockid'], entryPoint['extra'])
+        
+        return JsonResponse(KakaoForm.GetForm())
+
+    except (RuntimeError, TypeError, NameError, KeyError) as ex:
+        return errorView("{} ".format(ex))

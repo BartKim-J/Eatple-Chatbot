@@ -13,18 +13,21 @@ from django_mysql.models import Model
 
 #External Library
 
-#Models 
+#Define
 from eatplus_app.define import EP_define
 
-#GLOBAL CONFIG
 NOT_APPLICABLE          = EP_define.NOT_APPLICABLE
 DEFAULT_OBJECT_ID       = EP_define.DEFAULT_OBJECT_ID
 
 USER_NICKNAME_LENGTH    = EP_define.USER_NICKNAME_LENGTH
 USER_ID_CODE_LENGTH     = EP_define.USER_ID_CODE_LENGTH
 
-#STATIC CONFIG
+#Other Models 
+from eatplus_app.models import Order
+from eatplus_app.models import Category, SubCategory
+from eatplus_app.models import Store, Menu
 
+#Models
 class User(models.Model):
     class Meta:
         ordering = ['-name']
@@ -44,3 +47,5 @@ class User(models.Model):
             # Methods
     def __str__(self):
         return "{}".format(self.name)
+
+

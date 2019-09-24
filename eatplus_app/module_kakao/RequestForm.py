@@ -62,21 +62,17 @@ class KakaoPayLoad():
         self.dataAction         = self.received_json_data['action']
         self.dataActionExtra    = self.dataAction['clientExtra']
         self.dataActionParams   = self.dataAction['detailParams']
-
-
-
+        
         #ID Parsing
+        try:
+            self.userID         = self.dataUserRequest['user']['id']
+        except (RuntimeError, TypeError, NameError, KeyError) as ex:
+            self.userID         = EP_define.NOT_APPLICABLE
+
         try:
             self.orderID         = self.dataActionExtra[EP_define.KAKAO_PARAM_ORDER_ID]
         except (RuntimeError, TypeError, NameError, KeyError) as ex:
             self.orderID         = EP_define.NOT_APPLICABLE
-
-
-        try:
-            self.userID = self.dataUserRequest['user']['id']
-        except (RuntimeError, TypeError, NameError, KeyError) as ex:
-            self.userID         = EP_define.NOT_APPLICABLE
-
 
         try:
             self.storeID         = self.dataActionExtra[EP_define.KAKAO_PARAM_STORE_ID]

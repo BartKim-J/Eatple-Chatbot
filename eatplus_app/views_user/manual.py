@@ -70,7 +70,7 @@ USER_MANUAL_MAP = [
     {'title': "주문은 어떻게 하나요? ", 'description': "주문하기 클릭 후, 점심 또는 저녁을 선택해주세요. "},
     {'title': "주문 가능한 시간은 언제인가요?", 'description': "점심:전날 16:30~ 당일 10:30 /저녁:당일 10:30~16:30"},
     {'title': "메뉴선택은 어떻게 하나요?", 'description': "점심/저녁을 선택한 후, 먹고싶은 식당의 메뉴를 골라주세요. "},
-    {'title': "결제는 어디서하나요?", 'description': "픽업시간에 맞춰 식당에 가셔서 ‘주문상태확인' 버튼을 눌러 식권을 보여주시고 사용하기 버튼을 눌러주세요."},
+    {'title': "결제는 어디서하나요?", 'description': "픽업시간에 맞춰 식당에 가셔서 ‘주문상태확인' 버튼을 눌러 잇플패스를 보여주시고 사용하기 버튼을 눌러주세요."},
     {'title': "식당에서 어떻게 픽업할 수 있나요?", 'description': "결제 완료 후 매장 픽업대에서 이름과 휴대전화 뒷번호를 말씀해주세요."},
     {'title': "주문취소/픽업 시간변경이 가능한가요?", 'description': "점심은 당일 09:30까지, 저녁은 당일 15:30까지 주문취소 / 픽업시간변경 버튼을 통해 가능해요"},
     {'title': "잇플에 궁금한 점이 생겼어요!", 'description': "문의사항이 있는 경우에는 ‘상담원으로 전환하기’를 누르신 후 카카오톡으로 말씀해주세요."},
@@ -88,7 +88,7 @@ DEFAULT_QUICKREPLIES_MAP = [
         'extra': { KAKAO_PARAM_STATUS: KAKAO_PARAM_STATUS_OK }},
 ]
 '''
-    @name orderPickupTimeChange
+    @name GET_UserManual
     @param name
 
     @note
@@ -96,7 +96,7 @@ DEFAULT_QUICKREPLIES_MAP = [
     @tood
 '''
 @csrf_exempt
-def userManual(request):
+def GET_UserManual(request):
     try:
         kakaoPayload = KakaoPayLoad(request)
 

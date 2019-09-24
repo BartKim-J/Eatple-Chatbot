@@ -28,35 +28,37 @@ urlpatterns = [
 
     # Kakao Plus User Skills
     ## Home
-    path('userHome', views.userHome),
+    path('skill/user/home', views.userHome),
+    
     ## Order Flow
-    path('getSellingTime', views.getSellingTime),
-    path('selectMenu', views.selectMenu),
-    path('getPickupTime', views.getPickupTime),
-    path('orderConfirm', views.orderConfirm),
-    path('orderPush', views.orderPush),
+    path('skill/user/order/get_sellingTime',  views.GET_SellingTime),
+    path('skill/user/order/get_menu',         views.GET_Menu),
+    path('skill/user/order/get_pickupTime',   views.GET_PickupTime),
+    path('skill/user/order/set_orderSheet',   views.SET_OrderSheet),
+    path('skill/user/order/post_order',       views.POST_Order),
 
-    ## Order Check Flow
-    path('getOrderList', views.getOrderList),
-    path('getCoupon', views.getCoupon),
-    path('confirmUseCoupon', views.confirmUseCoupon), 
+    ## Order View Flow
+    path('skill/user/orderView/get_orderList', views.GET_OrderList),
+    path('skill/user/orderView/get_coupon',    views.GET_Coupon),
 
-    ## Order Change Flow
-    path('orderCancel', views.orderCancel),
-    path('useCoupon', views.useCoupon),
+    ## Order Edit Flow
+    path('skill/user/orderEdit/post_orderCancel',     views.POST_OrderCancel),
+    path('skill/user/orderEdit/get_confirmUseCoupon', views.GET_ConfirmUserCoupon), 
+    path('skill/user/orderEdit/post_useCoupon',       views.POST_UseCoupon),
 
     ## Order Pickup Time Change Flow
-    path('getOrderPickupTime', views.getOrderPickupTime),
-    path('orderPickupTimeChange', views.orderPickupTimeChange),
-    ## Location Change Flow
+    path('skill/user/orderEdit/get_pickupTimeForChange', views.GET_PickupTimeForChange),
+    path('skill/user/orderEdit/set_pickupTimeByChanged', views.SET_PickupTimeByChanged),
 
     ## User Manual
-    path('userManual', views.userManual),
+    path('skill/user/etc/get_userManual', views.GET_UserManual),
 
 
     # Kakao Plus Partner Skills
     ## Home
-    path('partnerHome', views.partnerHome),
+    path('skill/partner/home', views.partnerHome),
+
+    path('skill/partner/orderView/get_orderList', views.GET_StoreOrderList),
 ]
 
 # Media Link Url

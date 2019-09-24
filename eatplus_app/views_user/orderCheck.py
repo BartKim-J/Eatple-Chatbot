@@ -14,7 +14,6 @@ import os
 from django.shortcuts import render
 from django.views.decorators.csrf import csrf_exempt
 from django.http import JsonResponse
-from django.shortcuts import get_object_or_404, render
 
 #External Library
 import requests
@@ -187,7 +186,7 @@ def OrderListup(userID):
     return JsonResponse(KakaoForm.GetForm())
 
 '''
-    @name getOrderList
+    @name GET_OrderList
     @param userID
 
     @note
@@ -195,7 +194,7 @@ def OrderListup(userID):
     @tood
 '''
 @csrf_exempt
-def getOrderList(request):
+def GET_OrderList(request):
     try:
         kakaoPayload = KakaoPayLoad(request)
 
@@ -203,7 +202,10 @@ def getOrderList(request):
         if(kakaoPayload.userID == NOT_APPLICABLE):
             return errorView("Parameter Invalid")
         else:
-            userInstance = get_object_or_404(User, identifier_code=kakaoPayload.userID)
+            try:
+                userInstance = User.objects.get(identifier_code=kakaoPayload.userID)
+            except User.DoesNotExist:
+                return errorView("User ID is Invalid")
 
         EatplusSkillLog("Order Check Flow")
 
@@ -212,9 +214,8 @@ def getOrderList(request):
     except (RuntimeError, TypeError, NameError, KeyError) as ex:
         return errorView("{} ".format(ex))
 
-
 '''
-    @name getCoupon
+    @name GET_Coupon
     @param userID
 
     @note
@@ -222,7 +223,7 @@ def getOrderList(request):
     @tood
 '''
 @csrf_exempt
-def getCoupon(request):
+def GET_Coupon(request):
     try:
         kakaoPayload = KakaoPayLoad(request)
 
@@ -230,61 +231,14 @@ def getCoupon(request):
         if(kakaoPayload.userID == NOT_APPLICABLE):
             return errorView("Parameter Invalid")
         else:
-            userInstance = get_object_or_404(User, identifier_code=kakaoPayload.userID)
-
+            try:
+                userInstance = User.objects.get(identifier_code=kakaoPayload.userID)
+            except User.DoesNotExist:
+                return errorView("User ID is Invalid")
 
         EatplusSkillLog("Order Check Flow")
 
         return CouponListup(kakaoPayload.userID)
-
-    except (RuntimeError, TypeError, NameError, KeyError) as ex:
-        return errorView("{} ".format(ex))
-
-'''
-    @name useCoupon
-    @param orderID
-
-    @note
-    @bug
-    @tood
-'''
-@csrf_exempt
-def confirmUseCoupon(request):
-    try:
-        kakaoPayload = KakaoPayLoad(request)
-
-        # Invalied Path Access
-        #if(kakaoPayload.userID == NOT_APPLICABLE):
-        #    return errorView("Parameter Invalid")
-        #else:
-        #    UserInstance = User.objects.get(id=kakaoPayload.userID)
-        if(kakaoPayload.orderID == NOT_APPLICABLE):
-            return errorView("Parameter Invalid")
-        else:
-            OrderInstance = Order.objects.get(id=kakaoPayload.orderID)
-
-        USE_COUPON_QUICKREPLIES_MAP = [                
-            {'action': "message", 'label': "사용하기",    'messageText': wordings.USE_COUPON_COMMAND, 'blockid': "none", 'extra': { KAKAO_PARAM_ORDER_ID: OrderInstance.id }},
-            {'action': "message", 'label': wordings.RETURN_HOME_QUICK_REPLISE,    'messageText': wordings.RETURN_HOME_QUICK_REPLISE, 'blockid': "none", 'extra': { KAKAO_PARAM_STATUS: KAKAO_PARAM_STATUS_OK }},
-        ]
-
-        EatplusSkillLog("Order Check Flow")
-
-        KakaoForm = Kakao_SimpleForm()
-        KakaoForm.SimpleForm_Init()
-
-        thumbnail = { "imageUrl": "" }
-
-        buttons = [
-            # No Buttons
-        ]
-
-        KakaoForm.SimpleText_Add("식권을 사용하시겠습니까?")
-
-        for entryPoint in USE_COUPON_QUICKREPLIES_MAP:
-            KakaoForm.QuickReplies_Add(entryPoint['action'], entryPoint['label'], entryPoint['messageText'], entryPoint['blockid'], entryPoint['extra'])
-        
-        return JsonResponse(KakaoForm.GetForm())
 
     except (RuntimeError, TypeError, NameError, KeyError) as ex:
         return errorView("{} ".format(ex))

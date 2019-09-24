@@ -15,10 +15,12 @@ from .models import Store, Menu
 from .models import Category, SubCategory
 from .models import Order
 from .models import User
-
+from .models import Partner
 
 #Main Models
+admin.site.register(Partner)
 admin.site.register(User)
+
 admin.site.register(Store)
 admin.site.register(Menu)
 

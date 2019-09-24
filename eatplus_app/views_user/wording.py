@@ -57,10 +57,10 @@ class wordings():
     ORDER_PICKUP_TIME_CHANGE_COMMAND          = "픽업시간 변경"
     ORDER_PICKUP_TIME_CHANGE_CONFIRM_COMMAND  = "픽업시간 변경 완료"
 
-    GET_COUPON_COMMAND                        = "주문 상태 확인"
+    GET_COUPON_COMMAND                        = "잇플패스 확인"
     GET_ORDER_LIST_COMMAND                    = "최근 구매내역"
-    CONFIRM_USE_COUPON_COMMAND                = "식권 사용 확인"
-    USE_COUPON_COMMAND                        = "식권 사용"
+    CONFIRM_USE_COUPON_COMMAND                = "잇플패스 사용 확인"
+    USE_COUPON_COMMAND                        = "잇플패스 사용"
 
     USER_MANUAL_COMMAND                       = "사용방법"
     
@@ -81,5 +81,5 @@ class wordings():
     ALREADY_ORDER_DINNER_TEXT                       = "이미 저녁 주문을 해주셨네요!\n곧 있을 내일 점심 주문시간에 잇플과 다시 함께해주세요."
     ALREADY_ORDER_EATPLUS_TEXT                      = "오늘 하루, 잇플로 맛있는 식사를 즐겨주셔서 감사해요. 내일도 잇플과 함께 해주실거죠?"
 
-    GET_COUPON_EMPTY_TEXT                           = "현재 조회 가능한 식권이 없습니다!\n주문하시려면 아래 [{}]를 눌러주세요!".format(ORDER_BTN)
+    GET_COUPON_EMPTY_TEXT                           = "현재 조회 가능한 잇플패스가 없습니다!\n주문하시려면 아래 [{}]를 눌러주세요!".format(ORDER_BTN)
     GET_ORDER_LIST_EMPTY_TEXT                       = "주문 내역이 존재하지 않습니다!\n주문하시려면 아래 [{}]를 눌러주세요!".format(ORDER_BTN)

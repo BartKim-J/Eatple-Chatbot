@@ -97,8 +97,7 @@ class Kakao_SimpleForm(KakaoBaseForm):
 
     # SimpleForm Text
     def SimpleText_Add(self, _text):
-        _params = { 
-            "text": _text,
+        _params = { "text": _text,
         }
 
         self.outputs += {
@@ -122,8 +121,6 @@ class Kakao_SimpleForm(KakaoBaseForm):
 
     def GetForm(self):
         return self.baseForm
-
-
 
 class Kakao_CarouselForm(KakaoBaseForm):
     def __init__(self, _type='commerceCard', _items=[], _quickReplies=[]):
