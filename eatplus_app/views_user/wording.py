@@ -77,7 +77,7 @@ class wordings():
     GET_SELLING_TIME_LUNCH_FINISH_TEXT              = "점심 주문이 마감되었어요!\n지금은 저녁 주문시간입니다."
     GET_SELLING_TIME_DINNER_FINISH_TEXT             = "저녁 주문이 마감되었어요!\n지금은 점심 주문시간입니다."
     
-    ALREADY_ORDER_LUNCH_TEXT                        = "이미 점심 주문을 해주셨네요!\n저녁시간 혹은 내일 다시 잇플과 함께해주세요."
+    ALREADY_ORDER_LUNCH_TEXT                        = "이미 점심 주문을 해주셨네요!\n저녁 주문 또는 내일 다시 잇플과 함께해주세요."
     ALREADY_ORDER_DINNER_TEXT                       = "이미 저녁 주문을 해주셨네요!\n곧 있을 내일 점심 주문시간에 잇플과 다시 함께해주세요."
     ALREADY_ORDER_EATPLUS_TEXT                      = "오늘 하루, 잇플로 맛있는 식사를 즐겨주셔서 감사해요. 내일도 잇플과 함께 해주실거죠?"
 

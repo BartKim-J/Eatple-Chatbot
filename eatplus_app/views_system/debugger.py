@@ -40,7 +40,7 @@ def EatplusSkillLog(flow="some flow"):
     print("- - - - - - - - - - - - - - - - - - - - - - - - -")
 
 # Error View
-def errorView(error_log="error message"):
+def errorView(error_log="error message", view_log="진행하는 도중 문제가생겼어요ㅠㅜ"):
     print("- - - - - - - - - - - - - - - - - - - - - - - - -")
     print("- [ ERROR! ]")
     print("-  func() => {}   ".format(sys._getframe(1).f_code.co_name + "()"))
@@ -57,6 +57,6 @@ def errorView(error_log="error message"):
     for entryPoint in ERROR_QUICKREPLIES_MAP:
         KakaoForm.QuickReplies_Add(entryPoint['action'], entryPoint['label'], entryPoint['messageText'], entryPoint['blockid'], entryPoint['extra'])
 
-    KakaoForm.SimpleText_Add("진행하는 도중 문제가생겼어요ㅠㅜ")
+    KakaoForm.SimpleText_Add(view_log)
 
     return JsonResponse(KakaoForm.GetForm())

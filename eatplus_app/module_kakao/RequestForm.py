@@ -21,6 +21,9 @@ from eatplus_app.define import EP_define
 #View
 from eatplus_app.views_system.debugger import EatplusSkillLog, errorView
 
+#Static Defube 
+KAKAO_API_KEY = "d62991888c78ec58d809bdc591eb62f6"
+
 '''
     @name getLatLng
     @param address
@@ -32,7 +35,7 @@ from eatplus_app.views_system.debugger import EatplusSkillLog, errorView
 def getLatLng(addr):
     try:
         url = 'https://dapi.kakao.com/v2/local/search/address.json?query='+addr
-        headers = {"Authorization": "KakaoAK d62991888c78ec58d809bdc591eb62f6"}
+        headers = {"Authorization": "KakaoAK {}".format(KAKAO_API_KEY)}
         result = json.loads(str(requests.get(url,headers=headers).text))
 
         match_first = result['documents'][0]['road_address']

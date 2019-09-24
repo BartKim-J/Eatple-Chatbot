@@ -85,6 +85,16 @@ DEFAULT_QUICKREPLIES_MAP = [
 # Static View
 #
 # # # # # # # # # # # # # # # # # # # # # # # # #
+def orderValidation(userID, menuID):
+    menuInstance  = Menu.objects.get(id=menuID)
+
+    #Double Order Check
+    OrderManagerInstance = OrderManager(userID)
+    if OrderManagerInstance.getAvailableLunchCouponPurchased().exists() and (menuInstance.sellingTime == SELLING_TIME_CATEGORY[SELLING_TIME_LUNCH][0]):
+        return False
+
+    elif OrderManagerInstance.getAvailableDinnerCouponPurchased().exists() and (menuInstance.sellingTime == SELLING_TIME_CATEGORY[SELLING_TIME_DINNER][0]):
+        return False
 '''
     @name sellingTimeCheck
     @param
@@ -381,6 +391,9 @@ def GET_PickupTime(request):
             storeInstance = Store.objects.get(id=kakaoPayload.storeID)
             menuInstance  = Menu.objects.get(id=kakaoPayload.menuID)
 
+        if(orderValidation(kakaoPayload.userID, kakaoPayload.menuID) == False):
+            return errorView("Order Validate Failed!","정상적인 경로로 주문해주세요!")
+
         EatplusSkillLog("Order Flow")
 
         KakaoForm = Kakao_SimpleForm()
@@ -437,6 +450,9 @@ def SET_OrderSheet(request):
 
             storeInstance = Store.objects.get(id=kakaoPayload.storeID)
             menuInstance  = Menu.objects.get(id=kakaoPayload.menuID)
+
+        if(orderValidation(kakaoPayload.userID, kakaoPayload.menuID) == False):
+            return errorView("Order Validate Failed!","정상적인 경로로 주문해주세요!")
 
         EatplusSkillLog("Order Flow")
 
@@ -497,6 +513,17 @@ def POST_Order(request):
             storeInstance = Store.objects.get(id=kakaoPayload.storeID)
             menuInstance  = Menu.objects.get(id=kakaoPayload.menuID)
 
+        if(orderValidation(kakaoPayload.userID, kakaoPayload.menuID) == False):
+            return errorView("Order Validate Failed!","정상적인 경로로 주문해주세요!")
+        
+        #Order Validation
+        OrderManagerInstance = OrderManager(kakaoPayload.userID)
+        if OrderManagerInstance.getAvailableLunchCouponPurchased().exists() and (menuInstance.sellingTime == SELLING_TIME_CATEGORY[SELLING_TIME_LUNCH][0]):
+            return errorView("Invalid Access Order")
+
+        elif OrderManagerInstance.getAvailableDinnerCouponPurchased().exists() and (menuInstance.sellingTime == SELLING_TIME_CATEGORY[SELLING_TIME_DINNER][0]):
+            return errorView("Invalid Access Order")
+            
         EatplusSkillLog("Order Flow")
 
         pushedOrder = Order.pushOrder(userInstance=userInstance,
