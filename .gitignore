@@ -709,5 +709,5 @@ MigrationBackup/
 # Django migrate
 
 store_app/migrations/*.py
-
+*.code-workspace
 # End of https://www.gitignore.io/api/git,node,macos,python,django,windows,visualstudio,visualstudiocode
