@@ -61,9 +61,14 @@ ORDER_SUPER_USER_ID         = EP_define.DEFAULT_USER_ID
 #STATIC EP_define
 ORDER_LIST_LENGTH           = 30
 
+# # # # # # # # # # # # # # # # # # # # # # # # #
+#
+# Static View
+#
+# # # # # # # # # # # # # # # # # # # # # # # # #
 '''
     @name StoreOrderListup
-    @param userID, order_status
+    @param uniqueNumber
 
     @note
     @bug
@@ -74,6 +79,8 @@ def StoreOrderListup(uniqueNumber):
                                    {'action': "message", 'label': wordings.REFRESH_BTN, 'messageText': wordings.GET_ORDER_LIST_COMMAND, 'blockid': "none", 'extra': { KAKAO_PARAM_STATUS: KAKAO_PARAM_STATUS_OK }}]
 
     OrderManagerInstance = storeOrderManager(uniqueNumber)
+    
+    OrderManagerInstance.availableCouponStatusUpdate()
     
     availableCoupons = OrderManagerInstance.getAvailableCoupons()[:ORDER_LIST_LENGTH]
 
@@ -109,8 +116,65 @@ def StoreOrderListup(uniqueNumber):
 
     return JsonResponse(KakaoForm.GetForm())
 
+
 '''
-    @name GET_OrderList
+    @name StoreOrderTotal
+    @param uniqueNumber
+
+    @note
+    @bug
+    @tood
+'''
+def StoreOrderTotal(uniqueNumber):
+    ORDER_LIST_QUICKREPLIES_MAP = [{'action': "message", 'label': wordings.RETURN_HOME_QUICK_REPLISE, 'messageText': wordings.RETURN_HOME_QUICK_REPLISE, 'blockid': "none", 'extra': { KAKAO_PARAM_STATUS: KAKAO_PARAM_STATUS_OK }},
+                                   {'action': "message", 'label': wordings.REFRESH_BTN, 'messageText': wordings.GET_ORDER_LIST_COMMAND, 'blockid': "none", 'extra': { KAKAO_PARAM_STATUS: KAKAO_PARAM_STATUS_OK }}]
+
+    OrderManagerInstance = storeOrderManager(uniqueNumber)
+    
+    OrderManagerInstance.availableCouponStatusUpdate()
+    
+    availableCoupons = OrderManagerInstance.getAvailableCoupons()
+    availableCouponTotal = len(availableCoupons)
+
+    if availableCoupons:
+        KakaoForm = Kakao_CarouselForm()
+        KakaoForm.BasicCard_Init()
+
+        for orderInstance in availableCoupons:
+            thumbnail = { "imageUrl": "" }
+
+            buttons = [
+                {'action': "message", 'label': wordings.GET_ORDER_LIST_DETAIL_COMMAND, 'messageText': wordings.GET_ORDER_LIST_DETAIL_COMMAND, 'blockid': "none", 'extra': { KAKAO_PARAM_STATUS: KAKAO_PARAM_STATUS_OK }}
+            ]
+
+            KakaoForm.BasicCard_Add(
+                "{}".format(orderInstance.menuInstance.name),
+                " - 주문자: {}\n\n - 매장: {}\n - 픽업 시간: {}\n\n - 주문 상태: {}".format(
+                    orderInstance.userInstance.name,
+                    orderInstance.storeInstance.name, 
+                    orderInstance.pickupTime.astimezone().strftime('%H시%M분 %m월%d일'),
+                    orderInstance.status
+                ),
+                thumbnail, buttons
+            )
+    else:
+        KakaoForm = Kakao_SimpleForm()
+        KakaoForm.SimpleForm_Init()
+
+        KakaoForm.SimpleText_Add(wordings.GET_ORDER_LIST_EMPTY_TEXT)
+ 
+    for entryPoint in ORDER_LIST_QUICKREPLIES_MAP:
+        KakaoForm.QuickReplies_Add(entryPoint['action'], entryPoint['label'], entryPoint['messageText'], entryPoint['blockid'], entryPoint['extra'])
+
+    return JsonResponse(KakaoForm.GetForm())
+
+# # # # # # # # # # # # # # # # # # # # # # # # #
+#
+# External View
+#
+# # # # # # # # # # # # # # # # # # # # # # # # #
+'''
+    @name GET_StoreOrderList
     @param userID
 
     @note
@@ -134,6 +198,35 @@ def GET_StoreOrderList(request):
         EatplusSkillLog("Order Check Flow")
 
         return StoreOrderListup(partnerInstance.storeInstance.uniqueNumber)
+
+    except (RuntimeError, TypeError, NameError, KeyError) as ex:
+        return errorView("{} ".format(ex))
+
+'''
+    @name GET_StoreOrderTotal
+    @param userID
+
+    @note
+    @bug
+    @tood
+'''
+@csrf_exempt
+def GET_StoreOrderTotal(request):
+    try:
+        kakaoPayload = KakaoPayLoad(request)
+
+        # Invalied Path Access
+        if(kakaoPayload.userID == NOT_APPLICABLE):
+            return errorView("Parameter Invalid")
+        else:
+            try:
+                partnerInstance = Partner.objects.get(identifier_code=kakaoPayload.userID)
+            except Partner.DoesNotExist:
+                return errorView("Partner ID is Invalid")
+
+        EatplusSkillLog("Order Check Flow")
+
+        return StoreOrderTotal(partnerInstance.storeInstance.uniqueNumber)
 
     except (RuntimeError, TypeError, NameError, KeyError) as ex:
         return errorView("{} ".format(ex))

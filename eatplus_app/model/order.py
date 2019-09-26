@@ -76,7 +76,7 @@ def orderStatusUpdateByTime(orderInstance):
     # Lunch Order
     if (SELLING_TIME_CATEGORY[SELLING_TIME_LUNCH][0] == menuInstance.sellingTime) and \
         ((YESTERDAY <= orderDateWithoutTime) and (orderDateWithoutTime <= TODAY)):
-
+            
         # Meal Pre- 
         if(prevlunchOrderTimeEnd <= currentDate) and (currentDate <= lunchOrderPickupTimeStart):
             orderInstance.status = ORDER_STATUS[ORDER_STATUS_DICT['픽업 준비중']][0]
@@ -97,20 +97,22 @@ def orderStatusUpdateByTime(orderInstance):
                 if currentDate <= prevlunchOrderEditTimeEnd:
                     orderInstance.status = ORDER_STATUS[ORDER_STATUS_DICT['주문 완료']][0]
                     orderInstance.save()
-                
+                    
                 else:
                     orderInstance.status = ORDER_STATUS[ORDER_STATUS_DICT['픽업 준비중']][0]
                     orderInstance.save()
 
             # next phase Lunch order
-            elif (nextlunchOrderTimeEnd >= currentDate):
+            elif (nextlunchOrderTimeEnd >= currentDate) and (orderDateWithoutTime >= TODAY):
                 orderInstance.status = ORDER_STATUS[ORDER_STATUS_DICT['주문 완료']][0]
                 orderInstance.save()
+                
 
             # Invalid Time Range is Dinner Order Time ( prev phase lunch order ~ dinner order ~ next phase lunch order )
             else:
                 orderInstance.status = ORDER_STATUS[ORDER_STATUS_DICT['주문 만료']][0]
                 orderInstance.save()
+                
 
     # Dinner Order
     elif (SELLING_TIME_CATEGORY[SELLING_TIME_DINNER][0] == menuInstance.sellingTime) and (orderDateWithoutTime == TODAY):
@@ -214,6 +216,8 @@ class storeOrderManager():
     def availableCouponStatusUpdate(self):
         availableCoupons = self.getAvailableCoupons()
 
+        print(availableCoupons)
+        
         # Order Status Update
         for orderInstance in availableCoupons:
             orderStatusUpdateByTime(orderInstance)
