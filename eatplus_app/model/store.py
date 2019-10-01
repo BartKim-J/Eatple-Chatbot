@@ -47,7 +47,7 @@ class Store(models.Model):
     owner        = models.CharField(default="Owner", max_length=WORD_LENGTH, help_text="Owner")
     description  = models.TextField(default="Store Dscription", help_text="Store Dscription")
 
-    logo         = models.ImageField(default="STORE_DB/images/default/logoImg.png", upload_to=logo_directory_path, storage=OverwriteStorage())
+    logo         = models.ImageField(default="STORE_DB/images/default/logoImg.png", blank=True, upload_to=logo_directory_path, storage=OverwriteStorage())
 
     lunch_pickupTime_start  = models.IntegerField(default=0, choices=LUNCH_PICKUP_TIME, help_text="")
     lunch_pickupTime_end    = models.IntegerField(default=len(LUNCH_PICKUP_TIME) - 1, choices=LUNCH_PICKUP_TIME, help_text="")

@@ -207,7 +207,7 @@ def MenuListup(userID, menuCategory, sellingTime, currentSellingTime, location):
         #Menu Carousel Card Add 
         for menu in MenuList:
             try:
-                thumbnail = {"imageUrl": "{}{}".format(HOST_URL, menu.image.url)}
+                thumbnail = {"imageUrl": "{}{}".format(HOST_URL, menu.imgURL())}
                 kakaoMapUrl = "https://map.kakao.com/link/map/{},{}".format(menu.storeInstance.name, getLatLng(menu.storeInstance.addr))
             except () as ex:
                 return print(ex)
@@ -460,7 +460,7 @@ def SET_OrderSheet(request):
         KakaoForm.BasicCard_Init()
         
         #Menu Carousel Card Add 
-        thumbnail = { "imageUrl": "{}{}".format(HOST_URL, menuInstance.image.url) }
+        thumbnail = { "imageUrl": "{}{}".format(HOST_URL, menuInstance.imgURL()) }
         
         
         kakaoMapUrl = "https://map.kakao.com/link/map/{},{}".format(storeInstance.name, getLatLng(storeInstance.addr))

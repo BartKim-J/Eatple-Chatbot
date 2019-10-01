@@ -42,7 +42,7 @@ class wordings():
 
     REFRESH_BTN               = "새로고침"
     
-    GET_ORDER_LIST_TOTAL_COMMAND   = "주문 조회"
+    GET_ORDER_LIST_TOTAL_COMMAND    = "주문 조회"
     GET_ORDER_LIST_DETAIL_COMMAND   = "주문 조회"
     GET_CALCULATE_CHECK_COMMAND     = "정산 조회"
     STORE_MANUAL_COMMAND            = "사용방법"

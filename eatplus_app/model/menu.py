@@ -34,6 +34,10 @@ SELLING_TIME_DINNER         = EP_define.SELLING_TIME_DINNER
 SELLING_TIME_CATEGORY_DICT  = EP_define.SELLING_TIME_CATEGORY_DICT
 SELLING_TIME_CATEGORY       = EP_define.SELLING_TIME_CATEGORY
 
+
+
+DEFAULT_MENU_IMAGE_PATH     = "STORE_DB/images/default/menuImg.png"
+
 #Utils
 from eatplus_app.model.utils import OverwriteStorage
 from eatplus_app.model.utils import menu_directory_path
@@ -84,7 +88,7 @@ class Menu(models.Model):
 
     categories       = models.ManyToManyField(SubCategory)
     
-    image            = models.ImageField(default="STORE_DB/images/default/menuImg.png", upload_to=menu_directory_path, storage=OverwriteStorage())
+    image            = models.ImageField(default=DEFAULT_MENU_IMAGE_PATH, blank=True, upload_to=menu_directory_path, storage=OverwriteStorage())
 
     price            = models.IntegerField(default=5500, help_text="Price") 
     discount         = models.IntegerField(default=0, help_text="Discount")
@@ -93,6 +97,17 @@ class Menu(models.Model):
 
     is_status        = models.IntegerField(default=0, choices=(), help_text="")
 
+    def imgURL(self):
+            try:
+                return self.image.url
+            except ValueError:
+                from django.contrib.staticfiles.storage import staticfiles_storage
+                from django.contrib.staticfiles import finders
+                
+                if finders.find(self.field.static_image_path):
+                    return staticfiles_storage.url(self.field.static_image_path)
+                return staticfiles_storage.url(DEFAULT_MENU_IMAGE_PATH)
+                
     # Methods
     def __str__(self):
         return "[{}] {} - {}".format(self.storeInstance.name, self.name, self.sellingTime)
