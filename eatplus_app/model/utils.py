@@ -98,8 +98,8 @@ class UserManual(models.Model):
     filename     = models.CharField(default="", max_length=STRING_LENGTH, help_text="filename")
     image        = models.ImageField(blank=False, upload_to=default_directory_path, storage=OverwriteStorage())
     
-    title        = models.CharField(default="", max_length=STRING_LENGTH, help_text="Title")
-    description  = models.TextField(default="", help_text="Description")
+    title        = models.CharField(default="", max_length=STRING_LENGTH, help_text="Title", blank=True)
+    description  = models.TextField(default="", help_text="Description", blank=True)
 
     def imgURL(self):
         try:
@@ -121,8 +121,8 @@ class UserIntro(models.Model):
     filename     = models.CharField(default="", max_length=STRING_LENGTH, help_text="filename")
     image        = models.ImageField(blank=False, upload_to=default_directory_path, storage=OverwriteStorage())
     
-    title        = models.CharField(default="", max_length=STRING_LENGTH, help_text="Title")
-    description  = models.TextField(default="", help_text="Description")
+    title        = models.CharField(default="", max_length=STRING_LENGTH, help_text="Title", blank=True)
+    description  = models.TextField(default="", help_text="Description", blank=True)
 
     def imgURL(self):
         try:
@@ -144,8 +144,8 @@ class PartnerIntro(models.Model):
     filename     = models.CharField(default="", max_length=STRING_LENGTH, help_text="filename")
     image        = models.ImageField(blank=False, upload_to=default_directory_path, storage=OverwriteStorage())
     
-    title        = models.CharField(default="", max_length=STRING_LENGTH, help_text="Title")
-    description  = models.TextField(default="", help_text="Description")
+    title        = models.CharField(default="", max_length=STRING_LENGTH, help_text="Title", blank=True)
+    description  = models.TextField(default="", help_text="Description", blank=True)
 
     def imgURL(self):
         try:
@@ -166,8 +166,8 @@ class PartnerManual(models.Model):
     filename     = models.CharField(default="", max_length=STRING_LENGTH, help_text="filename")
     image        = models.ImageField(blank=False, upload_to=default_directory_path, storage=OverwriteStorage())
     
-    title        = models.CharField(default="", max_length=STRING_LENGTH, help_text="Title")
-    description  = models.TextField(default="", help_text="Description")
+    title        = models.CharField(default="", max_length=STRING_LENGTH, help_text="Title", blank=True)
+    description  = models.TextField(default="", help_text="Description", blank=True)
 
     def imgURL(self):
         try:
