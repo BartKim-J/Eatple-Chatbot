@@ -27,6 +27,9 @@ from eatplus_app.models import Order, OrderManager
 from eatplus_app.models import Category, SubCategory
 from eatplus_app.models import Store, Menu
 
+from eatplus_app.models import UserManual
+from eatplus_app.models import UserIntro
+
 #Modules
 from eatplus_app.module_kakao.ReponseForm import Kakao_SimpleForm, Kakao_CarouselForm
 from eatplus_app.module_kakao.RequestForm import getLatLng, KakaoPayLoad
@@ -66,23 +69,6 @@ KAKAO_PARAM_STATUS_NOT_OK   = EP_define.KAKAO_PARAM_STATUS_NOT_OK
 # External View
 #
 # # # # # # # # # # # # # # # # # # # # # # # # #
-USER_MANUAL_MAP = [
-    {'title': "주문은 어떻게 하나요? ", 'description': "주문하기 클릭 후, 점심 또는 저녁을 선택해주세요. "},
-    {'title': "주문 가능한 시간은 언제인가요?", 'description': "점심:전날 16:30~ 당일 10:30 /저녁:당일 10:30~16:30"},
-    {'title': "메뉴선택은 어떻게 하나요?", 'description': "점심/저녁을 선택한 후, 먹고싶은 식당의 메뉴를 골라주세요. "},
-    {'title': "결제는 어디서하나요?", 'description': "픽업시간에 맞춰 식당에 가셔서 ‘주문상태확인' 버튼을 눌러 잇플패스를 보여주시고 사용하기 버튼을 눌러주세요."},
-    {'title': "식당에서 어떻게 픽업할 수 있나요?", 'description': "결제 완료 후 매장 픽업대에서 이름과 휴대전화 뒷번호를 말씀해주세요."},
-    {'title': "주문취소/픽업 시간변경이 가능한가요?", 'description': "점심은 당일 09:30까지, 저녁은 당일 15:30까지 주문취소 / 픽업시간변경 버튼을 통해 가능해요"},
-    {'title': "잇플에 궁금한 점이 생겼어요!", 'description': "문의사항이 있는 경우에는 ‘상담원으로 전환하기’를 누르신 후 카카오톡으로 말씀해주세요."},
-]
-
-USER_INTRO_MAP = [
-    {'title': "한 끼 식사가 매일 5,500원!", 'description': "내가 평소 자주가던 식당의 메뉴들을 5,500원에 즐길 수 있어요!"},
-    {'title': "잇플로 시간도 절약하세요.", 'description': "미리 주문하고 픽업시간을 예약하여 기다림없이 맛있는 식사를!"},
-    {'title': "가성비 있는 식사가 가능해집니다.", 'description': "꼼꼼하게 검수한 음식만을 제공하며, 다양한 식사를 선택할 수 있어요."},
-    {'title': "식사에 가치를 더하다, 잇플", 'description': "평범했던 식사시간에 의미를 더하는 잇플과 새로운 가치를 찾아보세요! "},
-]
-
 DEFAULT_QUICKREPLIES_MAP = [                
     {'action': "message", 'label': wordings.RETURN_HOME_QUICK_REPLISE, 'messageText': wordings.RETURN_HOME_QUICK_REPLISE, 'blockid': "none", 
         'extra': { KAKAO_PARAM_STATUS: KAKAO_PARAM_STATUS_OK }},
@@ -105,14 +91,18 @@ def GET_UserManual(request):
         KakaoForm = Kakao_CarouselForm()
         KakaoForm.BasicCard_Init()
 
-        thumbnail = { "imageUrl": "{}{}".format(HOST_URL, '/media/STORE_DB/images/default/defaultImg.png') }
-
         buttons = [
             # No Buttons
         ]
 
-        for entryPoint in USER_MANUAL_MAP:
-            KakaoForm.BasicCard_Add(entryPoint['title'], entryPoint['description'], thumbnail, buttons)
+
+        userManuals = UserManual.objects.all()
+        
+        for manualPage in userManuals:
+            
+            thumbnail = { "imageUrl": "{}{}".format(HOST_URL, manualPage.imgURL()) }
+            
+            KakaoForm.BasicCard_Add(manualPage.title, manualPage.description, thumbnail, buttons)
 
         for entryPoint in DEFAULT_QUICKREPLIES_MAP:
             KakaoForm.QuickReplies_Add(entryPoint['action'], entryPoint['label'], entryPoint['messageText'], entryPoint['blockid'], entryPoint['extra'])
@@ -140,14 +130,16 @@ def GET_UserIntro(request):
         KakaoForm = Kakao_CarouselForm()
         KakaoForm.BasicCard_Init()
 
-        thumbnail = { "imageUrl": "{}{}".format(HOST_URL, '/media/STORE_DB/images/default/defaultImg.png') }
-
         buttons = [
             # No Buttons
         ]
 
-        for entryPoint in USER_INTRO_MAP:
-            KakaoForm.BasicCard_Add(entryPoint['title'], entryPoint['description'], thumbnail, buttons)
+        userIntros = UserIntro.objects.all()
+        
+        for introPage in userIntros:
+            thumbnail = { "imageUrl": "{}{}".format(HOST_URL, introPage.imgURL()) }
+                    
+            KakaoForm.BasicCard_Add(introPage.title, introPage.description, thumbnail, buttons)
 
         for entryPoint in DEFAULT_QUICKREPLIES_MAP:
             KakaoForm.QuickReplies_Add(entryPoint['action'], entryPoint['label'], entryPoint['messageText'], entryPoint['blockid'], entryPoint['extra'])

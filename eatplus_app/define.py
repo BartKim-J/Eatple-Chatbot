@@ -33,6 +33,10 @@ class EP_define():
     DEFAULT_OBJECT_ID    = 1
     DEFAULT_USER_ID      = 2
 
+    #IMAGE DB PATH
+    PATH_IMG_DB                 = "STORE_DB/images"
+
+    
     #USER LENGTH
     USER_NICKNAME_LENGTH = STRING_32BIT
     USER_ID_LENGTH       = STRING_32BIT

@@ -210,7 +210,7 @@ def MenuListup(userID, menuCategory, sellingTime, currentSellingTime, location):
                 thumbnail = {"imageUrl": "{}{}".format(HOST_URL, menu.imgURL())}
                 kakaoMapUrl = "https://map.kakao.com/link/map/{},{}".format(menu.storeInstance.name, getLatLng(menu.storeInstance.addr))
             except () as ex:
-                return print(ex)
+                print(ex)
 
             buttons = [
                 {'action': "message", 'label': wordings.ORDER_BTN,  'messageText': "{} {}".format(sellingTime, wordings.GET_PICKUP_TIME_COMMAND), 

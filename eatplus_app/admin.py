@@ -11,6 +11,8 @@ from django.contrib import admin
 
 #Models
 from .models import DefaultImage
+from .models import UserManual, PartnerManual
+from .models import UserIntro, PartnerIntro
 from .models import Store, Menu 
 from .models import Category, SubCategory
 from .models import Order
@@ -33,5 +35,13 @@ admin.site.register(Order)
 #Menu Category-SubCategory
 admin.site.register(Category)
 admin.site.register(SubCategory)
+
+#Manual
+admin.site.register(UserManual)
+admin.site.register(PartnerManual)
+
+#Intro
+admin.site.register(UserIntro)
+admin.site.register(PartnerIntro)
 
 

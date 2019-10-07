@@ -69,13 +69,10 @@ class SubCategory(models.Model):
     def __str__(self):
         return "{} - {}".format(self.category, self.name)
 
-
-
 class Menu(models.Model):
     # Metadata
     class Meta:
         ordering = ['-name']
-
 
     storeInstance    = models.ForeignKey('Store', on_delete=models.CASCADE, default=DEFAULT_OBJECT_ID)
     
@@ -88,7 +85,7 @@ class Menu(models.Model):
 
     categories       = models.ManyToManyField(SubCategory)
     
-    image            = models.ImageField(default=DEFAULT_MENU_IMAGE_PATH, blank=True, upload_to=menu_directory_path, storage=OverwriteStorage())
+    image            = models.ImageField(blank=True, upload_to=menu_directory_path, storage=OverwriteStorage())
 
     price            = models.IntegerField(default=5500, help_text="Price") 
     discount         = models.IntegerField(default=0, help_text="Discount")
@@ -101,12 +98,7 @@ class Menu(models.Model):
             try:
                 return self.image.url
             except ValueError:
-                from django.contrib.staticfiles.storage import staticfiles_storage
-                from django.contrib.staticfiles import finders
-                
-                if finders.find(self.field.static_image_path):
-                    return staticfiles_storage.url(self.field.static_image_path)
-                return staticfiles_storage.url(DEFAULT_MENU_IMAGE_PATH)
+                return DEFAULT_MENU_IMAGE_PATH
                 
     # Methods
     def __str__(self):

@@ -8,6 +8,8 @@
 '''
 #Model Indexs
 from eatplus_app.model.utils   import DefaultImage
+from eatplus_app.model.utils   import UserManual, PartnerManual
+from eatplus_app.model.utils   import UserIntro, PartnerIntro
 
 from eatplus_app.model.store   import Store
 

@@ -26,6 +26,8 @@ DEFAULT_OBJECT_ID           = EP_define.DEFAULT_OBJECT_ID
 STRING_LENGTH               = EP_define.STRING_LENGTH
 WORD_LENGTH                 = EP_define.WORD_LENGTH
 
+DEFAULT_IMAGE_PATH     = "STORE_DB/images/default/defaultImg.png"
+
 #Util Funtions
 class OverwriteStorage(FileSystemStorage):
     def get_available_name(self, name, max_length=None):
@@ -62,6 +64,7 @@ def logo_directory_path(instance, filename):
 
     return path
 
+
 def default_directory_path(instance, filename):
     path = "STORE_DB/images/default/{filename}".format(
         filename=set_filename_format(instance, filename, instance.filename),
@@ -71,9 +74,107 @@ def default_directory_path(instance, filename):
 
 #Models
 class DefaultImage(models.Model):
-    filename     = models.CharField(max_length=STRING_LENGTH, help_text="Category")
+    # Metadata
+    class Meta:
+        ordering = ['-name']
+    
+    name         = models.CharField(default="", max_length=STRING_LENGTH, help_text="subject name")
+    
+    filename     = models.CharField(max_length=STRING_LENGTH, help_text="filename")
     image        = models.ImageField(blank=False, upload_to=default_directory_path, storage=OverwriteStorage())
+
+    # Methodssadfasdfas
+    def __str__(self):
+        return "{}".format(self.name)
+    
+    
+class UserManual(models.Model):
+    class Meta:
+        ordering = ['-index']
+    
+    index        = models.IntegerField(default=0)
+    name         = models.CharField(default="", max_length=STRING_LENGTH, help_text="subject name")
+    
+    filename     = models.CharField(default="", max_length=STRING_LENGTH, help_text="filename")
+    image        = models.ImageField(blank=False, upload_to=default_directory_path, storage=OverwriteStorage())
+    
+    title        = models.CharField(default="", max_length=STRING_LENGTH, help_text="Title")
+    description  = models.TextField(default="", help_text="Description")
+
+    def imgURL(self):
+        try:
+            return self.image.url
+        except ValueError:
+            return DEFAULT_IMAGE_PATH
 
     # Methods
     def __str__(self):
-        return "{}".format(self.filename)
+        return "{}".format(self.name)
+    
+class UserIntro(models.Model):
+    class Meta:
+        ordering = ['-index']
+    
+    index        = models.IntegerField(default=0)
+    name         = models.CharField(default="", max_length=STRING_LENGTH, help_text="subject name")
+    
+    filename     = models.CharField(default="", max_length=STRING_LENGTH, help_text="filename")
+    image        = models.ImageField(blank=False, upload_to=default_directory_path, storage=OverwriteStorage())
+    
+    title        = models.CharField(default="", max_length=STRING_LENGTH, help_text="Title")
+    description  = models.TextField(default="", help_text="Description")
+
+    def imgURL(self):
+        try:
+            return self.image.url
+        except ValueError:
+            return DEFAULT_IMAGE_PATH
+
+    # Methods
+    def __str__(self):
+        return "{}".format(self.name)
+
+class PartnerIntro(models.Model):
+    class Meta:
+        ordering = ['-index']
+    
+    index        = models.IntegerField(default=0)
+    name         = models.CharField(default="", max_length=STRING_LENGTH, help_text="subject name")
+    
+    filename     = models.CharField(default="", max_length=STRING_LENGTH, help_text="filename")
+    image        = models.ImageField(blank=False, upload_to=default_directory_path, storage=OverwriteStorage())
+    
+    title        = models.CharField(default="", max_length=STRING_LENGTH, help_text="Title")
+    description  = models.TextField(default="", help_text="Description")
+
+    def imgURL(self):
+        try:
+            return self.image.url
+        except ValueError:
+            return DEFAULT_IMAGE_PATH
+
+    # Methods
+    def __str__(self):
+        return "{}".format(self.name)
+class PartnerManual(models.Model):
+    class Meta:
+        ordering = ['-name']
+    
+    index        = models.IntegerField(default=0)
+    name         = models.CharField(default="", max_length=STRING_LENGTH, help_text="subject name")
+    
+    filename     = models.CharField(default="", max_length=STRING_LENGTH, help_text="filename")
+    image        = models.ImageField(blank=False, upload_to=default_directory_path, storage=OverwriteStorage())
+    
+    title        = models.CharField(default="", max_length=STRING_LENGTH, help_text="Title")
+    description  = models.TextField(default="", help_text="Description")
+
+    def imgURL(self):
+        try:
+            return self.image.url
+        except ValueError:
+            return DEFAULT_IMAGE_PATH
+
+    # Methods
+    def __str__(self):
+        return "{}".format(self.name)
