@@ -465,7 +465,14 @@ def SET_OrderSheet(request):
         
         kakaoMapUrl = "https://map.kakao.com/link/map/{},{}".format(storeInstance.name, getLatLng(storeInstance.addr))
         buttons = [
-            {'action': "message", 'label': wordings.ORDER_PUSH_COMMAND,  'messageText': wordings.ORDER_PUSH_COMMAND, 'extra': kakaoPayload.dataActionExtra},
+            {'action': "webLink", 'label': wordings.ORDER_PUSH_COMMAND,  'messageText': wordings.ORDER_PUSH_COMMAND, 'extra': kakaoPayload.dataActionExtra, 
+             
+            "webLinkUrl": "http://eatple.com/payment?storeName={storeName}&menuName={menuName}&menuPrice={menuPrice}".format(
+            #"webLinkUrl": "http://localhost:3000/payment?storeName={storeName}&menuName={menuName}&menuPrice={menuPrice}".format(
+             
+                 storeName=storeInstance.name, menuName=menuInstance.name, menuPrice=menuInstance.price )},
+            
+            #{'action': "message", 'label': wordings.ORDER_PUSH_COMMAND,  'messageText': wordings.ORDER_PUSH_COMMAND, 'extra': kakaoPayload.dataActionExtra}
         ]
 
         KakaoForm.BasicCard_Add("{}".format(menuInstance.name),"{} - {}원\n - 픽업 시간 [ {} ]".format(
@@ -526,6 +533,8 @@ def POST_Order(request):
             
         EatplusSkillLog("Order Flow")
 
+        requests.get
+        
         pushedOrder = Order.pushOrder(userInstance=userInstance,
                                       storeInstance=storeInstance, 
                                       menuInstance=menuInstance,
