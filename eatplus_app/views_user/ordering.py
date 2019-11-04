@@ -465,14 +465,12 @@ def SET_OrderSheet(request):
         
         kakaoMapUrl = "https://map.kakao.com/link/map/{},{}".format(storeInstance.name, getLatLng(storeInstance.addr))
         buttons = [
-            {'action': "webLink", 'label': wordings.ORDER_PUSH_COMMAND,  'messageText': wordings.ORDER_PUSH_COMMAND, 'extra': kakaoPayload.dataActionExtra, 
+            #{'action': "webLink", 'label': wordings.ORDER_PUSH_COMMAND,  'messageText': wordings.ORDER_PUSH_COMMAND, 'extra': kakaoPayload.dataActionExtra, 
              
-            "webLinkUrl": "http://eatple.com/payment?storeName={storeName}&menuName={menuName}&menuPrice={menuPrice}".format(
-            #"webLinkUrl": "http://localhost:3000/payment?storeName={storeName}&menuName={menuName}&menuPrice={menuPrice}".format(
-             
-                 storeName=storeInstance.name, menuName=menuInstance.name, menuPrice=menuInstance.price )},
+            #"webLinkUrl": "http://eatple.com/payment?storeName={storeName}&menuName={menuName}&menuPrice={menuPrice}".format(storeName=storeInstance.name, menuName=menuInstance.name, menuPrice=menuInstance.price )},
+            #"webLinkUrl": "http://localhost:3000/payment?storeName={storeName}&menuName={menuName}&menuPrice={menuPrice}".format(storeName=storeInstance.name, menuName=menuInstance.name, menuPrice=menuInstance.price )},
             
-            #{'action': "message", 'label': wordings.ORDER_PUSH_COMMAND,  'messageText': wordings.ORDER_PUSH_COMMAND, 'extra': kakaoPayload.dataActionExtra}
+            {'action': "message", 'label': wordings.ORDER_PUSH_COMMAND,  'messageText': wordings.ORDER_PUSH_COMMAND, 'extra': kakaoPayload.dataActionExtra}
         ]
 
         KakaoForm.BasicCard_Add("{}".format(menuInstance.name),"{} - {}원\n - 픽업 시간 [ {} ]".format(
@@ -555,7 +553,7 @@ def POST_Order(request):
 
         KakaoForm.BasicCard_Add(
             "잇플패스가 발급되었습니다.",
-            "주문번호: {}\n--------------------\n - 주문자: {}\n\n - 매장: {} \n - 메뉴: {}\n\n - 결제 금액: {}원\n\n - 픽업 시간: {}\n--------------------\n - 매장 위치: {}".format(
+            "주문번호: {}\n--------------------\n - 주문자: {}\n\n - 매장: {} \n - 메뉴: {}\n\n - 제 금액: {}원\n\n - 픽업 시간: {}\n--------------------\n - 매장 위치: {}".format(
                 pushedOrder.management_code,
                 pushedOrder.userInstance.name,
                 pushedOrder.storeInstance.name, 
