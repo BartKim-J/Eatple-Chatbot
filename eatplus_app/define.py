@@ -18,7 +18,7 @@ STRING_32BIT  = 31
 STRING_256BIT = 255
 
 
-EATPLUS_HOST_URL = "http://54.65.75.156:8000"
+EATPLUS_HOST_URL = "http://eatple.com:8000"
 VALUE_NOT_APPLICABLE = 'N/A'
 
 #Eatplus App Global Defines

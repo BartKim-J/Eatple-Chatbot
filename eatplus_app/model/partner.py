@@ -34,10 +34,11 @@ class Partner(models.Model):
     storeInstance   = models.ForeignKey('Store', on_delete=models.CASCADE, default=DEFAULT_OBJECT_ID)
     identifier_code = models.CharField(max_length=PARTNER_ID_CODE_LENGTH, help_text="Partner ID", default='')
     
+
     @classmethod
     def registerPartner(cls, _name, _identifier_code, _storeKey):
         try: 
-            storeInstance = Store.objects.get(uniqueNumber=_storeKey)
+            storeInstance = Store.objects.get(id=_storeKey)
         except Store.DoesNotExist:
             return None
 

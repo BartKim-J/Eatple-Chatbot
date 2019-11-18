@@ -32,7 +32,7 @@ from eatplus_app.views_system.debugger import EatplusSkillLog, errorView
 #Define
 from eatplus_app.define import EP_define
 
-DEFAULT_STORE_KEY = "0015"
+DEFAULT_STORE_ID = 28 # Eatple Store Unique ID : 28
 
 #Static Functions
 def registerPartner(partnerIdentifier, storeKey):
@@ -54,7 +54,7 @@ def GET_PartnerHome(request):
     EatplusSkillLog("Home")
 
     HOME_BTN_MAP = [
-        {'action': "message", 'label': wordings.GET_ORDER_LIST_COMMAND, 'messageText': wordings.GET_ORDER_LIST_COMMAND, 'blockid': "none", 'extra': { 'Status': "OK" }},
+        {'action': "message", 'label': wordings.GET_ORDER_LIST_TOTAL_COMMAND, 'messageText': wordings.GET_ORDER_LIST_TOTAL_COMMAND, 'blockid': "none", 'extra': { 'Status': "OK" }},
         {'action': "message", 'label': wordings.GET_CALCULATE_CHECK_COMMAND, 'messageText': wordings.GET_CALCULATE_CHECK_COMMAND, 'blockid': "none", 'extra': { 'Status': "OK" }},
     ]
 
@@ -68,10 +68,14 @@ def GET_PartnerHome(request):
         try:
             partnerInstance = Partner.objects.get(identifier_code=kakaoPayload.userID)
         except Partner.DoesNotExist:
-            storeKey = DEFAULT_STORE_KEY
+            storeKey = DEFAULT_STORE_ID
             partnerInstance = registerPartner(kakaoPayload.userID, "{}".format(storeKey))
             if (partnerInstance == None):
                 return errorView("partner register failed.")
+            
+            
+            
+        print(partnerInstance.storeInstance)
             
         KakaoForm = Kakao_CarouselForm()
         KakaoForm.BasicCard_Init()

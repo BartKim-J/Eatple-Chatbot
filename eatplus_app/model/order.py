@@ -210,8 +210,8 @@ class Order(models.Model):
         return "{} - {} :: {} ----- {}".format(self.management_code, self.status, self.pickupTime, self.order_date)
 
 class storeOrderManager():
-    def __init__(self, uniqueNumber):
-        self.storeOrderList = Order.objects.filter(storeInstance__uniqueNumber=uniqueNumber)
+    def __init__(self, storeId):
+        self.storeOrderList = Order.objects.filter(storeInstance__id=storeId)
 
     def availableCouponStatusUpdate(self):
         availableCoupons = self.getAvailableCoupons()

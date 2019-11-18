@@ -31,8 +31,6 @@ DEFAULT_IMAGE_PATH     = "STORE_DB/images/default/defaultImg.png"
 #Util Funtions
 class OverwriteStorage(FileSystemStorage):
     def get_available_name(self, name, max_length=None):
-        print(self)
-        print("HISIDFJAISF")
         # If the filename already exists, remove it as if it was a true file system
         if self.exists(name):
             print(os.path.join(settings.MEDIA_ROOT, name))

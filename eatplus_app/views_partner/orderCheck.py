@@ -68,17 +68,17 @@ ORDER_LIST_LENGTH           = 30
 # # # # # # # # # # # # # # # # # # # # # # # # #
 '''
     @name StoreOrderListup
-    @param uniqueNumber
+    @param storeId
 
     @note
     @bug
     @todo userName to real username, now just use super user("잇플").
 '''
-def StoreOrderListup(uniqueNumber):
+def StoreOrderListup(storeId):
     ORDER_LIST_QUICKREPLIES_MAP = [{'action': "message", 'label': wordings.RETURN_HOME_QUICK_REPLISE, 'messageText': wordings.RETURN_HOME_QUICK_REPLISE, 'blockid': "none", 'extra': { KAKAO_PARAM_STATUS: KAKAO_PARAM_STATUS_OK }},
-                                   {'action': "message", 'label': wordings.REFRESH_BTN, 'messageText': wordings.GET_ORDER_LIST_COMMAND, 'blockid': "none", 'extra': { KAKAO_PARAM_STATUS: KAKAO_PARAM_STATUS_OK }}]
+                                   {'action': "message", 'label': wordings.REFRESH_BTN, 'messageText': wordings.GET_ORDER_LIST_TOTAL_COMMAND, 'blockid': "none", 'extra': {KAKAO_PARAM_STATUS: KAKAO_PARAM_STATUS_OK}}]
 
-    OrderManagerInstance = storeOrderManager(uniqueNumber)
+    OrderManagerInstance = storeOrderManager(storeId)
     
     OrderManagerInstance.availableCouponStatusUpdate()
     
@@ -119,17 +119,17 @@ def StoreOrderListup(uniqueNumber):
 
 '''
     @name StoreOrderTotal
-    @param uniqueNumber
+    @param storeId
 
     @note
     @bug
     @tood
 '''
-def StoreOrderTotal(uniqueNumber):
+def StoreOrderTotal(storeId):
     ORDER_LIST_QUICKREPLIES_MAP = [{'action': "message", 'label': wordings.RETURN_HOME_QUICK_REPLISE, 'messageText': wordings.RETURN_HOME_QUICK_REPLISE, 'blockid': "none", 'extra': { KAKAO_PARAM_STATUS: KAKAO_PARAM_STATUS_OK }},
                                    {'action': "message", 'label': wordings.REFRESH_BTN, 'messageText': wordings.GET_ORDER_LIST_COMMAND, 'blockid': "none", 'extra': { KAKAO_PARAM_STATUS: KAKAO_PARAM_STATUS_OK }}]
 
-    OrderManagerInstance = storeOrderManager(uniqueNumber)
+    OrderManagerInstance = storeOrderManager(storeId)
     
     OrderManagerInstance.availableCouponStatusUpdate()
     
@@ -197,7 +197,7 @@ def GET_StoreOrderList(request):
 
         EatplusSkillLog("Order Check Flow")
 
-        return StoreOrderListup(partnerInstance.storeInstance.uniqueNumber)
+        return StoreOrderListup(partnerInstance.storeInstance.id)
 
     except (RuntimeError, TypeError, NameError, KeyError) as ex:
         return errorView("{} ".format(ex))
@@ -226,7 +226,7 @@ def GET_StoreOrderTotal(request):
 
         EatplusSkillLog("Order Check Flow")
 
-        return StoreOrderTotal(partnerInstance.storeInstance.uniqueNumber)
+        return StoreOrderTotal(partnerInstance.storeInstance.id)
 
     except (RuntimeError, TypeError, NameError, KeyError) as ex:
         return errorView("{} ".format(ex))
