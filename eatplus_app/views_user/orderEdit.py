@@ -6,65 +6,65 @@
     @TODO
  
 '''
-#System
+# System
 import sys
 import os
 
-#Django Library
+# Django Library
 from django.shortcuts import render
 from django.views.decorators.csrf import csrf_exempt
 from django.http import JsonResponse
 
-#External Library
+# External Library
 import requests
 import json
 
-#Models 
+# Models
 from eatplus_app.models import User
 from eatplus_app.models import Order, OrderManager
 from eatplus_app.models import Category, SubCategory
 from eatplus_app.models import Store, Menu
 
-#Modules
+# Modules
 from eatplus_app.module_kakao.ReponseForm import Kakao_SimpleForm, Kakao_CarouselForm
 from eatplus_app.module_kakao.RequestForm import getLatLng, KakaoPayLoad
 
-#View-System
+# View-System
 from eatplus_app.views_system.debugger import EatplusSkillLog, errorView
 
-#Wordings
+# Wordings
 from eatplus_app.views_user.wording import wordings
 
-#Define
+# Define
 from eatplus_app.define import EP_define
-NOT_APPLICABLE              = EP_define.NOT_APPLICABLE
+NOT_APPLICABLE = EP_define.NOT_APPLICABLE
 
-SELLING_TIME_LUNCH          = EP_define.SELLING_TIME_LUNCH
-SELLING_TIME_DINNER         = EP_define.SELLING_TIME_DINNER
-SELLING_TIME_CATEGORY_DICT  = EP_define.SELLING_TIME_CATEGORY_DICT
-SELLING_TIME_CATEGORY       = EP_define.SELLING_TIME_CATEGORY
+SELLING_TIME_LUNCH = EP_define.SELLING_TIME_LUNCH
+SELLING_TIME_DINNER = EP_define.SELLING_TIME_DINNER
+SELLING_TIME_CATEGORY_DICT = EP_define.SELLING_TIME_CATEGORY_DICT
+SELLING_TIME_CATEGORY = EP_define.SELLING_TIME_CATEGORY
 
-LUNCH_PICKUP_TIME           = EP_define.LUNCH_PICKUP_TIME
-DINNER_PICKUP_TIME          = EP_define.DINNER_PICKUP_TIME
+LUNCH_PICKUP_TIME = EP_define.LUNCH_PICKUP_TIME
+DINNER_PICKUP_TIME = EP_define.DINNER_PICKUP_TIME
 
-ORDER_STATUS                = EP_define.ORDER_STATUS
-ORDER_STATUS_DICT           = EP_define.ORDER_STATUS_DICT
+ORDER_STATUS = EP_define.ORDER_STATUS
+ORDER_STATUS_DICT = EP_define.ORDER_STATUS_DICT
 
-KAKAO_PARAM_ORDER_ID        = EP_define.KAKAO_PARAM_ORDER_ID
-KAKAO_PARAM_STORE_ID        = EP_define.KAKAO_PARAM_STORE_ID
-KAKAO_PARAM_MENU_ID         = EP_define.KAKAO_PARAM_MENU_ID
+KAKAO_PARAM_ORDER_ID = EP_define.KAKAO_PARAM_ORDER_ID
+KAKAO_PARAM_STORE_ID = EP_define.KAKAO_PARAM_STORE_ID
+KAKAO_PARAM_MENU_ID = EP_define.KAKAO_PARAM_MENU_ID
 
-KAKAO_PARAM_PICKUP_TIME     = EP_define.KAKAO_PARAM_PICKUP_TIME
+KAKAO_PARAM_PICKUP_TIME = EP_define.KAKAO_PARAM_PICKUP_TIME
 
-KAKAO_PARAM_STATUS          = EP_define.KAKAO_PARAM_STATUS
-KAKAO_PARAM_STATUS_OK       = EP_define.KAKAO_PARAM_STATUS_OK
-KAKAO_PARAM_STATUS_NOT_OK   = EP_define.KAKAO_PARAM_STATUS_NOT_OK
+KAKAO_PARAM_STATUS = EP_define.KAKAO_PARAM_STATUS
+KAKAO_PARAM_STATUS_OK = EP_define.KAKAO_PARAM_STATUS_OK
+KAKAO_PARAM_STATUS_NOT_OK = EP_define.KAKAO_PARAM_STATUS_NOT_OK
 
-ORDER_SUPER_USER_ID         = EP_define.DEFAULT_USER_ID
+ORDER_SUPER_USER_ID = EP_define.DEFAULT_USER_ID
 
-DEFAULT_QUICKREPLIES_MAP = [                
-    {'action': "message", 'label': wordings.RETURN_HOME_QUICK_REPLISE,    'messageText': wordings.RETURN_HOME_QUICK_REPLISE, 'blockid': "none", 
-        'extra': { KAKAO_PARAM_STATUS: KAKAO_PARAM_STATUS_OK }},
+DEFAULT_QUICKREPLIES_MAP = [
+    {'action': "message", 'label': wordings.RETURN_HOME_QUICK_REPLISE,    'messageText': wordings.RETURN_HOME_QUICK_REPLISE, 'blockid': "none",
+        'extra': {KAKAO_PARAM_STATUS: KAKAO_PARAM_STATUS_OK}},
 ]
 
 # # # # # # # # # # # # # # # # # # # # # # # # #
@@ -111,19 +111,21 @@ def GET_PickupTimeForChange(request):
 
         if SELLING_TIME_CATEGORY_DICT[kakaoPayload.sellingTime] == SELLING_TIME_LUNCH:
             ENTRY_PICKUP_TIME_MAP = LUNCH_PICKUP_TIME
-            pikcupTime_Start      = orderInstance.storeInstance.lunch_pickupTime_start
-            pikcupTime_End        = orderInstance.storeInstance.lunch_pickupTime_end
+            pikcupTime_Start = orderInstance.storeInstance.lunch_pickupTime_start
+            pikcupTime_End = orderInstance.storeInstance.lunch_pickupTime_end
         else:
             ENTRY_PICKUP_TIME_MAP = DINNER_PICKUP_TIME
-            pikcupTime_Start      = orderInstance.storeInstance.dinner_pickupTime_start
-            pikcupTime_End        = orderInstance.storeInstance.dinner_pickupTime_end
+            pikcupTime_Start = orderInstance.storeInstance.dinner_pickupTime_start
+            pikcupTime_End = orderInstance.storeInstance.dinner_pickupTime_end
 
         for index, pickupTime in ENTRY_PICKUP_TIME_MAP:
             if(pikcupTime_Start <= index) and (index <= pikcupTime_End):
-                PICKUP_TIME_QUICKREPLIES_MAP += {'action': "message", 'label': pickupTime, 'messageText': wordings.ORDER_PICKUP_TIME_CHANGE_CONFIRM_COMMAND, 'blockid': "none", 'extra': { **allExtraData, KAKAO_PARAM_PICKUP_TIME: pickupTime}},
+                PICKUP_TIME_QUICKREPLIES_MAP += {'action': "message", 'label': pickupTime, 'messageText': wordings.ORDER_PICKUP_TIME_CHANGE_CONFIRM_COMMAND,
+                                                 'blockid': "none", 'extra': {**allExtraData, KAKAO_PARAM_PICKUP_TIME: pickupTime}},
 
         for entryPoint in PICKUP_TIME_QUICKREPLIES_MAP:
-            KakaoForm.QuickReplies_Add(entryPoint['action'], entryPoint['label'], entryPoint['messageText'], entryPoint['blockid'], entryPoint['extra'])
+            KakaoForm.QuickReplies_Add(entryPoint['action'], entryPoint['label'],
+                                       entryPoint['messageText'], entryPoint['blockid'], entryPoint['extra'])
 
         return JsonResponse(KakaoForm.GetForm())
 
@@ -153,40 +155,46 @@ def SET_PickupTimeByChanged(request):
         EatplusSkillLog("Order Change Flow")
 
         beforePickupTime = orderInstance.pickupTime
-        orderInstance.pickupTime = orderInstance.rowPickupTimeToDatetime(kakaoPayload.pickupTime).replace(day=beforePickupTime.day)
+        orderInstance.pickupTime = orderInstance.rowPickupTimeToDatetime(
+            kakaoPayload.pickupTime).replace(day=beforePickupTime.day)
         orderInstance.save()
-        
+
         KakaoForm = Kakao_CarouselForm()
         KakaoForm.BasicCard_Init()
 
-        thumbnail = { "imageUrl": "" }
+        thumbnail = {"imageUrl": ""}
 
-        kakaoMapUrl = "https://map.kakao.com/link/map/{},{}".format(orderInstance.storeInstance.name, getLatLng(orderInstance.storeInstance.addr))
+        kakaoMapUrl = "https://map.kakao.com/link/map/{},{}".format(
+            orderInstance.storeInstance.name, getLatLng(orderInstance.storeInstance.addr))
 
         buttons = [
-            {'action': "webLink", 'label': wordings.SHOW_LOCATION_BTN,  "webLinkUrl": kakaoMapUrl},
+            {'action': "webLink", 'label': wordings.SHOW_LOCATION_BTN,
+                "webLinkUrl": kakaoMapUrl},
         ]
 
         KakaoForm.BasicCard_Add(
-            "{}시 {}분으로 변경되었습니다.".format(orderInstance.pickupTime.astimezone().strftime('%H'), orderInstance.pickupTime.astimezone().strftime('%M')),
+            "{}시 {}분으로 변경되었습니다.".format(orderInstance.pickupTime.astimezone().strftime(
+                '%H'), orderInstance.pickupTime.astimezone().strftime('%M')),
             "주문번호: {}\n--------------------\n - 주문자: {}\n\n - 매장: {} \n - 메뉴: {}\n\n - 결제 금액: {}원\n\n - 픽업 시간: {}\n--------------------".format(
                 orderInstance.management_code,
                 orderInstance.userInstance.name,
-                orderInstance.storeInstance.name, 
-                orderInstance.menuInstance.name, 
-                orderInstance.menuInstance.price, 
-                orderInstance.pickupTime.astimezone().strftime('%H시%M분 %m월%d일'), 
+                orderInstance.storeInstance.name,
+                orderInstance.menuInstance.name,
+                orderInstance.menuInstance.price,
+                orderInstance.pickupTime.astimezone().strftime('%H시%M분 %m월%d일'),
             ),
             thumbnail, buttons
         )
 
         for entryPoint in DEFAULT_QUICKREPLIES_MAP:
-            KakaoForm.QuickReplies_Add(entryPoint['action'], entryPoint['label'], entryPoint['messageText'], entryPoint['blockid'], entryPoint['extra'])
-        
+            KakaoForm.QuickReplies_Add(entryPoint['action'], entryPoint['label'],
+                                       entryPoint['messageText'], entryPoint['blockid'], entryPoint['extra'])
+
         return JsonResponse(KakaoForm.GetForm())
 
     except (RuntimeError, TypeError, NameError, KeyError) as ex:
         return errorView("{}".format(ex))
+
 
 '''
     @name GET_ConfirmUserCoupon
@@ -206,15 +214,18 @@ def GET_ConfirmUserCoupon(request):
             return errorView("Parameter Invalid")
         else:
             try:
-                userInstance = User.objects.get(identifier_code=kakaoPayload.userID)
+                userInstance = User.objects.get(
+                    identifier_code=kakaoPayload.userID)
             except User.DoesNotExist:
                 return errorView("User ID is Invalid")
-                
+
             OrderInstance = Order.objects.get(id=kakaoPayload.orderID)
 
-        USE_COUPON_QUICKREPLIES_MAP = [                
-            {'action': "message", 'label': "사용하기",    'messageText': wordings.USE_COUPON_COMMAND, 'blockid': "none", 'extra': { KAKAO_PARAM_ORDER_ID: OrderInstance.id }},
-            {'action': "message", 'label': wordings.RETURN_HOME_QUICK_REPLISE,    'messageText': wordings.RETURN_HOME_QUICK_REPLISE, 'blockid': "none", 'extra': { KAKAO_PARAM_STATUS: KAKAO_PARAM_STATUS_OK }},
+        USE_COUPON_QUICKREPLIES_MAP = [
+            {'action': "message", 'label': "사용하기",    'messageText': wordings.USE_COUPON_COMMAND,
+                'blockid': "none", 'extra': {KAKAO_PARAM_ORDER_ID: OrderInstance.id}},
+            {'action': "message", 'label': wordings.RETURN_HOME_QUICK_REPLISE,    'messageText': wordings.RETURN_HOME_QUICK_REPLISE,
+                'blockid': "none", 'extra': {KAKAO_PARAM_STATUS: KAKAO_PARAM_STATUS_OK}},
         ]
 
         EatplusSkillLog("Order Check Flow")
@@ -222,7 +233,7 @@ def GET_ConfirmUserCoupon(request):
         KakaoForm = Kakao_SimpleForm()
         KakaoForm.SimpleForm_Init()
 
-        thumbnail = { "imageUrl": "" }
+        thumbnail = {"imageUrl": ""}
 
         buttons = [
             # No Buttons
@@ -231,12 +242,14 @@ def GET_ConfirmUserCoupon(request):
         KakaoForm.SimpleText_Add("잇플패스를 사용하시겠습니까?")
 
         for entryPoint in USE_COUPON_QUICKREPLIES_MAP:
-            KakaoForm.QuickReplies_Add(entryPoint['action'], entryPoint['label'], entryPoint['messageText'], entryPoint['blockid'], entryPoint['extra'])
-        
+            KakaoForm.QuickReplies_Add(entryPoint['action'], entryPoint['label'],
+                                       entryPoint['messageText'], entryPoint['blockid'], entryPoint['extra'])
+
         return JsonResponse(KakaoForm.GetForm())
 
     except (RuntimeError, TypeError, NameError, KeyError) as ex:
         return errorView("{} ".format(ex))
+
 
 '''
     @name POST_UseCoupon
@@ -261,13 +274,14 @@ def POST_UseCoupon(request):
 
         orderInstance.status = ORDER_STATUS[ORDER_STATUS_DICT['픽업 완료']][0]
         orderInstance.save()
-        
+
         KakaoForm = Kakao_CarouselForm()
         KakaoForm.BasicCard_Init()
 
-        thumbnail = { "imageUrl": "" }
+        thumbnail = {"imageUrl": ""}
 
-        kakaoMapUrl = "https://map.kakao.com/link/map/{},{}".format(orderInstance.storeInstance.name, getLatLng(orderInstance.storeInstance.addr))
+        kakaoMapUrl = "https://map.kakao.com/link/map/{},{}".format(
+            orderInstance.storeInstance.name, getLatLng(orderInstance.storeInstance.addr))
 
         buttons = [
             # No Buttons
@@ -278,21 +292,23 @@ def POST_UseCoupon(request):
             "주문번호: {}\n--------------------\n - 주문자: {}\n\n - 매장: {} \n - 메뉴: {}\n\n - 결제 금액: {}원\n\n - 픽업 시간: {}\n--------------------".format(
                 orderInstance.management_code,
                 orderInstance.userInstance.name,
-                orderInstance.storeInstance.name, 
-                orderInstance.menuInstance.name, 
-                orderInstance.menuInstance.price, 
-                orderInstance.pickupTime.astimezone().strftime('%H시%M분 %m월%d일'), 
+                orderInstance.storeInstance.name,
+                orderInstance.menuInstance.name,
+                orderInstance.menuInstance.price,
+                orderInstance.pickupTime.astimezone().strftime('%H시%M분 %m월%d일'),
             ),
             thumbnail, buttons
         )
 
         for entryPoint in DEFAULT_QUICKREPLIES_MAP:
-            KakaoForm.QuickReplies_Add(entryPoint['action'], entryPoint['label'], entryPoint['messageText'], entryPoint['blockid'], entryPoint['extra'])
-        
+            KakaoForm.QuickReplies_Add(entryPoint['action'], entryPoint['label'],
+                                       entryPoint['messageText'], entryPoint['blockid'], entryPoint['extra'])
+
         return JsonResponse(KakaoForm.GetForm())
 
     except (RuntimeError, TypeError, NameError, KeyError) as ex:
         return errorView("{}".format(ex))
+
 
 '''
     @name POST_OrderCancel
@@ -317,16 +333,18 @@ def POST_OrderCancel(request):
 
         orderInstance.status = ORDER_STATUS[ORDER_STATUS_DICT['주문 취소']][0]
         orderInstance.save()
-        
+
         KakaoForm = Kakao_CarouselForm()
         KakaoForm.BasicCard_Init()
 
-        thumbnail = { "imageUrl": "" }
+        thumbnail = {"imageUrl": ""}
 
-        kakaoMapUrl = "https://map.kakao.com/link/map/{},{}".format(orderInstance.storeInstance.name, getLatLng(orderInstance.storeInstance.addr))
+        kakaoMapUrl = "https://map.kakao.com/link/map/{},{}".format(
+            orderInstance.storeInstance.name, getLatLng(orderInstance.storeInstance.addr))
 
         buttons = [
-            {'action': "webLink", 'label': wordings.SHOW_LOCATION_BTN,  "webLinkUrl": kakaoMapUrl},
+            {'action': "webLink", 'label': wordings.SHOW_LOCATION_BTN,
+                "webLinkUrl": kakaoMapUrl},
         ]
 
         KakaoForm.BasicCard_Add(
@@ -334,17 +352,18 @@ def POST_OrderCancel(request):
             "주문번호: {}\n--------------------\n - 주문자: {}\n\n - 매장: {} \n - 메뉴: {}\n\n - 결제 금액: {}원\n\n - 픽업 시간: {}\n--------------------".format(
                 orderInstance.management_code,
                 orderInstance.userInstance.name,
-                orderInstance.storeInstance.name, 
-                orderInstance.menuInstance.name, 
-                orderInstance.menuInstance.price, 
+                orderInstance.storeInstance.name,
+                orderInstance.menuInstance.name,
+                orderInstance.menuInstance.price,
                 orderInstance.pickupTime.astimezone().strftime('%H시%M분 %m월%d일'),
             ),
             thumbnail, buttons
         )
 
         for entryPoint in DEFAULT_QUICKREPLIES_MAP:
-            KakaoForm.QuickReplies_Add(entryPoint['action'], entryPoint['label'], entryPoint['messageText'], entryPoint['blockid'], entryPoint['extra'])
-        
+            KakaoForm.QuickReplies_Add(entryPoint['action'], entryPoint['label'],
+                                       entryPoint['messageText'], entryPoint['blockid'], entryPoint['extra'])
+
         return JsonResponse(KakaoForm.GetForm())
 
     except (RuntimeError, TypeError, NameError, KeyError) as ex:

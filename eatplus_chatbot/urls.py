@@ -27,43 +27,46 @@ urlpatterns = [
     path('admin/', admin.site.urls),
 
     # Kakao Plus User Skills
-    ## Home
+    # Home
     path('skill/user/home', views.GET_UserHome),
-    
-    ## Order Flow
+
+    # Order Flow
     path('skill/user/order/get_sellingTime',  views.GET_SellingTime),
     path('skill/user/order/get_menu',         views.GET_Menu),
     path('skill/user/order/get_pickupTime',   views.GET_PickupTime),
     path('skill/user/order/set_orderSheet',   views.SET_OrderSheet),
     path('skill/user/order/post_order',       views.POST_Order),
 
-    ## Order View Flow
+    # Order View Flow
     path('skill/user/orderView/get_orderList', views.GET_OrderList),
     path('skill/user/orderView/get_coupon',    views.GET_Coupon),
 
-    ## Order Edit Flow
+    # Order Edit Flow
     path('skill/user/orderEdit/post_orderCancel',     views.POST_OrderCancel),
-    path('skill/user/orderEdit/get_confirmUseCoupon', views.GET_ConfirmUserCoupon), 
+    path('skill/user/orderEdit/get_confirmUseCoupon',
+         views.GET_ConfirmUserCoupon),
     path('skill/user/orderEdit/post_useCoupon',       views.POST_UseCoupon),
 
-    ## Order Pickup Time Change Flow
-    path('skill/user/orderEdit/get_pickupTimeForChange', views.GET_PickupTimeForChange),
-    path('skill/user/orderEdit/set_pickupTimeByChanged', views.SET_PickupTimeByChanged),
+    # Order Pickup Time Change Flow
+    path('skill/user/orderEdit/get_pickupTimeForChange',
+         views.GET_PickupTimeForChange),
+    path('skill/user/orderEdit/set_pickupTimeByChanged',
+         views.SET_PickupTimeByChanged),
 
-    ## ETC
+    # ETC
     path('skill/user/etc/get_userManual', views.GET_UserManual),
     path('skill/user/etc/get_userIntro', views.GET_UserIntro),
 
 
     # Kakao Plus Partner Skills
-    ## Home
+    # Home
     path('skill/partner/home', views.GET_PartnerHome),
-    
-    ## Order View Flow
+
+    # Order View Flow
     path('skill/partner/orderView/get_orderList', views.GET_StoreOrderList),
     path('skill/partner/orderView/get_calculateCheck', views.GET_CalculateCheck),
 
-    ## ETC
+    # ETC
     path('skill/partner/etc/get_partnerManual', views.GET_PartnerManual),
     path('skill/partner/etc/get_partnerIntro', views.GET_PartnerIntro),
 ]

@@ -6,9 +6,11 @@
     @TODO
  
 '''
-#Django Library
+# Django Library
 from django.apps import AppConfig
 
-#App Config
+# App Config
+
+
 class EatplusChatbotAppConfig(AppConfig):
     name = 'eatplus_app'

@@ -16,7 +16,7 @@ import os
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 # PATH
-MEDIA_URL='/media/'
+MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 # Quick-start development settings - unsuitable for production
@@ -80,7 +80,7 @@ WSGI_APPLICATION = 'eatplus_chatbot.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql',   #use mysql (not sqlite)
+        'ENGINE': 'django.db.backends.mysql',  # use mysql (not sqlite)
         'NAME': 'eatplus_db',
         'USER': 'eatplus',
         'PASSWORD': 'aisthefuture',
