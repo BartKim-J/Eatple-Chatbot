@@ -66,6 +66,21 @@ urlpatterns = [
     path('skill/partner/orderView/get_orderList', views.GET_StoreOrderList),
     path('skill/partner/orderView/get_calculateCheck', views.GET_CalculateCheck),
 
+    # Order Alram View
+    path('skill/partner/alarmView/get_openLunchStore',
+         views.GET_OpenLunchStoreAlarm),
+    path('skill/partner/alarmView/get_closeLunchStore',
+         views.GET_CloseLunchStoreAlarm),
+    path('skill/partner/alarmView/get_openDinnerStore',
+         views.GET_OpenDinnerStoreAlarm),
+    path('skill/partner/alarmView/get_closeDinnerStore',
+         views.GET_CloseDinnerStoreAlarm),
+    path('skill/partner/alarmView/get_pickup', views.GET_PickupAlarm),
+    path('skill/partner/alarmView/get_enablePickupBlock',
+         views.GET_PickupBlockEnableAlarm),
+    path('skill/partner/alarmView/get_disablePickupBlock',
+         views.GET_PickupBlockDisableAlarm),
+
     # ETC
     path('skill/partner/etc/get_partnerManual', views.GET_PartnerManual),
     path('skill/partner/etc/get_partnerIntro', views.GET_PartnerIntro),

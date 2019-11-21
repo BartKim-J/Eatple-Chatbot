@@ -20,3 +20,8 @@ from eatplus_app.views_partner.etc import GET_PartnerManual
 from eatplus_app.views_partner.etc import GET_PartnerIntro
 from eatplus_app.views_partner.alarm import GET_OpenLunchStoreAlarm
 from eatplus_app.views_partner.alarm import GET_CloseLunchStoreAlarm
+from eatplus_app.views_partner.alarm import GET_OpenDinnerStoreAlarm
+from eatplus_app.views_partner.alarm import GET_CloseDinnerStoreAlarm
+from eatplus_app.views_partner.alarm import GET_PickupAlarm
+from eatplus_app.views_partner.alarm import GET_PickupBlockEnableAlarm
+from eatplus_app.views_partner.alarm import GET_PickupBlockDisableAlarm
