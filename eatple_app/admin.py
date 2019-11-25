@@ -15,17 +15,13 @@ from .models import UserManual, PartnerManual
 from .models import UserIntro, PartnerIntro
 from .models import Store, Menu
 from .models import Category, SubCategory
-from .models import Order
-from .models import User, UserFlags
+from .models import Order, OrderBox
+from .models import User
 from .models import Partner
-
-class PersonAdmin(admin.ModelAdmin):
-    pass
 
 # Main Models
 admin.site.register(Partner)
 admin.site.register(User)
-admin.site.register(UserFlags)
 
 admin.site.register(Store)
 admin.site.register(Menu)
@@ -34,6 +30,7 @@ admin.site.register(Menu)
 admin.site.register(DefaultImage)
 
 # Order
+admin.site.register(OrderBox)
 admin.site.register(Order)
 
 # Menu Category-SubCategory

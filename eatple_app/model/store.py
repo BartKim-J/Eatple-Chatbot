@@ -31,6 +31,8 @@ def getUniqueID(instance):
     return "{:4d}".format(instance.id)
 
 # Models
+
+
 class Store(models.Model):
     # Metadata
     class Meta:

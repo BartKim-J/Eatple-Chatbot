@@ -30,18 +30,6 @@ USER_ID_CODE_LENGTH = EP_define.USER_ID_CODE_LENGTH
 # Models
 
 
-class UserFlags(models.Model):
-    class Meta:
-        ordering = ['-name']
-
-    name = models.CharField(max_length=USER_NICKNAME_LENGTH, help_text="Flag")
-    active = models.BooleanField(default=False)
-
-    # Methods
-    def __str__(self):
-        return "{}".format(self.name)
-
-
 class User(models.Model):
     class Meta:
         ordering = ['-name']
@@ -51,6 +39,12 @@ class User(models.Model):
 
     identifier_code = models.CharField(
         max_length=USER_ID_CODE_LENGTH, help_text="User ID", default='')
+
+    kakao_token = models.CharField(
+        max_length=USER_ID_CODE_LENGTH, help_text="Kakao Token", default='')
+
+    # flag
+    event_accout = models.BooleanField(default=False)
 
     create_date = models.DateTimeField(auto_now=True)
 
