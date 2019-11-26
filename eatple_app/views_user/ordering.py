@@ -23,7 +23,7 @@ from datetime import timedelta
 # Models
 from eatple_app.models import User
 from eatple_app.models import Order, OrderManager
-from eatple_app.models import Category, SubCategory
+from eatple_app.models import Category, Tag
 from eatple_app.models import Store, Menu
 
 # Modules

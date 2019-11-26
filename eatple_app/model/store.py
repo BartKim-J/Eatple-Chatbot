@@ -33,14 +33,13 @@ def getUniqueID(instance):
 # Models
 
 
-class Store(models.Model):
-    # Metadata
-    class Meta:
-        ordering = ['-name']
-
-    # Store Info
+class StoreInfo(models.Model):
+    store_id = models.CharField(default="Store ID",
+                            max_length=STRING_LENGTH, help_text="Store ID")
+    
     name = models.CharField(default="Store Name",
                             max_length=STRING_LENGTH, help_text="Store Name")
+    
     addr = models.CharField(
         default="Address", max_length=STRING_LENGTH, help_text="Address")
     owner = models.CharField(
@@ -51,15 +50,38 @@ class Store(models.Model):
     logo = models.ImageField(default="STORE_DB/images/default/logoImg.png",
                              blank=True, upload_to=logo_directory_path, storage=OverwriteStorage())
 
+    class Meta:
+        abstract = True
+
+
+class StoreSetting(models.Model):
     lunch_pickupTime_start = models.IntegerField(
         default=0, choices=LUNCH_PICKUP_TIME, help_text="")
+
     lunch_pickupTime_end = models.IntegerField(default=len(
         LUNCH_PICKUP_TIME) - 1, choices=LUNCH_PICKUP_TIME, help_text="")
 
     dinner_pickupTime_start = models.IntegerField(
         default=0, choices=DINNER_PICKUP_TIME, help_text="")
+
     dinner_pickupTime_end = models.IntegerField(default=len(
         DINNER_PICKUP_TIME) - 1, choices=DINNER_PICKUP_TIME, help_text="")
+
+    class Meta:
+        abstract = True
+
+
+class StoreStatus(models.Model):
+    status = models.IntegerField(default=0, choices=(), help_text="")
+
+    class Meta:
+        abstract = True
+
+
+class Store(StoreInfo, StoreSetting, StoreStatus):
+    # Metadata
+    class Meta:
+        ordering = ['-name']
 
     # Methods
     def save(self, *args, **kwargs):

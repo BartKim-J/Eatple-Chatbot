@@ -58,33 +58,23 @@ class Category(models.Model):
         return "{}".format(self.name)
 
 
-class SubCategory(models.Model):
+class Tag(models.Model):
     # Metadata
     class Meta:
         #abstract = True
-        ordering = ['-index']
+        ordering = ['-name']
 
-    category = models.ForeignKey(Category, on_delete=models.CASCADE)
-    name = models.CharField(max_length=STRING_LENGTH, help_text="Sub Category")
-    index = models.IntegerField(default=0, help_text="Sub Category Index")
+    name = models.CharField(max_length=STRING_LENGTH, help_text="Tag")
+
     # Methods
 
     def __str__(self):
-        return "{} - {}".format(self.category, self.name)
+        return "{}".format(self.name)
 
 
-class Menu(models.Model):
-    # Metadata
-    class Meta:
-        ordering = ['-name']
-
+class MenuInfo(models.Model):
     storeInstance = models.ForeignKey(
         'Store', on_delete=models.CASCADE, default=DEFAULT_OBJECT_ID)
-
-    # Menu Info
-
-    sellingTime = models.CharField(
-        max_length=STRING_LENGTH, choices=SELLING_TIME_CATEGORY, default=SELLING_TIME_CATEGORY[SELLING_TIME_LUNCH])
 
     name = models.CharField(default="Menu Name",
                             max_length=STRING_LENGTH, help_text="Menu Name")
@@ -92,18 +82,40 @@ class Menu(models.Model):
     description = models.TextField(
         default="Description", help_text="Description")
 
-    categories = models.ManyToManyField(SubCategory)
+    tag = models.ManyToManyField(Tag)
 
     image = models.ImageField(
         blank=True, upload_to=menu_directory_path, storage=OverwriteStorage())
 
-    price = models.IntegerField(default=6000, help_text="Price")
-    discount = models.IntegerField(default=0, help_text="Discount")
+    class Meta:
+        abstract = True
 
+
+class MenuStatus(models.Model):
     current_stock = models.IntegerField(default=0, help_text="Current Stock")
     max_stock = models.IntegerField(default=50, help_text="Max Stock")
 
-    is_status = models.IntegerField(default=0, choices=(), help_text="")
+    status = models.IntegerField(default=0, choices=(), help_text="")
+
+    class Meta:
+        abstract = True
+
+
+class MenuSetting(models.Model):
+    sellingTime = models.CharField(
+        max_length=STRING_LENGTH, choices=SELLING_TIME_CATEGORY, default=SELLING_TIME_CATEGORY[SELLING_TIME_LUNCH])
+
+    price = models.IntegerField(default=6000, help_text="Price")
+    discount = models.IntegerField(default=0, help_text="Discount")
+
+    class Meta:
+        abstract = True
+
+
+class Menu(MenuInfo, MenuStatus, MenuSetting):
+    # Metadata
+    class Meta:
+        ordering = ['-name']
 
     def imgURL(self):
         try:
@@ -111,6 +123,5 @@ class Menu(models.Model):
         except ValueError:
             return DEFAULT_MENU_IMAGE_PATH
 
-    # Methods
     def __str__(self):
         return "[{}] {} - {}".format(self.storeInstance.name, self.name, self.sellingTime)

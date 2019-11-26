@@ -18,7 +18,7 @@ from random import *
 # Models
 from eatple_app.models import Partner
 from eatple_app.models import Order
-from eatple_app.models import Category, SubCategory
+from eatple_app.models import Category, Tag
 from eatple_app.models import Store, Menu
 
 # View Modules

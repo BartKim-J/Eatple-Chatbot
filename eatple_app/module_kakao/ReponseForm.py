@@ -19,7 +19,7 @@ from eatple_app.define import EP_define
 
 from eatple_app.models import User
 from eatple_app.models import Order
-from eatple_app.models import Category, SubCategory
+from eatple_app.models import Category, Tag
 from eatple_app.models import Store, Menu
 
 class KakaoBaseForm():

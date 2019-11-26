@@ -14,7 +14,7 @@ from .models import DefaultImage
 from .models import UserManual, PartnerManual
 from .models import UserIntro, PartnerIntro
 from .models import Store, Menu
-from .models import Category, SubCategory
+from .models import Category, Tag
 from .models import Order, OrderBox
 from .models import User
 from .models import Partner
@@ -33,9 +33,9 @@ admin.site.register(DefaultImage)
 admin.site.register(OrderBox)
 admin.site.register(Order)
 
-# Menu Category-SubCategory
+# Menu Category-Tag
 admin.site.register(Category)
-admin.site.register(SubCategory)
+admin.site.register(Tag)
 
 # Manual
 admin.site.register(UserManual)

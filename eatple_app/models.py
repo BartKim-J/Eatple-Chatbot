@@ -5,7 +5,7 @@ from eatple_app.model.utils import UserIntro, PartnerIntro
 from eatple_app.model.store import Store
 
 from eatple_app.model.menu import Menu
-from eatple_app.model.menu import Category, SubCategory
+from eatple_app.model.menu import Category, Tag
 
 from eatple_app.model.order import Order, OrderBox
 from eatple_app.model.order import storeOrderManager, OrderManager

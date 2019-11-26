@@ -13,7 +13,7 @@ from eatple_app.views_system.debugger import EatplusSkillLog, errorView
 from eatple_app.module_kakao.RequestForm import getLatLng, KakaoPayLoad
 from eatple_app.module_kakao.ReponseForm import Kakao_SimpleForm, Kakao_CarouselForm
 from eatple_app.models import Store, Menu
-from eatple_app.models import Category, SubCategory
+from eatple_app.models import Category, Tag
 from eatple_app.models import Order, OrderManager
 from eatple_app.models import User
 from random import *
