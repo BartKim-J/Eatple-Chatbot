@@ -15,7 +15,7 @@ from .models import UserManual, PartnerManual
 from .models import UserIntro, PartnerIntro
 from .models import Store, Menu
 from .models import Category, Tag
-from .models import Order, OrderBox
+from .models import Order, OrderForm
 from .models import User
 from .models import Partner
 
@@ -30,7 +30,7 @@ admin.site.register(Menu)
 admin.site.register(DefaultImage)
 
 # Order
-admin.site.register(OrderBox)
+admin.site.register(OrderForm)
 admin.site.register(Order)
 
 # Menu Category-Tag

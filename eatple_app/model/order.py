@@ -180,7 +180,7 @@ def OrderManagementCodeGenerator(storeInstance, menuInstance, userInstance, orde
 # Models
 
 
-class OrderBox(models.Model):
+class OrderForm(models.Model):
     userInstance = models.ForeignKey(
         'User',  on_delete=models.DO_NOTHING, default=DEFAULT_OBJECT_ID)
     
@@ -195,8 +195,8 @@ class Order(models.Model):
     class Meta:
         ordering = ['-pickupTime']
 
-    orderBoxInstance = models.ForeignKey(
-        'OrderBox',  on_delete=models.DO_NOTHING, default=DEFAULT_OBJECT_ID)
+    OrderFormInstance = models.ForeignKey(
+        'OrderForm',  on_delete=models.DO_NOTHING, default=DEFAULT_OBJECT_ID)
     userInstance = models.ForeignKey(
         'User',  on_delete=models.DO_NOTHING, default=DEFAULT_OBJECT_ID)
     storeInstance = models.ForeignKey(

@@ -4,7 +4,7 @@
     @NOTE
     @BUG
     @TODO
- 
+
 '''
 # Django Library
 from eatple_app.model.utils import menu_directory_path
@@ -47,7 +47,7 @@ DEFAULT_MENU_IMAGE_PATH = "STORE_DB/images/default/menuImg.png"
 class Category(models.Model):
     # Metadata
     class Meta:
-        #abstract = True
+        # abstract = True
         ordering = ['-index']
 
     name = models.CharField(max_length=STRING_LENGTH, help_text="Category")
@@ -61,7 +61,7 @@ class Category(models.Model):
 class Tag(models.Model):
     # Metadata
     class Meta:
-        #abstract = True
+        # abstract = True
         ordering = ['-name']
 
     name = models.CharField(max_length=STRING_LENGTH, help_text="Tag")
@@ -75,6 +75,8 @@ class Tag(models.Model):
 class MenuInfo(models.Model):
     storeInstance = models.ForeignKey(
         'Store', on_delete=models.CASCADE, default=DEFAULT_OBJECT_ID)
+
+    menu_id = models.CharField(default="0000-0000-0000", max_length=STRING_LENGTH, help_text="Menu ID")
 
     name = models.CharField(default="Menu Name",
                             max_length=STRING_LENGTH, help_text="Menu Name")
@@ -117,6 +119,17 @@ class Menu(MenuInfo, MenuStatus, MenuSetting):
     class Meta:
         ordering = ['-name']
 
+    def __init__(self, *args, **kwargs):
+        super(Menu, self).__init__(*args, **kwargs)
+        
+        self.menu_id = "{store_id}-{menu_index:04d}".format(store_id=self.storeInstance.store_id, menu_index=0)
+
+    def save(self, *args, **kwargs):
+        print(self)
+        
+        super(Menu, self).save(*args, **kwargs)
+      
+      
     def imgURL(self):
         try:
             return self.image.url

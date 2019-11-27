@@ -34,7 +34,7 @@ def getUniqueID(instance):
 
 
 class StoreInfo(models.Model):
-    store_id = models.CharField(default="Store ID",
+    store_id = models.CharField(default="0000-0000",
                             max_length=STRING_LENGTH, help_text="Store ID")
     
     name = models.CharField(default="Store Name",
@@ -83,9 +83,21 @@ class Store(StoreInfo, StoreSetting, StoreStatus):
     class Meta:
         ordering = ['-name']
 
+
+    def __init__(self, *args, **kwargs):
+        super(Store, self).__init__(*args, **kwargs)
+        
+        if (self.id == None):
+            self.id = Store.objects.latest('id').id + 1
+            print(self.id)
+  
+        
+        self.store_id = "{area:04x}-{id:04x}".format(area=0, id=self.id)
+
     # Methods
     def save(self, *args, **kwargs):
+
         super().save(*args, **kwargs)
 
     def __str__(self):
-        return "{id:04d} : {name}".format(id=self.id, name=self.name)
+        return "[ {store_id} ] : {name}".format(store_id=self.store_id, name=self.name)

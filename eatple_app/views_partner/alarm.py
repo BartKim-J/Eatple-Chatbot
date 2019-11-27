@@ -82,7 +82,7 @@ def GET_OpenLunchStoreAlarm(request):
         ]
 
         KakaoForm.BasicCard_Add(
-            "총 {:d}개의 점심 주문이 들어왔어요!".format(15), "", thumbnail, buttons)
+            "오늘 잇플에 준비해주실 음식은 {:d}개입니다. \n맛있는 음식 기대할게요!".format(15), "", thumbnail, buttons)
 
         return JsonResponse(KakaoForm.GetForm())
 
@@ -112,7 +112,7 @@ def GET_CloseLunchStoreAlarm(request):
 
         buttons = DEFAULT_QUICKREPLIES_MAP
 
-        KakaoForm.BasicCard_Add("오늘의 점심은 마감되었어요!. 다음 저녁 준비를 해주세요!",
+        KakaoForm.BasicCard_Add("오늘 잇플 서비스가 모두 종료되었습니다.\n내일 더 맛있는 음식으로 찾아뵐께요!",
                                 "", thumbnail, buttons)
 
         return JsonResponse(KakaoForm.GetForm())
@@ -145,7 +145,7 @@ def GET_OpenDinnerStoreAlarm(request):
              'extra': {KAKAO_PARAM_STATUS: KAKAO_PARAM_STATUS_OK}},
         ]
 
-        KakaoForm.BasicCard_Add("총 {:d}개의 저녁 주문이 들어왔어요!".format(11),
+        KakaoForm.BasicCard_Add("오늘은 11시 30분부터 손님들이 오실예정이에요.\n조금만 서둘러주세요.".format(11),
                                 "", thumbnail, buttons)
 
         return JsonResponse(KakaoForm.GetForm())
@@ -176,7 +176,7 @@ def GET_CloseDinnerStoreAlarm(request):
 
         buttons = DEFAULT_QUICKREPLIES_MAP
 
-        KakaoForm.BasicCard_Add("오늘의 저녁은 마감되었어요!. 오늘 하루 수고하셨습니다.",
+        KakaoForm.BasicCard_Add("오늘은 {}부터 손님들이 오실예정이에요.\n픽업시간에 맞춰 맛있는 음식 준비해주세요.".format("11:55"),
                                 "", thumbnail, buttons)
 
         return JsonResponse(KakaoForm.GetForm())
@@ -207,7 +207,7 @@ def GET_PickupAlarm(request):
 
         buttons = DEFAULT_QUICKREPLIES_MAP
 
-        KakaoForm.BasicCard_Add("픽업시간({:d} : {:d}) 5분 전 입니다. \n {:d}개를 준비해주세요!".format(11, 45, 15),
+        KakaoForm.BasicCard_Add("픽업시간이 다가왔어요. 5분뒤에 손님들이 오실예정이에요.\n반갑게 맞이해주세요.".format(11, 45, 15),
                                 "", thumbnail, buttons)
 
         return JsonResponse(KakaoForm.GetForm())
