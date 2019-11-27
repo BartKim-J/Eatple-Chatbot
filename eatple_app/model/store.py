@@ -33,19 +33,37 @@ def getUniqueID(instance):
 # Models
 
 
+class CRN(models.Model):
+    UID = models.CharField(default="000",
+                           max_length=STRING_LENGTH, help_text="Unique ID")
+
+    CC = models.CharField(default="00",
+                          max_length=STRING_LENGTH, help_text="Corporation Classification Code")
+
+    SN = models.CharField(default="0000",
+                          max_length=STRING_LENGTH, help_text="Serial Number")
+
+    VN = models.CharField(default="0",
+                          max_length=STRING_LENGTH, help_text="Vertification Number")
+
+    def __str__(self):
+        return "{UID}-{CC}-{SN}{VN}".format(UID=self.UID, CC=self.CC, SN=self.SN, VN=self.VN)
+
+
 class StoreInfo(models.Model):
     store_id = models.CharField(default="0000-0000",
-                            max_length=STRING_LENGTH, help_text="Store ID")
-    
-    name = models.CharField(default="Store Name",
-                            max_length=STRING_LENGTH, help_text="Store Name")
-    
-    addr = models.CharField(
-        default="Address", max_length=STRING_LENGTH, help_text="Address")
-    owner = models.CharField(
-        default="Owner", max_length=WORD_LENGTH, help_text="Owner")
-    description = models.TextField(
-        default="Store Dscription", help_text="Store Dscription")
+                                max_length=STRING_LENGTH, help_text="Store ID")
+
+    CRN = models.OneToOneField('CRN', on_delete=models.CASCADE,
+                               primary_key=True)
+
+    name = models.CharField(max_length=STRING_LENGTH, help_text="Store Name")
+
+    addr = models.CharField(max_length=STRING_LENGTH, help_text="Address")
+
+    owner = models.CharField(max_length=WORD_LENGTH, help_text="Owner")
+
+    description = models.TextField(help_text="Store Dscription")
 
     logo = models.ImageField(default="STORE_DB/images/default/logoImg.png",
                              blank=True, upload_to=logo_directory_path, storage=OverwriteStorage())
@@ -55,17 +73,6 @@ class StoreInfo(models.Model):
 
 
 class StoreSetting(models.Model):
-    lunch_pickupTime_start = models.IntegerField(
-        default=0, choices=LUNCH_PICKUP_TIME, help_text="")
-
-    lunch_pickupTime_end = models.IntegerField(default=len(
-        LUNCH_PICKUP_TIME) - 1, choices=LUNCH_PICKUP_TIME, help_text="")
-
-    dinner_pickupTime_start = models.IntegerField(
-        default=0, choices=DINNER_PICKUP_TIME, help_text="")
-
-    dinner_pickupTime_end = models.IntegerField(default=len(
-        DINNER_PICKUP_TIME) - 1, choices=DINNER_PICKUP_TIME, help_text="")
 
     class Meta:
         abstract = True
@@ -83,15 +90,15 @@ class Store(StoreInfo, StoreSetting, StoreStatus):
     class Meta:
         ordering = ['-name']
 
-
     def __init__(self, *args, **kwargs):
         super(Store, self).__init__(*args, **kwargs)
-        
+
         if (self.id == None):
-            self.id = Store.objects.latest('id').id + 1
-            print(self.id)
-  
-        
+            try:
+                self.id = Store.objects.latest('id').id + 1
+            except (Store.DoesNotExist) as ex:
+                self.id = 1
+
         self.store_id = "{area:04x}-{id:04x}".format(area=0, id=self.id)
 
     # Methods

@@ -13,7 +13,8 @@ from django.contrib import admin
 from .models import DefaultImage
 from .models import UserManual, PartnerManual
 from .models import UserIntro, PartnerIntro
-from .models import Store, Menu
+from .models import Store, CRN
+from .models import Menu
 from .models import Category, Tag
 from .models import Order, OrderForm
 from .models import User
@@ -24,6 +25,8 @@ admin.site.register(Partner)
 admin.site.register(User)
 
 admin.site.register(Store)
+admin.site.register(CRN)
+
 admin.site.register(Menu)
 
 # Defulat Images
