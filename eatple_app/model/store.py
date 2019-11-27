@@ -5,7 +5,7 @@ from django.urls import reverse
 from django.core.files.storage import FileSystemStorage
 from django_mysql.models import Model
 from django.core.validators import MaxValueValidator, MinValueValidator
-
+from django import forms
 
 import os
 from random import *
@@ -33,18 +33,20 @@ def getUniqueID(instance):
 # Models
 
 
-class CRN(models.Model):
+class CRN(models.Model):    
+    store_instance = models.OneToOneField('Store', on_delete=models.CASCADE, unique=True, null=True)
+
     UID = models.CharField(default="000",
-                           max_length=STRING_LENGTH, help_text="Unique ID")
+                           max_length=3, help_text="Unique ID")
 
     CC = models.CharField(default="00",
-                          max_length=STRING_LENGTH, help_text="Corporation Classification Code")
+                          max_length=2, help_text="Corporation Classification Code")
 
     SN = models.CharField(default="0000",
-                          max_length=STRING_LENGTH, help_text="Serial Number")
+                          max_length=4, help_text="Serial Number")
 
     VN = models.CharField(default="0",
-                          max_length=STRING_LENGTH, help_text="Vertification Number")
+                          max_length=1, help_text="Vertification Number")
 
     def __str__(self):
         return "{UID}-{CC}-{SN}{VN}".format(UID=self.UID, CC=self.CC, SN=self.SN, VN=self.VN)
@@ -52,10 +54,8 @@ class CRN(models.Model):
 
 class StoreInfo(models.Model):
     store_id = models.CharField(default="0000-0000",
-                                max_length=STRING_LENGTH, help_text="Store ID")
-
-    CRN = models.OneToOneField('CRN', on_delete=models.CASCADE,
-                               primary_key=True)
+                                max_length=STRING_LENGTH, help_text="Store ID",
+                                unique=True)
 
     name = models.CharField(max_length=STRING_LENGTH, help_text="Store Name")
 
@@ -63,16 +63,16 @@ class StoreInfo(models.Model):
 
     owner = models.CharField(max_length=WORD_LENGTH, help_text="Owner")
 
-    description = models.TextField(help_text="Store Dscription")
-
-    logo = models.ImageField(default="STORE_DB/images/default/logoImg.png",
-                             blank=True, upload_to=logo_directory_path, storage=OverwriteStorage())
-
     class Meta:
         abstract = True
 
 
 class StoreSetting(models.Model):
+
+    description = models.TextField(help_text="Store Dscription")
+
+    logo = models.ImageField(default="STORE_DB/images/default/logoImg.png",
+                             blank=True, upload_to=logo_directory_path, storage=OverwriteStorage())
 
     class Meta:
         abstract = True

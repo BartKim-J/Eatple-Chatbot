@@ -80,7 +80,10 @@ class MenuInfo(models.Model):
 
     name = models.CharField(default="Menu Name",
                             max_length=STRING_LENGTH, help_text="Menu Name")
+    class Meta:
+        abstract = True
 
+class MenuSetting(models.Model):
     description = models.TextField(
         default="Description", help_text="Description")
 
@@ -89,10 +92,15 @@ class MenuInfo(models.Model):
     image = models.ImageField(
         blank=True, upload_to=menu_directory_path, storage=OverwriteStorage())
 
+    sellingTime = models.CharField(
+        max_length=STRING_LENGTH, choices=SELLING_TIME_CATEGORY, default=SELLING_TIME_CATEGORY[SELLING_TIME_LUNCH])
+
+    price = models.IntegerField(default=6000, help_text="Price")
+    discount = models.IntegerField(default=0, help_text="Discount")
+
     class Meta:
         abstract = True
-
-
+        
 class MenuStatus(models.Model):
     current_stock = models.IntegerField(default=0, help_text="Current Stock")
     max_stock = models.IntegerField(default=50, help_text="Max Stock")
@@ -102,16 +110,6 @@ class MenuStatus(models.Model):
     class Meta:
         abstract = True
 
-
-class MenuSetting(models.Model):
-    sellingTime = models.CharField(
-        max_length=STRING_LENGTH, choices=SELLING_TIME_CATEGORY, default=SELLING_TIME_CATEGORY[SELLING_TIME_LUNCH])
-
-    price = models.IntegerField(default=6000, help_text="Price")
-    discount = models.IntegerField(default=0, help_text="Discount")
-
-    class Meta:
-        abstract = True
 
 
 class Menu(MenuInfo, MenuStatus, MenuSetting):

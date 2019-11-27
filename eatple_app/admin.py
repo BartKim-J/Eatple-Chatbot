@@ -24,10 +24,31 @@ from .models import Partner
 admin.site.register(Partner)
 admin.site.register(User)
 
-admin.site.register(Store)
-admin.site.register(CRN)
 
-admin.site.register(Menu)
+class CRNInline(admin.TabularInline):
+    model = CRN
+
+
+class MenuInline(admin.TabularInline):
+    model = Menu
+
+
+class StoreAdmin(admin.ModelAdmin):
+    fieldsets = [
+        ('ID',                   {'fields': ['store_id']}),
+        ('Information',          {'fields': ['name', 'addr', 'owner']}),
+        ('Setting',              {
+                                  'classes': ('collapse',),
+                                  'fields': ['description', 'logo']}),
+        ('Status',               {'fields': ['status']}),
+    ]
+
+    list_filter = ('status',)
+    
+    inlines = [CRNInline, MenuInline]
+
+
+admin.site.register(Store, StoreAdmin)
 
 # Defulat Images
 admin.site.register(DefaultImage)
