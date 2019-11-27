@@ -33,7 +33,12 @@ ALLOWED_HOSTS = ['*']
 # Application definition
 
 INSTALLED_APPS = [
-    'suit',
+    # local-app
+    'eatple_app',
+
+    # 'suit',
+    'eatple_app.apps.SuitConfig',
+    
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -41,8 +46,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
-    # local-app
-    'eatple_app',
+
 ]
 
 MIDDLEWARE = [
@@ -82,8 +86,8 @@ WSGI_APPLICATION = 'eatple_setting.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',  # use mysql (not sqlite)
-        'NAME': 'eatplus_db',
-        'USER': 'eatplus',
+        'NAME': 'eatple_DB',
+        'USER': 'eatple',
         'PASSWORD': 'aisthefuture',
         'HOST': 'localhost',
         'PORT': '3306',

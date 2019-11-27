@@ -73,19 +73,14 @@ class Tag(models.Model):
 
 
 class MenuInfo(models.Model):
-    storeInstance = models.ForeignKey(
-        'Store', on_delete=models.CASCADE, default=DEFAULT_OBJECT_ID)
+    store_instance = models.ForeignKey('Store', on_delete=models.CASCADE, null=True)
 
-    menu_id = models.CharField(default="0000-0000-0000", max_length=STRING_LENGTH, help_text="Menu ID")
-
-    name = models.CharField(default="Menu Name",
-                            max_length=STRING_LENGTH, help_text="Menu Name")
+    name = models.CharField(max_length=STRING_LENGTH, help_text="Menu Name")
     class Meta:
         abstract = True
 
 class MenuSetting(models.Model):
-    description = models.TextField(
-        default="Description", help_text="Description")
+    description = models.TextField(help_text="Description")
 
     tag = models.ManyToManyField(Tag)
 
@@ -120,7 +115,6 @@ class Menu(MenuInfo, MenuStatus, MenuSetting):
     def __init__(self, *args, **kwargs):
         super(Menu, self).__init__(*args, **kwargs)
         
-        self.menu_id = "{store_id}-{menu_index:04d}".format(store_id=self.storeInstance.store_id, menu_index=0)
 
     def save(self, *args, **kwargs):
         print(self)
@@ -135,4 +129,4 @@ class Menu(MenuInfo, MenuStatus, MenuSetting):
             return DEFAULT_MENU_IMAGE_PATH
 
     def __str__(self):
-        return "[{}] {} - {}".format(self.storeInstance.name, self.name, self.sellingTime)
+        return "{} - {}".format(self.name, self.sellingTime)

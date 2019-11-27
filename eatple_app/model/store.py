@@ -36,17 +36,13 @@ def getUniqueID(instance):
 class CRN(models.Model):    
     store_instance = models.OneToOneField('Store', on_delete=models.CASCADE, unique=True, null=True)
 
-    UID = models.CharField(default="000",
-                           max_length=3, help_text="Unique ID")
+    UID = models.CharField(max_length=3, help_text="Unique ID")
 
-    CC = models.CharField(default="00",
-                          max_length=2, help_text="Corporation Classification Code")
+    CC = models.CharField(max_length=2, help_text="Corporation Classification Code")
 
-    SN = models.CharField(default="0000",
-                          max_length=4, help_text="Serial Number")
+    SN = models.CharField(max_length=4, help_text="Serial Number")
 
-    VN = models.CharField(default="0",
-                          max_length=1, help_text="Vertification Number")
+    VN = models.CharField(max_length=1, help_text="Vertification Number")
 
     def __str__(self):
         return "{UID}-{CC}-{SN}{VN}".format(UID=self.UID, CC=self.CC, SN=self.SN, VN=self.VN)
@@ -59,7 +55,7 @@ class StoreInfo(models.Model):
 
     name = models.CharField(max_length=STRING_LENGTH, help_text="Store Name")
 
-    addr = models.CharField(max_length=STRING_LENGTH, help_text="Address")
+    addr = models.CharField(max_length=STRING_LENGTH, help_text="Store Address")
 
     owner = models.CharField(max_length=WORD_LENGTH, help_text="Owner")
 
@@ -107,4 +103,4 @@ class Store(StoreInfo, StoreSetting, StoreStatus):
         super().save(*args, **kwargs)
 
     def __str__(self):
-        return "[ {store_id} ] : {name}".format(store_id=self.store_id, name=self.name)
+        return "{name}".format(name=self.name)

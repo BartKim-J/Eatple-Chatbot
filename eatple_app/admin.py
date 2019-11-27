@@ -1,13 +1,8 @@
-'''
-    Author : Ben Kim
-
-    @NOTE
-    @BUG
-    @TODO
- 
-'''
 # Django Library
 from django.contrib import admin
+from django import forms
+from django.core import validators
+from django.utils.translation import ugettext_lazy as _
 
 # Models
 from .models import DefaultImage
@@ -25,25 +20,27 @@ admin.site.register(Partner)
 admin.site.register(User)
 
 
+
 class CRNInline(admin.TabularInline):
     model = CRN
+    min_num = 1
 
-
-class MenuInline(admin.TabularInline):
+class MenuInline(admin.StackedInline):
     model = Menu
-
+    extra = 0
+    min_num = 1
 
 class StoreAdmin(admin.ModelAdmin):
     fieldsets = [
         ('ID',                   {'fields': ['store_id']}),
         ('Information',          {'fields': ['name', 'addr', 'owner']}),
-        ('Setting',              {
-                                  'classes': ('collapse',),
+        ('Setting',              {'classes': ('collapse',),
                                   'fields': ['description', 'logo']}),
         ('Status',               {'fields': ['status']}),
     ]
 
     list_filter = ('status',)
+    list_display = ('name', 'store_id', 'crn')
     
     inlines = [CRNInline, MenuInline]
 
