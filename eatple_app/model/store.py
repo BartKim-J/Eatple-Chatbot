@@ -49,7 +49,7 @@ class CRN(models.Model):
 
 
 class StoreInfo(models.Model):
-    store_id = models.CharField(default="0000-0000",
+    store_id = models.CharField(default="N/A",
                                 max_length=STRING_LENGTH, help_text="Store ID",
                                 unique=True)
 
@@ -65,7 +65,7 @@ class StoreInfo(models.Model):
 
 class StoreSetting(models.Model):
 
-    description = models.TextField(help_text="Store Dscription")
+    description = models.TextField(help_text="Store Dscription", blank=True)
 
     logo = models.ImageField(default="STORE_DB/images/default/logoImg.png",
                              blank=True, upload_to=logo_directory_path, storage=OverwriteStorage())
@@ -75,8 +75,13 @@ class StoreSetting(models.Model):
 
 
 class StoreStatus(models.Model):
-    status = models.IntegerField(default=0, choices=(), help_text="")
+    STATUS_CHOICES = (
+        ('o', 'Open'),
+        ('c', 'Close'),
+    )
 
+    status = models.CharField(max_length=1, default='o', choices=STATUS_CHOICES, help_text="")
+    
     class Meta:
         abstract = True
 

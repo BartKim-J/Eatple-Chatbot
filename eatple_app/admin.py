@@ -15,24 +15,36 @@ from .models import Order, OrderForm
 from .models import User
 from .models import Partner
 
-# Main Models
-admin.site.register(Partner)
-admin.site.register(User)
-
-
-
 class CRNInline(admin.TabularInline):
     model = CRN
     min_num = 1
+
 
 class MenuInline(admin.StackedInline):
     model = Menu
     extra = 0
     min_num = 1
 
-class StoreAdmin(admin.ModelAdmin):
+    readonly_fields=('menu_id',)
+
     fieldsets = [
-        ('ID',                   {'fields': ['store_id']}),
+        (None,                  {'fields': ['menu_id']}),
+        (None,                  {'fields': ['name']}),
+        (None,                  {'fields': [
+         'sellingTime', 'tag', 'description', 'image', 'price', 'discount']}),
+        (None,                  {'fields': [
+         'current_stock', 'max_stock', 'status']}),
+    ]
+
+class StoreAdmin(admin.ModelAdmin):
+    
+    readonly_fields=('store_id',)
+
+
+    list_editable=('status',)
+
+    fieldsets = [
+        (None,                   {'fields': ['store_id']}),
         ('Information',          {'fields': ['name', 'addr', 'owner']}),
         ('Setting',              {'classes': ('collapse',),
                                   'fields': ['description', 'logo']}),
@@ -40,12 +52,17 @@ class StoreAdmin(admin.ModelAdmin):
     ]
 
     list_filter = ('status',)
-    list_display = ('name', 'store_id', 'crn')
-    
+    list_display = ('name', 'status', 'store_id', 'crn')
+
     inlines = [CRNInline, MenuInline]
 
-
 admin.site.register(Store, StoreAdmin)
+
+
+# Main Models
+admin.site.register(Partner)
+admin.site.register(User)
+
 
 # Defulat Images
 admin.site.register(DefaultImage)
@@ -59,9 +76,9 @@ admin.site.register(Category)
 admin.site.register(Tag)
 
 # Manual
-admin.site.register(UserManual)
-admin.site.register(PartnerManual)
+# admin.site.register(UserManual)
+# admin.site.register(PartnerManual)
 
 # Intro
-admin.site.register(UserIntro)
-admin.site.register(PartnerIntro)
+# admin.site.register(UserIntro)
+# admin.site.register(PartnerIntro)

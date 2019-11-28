@@ -36,12 +36,7 @@ SELLING_TIME_DINNER = EP_define.SELLING_TIME_DINNER
 SELLING_TIME_CATEGORY_DICT = EP_define.SELLING_TIME_CATEGORY_DICT
 SELLING_TIME_CATEGORY = EP_define.SELLING_TIME_CATEGORY
 
-
 DEFAULT_MENU_IMAGE_PATH = "STORE_DB/images/default/menuImg.png"
-
-# Utils
-
-# Models
 
 
 class Category(models.Model):
@@ -73,14 +68,21 @@ class Tag(models.Model):
 
 
 class MenuInfo(models.Model):
-    store_instance = models.ForeignKey('Store', on_delete=models.CASCADE, null=True)
+    store_instance = models.ForeignKey(
+        'Store', on_delete=models.CASCADE, null=True)
+
+    menu_id = models.CharField(default="N/A",
+                               max_length=STRING_LENGTH, help_text="Menu ID",
+                               unique=True)
 
     name = models.CharField(max_length=STRING_LENGTH, help_text="Menu Name")
+
     class Meta:
         abstract = True
 
+
 class MenuSetting(models.Model):
-    description = models.TextField(help_text="Description")
+    description = models.TextField(help_text="Description", blank=True)
 
     tag = models.ManyToManyField(Tag)
 
@@ -95,7 +97,8 @@ class MenuSetting(models.Model):
 
     class Meta:
         abstract = True
-        
+
+
 class MenuStatus(models.Model):
     current_stock = models.IntegerField(default=0, help_text="Current Stock")
     max_stock = models.IntegerField(default=50, help_text="Max Stock")
@@ -106,22 +109,25 @@ class MenuStatus(models.Model):
         abstract = True
 
 
-
 class Menu(MenuInfo, MenuStatus, MenuSetting):
     # Metadata
     class Meta:
-        ordering = ['-name']
+        ordering = ['-menu_id']
 
     def __init__(self, *args, **kwargs):
         super(Menu, self).__init__(*args, **kwargs)
-        
+
+        if (self.id == None):
+            try:
+                self.id = Menu.objects.latest('id').id + 1
+            except (Menu.DoesNotExist) as ex:
+                self.id = 1
+
+        self.menu_id = "{id:04x}".format(id=self.id)
 
     def save(self, *args, **kwargs):
-        print(self)
-        
-        super(Menu, self).save(*args, **kwargs)
-      
-      
+        super().save(*args, **kwargs)
+
     def imgURL(self):
         try:
             return self.image.url
@@ -129,4 +135,4 @@ class Menu(MenuInfo, MenuStatus, MenuSetting):
             return DEFAULT_MENU_IMAGE_PATH
 
     def __str__(self):
-        return "{} - {}".format(self.name, self.sellingTime)
+        return "{sellingTime}메뉴 - {name}".format(name=self.name, sellingTime=self.sellingTime)
