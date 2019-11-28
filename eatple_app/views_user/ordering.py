@@ -577,6 +577,7 @@ def POST_Order(request):
 
         requests.get
 
+
         pushedOrder = Order.pushOrder(userInstance=userInstance,
                                       storeInstance=storeInstance,
                                       menuInstance=menuInstance,

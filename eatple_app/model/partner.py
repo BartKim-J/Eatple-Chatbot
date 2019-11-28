@@ -1,11 +1,4 @@
-'''
-    Author : Ben Kim
 
-    @NOTE
-    @BUG
-    @TODO
- 
-'''
 # Django Library
 from eatple_app.models import Store, Menu
 from eatple_app.models import Category, Tag
@@ -23,9 +16,6 @@ NOT_APPLICABLE = EP_define.NOT_APPLICABLE
 DEFAULT_OBJECT_ID = EP_define.DEFAULT_OBJECT_ID
 
 PARTNER_ID_CODE_LENGTH = EP_define.PARTNER_ID_CODE_LENGTH
-
-# Other Models
-
 
 class Partner(models.Model):
     class Meta:

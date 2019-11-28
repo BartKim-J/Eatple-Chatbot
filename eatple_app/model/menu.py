@@ -1,11 +1,3 @@
-'''
-    Author : Ben Kim
-
-    @NOTE
-    @BUG
-    @TODO
-
-'''
 # Django Library
 from eatple_app.model.utils import menu_directory_path
 from eatple_app.model.utils import OverwriteStorage
@@ -68,7 +60,7 @@ class Tag(models.Model):
 
 
 class MenuInfo(models.Model):
-    store_instance = models.ForeignKey(
+    store = models.ForeignKey(
         'Store', on_delete=models.CASCADE, null=True)
 
     menu_id = models.CharField(default="N/A",

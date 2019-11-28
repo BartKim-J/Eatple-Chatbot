@@ -1,11 +1,3 @@
-'''
-    Author : Ben Kim
-
-    @NOTE
-    @BUG
-    @TODO
-
-'''
 # Django Library
 from django.urls import reverse
 from django.db import models
@@ -177,37 +169,23 @@ def OrderManagementCodeGenerator(storeInstance, menuInstance, userInstance, orde
 
     return management_code
 
-# Models
-
-
-class OrderForm(models.Model):
-    userInstance = models.ForeignKey(
-        'User',  on_delete=models.DO_NOTHING, default=DEFAULT_OBJECT_ID)
-    
-    order_date = models.DateTimeField(default=timezone.now)
-
-    # Methods
-    def __str__(self):
-        return "[ Order Box ] : {}".format(self.order_date)
-
-
 class Order(models.Model):
     class Meta:
-        ordering = ['-pickupTime']
+        ordering = ['-pickup_time']
 
-    OrderFormInstance = models.ForeignKey(
-        'OrderForm',  on_delete=models.DO_NOTHING, default=DEFAULT_OBJECT_ID)
-    userInstance = models.ForeignKey(
-        'User',  on_delete=models.DO_NOTHING, default=DEFAULT_OBJECT_ID)
-    storeInstance = models.ForeignKey(
-        'Store',  on_delete=models.DO_NOTHING, default=DEFAULT_OBJECT_ID)
-    menuInstance = models.ForeignKey(
-        'Menu',  on_delete=models.DO_NOTHING, default=DEFAULT_OBJECT_ID)
+    ordersheet = models.ForeignKey(
+        'OrderSheet',  on_delete=models.DO_NOTHING, default=DEFAULT_OBJECT_ID)
 
-    management_code = models.CharField(max_length=MANAGEMENT_CODE_LENGTH, blank=True, null=True,
-                                       help_text="Menu Magement Code")
+    order_code =  models.CharField(max_length=MANAGEMENT_CODE_LENGTH, blank=True, null=True)
+    
+    store = models.ForeignKey(
+        'Store',  on_delete=models.DO_NOTHING, default=DEFAULT_OBJECT_ID, null=True)
+    
+    menu = models.ForeignKey('Menu', on_delete=models.DO_NOTHING, default=DEFAULT_OBJECT_ID, null=True)
 
-    pickupTime = models.DateTimeField(default=timezone.now)
+    count = models.IntegerField(default = 1);
+    
+    pickup_time = models.DateTimeField(default=timezone.now)
 
     update_date = models.DateTimeField(auto_now_add=False, auto_now=True)
     order_date = models.DateTimeField(default=timezone.now)
@@ -215,41 +193,57 @@ class Order(models.Model):
     status = models.CharField(max_length=STRING_LENGTH, choices=ORDER_STATUS,
                               default=ORDER_STATUS[ORDER_STATUS_DICT['주문 완료']][0])
 
-    @classmethod
-    def pushOrder(cls, userInstance, storeInstance, menuInstance, pickupTime):
-        orderDate = dateNowByTimeZone()
-        orderDateWithoutTime = orderDate.replace(
-            hour=0, minute=0, second=0, microsecond=0)
+    def __init__(self, *args, **kwargs):
+        super(Order, self).__init__(*args, **kwargs)
 
-        pickupTime = cls.rowPickupTimeToDatetime(pickupTime)
-
-        # Next Lunch Order Edit Time 16:30 ~ 9:30(~ 10:30)
-        nextlunchOrderEditTimeStart = orderDateWithoutTime + \
-            timedelta(hours=16, minutes=30)
-        nextlunchOrderTimeEnd = orderDateWithoutTime + \
-            timedelta(hours=10, minutes=30, days=1)
-
-        if(nextlunchOrderEditTimeStart <= orderDate) and (orderDate <= nextlunchOrderTimeEnd):
-            pickupTime = pickupTime + timedelta(days=1)
-
-        managementCode = OrderManagementCodeGenerator(
-            storeInstance, menuInstance, userInstance, orderDate)
-
-        pushedOrder = cls(userInstance=userInstance, storeInstance=storeInstance, menuInstance=menuInstance,
-                          management_code=managementCode, pickupTime=pickupTime, order_date=orderDate)
-        pushedOrder.save()
-
-        return pushedOrder
+        if (self.id == None):
+            try:
+                self.id = Order.objects.latest('id').id + 1
+            except (Order.DoesNotExist) as ex:
+                self.id = 1
+        
+        self.order_code = "EP{area:08X}{id:04X}".format(
+            area=int(self.order_date.strftime('%f')), id=self.id)
 
     @staticmethod
     def rowPickupTimeToDatetime(rowPickupTime):
         return dateNowByTimeZone().replace(hour=0, minute=0, second=0, microsecond=0) + timedelta(hours=int(rowPickupTime[0:2]), minutes=int(rowPickupTime[3:5]))
 
+
+    
     # Methods
     def __str__(self):
-        return "[ Order ] {} - {} :: {} ----- {}".format(self.management_code, self.status, self.pickupTime, self.order_date)
+        return "{}".format(self.order_code)
+
+class OrderSheet(models.Model):
+    class Meta:
+        ordering = ['-order_date']
+
+    user = models.ForeignKey(
+        'User',  on_delete=models.DO_NOTHING, default=DEFAULT_OBJECT_ID, null=True)
+
+    management_code = models.CharField(max_length=MANAGEMENT_CODE_LENGTH, blank=True, null=True)
+
+    update_date = models.DateTimeField(auto_now_add=False, auto_now=True)
+    order_date = models.DateTimeField(default=timezone.now)
 
 
+    def __init__(self, *args, **kwargs):
+        super(OrderSheet, self).__init__(*args, **kwargs)
+
+        if (self.id == None):
+            try:
+                self.id = OrderSheet.objects.latest('id').id + 1
+            except (OrderSheet.DoesNotExist) as ex:
+                self.id = 1
+        
+        self.management_code = "E{area:06X}P{id:03x}".format(
+            area=int(self.order_date.strftime('%f')), id=self.id)
+
+    # Methods
+    def __str__(self):
+        return "{}".format(self.management_code)
+    
 class storeOrderManager():
     def __init__(self, storeId):
         self.storeOrderList = Order.objects.filter(storeInstance__id=storeId)

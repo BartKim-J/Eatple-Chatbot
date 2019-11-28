@@ -26,15 +26,8 @@ WORD_LENGTH = EP_define.WORD_LENGTH
 LUNCH_PICKUP_TIME = EP_define.LUNCH_PICKUP_TIME
 DINNER_PICKUP_TIME = EP_define.DINNER_PICKUP_TIME
 
-
-def getUniqueID(instance):
-    return "{:4d}".format(instance.id)
-
-# Models
-
-
 class CRN(models.Model):    
-    store_instance = models.OneToOneField('Store', on_delete=models.CASCADE, unique=True, null=True)
+    store = models.OneToOneField('Store', on_delete=models.CASCADE, unique=True, null=True)
 
     UID = models.CharField(max_length=3, help_text="Unique ID")
 
@@ -87,7 +80,6 @@ class StoreStatus(models.Model):
 
 
 class Store(StoreInfo, StoreSetting, StoreStatus):
-    # Metadata
     class Meta:
         ordering = ['-name']
 
@@ -102,7 +94,6 @@ class Store(StoreInfo, StoreSetting, StoreStatus):
 
         self.store_id = "{area:04x}-{id:04x}".format(area=0, id=self.id)
 
-    # Methods
     def save(self, *args, **kwargs):
 
         super().save(*args, **kwargs)

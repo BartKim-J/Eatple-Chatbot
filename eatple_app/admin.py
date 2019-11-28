@@ -11,9 +11,10 @@ from .models import UserIntro, PartnerIntro
 from .models import Store, CRN
 from .models import Menu
 from .models import Category, Tag
-from .models import Order, OrderForm
+from .models import Order, OrderSheet
 from .models import User
 from .models import Partner
+
 
 class CRNInline(admin.TabularInline):
     model = CRN
@@ -25,7 +26,7 @@ class MenuInline(admin.StackedInline):
     extra = 0
     min_num = 1
 
-    readonly_fields=('menu_id',)
+    readonly_fields = ('menu_id',)
 
     fieldsets = [
         (None,                  {'fields': ['menu_id']}),
@@ -36,12 +37,11 @@ class MenuInline(admin.StackedInline):
          'current_stock', 'max_stock', 'status']}),
     ]
 
+
 class StoreAdmin(admin.ModelAdmin):
-    
-    readonly_fields=('store_id',)
+    readonly_fields = ('store_id',)
 
-
-    list_editable=('status',)
+    list_editable = ('status',)
 
     fieldsets = [
         (None,                   {'fields': ['store_id']}),
@@ -56,8 +56,28 @@ class StoreAdmin(admin.ModelAdmin):
 
     inlines = [CRNInline, MenuInline]
 
+
 admin.site.register(Store, StoreAdmin)
 
+
+class OrderInline(admin.TabularInline):
+    readonly_fields = ('order_code', 'menu',  'store',
+                       'order_date', 'pickup_time')
+
+    model = Order
+    extra = 0
+    min_num = 1
+
+class OrderSheetAdmin(admin.ModelAdmin):
+    readonly_fields = ('management_code', 'user', 'order_date', 'update_date')
+    
+    list_filter = ('order_date',)
+    list_display = ('management_code', 'user', 'order_date', 'update_date')
+    
+    inlines = [OrderInline]
+
+
+admin.site.register(OrderSheet, OrderSheetAdmin)
 
 # Main Models
 admin.site.register(Partner)
@@ -66,10 +86,6 @@ admin.site.register(User)
 
 # Defulat Images
 admin.site.register(DefaultImage)
-
-# Order
-admin.site.register(OrderForm)
-admin.site.register(Order)
 
 # Menu Category-Tag
 admin.site.register(Category)
