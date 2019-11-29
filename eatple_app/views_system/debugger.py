@@ -16,7 +16,7 @@ import json
 import sys
 
 # Models
-from eatple_app.define import EP_define
+from eatple_app.define import *
 
 from eatple_app.models import User
 from eatple_app.models import Order
@@ -25,11 +25,6 @@ from eatple_app.models import Store, Menu
 
 # View Modules
 from eatple_app.module_kakao.ReponseForm import Kakao_SimpleForm, Kakao_CarouselForm
-
-# GLOBAL EP_define
-KAKAO_PARAM_STATUS = EP_define.KAKAO_PARAM_STATUS
-KAKAO_PARAM_STATUS_OK = EP_define.KAKAO_PARAM_STATUS_OK
-KAKAO_PARAM_STATUS_NOT_OK = EP_define.KAKAO_PARAM_STATUS_NOT_OK
 
 
 # SKill Log

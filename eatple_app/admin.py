@@ -61,19 +61,20 @@ admin.site.register(Store, StoreAdmin)
 
 
 class OrderInline(admin.TabularInline):
-    readonly_fields = ('order_code', 'menu',  'store',
+    readonly_fields = ('order_code', 'menu', 'count', 'store',
                        'order_date', 'pickup_time')
 
     model = Order
     extra = 0
     min_num = 1
 
+
 class OrderSheetAdmin(admin.ModelAdmin):
     readonly_fields = ('management_code', 'user', 'order_date', 'update_date')
-    
+
     list_filter = ('order_date',)
     list_display = ('management_code', 'user', 'order_date', 'update_date')
-    
+
     inlines = [OrderInline]
 
 
@@ -81,7 +82,18 @@ admin.site.register(OrderSheet, OrderSheetAdmin)
 
 # Main Models
 admin.site.register(Partner)
-admin.site.register(User)
+
+
+class UserAdmin(admin.ModelAdmin):
+    readonly_fields = ('app_user_id','nickname', 'profile_image_url',
+                       'phone_number', 'email', 'birthyear', 'birthday', 'gender', 'ci', 'ci_authenticated_at')
+
+    list_filter = ('create_date', 'gender')
+    list_display = ('app_user_id', 'nickname', 'phone_number', 'email','gender')
+
+
+
+admin.site.register(User, UserAdmin)
 
 
 # Defulat Images

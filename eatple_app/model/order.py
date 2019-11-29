@@ -8,25 +8,7 @@ from django.utils import timezone
 from datetime import datetime, timedelta
 
 # Define
-from eatple_app.define import EP_define, dateNowByTimeZone, dateByTimeZone
-
-NOT_APPLICABLE = EP_define.NOT_APPLICABLE
-DEFAULT_OBJECT_ID = EP_define.DEFAULT_OBJECT_ID
-
-SELLING_TIME_LUNCH = EP_define.SELLING_TIME_LUNCH
-SELLING_TIME_DINNER = EP_define.SELLING_TIME_DINNER
-SELLING_TIME_CATEGORY_DICT = EP_define.SELLING_TIME_CATEGORY_DICT
-SELLING_TIME_CATEGORY = EP_define.SELLING_TIME_CATEGORY
-
-ORDER_STATUS_DICT = EP_define.ORDER_STATUS_DICT
-ORDER_STATUS = EP_define.ORDER_STATUS
-
-MANAGEMENT_CODE_LENGTH = EP_define.MANAGEMENT_CODE_LENGTH
-STRING_LENGTH = EP_define.STRING_LENGTH
-
-MANAGEMENT_CODE_DEFAULT = EP_define.MANAGEMENT_CODE_DEFAULT
-
-# Static Functions
+from eatple_app.define import *
 
 
 def orderStatusUpdateByTime(orderInstance):
@@ -160,38 +142,45 @@ def orderStatusUpdateByTime(orderInstance):
     return orderInstance.status
 
 
-def OrderManagementCodeGenerator(storeInstance, menuInstance, userInstance, order_date):
-    management_code = ''
-    management_code += '{:02d}'.format(storeInstance.id % 10)
-    management_code += '{:02d}'.format(menuInstance.id % 10)
-    management_code += '{:02d}'.format(userInstance.id % 10)
-    management_code += order_date.strftime("%M%H%S")
-
-    return management_code
-
 class Order(models.Model):
     class Meta:
         ordering = ['-pickup_time']
 
     ordersheet = models.ForeignKey(
-        'OrderSheet',  on_delete=models.DO_NOTHING, default=DEFAULT_OBJECT_ID)
+        'OrderSheet',
+        on_delete=models.DO_NOTHING,
+        default=DEFAULT_OBJECT_ID
+    )
 
-    order_code =  models.CharField(max_length=MANAGEMENT_CODE_LENGTH, blank=True, null=True)
-    
+    order_code = models.CharField(
+        max_length=MANAGEMENT_CODE_LENGTH,
+        blank=True,
+        null=True
+    )
+
     store = models.ForeignKey(
-        'Store',  on_delete=models.DO_NOTHING, default=DEFAULT_OBJECT_ID, null=True)
-    
-    menu = models.ForeignKey('Menu', on_delete=models.DO_NOTHING, default=DEFAULT_OBJECT_ID, null=True)
+        'Store',
+        on_delete=models.DO_NOTHING,
+        default=DEFAULT_OBJECT_ID,
+        null=True
+    )
 
-    count = models.IntegerField(default = 1);
-    
+    menu = models.ForeignKey(
+        'Menu',
+        on_delete=models.DO_NOTHING,
+        default=DEFAULT_OBJECT_ID,
+        null=True
+    )
+
+    count = models.IntegerField(default=1)
+
     pickup_time = models.DateTimeField(default=timezone.now)
 
     update_date = models.DateTimeField(auto_now_add=False, auto_now=True)
     order_date = models.DateTimeField(default=timezone.now)
 
     status = models.CharField(max_length=STRING_LENGTH, choices=ORDER_STATUS,
-                              default=ORDER_STATUS[ORDER_STATUS_DICT['주문 완료']][0])
+                              default=ORDER_STATUS[0])
 
     def __init__(self, *args, **kwargs):
         super(Order, self).__init__(*args, **kwargs)
@@ -201,7 +190,7 @@ class Order(models.Model):
                 self.id = Order.objects.latest('id').id + 1
             except (Order.DoesNotExist) as ex:
                 self.id = 1
-        
+
         self.order_code = "EP{area:08X}{id:04X}".format(
             area=int(self.order_date.strftime('%f')), id=self.id)
 
@@ -209,41 +198,12 @@ class Order(models.Model):
     def rowPickupTimeToDatetime(rowPickupTime):
         return dateNowByTimeZone().replace(hour=0, minute=0, second=0, microsecond=0) + timedelta(hours=int(rowPickupTime[0:2]), minutes=int(rowPickupTime[3:5]))
 
-
-    
     # Methods
+
     def __str__(self):
         return "{}".format(self.order_code)
 
-class OrderSheet(models.Model):
-    class Meta:
-        ordering = ['-order_date']
 
-    user = models.ForeignKey(
-        'User',  on_delete=models.DO_NOTHING, default=DEFAULT_OBJECT_ID, null=True)
-
-    management_code = models.CharField(max_length=MANAGEMENT_CODE_LENGTH, blank=True, null=True)
-
-    update_date = models.DateTimeField(auto_now_add=False, auto_now=True)
-    order_date = models.DateTimeField(default=timezone.now)
-
-
-    def __init__(self, *args, **kwargs):
-        super(OrderSheet, self).__init__(*args, **kwargs)
-
-        if (self.id == None):
-            try:
-                self.id = OrderSheet.objects.latest('id').id + 1
-            except (OrderSheet.DoesNotExist) as ex:
-                self.id = 1
-        
-        self.management_code = "E{area:06X}P{id:03x}".format(
-            area=int(self.order_date.strftime('%f')), id=self.id)
-
-    # Methods
-    def __str__(self):
-        return "{}".format(self.management_code)
-    
 class storeOrderManager():
     def __init__(self, storeId):
         self.storeOrderList = Order.objects.filter(storeInstance__id=storeId)
@@ -260,24 +220,20 @@ class storeOrderManager():
         return self.getAvailableCoupons()
 
     def getUnavailableCoupons(self):
-        unavailableCoupons = self.storeOrderList.exclude(
-            status=ORDER_STATUS[ORDER_STATUS_DICT['주문 확인중']][0]
-        ).exclude(
-            status=ORDER_STATUS[ORDER_STATUS_DICT['주문 완료']][0]
-        ).exclude(
-            status=ORDER_STATUS[ORDER_STATUS_DICT['픽업 준비중']][0]
-        ).exclude(
-            status=ORDER_STATUS[ORDER_STATUS_DICT['픽업 가능']][0]
+        unavailableCoupons = self.storeOrderList.get(
+            ~Q(status=ORDER_STATUS[ORDER_STATUS_PAYMENT_COMPLETED]) &
+            ~Q(status=ORDER_STATUS[ORDER_STATUS_ORDER_CONFIRM_WAIT]) &
+            ~Q(status=ORDER_STATUS[ORDER_STATUS_PICKUP_PREPARE]) &
+            ~Q(status=ORDER_STATUS[ORDER_STATUS_PICKUP_WAIT])
         )
         return unavailableCoupons
 
     def getAvailableCoupons(self):
         availableCoupons = self.storeOrderList.exclude(
-            status=ORDER_STATUS[ORDER_STATUS_DICT['픽업 완료']][0]
-        ).exclude(
-            status=ORDER_STATUS[ORDER_STATUS_DICT['주문 만료']][0]
-        ).exclude(
-            status=ORDER_STATUS[ORDER_STATUS_DICT['주문 취소']][0]
+            Q(status=ORDER_STATUS[ORDER_STATUS_PAYMENT_COMPLETED]) &
+            Q(status=ORDER_STATUS[ORDER_STATUS_ORDER_CONFIRM_WAIT]) &
+            Q(status=ORDER_STATUS[ORDER_STATUS_PICKUP_PREPARE]) &
+            Q(status=ORDER_STATUS[ORDER_STATUS_PICKUP_WAIT])
         )
         return availableCoupons
 
@@ -297,25 +253,98 @@ class OrderManager():
         return self.getAvailableCoupons()
 
     def getUnavailableCoupons(self):
-        unavailableCoupons = self.userOrderList.exclude(
-            status=ORDER_STATUS[ORDER_STATUS_DICT['주문 확인중']][0]
-        ).exclude(
-            status=ORDER_STATUS[ORDER_STATUS_DICT['주문 완료']][0]
-        ).exclude(
-            status=ORDER_STATUS[ORDER_STATUS_DICT['픽업 준비중']][0]
-        ).exclude(
-            status=ORDER_STATUS[ORDER_STATUS_DICT['픽업 가능']][0]
+        unavailableCoupons = self.userOrderList.get(
+            ~Q(status=ORDER_STATUS[ORDER_STATUS_PAYMENT_COMPLETED]) &
+            ~Q(status=ORDER_STATUS[ORDER_STATUS_ORDER_CONFIRM_WAIT]) &
+            ~Q(status=ORDER_STATUS[ORDER_STATUS_PICKUP_PREPARE]) &
+            ~Q(status=ORDER_STATUS[ORDER_STATUS_PICKUP_WAIT])
         )
         return unavailableCoupons
 
     def getAvailableCoupons(self):
-        availableCoupons = self.userOrderList.exclude(
-            status=ORDER_STATUS[ORDER_STATUS_DICT['픽업 완료']][0]
-        ).exclude(
-            status=ORDER_STATUS[ORDER_STATUS_DICT['주문 만료']][0]
-        ).exclude(
-            status=ORDER_STATUS[ORDER_STATUS_DICT['주문 취소']][0]
+        availableCoupons = self.userOrderList.get(
+            Q(status=ORDER_STATUS[ORDER_STATUS_PAYMENT_COMPLETED]) &
+            Q(status=ORDER_STATUS[ORDER_STATUS_ORDER_CONFIRM_WAIT]) &
+            Q(status=ORDER_STATUS[ORDER_STATUS_PICKUP_PREPARE]) &
+            Q(status=ORDER_STATUS[ORDER_STATUS_PICKUP_WAIT])
         )
+
+        return availableCoupons
+
+    def getAvailableLunchCouponPurchased(self):
+        availableCoupons = self.getAvailableCoupons()
+        lunchCoupons = availableCoupons.filter(
+            menuInstance__sellingTime=SELLING_TIME_CATEGORY[SELLING_TIME_LUNCH][0])
+        return lunchCoupons
+
+    def getAvailableDinnerCouponPurchased(self):
+        availableCoupons = self.getAvailableCoupons()
+        dinnerCoupons = availableCoupons.filter(
+            menuInstance__sellingTime=SELLING_TIME_CATEGORY[SELLING_TIME_DINNER][0])
+        return dinnerCoupons
+
+
+class OrderSheet(models.Model):
+    class Meta:
+        ordering = ['-order_date']
+
+    user = models.ForeignKey(
+        'User',  on_delete=models.DO_NOTHING, default=DEFAULT_OBJECT_ID, null=True)
+
+    management_code = models.CharField(
+        max_length=MANAGEMENT_CODE_LENGTH, blank=True, null=True)
+
+    update_date = models.DateTimeField(auto_now_add=False, auto_now=True)
+    order_date = models.DateTimeField(default=timezone.now)
+
+    def __init__(self, *args, **kwargs):
+        super(OrderSheet, self).__init__(*args, **kwargs)
+
+        if (self.id == None):
+            try:
+                self.id = OrderSheet.objects.latest('id').id + 1
+            except (OrderSheet.DoesNotExist) as ex:
+                self.id = 1
+
+        self.management_code = "E{area:06X}P{id:03x}".format(
+            area=int(self.order_date.strftime('%f')), id=self.id)
+
+    # Methods
+    def __str__(self):
+        return "{}".format(self.management_code)
+
+
+class OrderSheetManager():
+    def __init__(self, user):
+        self.userOrderSheets = OrderSheet.objects.get(user=user)
+
+    def availableCouponStatusUpdate(self):
+        availableCoupons = self.getAvailableCoupons()
+
+        # Order Status Update
+        for orderInstance in availableCoupons:
+            orderStatusUpdateByTime(orderInstance)
+
+        return self.getAvailableCoupons()
+
+    def getUnavailableCoupons(self):
+        unavailableCoupons = self.userOrderList.get(
+            ~Q(status=ORDER_STATUS[ORDER_STATUS_PAYMENT_COMPLETED]) &
+            ~Q(status=ORDER_STATUS[ORDER_STATUS_ORDER_CONFIRM_WAIT]) &
+            ~Q(status=ORDER_STATUS[ORDER_STATUS_PICKUP_PREPARE]) &
+            ~Q(status=ORDER_STATUS[ORDER_STATUS_PICKUP_WAIT])
+        )
+
+        return unavailableCoupons
+
+    def getAvailableCoupons(self):
+        availableCoupons = self.userOrderList.get(
+            Q(status=ORDER_STATUS[ORDER_STATUS_PAYMENT_COMPLETED]) &
+            Q(status=ORDER_STATUS[ORDER_STATUS_ORDER_CONFIRM_WAIT]) &
+            Q(status=ORDER_STATUS[ORDER_STATUS_PICKUP_PREPARE]) &
+            Q(status=ORDER_STATUS[ORDER_STATUS_PICKUP_WAIT])
+        )
+
         return availableCoupons
 
     def getAvailableLunchCouponPurchased(self):

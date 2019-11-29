@@ -17,44 +17,48 @@ from django_mysql.models import Model
 # External Library
 
 # Define
-from eatple_app.define import EP_define
-
-NOT_APPLICABLE = EP_define.NOT_APPLICABLE
-DEFAULT_OBJECT_ID = EP_define.DEFAULT_OBJECT_ID
-
-USER_NICKNAME_LENGTH = EP_define.USER_NICKNAME_LENGTH
-USER_ID_CODE_LENGTH = EP_define.USER_ID_CODE_LENGTH
-
-# Other Models
-
-# Models
-
+from eatple_app.define import *
 
 class User(models.Model):
     class Meta:
-        ordering = ['-name']
+        ordering = ['-nickname']
 
-    name = models.CharField(
-        max_length=USER_NICKNAME_LENGTH, help_text="User Name")
+    nickname = models.CharField(
+        max_length=USER_NICKNAME_LENGTH, null=True)
 
-    identifier_code = models.CharField(
-        max_length=USER_ID_CODE_LENGTH, help_text="User ID", default='')
+    profile_image_url = models.CharField(
+        max_length=STRING_LENGTH, null=True)
+    
+    phone_number = models.CharField(
+        max_length=STRING_LENGTH, null=True)
 
-    kakao_token = models.CharField(
-        max_length=USER_ID_CODE_LENGTH, help_text="Kakao Token", default='')
+    email = models.CharField(
+        max_length=STRING_LENGTH, null=True)
 
-    # flag
-    event_accout = models.BooleanField(default=False)
-
+    birthyear = models.CharField(
+        max_length=STRING_LENGTH, null=True)
+    birthday = models.CharField(
+        max_length=STRING_LENGTH, null=True)
+    
+    gender = models.CharField(
+        max_length=STRING_LENGTH, null=True)
+    
+    ci = models.CharField(
+        max_length=STRING_LENGTH, null=True)
+    ci_authenticated_at = models.CharField(
+        max_length=STRING_LENGTH, null=True )
+    
+    app_user_id = models.IntegerField(default=0)
+    
     create_date = models.DateTimeField(auto_now=True)
 
     @classmethod
-    def registerUser(cls, _name, _identifier_code):
-        registedUser = cls(name=_name, identifier_code=_identifier_code)
+    def signUp(cls, *args, **kwargs):
+        registedUser = cls(*args, **kwargs)
         registedUser.save()
 
         return registedUser
 
     # Methods
     def __str__(self):
-        return "{}".format(self.name)
+        return "{}".format(self.app_user_id)

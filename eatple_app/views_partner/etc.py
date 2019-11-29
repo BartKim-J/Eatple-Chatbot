@@ -7,7 +7,7 @@
  
 '''
 # System
-from eatple_app.define import EP_define
+from eatple_app.define import *
 from eatple_app.views_user.wording import wordings
 from eatple_app.views_system.debugger import EatplusSkillLog, errorView
 from eatple_app.module_kakao.RequestForm import getLatLng, KakaoPayLoad
@@ -25,35 +25,6 @@ import sys
 import os
 
 sys.path.append(os.path.dirname(os.path.abspath(os.path.dirname(__file__))))
-
-# Django Library
-
-# External Library
-
-# Models
-
-# Modules
-
-# View-System
-
-# Wordings
-
-# Define
-
-HOST_URL = EP_define.HOST_URL
-NOT_APPLICABLE = EP_define.NOT_APPLICABLE
-
-ORDER_STATUS = EP_define.ORDER_STATUS
-ORDER_STATUS_DICT = EP_define.ORDER_STATUS_DICT
-
-KAKAO_PARAM_ORDER_ID = EP_define.KAKAO_PARAM_ORDER_ID
-KAKAO_PARAM_STORE_ID = EP_define.KAKAO_PARAM_STORE_ID
-KAKAO_PARAM_MENU_ID = EP_define.KAKAO_PARAM_MENU_ID
-
-KAKAO_PARAM_STATUS = EP_define.KAKAO_PARAM_STATUS
-KAKAO_PARAM_STATUS_OK = EP_define.KAKAO_PARAM_STATUS_OK
-KAKAO_PARAM_STATUS_NOT_OK = EP_define.KAKAO_PARAM_STATUS_NOT_OK
-
 
 # # # # # # # # # # # # # # # # # # # # # # # # #
 #

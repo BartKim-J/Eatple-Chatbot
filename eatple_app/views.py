@@ -1,5 +1,4 @@
 from eatple_app.views_user.home import GET_UserHome
-from eatple_app.views_user.ordering import GET_SellingTime
 from eatple_app.views_user.ordering import GET_Menu
 from eatple_app.views_user.ordering import GET_PickupTime
 from eatple_app.views_user.ordering import SET_OrderSheet

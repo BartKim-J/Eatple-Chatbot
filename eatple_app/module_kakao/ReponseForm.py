@@ -15,7 +15,7 @@ from django.http import JsonResponse
 import datetime
 
 #Models 
-from eatple_app.define import EP_define
+from eatple_app.define import *
 
 from eatple_app.models import User
 from eatple_app.models import Order

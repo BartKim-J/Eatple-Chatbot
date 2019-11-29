@@ -36,13 +36,7 @@ from eatple_app.views_system.debugger import EatplusSkillLog, errorView
 from eatple_app.views_partner.wording import wordings
 
 # Define
-from eatple_app.define import EP_define
-
-NOT_APPLICABLE = EP_define.NOT_APPLICABLE
-
-KAKAO_PARAM_STATUS = EP_define.KAKAO_PARAM_STATUS
-KAKAO_PARAM_STATUS_OK = EP_define.KAKAO_PARAM_STATUS_OK
-KAKAO_PARAM_STATUS_NOT_OK = EP_define.KAKAO_PARAM_STATUS_NOT_OK
+from eatple_app.define import *
 
 # STATIC CONFIG
 MENU_LIST_LENGTH = 5

@@ -10,12 +10,7 @@ from django_mysql.models import Model
 # External Library
 
 # Define
-from eatple_app.define import EP_define
-
-NOT_APPLICABLE = EP_define.NOT_APPLICABLE
-DEFAULT_OBJECT_ID = EP_define.DEFAULT_OBJECT_ID
-
-PARTNER_ID_CODE_LENGTH = EP_define.PARTNER_ID_CODE_LENGTH
+from eatple_app.define import *
 
 class Partner(models.Model):
     class Meta:

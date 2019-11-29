@@ -12,21 +12,7 @@ from django.core.validators import MaxValueValidator, MinValueValidator
 import os
 
 # Define
-from eatple_app.define import EP_define
-
-NOT_APPLICABLE = EP_define.NOT_APPLICABLE
-DEFAULT_OBJECT_ID = EP_define.DEFAULT_OBJECT_ID
-
-STRING_LENGTH = EP_define.STRING_LENGTH
-WORD_LENGTH = EP_define.WORD_LENGTH
-
-LUNCH_PICKUP_TIME = EP_define.LUNCH_PICKUP_TIME
-DINNER_PICKUP_TIME = EP_define.DINNER_PICKUP_TIME
-
-SELLING_TIME_LUNCH = EP_define.SELLING_TIME_LUNCH
-SELLING_TIME_DINNER = EP_define.SELLING_TIME_DINNER
-SELLING_TIME_CATEGORY_DICT = EP_define.SELLING_TIME_CATEGORY_DICT
-SELLING_TIME_CATEGORY = EP_define.SELLING_TIME_CATEGORY
+from eatple_app.define import *
 
 DEFAULT_MENU_IMAGE_PATH = "STORE_DB/images/default/menuImg.png"
 

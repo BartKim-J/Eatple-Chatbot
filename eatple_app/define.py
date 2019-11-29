@@ -1,94 +1,115 @@
-'''
-    Author : Ben Kim
+# System
+import sys
+import os
 
-    @NOTE
-    @BUG
-    @TODO
- 
-'''
 # Django Library
 from django.conf import settings
+from django.utils import timezone
 
 # External Library
-from datetime import datetime, timedelta, timezone
-import pytz
+from datetime import datetime, timedelta
+import requests
+import json
 
-# SYSTEM LOCAL DEFINE
-STRING_32 = 31
-STRING_256 = 255
+import pytz
 
 
 EATPLUS_HOST_URL = "http://eatple.com:8000"
 VALUE_NOT_APPLICABLE = 'N/A'
 
 # Eatplus App Global Defines
+STRING_32 = 31
+STRING_256 = 255
 
+USE_TZ = settings.USE_TZ
+TIME_ZONE = settings.TIME_ZONE
 
-class EP_define():
-    # SYSTEM
-    USE_TZ = settings.USE_TZ
-    TIME_ZONE = settings.TIME_ZONE
+HOST_URL = EATPLUS_HOST_URL
 
-    HOST_URL = EATPLUS_HOST_URL
+NOT_APPLICABLE = VALUE_NOT_APPLICABLE
+DEFAULT_OBJECT_ID = 1
+DEFAULT_USER_ID = 2
 
-    NOT_APPLICABLE = VALUE_NOT_APPLICABLE
-    DEFAULT_OBJECT_ID = 1
-    DEFAULT_USER_ID = 2
+# IMAGE DB PATH
+PATH_IMG_DB = "STORE_DB/images"
 
-    # IMAGE DB PATH
-    PATH_IMG_DB = "STORE_DB/images"
+# USER LENGTH
+USER_NICKNAME_LENGTH = STRING_32
+USER_ID_LENGTH = STRING_32
+USER_ID_CODE_LENGTH = STRING_256
 
-    # USER LENGTH
-    USER_NICKNAME_LENGTH = STRING_32
-    USER_ID_LENGTH = STRING_32
-    USER_ID_CODE_LENGTH = STRING_256
+# PARTNER LENGTH
+PARTNER_ID_CODE_LENGTH = STRING_256
 
-    # PARTNER LENGTH
-    PARTNER_ID_CODE_LENGTH = STRING_256
+# STRING LENGTH
+STRING_LENGTH = STRING_256
+WORD_LENGTH = STRING_32
 
-    # STRING LENGTH
-    STRING_LENGTH = STRING_256
-    WORD_LENGTH = STRING_32
+# MENU
+MANAGEMENT_CODE_DEFAULT = VALUE_NOT_APPLICABLE
+MANAGEMENT_CODE_LENGTH = STRING_256
 
-    # MENU
-    MANAGEMENT_CODE_DEFAULT = VALUE_NOT_APPLICABLE
-    MANAGEMENT_CODE_LENGTH = STRING_256
+SELLING_TIME_LUNCH = 0
+SELLING_TIME_DINNER = 1
+SELLING_TIME_CATEGORY = [
+    (SELLING_TIME_LUNCH, '점심'),
+    (SELLING_TIME_DINNER, '저녁'),
+]
 
-    SELLING_TIME_LUNCH = 0
-    SELLING_TIME_DINNER = 1
-    SELLING_TIME_CATEGORY_DICT = {
-        '점심': SELLING_TIME_LUNCH, '저녁': SELLING_TIME_DINNER}
-    SELLING_TIME_CATEGORY = [('점심', '점심'), ('저녁', '저녁'), ]
+# ORDERING
+ORDER_STATUS_PAYMENT_WAIT = 0
+ORDER_STATUS_PAYMENT_COMPLETED = 1
+ORDER_STATUS_REFUND_WAIT = 2
+ORDER_STATUS_REFUND_COMPLETED = 3
+ORDER_STATUS_ORDER_CONFIRM_WAIT = 4
+ORDER_STATUS_ORDER_CONFIRMED = 5
+ORDER_STATUS_ORDER_CANCELED = 6
+ORDER_STATUS_ORDER_EXPIRED = 7
+ORDER_STATUS_PICKUP_PREPARE = 8
+ORDER_STATUS_PICKUP_WAIT = 9
+ORDER_STATUS_PICKUP_COMPLETED = 10
 
-    # ORDERING
-    ORDER_STATUS_DICT = {'주문 확인중': 0, '주문 완료': 1, '픽업 준비중': 2,
-                         '픽업 가능': 3, '픽업 완료': 4, '주문 만료': 5, '주문 취소': 6}
-    ORDER_STATUS = [
-        ('주문 확인중',  '주문 확인중'), ('주문 완료',   '주문 완료'), ('픽업 준비중',  '픽업 준비중'),
-        ('픽업 가능',   '픽업 가능'), ('픽업 완료',   '픽업 완료'),
-        ('주문 만료',   '주문 만료'), ('주문 취소',   '주문 취소'), ]
+ORDER_STATUS = [
+    (ORDER_STATUS_PAYMENT_WAIT, '결제 대기'),
+    (ORDER_STATUS_PAYMENT_COMPLETED, '결제 성공'),
+    (ORDER_STATUS_REFUND_WAIT, '환불 대기'),
+    (ORDER_STATUS_REFUND_COMPLETED, '환불 성공'),
+    (ORDER_STATUS_ORDER_CONFIRM_WAIT, '주문 확인중'),
+    (ORDER_STATUS_ORDER_CONFIRMED, '주문 완료'),
+    (ORDER_STATUS_ORDER_EXPIRED, '주문 만료'),
+    (ORDER_STATUS_ORDER_CONFIRMED, '주문 취소'),
+    (ORDER_STATUS_PICKUP_PREPARE,  '픽업 준비중'),
+    (ORDER_STATUS_PICKUP_WAIT,  '픽업 대기중'),
+    (ORDER_STATUS_PICKUP_COMPLETED, '픽업 완료'),
+]
 
-    # PICKUP TIME
-    LUNCH_PICKUP_TIME = [(0, "11:30"), (1, "11:45"), (2, "12:00"), (3, "12:15"), (
-        4, "12:30"), (5, "12:45"), (6, "13:00"), (7, "13:15"), (8, "13:30")]
-    DINNER_PICKUP_TIME = [(0, "17:30"), (1, "18:00"), (2, "18:30"),
-                          (3, "19:00"), (4, "19:30"), (5, "20:00"), (6, "20:30"), (7, "21:00")]
+# PICKUP TIME
+LUNCH_PICKUP_TIME = [
+    (0, "11:30"), (1, "11:45"), (2, "12:00"), (3, "12:15"), 
+    (4, "12:30"), (5, "12:45"), (6, "13:00"), (7, "13:15"), (8, "13:30")
+]
 
-    # Kakao Param Data
-    KAKAO_PARAM_ORDER_ID = 'orderID'
-    KAKAO_PARAM_STORE_ID = 'storeID'
-    KAKAO_PARAM_MENU_ID = 'menuID'
+DINNER_PICKUP_TIME = [
+    (0, "17:30"), (1, "18:00"), (2, "18:30"),
+    (3, "19:00"), (4, "19:30"), (5, "20:00"), (6, "20:30"), (7, "21:00")
+]
 
-    KAKAO_PARAM_MENU_CATEGORY = 'menuCategory'
-    KAKAO_PARAM_SELLING_TIME = 'sellingTime'
-    KAKAO_PARAM_PICKUP_TIME = 'pickupTime'
+# Kakao Param Data
+KAKAO_PARAM_ORDER_ID = 'orderID'
+KAKAO_PARAM_STORE_ID = 'storeID'
+KAKAO_PARAM_MENU_ID = 'menuID'
 
-    KAKAO_PARAM_STATUS = 'status'
-    KAKAO_PARAM_STATUS_OK = True
-    KAKAO_PARAM_STATUS_NOT_OK = False
+KAKAO_PARAM_MENU_CATEGORY = 'menuCategory'
+KAKAO_PARAM_SELLING_TIME = 'sellingTime'
+KAKAO_PARAM_PICKUP_TIME = 'pickupTime'
 
+KAKAO_PARAM_STATUS = 'status'
+KAKAO_PARAM_STATUS_OK = True
+KAKAO_PARAM_STATUS_NOT_OK = False
 
 # Time Functions
+
+
 def dateNowByTimeZone():
     """
     Returns an aware or naive datetime.datetime, depending on settings.USE_TZ.

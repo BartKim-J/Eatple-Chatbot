@@ -31,7 +31,6 @@ urlpatterns = [
     path('skill/user/home', views.GET_UserHome),
 
     # Order Flow
-    path('skill/user/order/get_sellingTime',  views.GET_SellingTime),
     path('skill/user/order/get_menu',         views.GET_Menu),
     path('skill/user/order/get_pickupTime',   views.GET_PickupTime),
     path('skill/user/order/set_orderSheet',   views.SET_OrderSheet),

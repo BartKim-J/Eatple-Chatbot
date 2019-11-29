@@ -30,7 +30,7 @@ from eatple_app.views_partner.wording import wordings
 from eatple_app.views_system.debugger import EatplusSkillLog, errorView
 
 # Define
-from eatple_app.define import EP_define
+from eatple_app.define import *
 
 DEFAULT_STORE_ID = 28  # Eatple Store Unique ID : 28
 

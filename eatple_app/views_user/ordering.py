@@ -1,75 +1,23 @@
-'''
-    Author : Ben Kim
-
-    @NOTE
-    @BUG
-    @TODO
- 
-'''
-# System
-import sys
-import os
-
 # Django Library
 from django.shortcuts import render
 from django.views.decorators.csrf import csrf_exempt
 from django.http import JsonResponse
 
-# External Library
-import requests
-import json
-from datetime import timedelta
-
 # Models
-from eatple_app.models import User
-from eatple_app.models import Order, OrderManager
-from eatple_app.models import Category, Tag
-from eatple_app.models import Store, Menu
+from eatple_app.models import *
+
+# Define
+from eatple_app.define import *
 
 # Modules
-from eatple_app.module_kakao.ReponseForm import Kakao_SimpleForm, Kakao_CarouselForm
-from eatple_app.module_kakao.RequestForm import getLatLng, KakaoPayLoad
+from eatple_app.module_kakao.ReponseForm import *
+from eatple_app.module_kakao.RequestForm import *
 
 # View-System
-from eatple_app.views_system.debugger import EatplusSkillLog, errorView
+from eatple_app.views_system.debugger import *
 
 # Wordings
 from eatple_app.views_user.wording import wordings
-
-# Define
-from eatple_app.define import EP_define, dateNowByTimeZone
-
-HOST_URL = EP_define.HOST_URL
-
-NOT_APPLICABLE = EP_define.NOT_APPLICABLE
-
-SELLING_TIME_LUNCH = EP_define.SELLING_TIME_LUNCH
-SELLING_TIME_DINNER = EP_define.SELLING_TIME_DINNER
-SELLING_TIME_CATEGORY_DICT = EP_define.SELLING_TIME_CATEGORY_DICT
-SELLING_TIME_CATEGORY = EP_define.SELLING_TIME_CATEGORY
-
-LUNCH = SELLING_TIME_CATEGORY[SELLING_TIME_LUNCH][0]
-DINNER = SELLING_TIME_CATEGORY[SELLING_TIME_DINNER][0]
-
-LUNCH_PICKUP_TIME = EP_define.LUNCH_PICKUP_TIME
-DINNER_PICKUP_TIME = EP_define.DINNER_PICKUP_TIME
-
-ORDER_STATUS = EP_define.ORDER_STATUS
-ORDER_STATUS_DICT = EP_define.ORDER_STATUS_DICT
-
-KAKAO_PARAM_ORDER_ID = EP_define.KAKAO_PARAM_ORDER_ID
-KAKAO_PARAM_STORE_ID = EP_define.KAKAO_PARAM_STORE_ID
-KAKAO_PARAM_MENU_ID = EP_define.KAKAO_PARAM_MENU_ID
-
-KAKAO_PARAM_MENU_CATEGORY = EP_define.KAKAO_PARAM_MENU_CATEGORY
-KAKAO_PARAM_SELLING_TIME = EP_define.KAKAO_PARAM_SELLING_TIME
-KAKAO_PARAM_PICKUP_TIME = EP_define.KAKAO_PARAM_PICKUP_TIME
-
-KAKAO_PARAM_STATUS = EP_define.KAKAO_PARAM_STATUS
-KAKAO_PARAM_STATUS_OK = EP_define.KAKAO_PARAM_STATUS_OK
-KAKAO_PARAM_STATUS_NOT_OK = EP_define.KAKAO_PARAM_STATUS_NOT_OK
-
-KAKAO_SUPER_USER_ID = EP_define.DEFAULT_USER_ID
 
 # STATIC CONFIG
 MENU_LIST_LENGTH = 5
@@ -85,9 +33,9 @@ DEFAULT_QUICKREPLIES_MAP = [
 # Static View
 #
 # # # # # # # # # # # # # # # # # # # # # # # # #
+    
 
-
-def orderValidation(userID, menuID):
+def ordersheetValidation(userID, menuID):
     menuInstance = Menu.objects.get(id=menuID)
 
     # Double Order Check
@@ -98,15 +46,8 @@ def orderValidation(userID, menuID):
     elif OrderManagerInstance.getAvailableDinnerCouponPurchased().exists() and (menuInstance.sellingTime == SELLING_TIME_CATEGORY[SELLING_TIME_DINNER][0]):
         return False
 
-
-'''
-    @name sellingTimeCheck
-    @param
-
-    @note
-    @bug
-    @todo
-'''
+def orderingValidation(kakaoPayload):
+    ordersheetValidation()
 
 
 def sellingTimeCheck():
@@ -137,18 +78,7 @@ def sellingTimeCheck():
     elif(nextlunchOrderTimeStart < nowDate) and (nowDate < nextlunchOrderTimeEnd):
         return SELLING_TIME_LUNCH
     else:
-        return None
-
-
-'''
-    @name MenuListup
-    @param userID, menuCategory, sellingTime, currentSellingTime, location
-
-    @note
-    @bug
-    @todo
-'''
-
+        return None    
 
 def MenuListup(userID, menuCategory, sellingTime, currentSellingTime, location):
     ALL_MENU = '전체'
@@ -293,104 +223,27 @@ def MenuListup(userID, menuCategory, sellingTime, currentSellingTime, location):
 # External View
 #
 # # # # # # # # # # # # # # # # # # # # # # # # #
-'''
-    @name GET_SellingTime
-    @param userID
 
-    @note
-    @bug
-    @todo
-'''
-@csrf_exempt
-def GET_SellingTime(request):
-    try:
-        kakaoPayload = KakaoPayLoad(request)
-
-        # Invalied Path Access
-        if(kakaoPayload.userID == NOT_APPLICABLE):
-            return errorView("Parameter Error")
-        else:
-            try:
-                userInstance = User.objects.get(
-                    identifier_code=kakaoPayload.userID)
-            except User.DoesNotExist:
-                return errorView("User ID is Invalid")
-
-        EatplusSkillLog("Order Flow")
-
-        OrderManagerInstance = OrderManager(kakaoPayload.userID)
-        if OrderManagerInstance.getAvailableLunchCouponPurchased().exists() and OrderManagerInstance.getAvailableDinnerCouponPurchased().exists():
-            KakaoForm = Kakao_SimpleForm()
-            KakaoForm.SimpleForm_Init()
-
-            KakaoForm.SimpleText_Add(wordings.ALREADY_ORDER_EATPLUS_TEXT)
-
-            for entryPoint in DEFAULT_QUICKREPLIES_MAP:
-                KakaoForm.QuickReplies_Add(
-                    entryPoint['action'], entryPoint['label'], entryPoint['messageText'], entryPoint['blockid'], entryPoint['extra'])
-
-            return JsonResponse(KakaoForm.GetForm())
-        else:
-            KakaoForm = Kakao_CarouselForm()
-            KakaoForm.BasicCard_Init()
-
-            thumbnail = {"imageUrl": ""}
-
-            buttons = [
-                {'action': "message", 'label': wordings.GET_SELLING_TIME_LUNCH_BTN,  'messageText': wordings.GET_SELLING_TIME_LUNCH_BTN,
-                 'extra': {KAKAO_PARAM_MENU_CATEGORY: NOT_APPLICABLE,
-                           KAKAO_PARAM_SELLING_TIME: LUNCH, }
-                 },
-
-                {'action': "message", 'label': wordings.GET_SELLING_TIME_DINNER_BTN,  'messageText': wordings.GET_SELLING_TIME_DINNER_BTN,
-                 'extra': {KAKAO_PARAM_MENU_CATEGORY: NOT_APPLICABLE,
-                           KAKAO_PARAM_SELLING_TIME: DINNER, }
-                 }
-            ]
-
-            KakaoForm.BasicCard_Add(wordings.GET_SELLING_TIME_SELECT_TITLE_TEXT,
-                                    wordings.GET_SELLING_TIME_SELECT_DESCRIPT_TEXT, thumbnail, buttons)
-
-            for entryPoint in DEFAULT_QUICKREPLIES_MAP:
-                KakaoForm.QuickReplies_Add(
-                    entryPoint['action'], entryPoint['label'], entryPoint['messageText'], entryPoint['blockid'], entryPoint['extra'])
-
-            return JsonResponse(KakaoForm.GetForm())
-
-    except (RuntimeError, TypeError, NameError, KeyError) as ex:
-        return errorView("{}".format(ex))
-
-
-'''
-    @name GET_Menu
-    @param userID, sellingTime 
-
-    @note
-    @bug
-    @todo
-'''
 @csrf_exempt
 def GET_Menu(request):
+    EatplusSkillLog("Get Menu")
+    
     try:
         kakaoPayload = KakaoPayLoad(request)
-
-        # Invalied Path Access
-        # and (kakaoPayload.menuCategory == NOT_APPLICABLE) => "ALL MENU"
-        if(kakaoPayload.userID == NOT_APPLICABLE) or (kakaoPayload.sellingTime == NOT_APPLICABLE):
-            return errorView("Parameter Error")
-        else:
-            try:
-                userInstance = User.objects.get(
-                    identifier_code=kakaoPayload.userID)
-            except User.DoesNotExist:
-                return errorView("User ID is Invalid")
-
-        EatplusSkillLog("Order Flow")
+        
+        orderingValidation(kakaoPayload)
 
         # Selling Time Check
         currentSellingTime = sellingTimeCheck()
+        
         if currentSellingTime == None:
-            return errorView("Get Invalid Selling Time")
+            return errorView("Get Invalid Selling Time", "잘못된 주문 시간입니다.")
+        elif currentSellingTime == SELLING_TIME_DINNER:
+            """
+                @NOTE Dinner Time Close In Alpha 
+            """
+            
+            return errorView("Get Invalid Selling Time", "오늘 점심은 이미 끝났어요.\n내일 점심을 기대해주세요.")
 
         return MenuListup(userInstance.identifier_code, kakaoPayload.menuCategory, kakaoPayload.sellingTime, currentSellingTime, kakaoPayload.location)
 

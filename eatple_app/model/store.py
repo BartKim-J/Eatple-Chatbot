@@ -15,16 +15,7 @@ from eatple_app.model.utils import OverwriteStorage
 from eatple_app.model.utils import logo_directory_path
 
 # define
-from eatple_app.define import EP_define
-
-NOT_APPLICABLE = EP_define.NOT_APPLICABLE
-DEFAULT_OBJECT_ID = EP_define.DEFAULT_OBJECT_ID
-
-STRING_LENGTH = EP_define.STRING_LENGTH
-WORD_LENGTH = EP_define.WORD_LENGTH
-
-LUNCH_PICKUP_TIME = EP_define.LUNCH_PICKUP_TIME
-DINNER_PICKUP_TIME = EP_define.DINNER_PICKUP_TIME
+from eatple_app.define import *
 
 class CRN(models.Model):    
     store = models.OneToOneField('Store', on_delete=models.CASCADE, unique=True, null=True)

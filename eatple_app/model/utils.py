@@ -18,13 +18,8 @@ from django.core.validators import MaxValueValidator, MinValueValidator
 import os
 
 # Define
-from eatple_app.define import EP_define
+from eatple_app.define import *
 
-NOT_APPLICABLE = EP_define.NOT_APPLICABLE
-DEFAULT_OBJECT_ID = EP_define.DEFAULT_OBJECT_ID
-
-STRING_LENGTH = EP_define.STRING_LENGTH
-WORD_LENGTH = EP_define.WORD_LENGTH
 
 DEFAULT_IMAGE_PATH = "STORE_DB/images/default/defaultImg.png"
 

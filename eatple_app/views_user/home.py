@@ -1,81 +1,116 @@
-'''
-    Author : Ben Kim
-
-    @NOTE
-    @BUG
-    @TODO
- 
-'''
-# System
-from eatple_app.define import EP_define
-from eatple_app.views_user.wording import wordings
-from eatple_app.views_system.debugger import EatplusSkillLog, errorView
-from eatple_app.module_kakao.RequestForm import getLatLng, KakaoPayLoad
-from eatple_app.module_kakao.ReponseForm import Kakao_SimpleForm, Kakao_CarouselForm
-from eatple_app.models import Store, Menu
-from eatple_app.models import Category, Tag
-from eatple_app.models import Order, OrderManager
-from eatple_app.models import User
-from random import *
-import json
-import requests
-from django.http import JsonResponse
-from django.views.decorators.csrf import csrf_exempt
-from django.shortcuts import render
-import sys
-import os
-
-sys.path.append(os.path.dirname(os.path.abspath(os.path.dirname(__file__))))
-
 # Django Library
-
-# External Library
+from django.shortcuts import render
+from django.views.decorators.csrf import csrf_exempt
+from django.http import JsonResponse
 
 # Models
-
-# Modules
-
-# View-System
-
-# Wordings
+from eatple_app.models import *
 
 # Define
+from eatple_app.define import *
 
-# Static Functions
+# Modules
+from eatple_app.module_kakao.ReponseForm import *
+from eatple_app.module_kakao.RequestForm import *
+
+# View-System
+from eatple_app.views_system.debugger import *
+
+# Wordings
+from eatple_app.views_user.wording import wordings
 
 
-def registerUser(userIdentifier):
-    userInstance = User.registerUser(
-        "잇플 유저 {}".format(randint(1, 10000)), userIdentifier)
+def userSignUp(userProfile):
+    user = User.signUp(
+        nickname=userProfile['nickname'],
+        profile_image_url=userProfile['profile_image_url'],
+        phone_number=userProfile['phone_number'],
+        email=userProfile['email'],
+        birthyear=userProfile['birthyear'],
+        birthday=userProfile['birthday'],
+        gender=userProfile['gender'],
+        ci=userProfile['ci'],
+        ci_authenticated_at=userProfile['ci_authenticated_at'],
+        app_user_id=userProfile['app_user_id'],
+    )
 
-    return userInstance
+    return user
 
 
-# Viewset
-'''
-    @name GET_UserHomes
-    @param userID
+def userVerification(user_properties):
+    user_id = user_properties['app_user_id']
 
-    @note
-    @bug
-    @todo
-'''
-@csrf_exempt
-def GET_UserHome(request):
+    try:
+        user = User.objects.get(app_user_id=user_id)
+
+        return user
+    except User.DoesNotExist:
+        return None
+
+
+def kakaoView_SignUp():
+    EatplusSkillLog("Sign Up")
+
+    KakaoForm = Kakao_CarouselForm()
+    KakaoForm.BasicCard_Init()
+
+    BTN_MAP = [
+        {
+            'action': "block",
+            'label': "연동하러 가기",
+            'messageText': "연동하기",
+            'blockId': "5ddf9007ffa7480001986cdc",
+            'extra': {}
+        },
+    ]
+    QUICKREPLIES_MAP = []
+
+    thumbnail = {"imageUrl": ""}
+
+    buttons = BTN_MAP
+
+    KakaoForm.BasicCard_Add("아직 잇플에 연동되지 않은 \n카카오 계정입니다.",
+                            "함께 연동하러 가볼까요?", thumbnail, buttons)
+
+    for entryPoint in QUICKREPLIES_MAP:
+        KakaoForm.QuickReplies_Add(entryPoint['action'], entryPoint['label'],
+                                   entryPoint['messageText'], entryPoint['blockid'], entryPoint['extra'])
+
+    return JsonResponse(KakaoForm.GetForm())
+
+
+def kakaoView_Home(user):
     EatplusSkillLog("Home")
 
-    HOME_BTN_MAP = [
-        {'action': "message", 'label': wordings.ORDER_BTN,
-            'messageText': wordings.GET_SELLING_TIEM_COMMAND, 'blockid': "none", 'extra': {}},
+    KakaoForm = Kakao_CarouselForm()
+    KakaoForm.BasicCard_Init()
 
-        {'action': "message", 'label': wordings.GET_COUPON_COMMAND,
-            'messageText': wordings.GET_COUPON_COMMAND,    'blockid': "none", 'extra': {}},
 
-        {'action': "message", 'label': wordings.GET_ORDER_LIST_COMMAND,
-            'messageText': wordings.GET_ORDER_LIST_COMMAND,    'blockid': "none", 'extra': {}},
-
+    BTN_MAP = [
+        {
+            'action': "block",
+            'label': "메뉴보기",
+            'messageText': "로딩중..",
+            'blockId': "5d5f9009b617ea0001c13f4b",
+            'extra': {}
+        },
+        {
+            'action': "block",
+            'label': "잇플패스 확인",
+            'messageText': "로딩중..",
+            'blockId': "5d6f6609ffa7480001c1fdb3",
+            'extra': {}
+        },
+        {
+            'action': "block",
+            'label': "최근 구매내역",
+            'messageText': "로딩중..",
+            'blockId': "5d706aed92690d0001812e49",
+            'extra': {}
+        },
     ]
-    HOME_QUICKREPLIES_MAP = [
+    
+    QUICKREPLIES_MAP = [
         {'action': "message", 'label': wordings.CHANGE_LOCATION_BTN,
             'messageText': wordings.CHANGE_LOCATION_COMMAND,    'blockid': "none", 'extra': {}},
 
@@ -85,28 +120,43 @@ def GET_UserHome(request):
 
     thumbnail = {"imageUrl": ""}
 
-    buttons = HOME_BTN_MAP
+    buttons = BTN_MAP
 
+    KakaoForm.BasicCard_Add(wordings.HOME_TITLE_TEXT,
+                            wordings.HOME_DESCRIPT_TEXT, thumbnail, buttons)
+
+    for entryPoint in QUICKREPLIES_MAP:
+        KakaoForm.QuickReplies_Add(entryPoint['action'], entryPoint['label'],
+                                   entryPoint['messageText'], entryPoint['blockid'], entryPoint['extra'])
+
+    return JsonResponse(KakaoForm.GetForm())
+
+
+@csrf_exempt
+def GET_UserHome(request):
     try:
         kakaoPayload = KakaoPayLoad(request)
 
-        try:
-            userInstance = User.objects.get(
-                identifier_code=kakaoPayload.userID)
-        except User.DoesNotExist:
-            userInstance = registerUser(kakaoPayload.userID)
+        user = userVerification(kakaoPayload.user_properties)
 
-        KakaoForm = Kakao_CarouselForm()
-        KakaoForm.BasicCard_Init()
+        if(user == None):
+            try:
+                otpURL = kakaoPayload.dataActionParams['user_profile']['origin']
 
-        KakaoForm.BasicCard_Add(wordings.HOME_TITLE_TEXT,
-                                wordings.HOME_DESCRIPT_TEXT, thumbnail, buttons)
+                kakaoResponse = requests.get("{url}?rest_api_key={rest_api_key}".format(
+                    url=otpURL, rest_api_key=KAKAO_REST_API_KEY))
 
-        for entryPoint in HOME_QUICKREPLIES_MAP:
-            KakaoForm.QuickReplies_Add(entryPoint['action'], entryPoint['label'],
-                                       entryPoint['messageText'], entryPoint['blockid'], entryPoint['extra'])
+                if(kakaoResponse.status_code == 200):
+                    user = userSignUp(kakaoResponse.json())
 
-        return JsonResponse(KakaoForm.GetForm())
+                    return kakaoView_Home(user)
+
+                return kakaoView_SignUp()
+
+            except (RuntimeError, TypeError, NameError, KeyError):
+                return kakaoView_SignUp()
+        else:
+            return kakaoView_Home(user)
 
     except (RuntimeError, TypeError, NameError, KeyError) as ex:
         return errorView("{}".format(ex))
