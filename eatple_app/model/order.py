@@ -11,7 +11,6 @@ from datetime import datetime, timedelta
 # Define
 from eatple_app.define import *
 
-
 def orderStatusUpdateByTime(orderInstance):
     menuInstance = orderInstance.menuInstance
 
@@ -207,7 +206,6 @@ class Order(models.Model):
     def __str__(self):
         return "{}".format(self.order_code)
 
-
 class storeOrderManager():
     def __init__(self, storeId):
         self.storeOrderList = Order.objects.filter(storeInstance__id=storeId)
@@ -240,7 +238,6 @@ class storeOrderManager():
             Q(status=ORDER_STATUS_PICKUP_WAIT)
         )
         return availableOrders
-
 
 class OrderManager():
     def __init__(self, user):
@@ -287,16 +284,22 @@ class OrderManager():
             menu__sellingTime=SELLING_TIME_CATEGORY[SELLING_TIME_DINNER][0])
         return dinnerOrders
 
-
 class OrderSheet(models.Model):
     class Meta:
         ordering = ['-order_date']
 
     user = models.ForeignKey(
-        'User',  on_delete=models.DO_NOTHING, default=DEFAULT_OBJECT_ID, null=True)
+        'User',  
+        on_delete=models.DO_NOTHING, 
+        default=DEFAULT_OBJECT_ID, 
+        null=True
+    )
 
     management_code = models.CharField(
-        max_length=MANAGEMENT_CODE_LENGTH, blank=True, null=True)
+        max_length=MANAGEMENT_CODE_LENGTH, 
+        blank=True, 
+        null=True
+    )
 
     update_date = models.DateTimeField(auto_now_add=False, auto_now=True)
     order_date = models.DateTimeField(default=timezone.now)
@@ -316,3 +319,5 @@ class OrderSheet(models.Model):
     # Methods
     def __str__(self):
         return "{}".format(self.management_code)
+
+

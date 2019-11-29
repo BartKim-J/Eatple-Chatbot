@@ -48,10 +48,11 @@ def kakaoView_SignUp():
             'action': "block",
             'label': "연동하러 가기",
             'messageText': "연동하기",
-            'blockId': "5ddf9007ffa7480001986cdc",
+            'blockId': KAKAO_BLOCK_SIGNUP,
             'extra': {}
         },
     ]
+    
     QUICKREPLIES_MAP = []
 
     thumbnail = {"imageUrl": ""}
@@ -63,7 +64,7 @@ def kakaoView_SignUp():
 
     for entryPoint in QUICKREPLIES_MAP:
         KakaoForm.QuickReplies_Add(entryPoint['action'], entryPoint['label'],
-                                   entryPoint['messageText'], entryPoint['blockid'], entryPoint['extra'])
+                                   entryPoint['messageText'], entryPoint['blockId'], entryPoint['extra'])
 
     return JsonResponse(KakaoForm.GetForm())
 
@@ -80,31 +81,31 @@ def kakaoView_Home(user):
             'action': "block",
             'label': "메뉴보기",
             'messageText': "로딩중..",
-            'blockId': "5d5f9009b617ea0001c13f4b",
+            'blockId': KAKAO_BLOCK_GET_MENU,
             'extra': {}
         },
         {
             'action': "block",
             'label': "잇플패스 확인",
             'messageText': "로딩중..",
-            'blockId': "5d6f6609ffa7480001c1fdb3",
+            'blockId': KAKAO_BLOCK_EATPLE_PASS,
             'extra': {}
         },
         {
             'action': "block",
             'label': "최근 구매내역",
             'messageText': "로딩중..",
-            'blockId': "5d706aed92690d0001812e49",
+            'blockId': KAKAO_BLOCK_RECENT_ORDER,
             'extra': {}
         },
     ]
     
     QUICKREPLIES_MAP = [
         {'action': "message", 'label': wordings.CHANGE_LOCATION_BTN,
-            'messageText': wordings.CHANGE_LOCATION_COMMAND,    'blockid': "none", 'extra': {}},
+            'messageText': wordings.CHANGE_LOCATION_COMMAND,    'blockId': "none", 'extra': {}},
 
         {'action': "message", 'label': wordings.USER_MANUAL_COMMAND,
-            'messageText': wordings.USER_MANUAL_COMMAND,    'blockid': "none", 'extra': {}},
+            'messageText': wordings.USER_MANUAL_COMMAND,    'blockId': "none", 'extra': {}},
     ]
 
     thumbnail = {"imageUrl": ""}
@@ -116,7 +117,7 @@ def kakaoView_Home(user):
 
     for entryPoint in QUICKREPLIES_MAP:
         KakaoForm.QuickReplies_Add(entryPoint['action'], entryPoint['label'],
-                                   entryPoint['messageText'], entryPoint['blockid'], entryPoint['extra'])
+                                   entryPoint['messageText'], entryPoint['blockId'], entryPoint['extra'])
 
     return JsonResponse(KakaoForm.GetForm())
 

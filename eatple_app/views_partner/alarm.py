@@ -32,7 +32,7 @@ from eatple_app.define import *
 
 
 DEFAULT_QUICKREPLIES_MAP = [
-    {'action': "message", 'label': wordings.RETURN_HOME_QUICK_REPLISE,    'messageText': wordings.RETURN_HOME_QUICK_REPLISE, 'blockid': "none",
+    {'action': "message", 'label': wordings.RETURN_HOME_QUICK_REPLISE,    'messageText': wordings.RETURN_HOME_QUICK_REPLISE, 'blockId': "none",
         'extra': {KAKAO_PARAM_STATUS: KAKAO_PARAM_STATUS_OK}},
 ]
 
@@ -57,7 +57,7 @@ def GET_OpenLunchStoreAlarm(request):
         thumbnail = {"imageUrl": ""}
 
         buttons = [
-            {'action': "message", 'label': "주문 확인하러 가기",    'messageText': "주문 조회", 'blockid': "none",
+            {'action': "message", 'label': "주문 확인하러 가기",    'messageText': "주문 조회", 'blockId': "none",
              'extra': {KAKAO_PARAM_STATUS: KAKAO_PARAM_STATUS_OK}},
         ]
 
@@ -121,7 +121,7 @@ def GET_OpenDinnerStoreAlarm(request):
         thumbnail = {"imageUrl": ""}
 
         buttons = [
-            {'action': "message", 'label': "주문 확인하러 가기", 'messageText': "주문 조회", 'blockid': "none",
+            {'action': "message", 'label': "주문 확인하러 가기", 'messageText': "주문 조회", 'blockId': "none",
              'extra': {KAKAO_PARAM_STATUS: KAKAO_PARAM_STATUS_OK}},
         ]
 

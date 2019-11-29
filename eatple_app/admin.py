@@ -5,16 +5,7 @@ from django.core import validators
 from django.utils.translation import ugettext_lazy as _
 
 # Models
-from .models import DefaultImage
-from .models import UserManual, PartnerManual
-from .models import UserIntro, PartnerIntro
-from .models import Store, CRN
-from .models import Menu
-from .models import Category, Tag
-from .models import Order, OrderSheet
-from .models import User
-from .models import Partner
-
+from .models import *
 
 class CRNInline(admin.TabularInline):
     model = CRN
@@ -83,7 +74,26 @@ class OrderSheetAdmin(admin.ModelAdmin):
     inlines = [OrderInline]
 
 
+
 admin.site.register(OrderSheet, OrderSheetAdmin)
+
+
+class OrderRecordInline(admin.TabularInline):
+    model = OrderRecord
+    extra = 0
+    min_num = 0
+    
+    readonly_fields = ('created_date', 'update_date')
+    
+class OrderRecordSheetAdmin(admin.ModelAdmin):
+    readonly_fields = ('status', 'created_date', 'update_date')
+        
+    list_filter = ('update_date', 'created_date')
+    list_display = ('status', 'user', 'created_date', 'update_date')
+    
+    inlines = [OrderRecordInline]
+
+admin.site.register(OrderRecordSheet, OrderRecordSheetAdmin)
 
 # Main Models
 admin.site.register(Partner)

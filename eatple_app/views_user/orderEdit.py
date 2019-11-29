@@ -39,7 +39,7 @@ from eatple_app.views_user.wording import wordings
 from eatple_app.define import *
 
 DEFAULT_QUICKREPLIES_MAP = [
-    {'action': "message", 'label': wordings.RETURN_HOME_QUICK_REPLISE,    'messageText': wordings.RETURN_HOME_QUICK_REPLISE, 'blockid': "none",
+    {'action': "message", 'label': wordings.RETURN_HOME_QUICK_REPLISE,    'messageText': wordings.RETURN_HOME_QUICK_REPLISE, 'blockId': "none",
         'extra': {KAKAO_PARAM_STATUS: KAKAO_PARAM_STATUS_OK}},
 ]
 
@@ -97,11 +97,11 @@ def GET_PickupTimeForChange(request):
         for index, pickupTime in ENTRY_PICKUP_TIME_MAP:
             if(pikcupTime_Start <= index) and (index <= pikcupTime_End):
                 PICKUP_TIME_QUICKREPLIES_MAP += {'action': "message", 'label': pickupTime, 'messageText': wordings.ORDER_PICKUP_TIME_CHANGE_CONFIRM_COMMAND,
-                                                 'blockid': "none", 'extra': {**allExtraData, KAKAO_PARAM_PICKUP_TIME: pickupTime}},
+                                                 'blockId': "none", 'extra': {**allExtraData, KAKAO_PARAM_PICKUP_TIME: pickupTime}},
 
         for entryPoint in PICKUP_TIME_QUICKREPLIES_MAP:
             KakaoForm.QuickReplies_Add(entryPoint['action'], entryPoint['label'],
-                                       entryPoint['messageText'], entryPoint['blockid'], entryPoint['extra'])
+                                       entryPoint['messageText'], entryPoint['blockId'], entryPoint['extra'])
 
         return JsonResponse(KakaoForm.GetForm())
 
@@ -164,7 +164,7 @@ def SET_PickupTimeByChanged(request):
 
         for entryPoint in DEFAULT_QUICKREPLIES_MAP:
             KakaoForm.QuickReplies_Add(entryPoint['action'], entryPoint['label'],
-                                       entryPoint['messageText'], entryPoint['blockid'], entryPoint['extra'])
+                                       entryPoint['messageText'], entryPoint['blockId'], entryPoint['extra'])
 
         return JsonResponse(KakaoForm.GetForm())
 
@@ -199,9 +199,9 @@ def GET_ConfirmUserCoupon(request):
 
         USE_COUPON_QUICKREPLIES_MAP = [
             {'action': "message", 'label': "사용하기",    'messageText': wordings.USE_COUPON_COMMAND,
-                'blockid': "none", 'extra': {KAKAO_PARAM_ORDER_ID: OrderInstance.id}},
+                'blockId': "none", 'extra': {KAKAO_PARAM_ORDER_ID: OrderInstance.id}},
             {'action': "message", 'label': wordings.RETURN_HOME_QUICK_REPLISE,    'messageText': wordings.RETURN_HOME_QUICK_REPLISE,
-                'blockid': "none", 'extra': {KAKAO_PARAM_STATUS: KAKAO_PARAM_STATUS_OK}},
+                'blockId': "none", 'extra': {KAKAO_PARAM_STATUS: KAKAO_PARAM_STATUS_OK}},
         ]
 
         EatplusSkillLog("Order Check Flow")
@@ -219,7 +219,7 @@ def GET_ConfirmUserCoupon(request):
 
         for entryPoint in USE_COUPON_QUICKREPLIES_MAP:
             KakaoForm.QuickReplies_Add(entryPoint['action'], entryPoint['label'],
-                                       entryPoint['messageText'], entryPoint['blockid'], entryPoint['extra'])
+                                       entryPoint['messageText'], entryPoint['blockId'], entryPoint['extra'])
 
         return JsonResponse(KakaoForm.GetForm())
 
@@ -278,7 +278,7 @@ def POST_UseCoupon(request):
 
         for entryPoint in DEFAULT_QUICKREPLIES_MAP:
             KakaoForm.QuickReplies_Add(entryPoint['action'], entryPoint['label'],
-                                       entryPoint['messageText'], entryPoint['blockid'], entryPoint['extra'])
+                                       entryPoint['messageText'], entryPoint['blockId'], entryPoint['extra'])
 
         return JsonResponse(KakaoForm.GetForm())
 
@@ -338,7 +338,7 @@ def POST_OrderCancel(request):
 
         for entryPoint in DEFAULT_QUICKREPLIES_MAP:
             KakaoForm.QuickReplies_Add(entryPoint['action'], entryPoint['label'],
-                                       entryPoint['messageText'], entryPoint['blockid'], entryPoint['extra'])
+                                       entryPoint['messageText'], entryPoint['blockId'], entryPoint['extra'])
 
         return JsonResponse(KakaoForm.GetForm())
 

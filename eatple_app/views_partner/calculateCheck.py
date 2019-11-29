@@ -43,7 +43,7 @@ MENU_LIST_LENGTH = 5
 CATEGORY_LIST_LENGTH = 5
 
 DEFAULT_QUICKREPLIES_MAP = [
-    {'action': "message", 'label': wordings.RETURN_HOME_QUICK_REPLISE,    'messageText': wordings.RETURN_HOME_QUICK_REPLISE, 'blockid': "none",
+    {'action': "message", 'label': wordings.RETURN_HOME_QUICK_REPLISE,    'messageText': wordings.RETURN_HOME_QUICK_REPLISE, 'blockId': "none",
         'extra': {KAKAO_PARAM_STATUS: KAKAO_PARAM_STATUS_OK}},
 ]
 
@@ -86,7 +86,7 @@ def GET_CalculateCheck(request):
 
         for entryPoint in DEFAULT_QUICKREPLIES_MAP:
             KakaoForm.QuickReplies_Add(entryPoint['action'], entryPoint['label'],
-                                       entryPoint['messageText'], entryPoint['blockid'], entryPoint['extra'])
+                                       entryPoint['messageText'], entryPoint['blockId'], entryPoint['extra'])
 
         return JsonResponse(KakaoForm.GetForm())
 

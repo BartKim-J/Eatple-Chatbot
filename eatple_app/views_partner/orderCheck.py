@@ -49,8 +49,8 @@ ORDER_LIST_LENGTH = 30
 
 
 def StoreOrderListup(storeId):
-    ORDER_LIST_QUICKREPLIES_MAP = [{'action': "message", 'label': wordings.RETURN_HOME_QUICK_REPLISE, 'messageText': wordings.RETURN_HOME_QUICK_REPLISE, 'blockid': "none", 'extra': {KAKAO_PARAM_STATUS: KAKAO_PARAM_STATUS_OK}},
-                                   {'action': "message", 'label': wordings.REFRESH_BTN, 'messageText': wordings.GET_ORDER_LIST_TOTAL_COMMAND, 'blockid': "none", 'extra': {KAKAO_PARAM_STATUS: KAKAO_PARAM_STATUS_OK}}]
+    ORDER_LIST_QUICKREPLIES_MAP = [{'action': "message", 'label': wordings.RETURN_HOME_QUICK_REPLISE, 'messageText': wordings.RETURN_HOME_QUICK_REPLISE, 'blockId': "none", 'extra': {KAKAO_PARAM_STATUS: KAKAO_PARAM_STATUS_OK}},
+                                   {'action': "message", 'label': wordings.REFRESH_BTN, 'messageText': wordings.GET_ORDER_LIST_TOTAL_COMMAND, 'blockId': "none", 'extra': {KAKAO_PARAM_STATUS: KAKAO_PARAM_STATUS_OK}}]
 
     OrderManagerInstance = storeOrderManager(storeId)
 
@@ -88,7 +88,7 @@ def StoreOrderListup(storeId):
 
     for entryPoint in ORDER_LIST_QUICKREPLIES_MAP:
         KakaoForm.QuickReplies_Add(entryPoint['action'], entryPoint['label'],
-                                   entryPoint['messageText'], entryPoint['blockid'], entryPoint['extra'])
+                                   entryPoint['messageText'], entryPoint['blockId'], entryPoint['extra'])
 
     return JsonResponse(KakaoForm.GetForm())
 
@@ -104,8 +104,8 @@ def StoreOrderListup(storeId):
 
 
 def StoreOrderTotal(storeId):
-    ORDER_LIST_QUICKREPLIES_MAP = [{'action': "message", 'label': wordings.RETURN_HOME_QUICK_REPLISE, 'messageText': wordings.RETURN_HOME_QUICK_REPLISE, 'blockid': "none", 'extra': {KAKAO_PARAM_STATUS: KAKAO_PARAM_STATUS_OK}},
-                                   {'action': "message", 'label': wordings.REFRESH_BTN, 'messageText': wordings.GET_ORDER_LIST_COMMAND, 'blockid': "none", 'extra': {KAKAO_PARAM_STATUS: KAKAO_PARAM_STATUS_OK}}]
+    ORDER_LIST_QUICKREPLIES_MAP = [{'action': "message", 'label': wordings.RETURN_HOME_QUICK_REPLISE, 'messageText': wordings.RETURN_HOME_QUICK_REPLISE, 'blockId': "none", 'extra': {KAKAO_PARAM_STATUS: KAKAO_PARAM_STATUS_OK}},
+                                   {'action': "message", 'label': wordings.REFRESH_BTN, 'messageText': wordings.GET_ORDER_LIST_COMMAND, 'blockId': "none", 'extra': {KAKAO_PARAM_STATUS: KAKAO_PARAM_STATUS_OK}}]
 
     OrderManagerInstance = storeOrderManager(storeId)
 
@@ -123,7 +123,7 @@ def StoreOrderTotal(storeId):
 
             buttons = [
                 {'action': "message", 'label': wordings.GET_ORDER_LIST_DETAIL_COMMAND, 'messageText': wordings.GET_ORDER_LIST_DETAIL_COMMAND,
-                    'blockid': "none", 'extra': {KAKAO_PARAM_STATUS: KAKAO_PARAM_STATUS_OK}}
+                    'blockId': "none", 'extra': {KAKAO_PARAM_STATUS: KAKAO_PARAM_STATUS_OK}}
             ]
 
             KakaoForm.BasicCard_Add(
@@ -144,7 +144,7 @@ def StoreOrderTotal(storeId):
 
     for entryPoint in ORDER_LIST_QUICKREPLIES_MAP:
         KakaoForm.QuickReplies_Add(entryPoint['action'], entryPoint['label'],
-                                   entryPoint['messageText'], entryPoint['blockid'], entryPoint['extra'])
+                                   entryPoint['messageText'], entryPoint['blockId'], entryPoint['extra'])
 
     return JsonResponse(KakaoForm.GetForm())
 

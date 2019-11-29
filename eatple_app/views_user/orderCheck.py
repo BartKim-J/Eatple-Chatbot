@@ -43,8 +43,8 @@ ORDER_LIST_LENGTH = 5
 
 
 def CouponListup(userID):
-    ORDER_LIST_QUICKREPLIES_MAP = [{'action': "message", 'label': wordings.REFRESH_BTN, 'messageText': wordings.GET_COUPON_COMMAND, 'blockid': "none", 'extra': {KAKAO_PARAM_STATUS: KAKAO_PARAM_STATUS_OK}},
-                                   {'action': "message", 'label': wordings.RETURN_HOME_QUICK_REPLISE, 'messageText': wordings.RETURN_HOME_QUICK_REPLISE, 'blockid': "none", 'extra': {KAKAO_PARAM_STATUS: KAKAO_PARAM_STATUS_OK}}, ]
+    ORDER_LIST_QUICKREPLIES_MAP = [{'action': "message", 'label': wordings.REFRESH_BTN, 'messageText': wordings.GET_COUPON_COMMAND, 'blockId': "none", 'extra': {KAKAO_PARAM_STATUS: KAKAO_PARAM_STATUS_OK}},
+                                   {'action': "message", 'label': wordings.RETURN_HOME_QUICK_REPLISE, 'messageText': wordings.RETURN_HOME_QUICK_REPLISE, 'blockId': "none", 'extra': {KAKAO_PARAM_STATUS: KAKAO_PARAM_STATUS_OK}}, ]
 
     OrderManagerInstance = OrderManager(userID)
 
@@ -102,14 +102,14 @@ def CouponListup(userID):
         KakaoForm = Kakao_SimpleForm()
         KakaoForm.SimpleForm_Init()
 
-        ORDER_LIST_QUICKREPLIES_MAP.insert(0, {'action': "message", 'label': wordings.ORDER_BTN, 'messageText': wordings.GET_SELLING_TIEM_COMMAND, 'blockid': "none",
+        ORDER_LIST_QUICKREPLIES_MAP.insert(0, {'action': "message", 'label': wordings.ORDER_BTN, 'messageText': wordings.GET_SELLING_TIEM_COMMAND, 'blockId': "none",
                                                'extra': {KAKAO_PARAM_STATUS: KAKAO_PARAM_STATUS_OK}})
 
         KakaoForm.SimpleText_Add(wordings.GET_COUPON_EMPTY_TEXT)
 
     for entryPoint in ORDER_LIST_QUICKREPLIES_MAP:
         KakaoForm.QuickReplies_Add(entryPoint['action'], entryPoint['label'],
-                                   entryPoint['messageText'], entryPoint['blockid'], entryPoint['extra'])
+                                   entryPoint['messageText'], entryPoint['blockId'], entryPoint['extra'])
 
     return JsonResponse(KakaoForm.GetForm())
 
@@ -125,8 +125,8 @@ def CouponListup(userID):
 
 
 def OrderListup(userID):
-    ORDER_LIST_QUICKREPLIES_MAP = [{'action': "message", 'label': wordings.RETURN_HOME_QUICK_REPLISE, 'messageText': wordings.RETURN_HOME_QUICK_REPLISE, 'blockid': "none", 'extra': {KAKAO_PARAM_STATUS: KAKAO_PARAM_STATUS_OK}},
-                                   {'action': "message", 'label': wordings.REFRESH_BTN, 'messageText': wordings.GET_ORDER_LIST_COMMAND, 'blockid': "none", 'extra': {KAKAO_PARAM_STATUS: KAKAO_PARAM_STATUS_OK}}]
+    ORDER_LIST_QUICKREPLIES_MAP = [{'action': "message", 'label': wordings.RETURN_HOME_QUICK_REPLISE, 'messageText': wordings.RETURN_HOME_QUICK_REPLISE, 'blockId': "none", 'extra': {KAKAO_PARAM_STATUS: KAKAO_PARAM_STATUS_OK}},
+                                   {'action': "message", 'label': wordings.REFRESH_BTN, 'messageText': wordings.GET_ORDER_LIST_COMMAND, 'blockId': "none", 'extra': {KAKAO_PARAM_STATUS: KAKAO_PARAM_STATUS_OK}}]
 
     OrderManagerInstance = OrderManager(userID)
 
@@ -165,13 +165,13 @@ def OrderListup(userID):
         KakaoForm.SimpleForm_Init()
 
         ORDER_LIST_QUICKREPLIES_MAP.append({'action': "message", 'label': wordings.ORDER_BTN,
-                                            'messageText': wordings.GET_SELLING_TIEM_COMMAND, 'blockid': "none", 'extra': {KAKAO_PARAM_STATUS: KAKAO_PARAM_STATUS_OK}})
+                                            'messageText': wordings.GET_SELLING_TIEM_COMMAND, 'blockId': "none", 'extra': {KAKAO_PARAM_STATUS: KAKAO_PARAM_STATUS_OK}})
 
         KakaoForm.SimpleText_Add(wordings.GET_ORDER_LIST_EMPTY_TEXT)
 
     for entryPoint in ORDER_LIST_QUICKREPLIES_MAP:
         KakaoForm.QuickReplies_Add(entryPoint['action'], entryPoint['label'],
-                                   entryPoint['messageText'], entryPoint['blockid'], entryPoint['extra'])
+                                   entryPoint['messageText'], entryPoint['blockId'], entryPoint['extra'])
 
     return JsonResponse(KakaoForm.GetForm())
 

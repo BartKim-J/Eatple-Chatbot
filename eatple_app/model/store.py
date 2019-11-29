@@ -87,7 +87,6 @@ class Store(StoreInfo, StoreSetting, StoreStatus):
         self.store_id = "{area:04x}-{id:04x}".format(area=0, id=self.id)
 
     def save(self, *args, **kwargs):
-
         super().save(*args, **kwargs)
 
     def __str__(self):

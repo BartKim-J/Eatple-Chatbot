@@ -23,11 +23,11 @@ from eatple_app.views import *
 
 DEFAULT_QUICKREPLIES_MAP = [
     {
-        'action': "message",
-        'label': wordings.RETURN_HOME_QUICK_REPLISE,
-        'messageText': wordings.RETURN_HOME_QUICK_REPLISE,
-        'blockid': "",
-        'extra': {KAKAO_PARAM_STATUS: KAKAO_PARAM_STATUS_OK}
+        'action': "block",
+        'label': "홈",
+        'messageText': "로딩중..",
+        'blockId': KAKAO_BLOCK_HOME,
+        'extra': {}
     },
 ]
 
@@ -47,7 +47,7 @@ def orderValidation(user):
             entryPoint['action'], 
             entryPoint['label'],
             entryPoint['messageText'], 
-            entryPoint['blockid'], 
+            entryPoint['blockId'], 
             entryPoint['extra'])
 
     if (lunchPurchaed and dinnerPurchaced):

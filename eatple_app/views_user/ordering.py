@@ -32,7 +32,7 @@ DEFAULT_QUICKREPLIES_MAP = [
         'action': "message",
         'label': wordings.RETURN_HOME_QUICK_REPLISE,
         'messageText': wordings.RETURN_HOME_QUICK_REPLISE,
-        'blockid': "",
+        'blockId': "",
         'extra': {KAKAO_PARAM_STATUS: KAKAO_PARAM_STATUS_OK}
     },
 ]
@@ -42,7 +42,6 @@ DEFAULT_QUICKREPLIES_MAP = [
 # Static View
 #
 # # # # # # # # # # # # # # # # # # # # # # # # #
-
 
 def sellingTimeCheck():
     nowDate = dateNowByTimeZone()
@@ -81,8 +80,8 @@ def MenuListup(user, sellingTime):
             'action': "block",
             'label': "홈으로 돌아가기",
             'messageText': "로딩중..",
-            'blockid': "KAKAO_BLOCK_ID_HOME",
-            'extra': {KAKAO_PARAM_STATUS: KAKAO_PARAM_STATUS_OK}
+            'blockId': KAKAO_BLOCK_HOME,
+            'extra': {}
         },
     ]
     
@@ -105,16 +104,16 @@ def MenuListup(user, sellingTime):
 
             buttons = [
                 {
-                    'action': "message", 
-                    'label': wordings.ORDER_BTN,  
-                    'messageText': "{} {}".format(sellingTime, wordings.GET_PICKUP_TIME_COMMAND),
+                    'action': "block",
+                    'label': "주문하기",
+                    'messageText': "로딩중..",
+                    'blockId': KAKAO_BLOCK_SET_PICKUP_TIME,
                     'extra': {
                         KAKAO_PARAM_STORE_ID:         menu.store.id,
                         KAKAO_PARAM_MENU_ID:          menu.id,
                         KAKAO_PARAM_SELLING_TIME:     sellingTime,
                     }
                 },
-
                 {
                     'action': "webLink", 
                     'label': wordings.SHOW_LOCATION_BTN,
@@ -130,7 +129,7 @@ def MenuListup(user, sellingTime):
         # Quick Replise Add
         for entryPoint in QUICKREPLIES_MAP:
             KakaoForm.QuickReplies_Add(entryPoint['action'], entryPoint['label'],
-                                       entryPoint['messageText'], entryPoint['blockid'], entryPoint['extra'])
+                                       entryPoint['messageText'], entryPoint['blockId'], entryPoint['extra'])
 
     else:
         KakaoForm = Kakao_SimpleForm()
@@ -138,7 +137,7 @@ def MenuListup(user, sellingTime):
 
         for entryPoint in QUICKREPLIES_MAP:
             KakaoForm.QuickReplies_Add(
-                entryPoint['action'], entryPoint['label'], entryPoint['messageText'], entryPoint['blockid'], entryPoint['extra'])
+                entryPoint['action'], entryPoint['label'], entryPoint['messageText'], entryPoint['blockId'], entryPoint['extra'])
 
         KakaoForm.SimpleText_Add("판매중인 {} 메뉴가 없어요ㅠㅜ".format(sellingTime))
 
@@ -166,16 +165,17 @@ def GET_Menu(request):
     try:
         kakaoPayload = KakaoPayLoad(request)
 
+        # User Validation
         user = userValidation(kakaoPayload)
         if (user == None):
             return GET_UserHome(request)
 
+        # User's Order Validation
         orderStatus = orderValidation(user)
         
         if(orderStatus != None):
             return orderStatus
 
-        # Selling Time Check
         currentSellingTime = sellingTimeCheck()
 
         if (currentSellingTime == None):
@@ -185,8 +185,8 @@ def GET_Menu(request):
                 @NOTE Dinner Time Close In Alpha 
             """
 
-            return MenuListup(user, SELLING_TIME_LUNCH)
-            # return errorView("Get Invalid Selling Time", "오늘 점심은 이미 마감되었어요.\n내일 점심을 기대해주세요.")
+            # return MenuListup(user, SELLING_TIME_LUNCH)
+            return errorView("Get Invalid Selling Time", "오늘 점심은 이미 마감되었어요.\n내일 점심을 기대해주세요.")
 
         return MenuListup(user, currentSellingTime)
 
@@ -204,38 +204,35 @@ def GET_Menu(request):
 '''
 @csrf_exempt
 def GET_PickupTime(request):
+    EatplusSkillLog("Get PickupTime")
+    
     try:
         kakaoPayload = KakaoPayLoad(request)
 
-        # Invalied Path Access
-        if(kakaoPayload.userID == NOT_APPLICABLE) or (kakaoPayload.storeID == NOT_APPLICABLE) or (kakaoPayload.menuID == NOT_APPLICABLE) or (kakaoPayload.sellingTime == NOT_APPLICABLE):
-            return errorView("Parameter Error")
-        else:
-            try:
-                userInstance = User.objects.get(
-                    identifier_code=kakaoPayload.userID)
-            except User.DoesNotExist:
-                return errorView("User ID is Invalid")
+        # User Validation
+        user = userValidation(kakaoPayload)
+        if (user == None):
+            return GET_UserHome(request)
 
-            storeInstance = Store.objects.get(id=kakaoPayload.storeID)
-            menuInstance = Menu.objects.get(id=kakaoPayload.menuID)
+        # User's Order Validation
+        orderStatus = orderValidation(user)
+        
+        if(orderStatus != None):
+            return orderStatus
 
-        if(orderValidation(kakaoPayload.userID, kakaoPayload.menuID) == False):
-            return errorView("Order Validate Failed!", "정상적인 경로로 주문해주세요!")
 
-        EatplusSkillLog("Order Flow")
+        currentSellingTime = sellingTimeCheck()
 
         KakaoForm = Kakao_SimpleForm()
         KakaoForm.SimpleForm_Init()
 
         KakaoForm.SimpleText_Add(
-            "{} 픽업시간을 설정해주세요.".format(kakaoPayload.sellingTime))
-
-        allExtraData = kakaoPayload.dataActionExtra
+            "음식을 가지러 갈 픽업시간을 설정해주세요."
+        )
 
         PICKUP_TIME_QUICKREPLIES_MAP = []
 
-        if SELLING_TIME_CATEGORY_DICT[kakaoPayload.sellingTime] == SELLING_TIME_LUNCH:
+        if currentSellingTime == SELLING_TIME_LUNCH:
             ENTRY_PICKUP_TIME_MAP = LUNCH_PICKUP_TIME
             pikcupTime_Start = storeInstance.lunch_pickupTime_start
             pikcupTime_End = storeInstance.lunch_pickupTime_end
@@ -247,11 +244,11 @@ def GET_PickupTime(request):
         for index, pickupTime in ENTRY_PICKUP_TIME_MAP:
             if(pikcupTime_Start <= index) and (index <= pikcupTime_End):
                 PICKUP_TIME_QUICKREPLIES_MAP += {'action': "message", 'label': pickupTime, 'messageText': wordings.ORDER_CONFIRM_COMMAND,
-                                                 'blockid': "none", 'extra': {**allExtraData, KAKAO_PARAM_PICKUP_TIME: pickupTime}},
+                                                 'blockId': "none", 'extra': {**allExtraData, KAKAO_PARAM_PICKUP_TIME: pickupTime}},
 
         for entryPoint in PICKUP_TIME_QUICKREPLIES_MAP:
             KakaoForm.QuickReplies_Add(entryPoint['action'], entryPoint['label'],
-                                       entryPoint['messageText'], entryPoint['blockid'], entryPoint['extra'])
+                                       entryPoint['messageText'], entryPoint['blockId'], entryPoint['extra'])
 
         return JsonResponse(KakaoForm.GetForm())
 
@@ -317,14 +314,14 @@ def SET_OrderSheet(request):
 
         GET_PICKUP_TIME_QUICKREPLIES_MAP = [
             {'action': "message", 'label': "{}하기".format(wordings.ORDER_PICKUP_TIME_CHANGE_COMMAND),  'messageText': "{} {}".format(
-                kakaoPayload.sellingTime, wordings.GET_PICKUP_TIME_COMMAND), 'blockid': "none", 'extra': kakaoPayload.dataActionExtra},
+                kakaoPayload.sellingTime, wordings.GET_PICKUP_TIME_COMMAND), 'blockId': "none", 'extra': kakaoPayload.dataActionExtra},
             {'action': "message", 'label': wordings.RETURN_HOME_QUICK_REPLISE, 'messageText': wordings.RETURN_HOME_QUICK_REPLISE,
-                'blockid': "none", 'extra': {KAKAO_PARAM_STATUS: KAKAO_PARAM_STATUS_OK}},
+                'blockId': "none", 'extra': {KAKAO_PARAM_STATUS: KAKAO_PARAM_STATUS_OK}},
         ]
 
         for entryPoint in GET_PICKUP_TIME_QUICKREPLIES_MAP:
             KakaoForm.QuickReplies_Add(entryPoint['action'], entryPoint['label'],
-                                       entryPoint['messageText'], entryPoint['blockid'], entryPoint['extra'])
+                                       entryPoint['messageText'], entryPoint['blockId'], entryPoint['extra'])
 
         return JsonResponse(KakaoForm.GetForm())
 
@@ -409,7 +406,7 @@ def POST_Order(request):
 
         for entryPoint in DEFAULT_QUICKREPLIES_MAP:
             KakaoForm.QuickReplies_Add(entryPoint['action'], entryPoint['label'],
-                                       entryPoint['messageText'], entryPoint['blockid'], entryPoint['extra'])
+                                       entryPoint['messageText'], entryPoint['blockId'], entryPoint['extra'])
 
         return JsonResponse(KakaoForm.GetForm())
 

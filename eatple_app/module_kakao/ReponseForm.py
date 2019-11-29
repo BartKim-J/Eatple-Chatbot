@@ -86,8 +86,8 @@ class Kakao_SimpleForm(KakaoBaseForm):
         self.quickReplies = []
         self.UpdateTemplateForm()
 
-    def QuickReplies_Add(self, _action, _label, _messageText, _blockid, _extra):
-        self.quickReplies += { "action" : _action, "label" : _label, "messageText" : _messageText, "blockid": _blockid, "extra": _extra },
+    def QuickReplies_Add(self, _action, _label, _messageText, _blockId, _extra):
+        self.quickReplies += { "action" : _action, "label" : _label, "messageText" : _messageText, "blockId": _blockId, "extra": _extra },
         
     # SimpleForm Common
     def SimpleForm_Init(self):
@@ -158,8 +158,8 @@ class Kakao_CarouselForm(KakaoBaseForm):
         self.quickReplies = []
         self.UpdateTemplateForm()
 
-    def QuickReplies_Add(self, _action, _label, _messageText, _blockid, _extra):
-        self.quickReplies += { "action" : _action, "label" : _label, "messageText" : _messageText, "blockid": _blockid, "extra": _extra },
+    def QuickReplies_Add(self, _action, _label, _messageText, _blockId, _extra):
+        self.quickReplies += { "action" : _action, "label" : _label, "messageText" : _messageText, "blockId": _blockId, "extra": _extra },
 
     # Comerce Card 
     def ComerceCard_Init(self):

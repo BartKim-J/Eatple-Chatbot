@@ -59,14 +59,14 @@ def GET_PartnerHome(request):
 
     HOME_BTN_MAP = [
         {'action': "message", 'label': wordings.GET_ORDER_LIST_TOTAL_COMMAND,
-            'messageText': wordings.GET_ORDER_LIST_TOTAL_COMMAND, 'blockid': "none", 'extra': {'Status': "OK"}},
+            'messageText': wordings.GET_ORDER_LIST_TOTAL_COMMAND, 'blockId': "none", 'extra': {'Status': "OK"}},
         {'action': "message", 'label': wordings.GET_CALCULATE_CHECK_COMMAND,
-            'messageText': wordings.GET_CALCULATE_CHECK_COMMAND, 'blockid': "none", 'extra': {'Status': "OK"}},
+            'messageText': wordings.GET_CALCULATE_CHECK_COMMAND, 'blockId': "none", 'extra': {'Status': "OK"}},
     ]
 
     HOME_QUICKREPLIES_MAP = [
         {'action': "message", 'label': wordings.STORE_MANUAL_COMMAND,
-            'messageText': wordings.STORE_MANUAL_COMMAND,    'blockid': "none", 'extra': {}},
+            'messageText': wordings.STORE_MANUAL_COMMAND,    'blockId': "none", 'extra': {}},
     ]
 
     try:
@@ -96,7 +96,7 @@ def GET_PartnerHome(request):
 
         for entryPoint in HOME_QUICKREPLIES_MAP:
             KakaoForm.QuickReplies_Add(entryPoint['action'], entryPoint['label'],
-                                       entryPoint['messageText'], entryPoint['blockid'], entryPoint['extra'])
+                                       entryPoint['messageText'], entryPoint['blockId'], entryPoint['extra'])
 
         return JsonResponse(KakaoForm.GetForm())
 
