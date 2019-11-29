@@ -18,12 +18,15 @@ from eatple_app.model.utils import logo_directory_path
 # define
 from eatple_app.define import *
 
-class CRN(models.Model):    
-    store = models.OneToOneField('Store', on_delete=models.CASCADE, unique=True, null=True)
+
+class CRN(models.Model):
+    store = models.OneToOneField(
+        'Store', on_delete=models.CASCADE, unique=True, null=True)
 
     UID = models.CharField(max_length=3, help_text="Unique ID")
 
-    CC = models.CharField(max_length=2, help_text="Corporation Classification Code")
+    CC = models.CharField(
+        max_length=2, help_text="Corporation Classification Code")
 
     SN = models.CharField(max_length=4, help_text="Serial Number")
 
@@ -33,19 +36,19 @@ class CRN(models.Model):
         return "{UID}-{CC}-{SN}{VN}".format(UID=self.UID, CC=self.CC, SN=self.SN, VN=self.VN)
 
 
-
 class PickupTime(models.Model):
-    STATUS_CHOICES = (
-        ('o', 'Open'),
-        ('c', 'Close'),
+    class Meta:
+        ordering = ['time']
+
+    store = models.ForeignKey('Store', on_delete=models.CASCADE, null=True)
+
+    time = models.TimeField(default=datetime.now())
+    
+    status = models.IntegerField(
+        default=OC_OPEN,
+        choices=OC_STATUS
     )
 
-    status = models.CharField(max_length=1, default='o', choices=STATUS_CHOICES, help_text="")
-        
-    store = models.ForeignKey('Store', on_delete=models.CASCADE, null=True)
-            
-    time = models.TimeField(auto_now_add=True)
-    
 
 class StoreInfo(models.Model):
     store_id = models.CharField(default="N/A",
@@ -54,7 +57,8 @@ class StoreInfo(models.Model):
 
     name = models.CharField(max_length=STRING_LENGTH, help_text="Store Name")
 
-    addr = models.CharField(max_length=STRING_LENGTH, help_text="Store Address")
+    addr = models.CharField(max_length=STRING_LENGTH,
+                            help_text="Store Address")
 
     owner = models.CharField(max_length=WORD_LENGTH, help_text="Owner")
 
@@ -74,13 +78,11 @@ class StoreSetting(models.Model):
 
 
 class StoreStatus(models.Model):
-    STATUS_CHOICES = (
-        ('o', 'Open'),
-        ('c', 'Close'),
+    status = models.IntegerField(
+        default=OC_OPEN,
+        choices=OC_STATUS
     )
 
-    status = models.CharField(max_length=1, default='o', choices=STATUS_CHOICES, help_text="")
-    
     class Meta:
         abstract = True
 

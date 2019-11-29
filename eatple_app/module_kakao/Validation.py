@@ -72,11 +72,42 @@ def orderValidation(user):
     return None
 
 def userValidation(KakaoPayload):
-    app_user_id = KakaoPayload.user_properties['app_user_id']
-
     try:
-        user = User.objects.get(app_user_id=app_user_id)
+        app_user_id = KakaoPayload.user_properties['app_user_id']
+        try:
+            user = User.objects.get(app_user_id=app_user_id)
+            return user
+        except User.DoesNotExist:
+            return None
+    except (TypeError, AttributeError):
+        return None
 
-        return user
-    except User.DoesNotExist:
+def menuValidation(KakaoPayload):
+    try:
+        menu_id = KakaoPayload.dataActionExtra[KAKAO_PARAM_MENU_ID]
+        try:
+            menu = Menu.objects.get(menu_id=menu_id)
+            return menu
+        except Menu.DoesNotExist:
+            return None
+    except (TypeError, AttributeError):
+        return None
+    
+def storeValidation(KakaoPayload):
+    try:
+        store_id = KakaoPayload.dataActionExtra[KAKAO_PARAM_STORE_ID]
+        try:
+            store = Store.objects.get(store_id=store_id)
+            return store
+        except Store.DoesNotExist:
+            return None
+    except (TypeError, AttributeError):
+        return None
+
+    
+def pickupTimeValidation(KakaoPayload):
+    try:
+        pickupTime = KakaoPayload.dataActionExtra[KAKAO_PARAM_PICKUP_TIME]
+        return pickupTime
+    except (TypeError, AttributeError):
         return None

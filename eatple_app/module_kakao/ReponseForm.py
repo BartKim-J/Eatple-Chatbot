@@ -168,12 +168,13 @@ class Kakao_CarouselForm(KakaoBaseForm):
         self.quickReplies = []
         self.UpdateTemplateForm()
 
-    def ComerceCard_Add(self, _description, _price, _discount, _currency, _thumbnails, _profile, _buttons):
+    def ComerceCard_Add(self, _description, _price, _discount, _discountPrice,  _thumbnails, _profile, _buttons):
         self.items += {
             "description": _description,
             "price": _price,
-            #"discount": _discount,
-            "currency": _currency,
+            "discount": _discount,
+            "discountPrice": _discountPrice,
+            "currency": "won",
             "thumbnails": _thumbnails,
             "profile": _profile,
             "buttons": _buttons

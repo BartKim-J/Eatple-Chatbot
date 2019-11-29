@@ -68,23 +68,21 @@ class OrderRecordSheet(models.Model):
         super().save(*args, **kwargs)
 
     def recordUpdate(self, status, *args, **kwargs):
-        if(self.id == None):
-            super().save(*args, **kwargs)
-            
-        timeOut = False
-        latest_date = dateByTimeZone(self.update_date)
-        current_date = dateNowByTimeZone()
-
-        if(latest_date + timedelta(minutes=3) < current_date):
-            return True
-
         super().save(*args, **kwargs)
 
         orderRecord = OrderRecord(order_record_sheet=self, status=status)
         orderRecord.save()
 
-        return timeOut
+    def timeoutValidation(self):
+        timeOut = False
+        latest_date = dateByTimeZone(self.update_date)
+        current_date = dateNowByTimeZone()
 
+        if (latest_date + timedelta(minutes=3) < current_date):
+            timeOut = True
+            
+        return timeOut
+    
     # Methods
     def __str__(self):
         return "{}".format(self.user)

@@ -7,6 +7,7 @@ from django.utils.translation import ugettext_lazy as _
 # Models
 from .models import *
 
+
 class CRNInline(admin.TabularInline):
     model = CRN
     min_num = 1
@@ -33,7 +34,12 @@ class PickupTimeInline(admin.TabularInline):
     model = PickupTime
     extra = 0
     min_num = 2
-    
+
+    fieldsets = [
+        (None, {'fields': ['status', 'time']}),
+    ]
+
+
 class StoreAdmin(admin.ModelAdmin):
     readonly_fields = ('store_id',)
 
@@ -63,12 +69,13 @@ class OrderInline(admin.TabularInline):
     model = Order
     extra = 0
     min_num = 1
-    
+
     def has_add_permission(self, request, obj=None):
         return False
-    
+
     def has_delete_permission(self, request, obj=None):
         return False
+
 
 class OrderSheetAdmin(admin.ModelAdmin):
     readonly_fields = ('management_code', 'user', 'order_date', 'update_date')
@@ -79,7 +86,6 @@ class OrderSheetAdmin(admin.ModelAdmin):
     inlines = [OrderInline]
 
 
-
 admin.site.register(OrderSheet, OrderSheetAdmin)
 
 
@@ -87,16 +93,18 @@ class OrderRecordInline(admin.TabularInline):
     model = OrderRecord
     extra = 0
     min_num = 0
-    
+
     readonly_fields = ('status', 'record_date', )
-    
+
+
 class OrderRecordSheetAdmin(admin.ModelAdmin):
     readonly_fields = ('status', 'created_date', 'update_date')
-        
+
     list_filter = ('update_date', 'created_date')
     list_display = ('status', 'user', 'created_date', 'update_date')
-    
+
     inlines = [OrderRecordInline]
+
 
 admin.site.register(OrderRecordSheet, OrderRecordSheetAdmin)
 
@@ -105,12 +113,12 @@ admin.site.register(Partner)
 
 
 class UserAdmin(admin.ModelAdmin):
-    readonly_fields = ('app_user_id','nickname', 'profile_image_url',
+    readonly_fields = ('app_user_id', 'nickname', 'profile_image_url',
                        'phone_number', 'email', 'birthyear', 'birthday', 'gender', 'ci', 'ci_authenticated_at')
 
     list_filter = ('create_date', 'gender')
-    list_display = ('app_user_id', 'nickname', 'phone_number', 'email','gender')
-
+    list_display = ('app_user_id', 'nickname',
+                    'phone_number', 'email', 'gender')
 
 
 admin.site.register(User, UserAdmin)
