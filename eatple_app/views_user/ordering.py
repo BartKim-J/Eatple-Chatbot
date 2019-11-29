@@ -33,7 +33,7 @@ DEFAULT_QUICKREPLIES_MAP = [
         'label': wordings.RETURN_HOME_QUICK_REPLISE,
         'messageText': wordings.RETURN_HOME_QUICK_REPLISE,
         'blockId': "",
-        'extra': {KAKAO_PARAM_STATUS: KAKAO_PARAM_STATUS_OK}
+        'extra': {}
     },
 ]
 
@@ -109,9 +109,8 @@ def MenuListup(user, sellingTime):
                     'messageText': "로딩중..",
                     'blockId': KAKAO_BLOCK_SET_PICKUP_TIME,
                     'extra': {
-                        KAKAO_PARAM_STORE_ID:         menu.store.id,
-                        KAKAO_PARAM_MENU_ID:          menu.id,
-                        KAKAO_PARAM_SELLING_TIME:     sellingTime,
+                        KAKAO_PARAM_STORE_ID:         menu.store.store_id,
+                        KAKAO_PARAM_MENU_ID:          menu.menu_id,
                     }
                 },
                 {
@@ -140,14 +139,6 @@ def MenuListup(user, sellingTime):
                 entryPoint['action'], entryPoint['label'], entryPoint['messageText'], entryPoint['blockId'], entryPoint['extra'])
 
         KakaoForm.SimpleText_Add("판매중인 {} 메뉴가 없어요ㅠㅜ".format(sellingTime))
-
-
-    kakaoReponseData = {
-        KAKAO_PARAM_SELLING_TIME:  sellingTime,
-        KAKAO_PARAM_STATUS: KAKAO_PARAM_STATUS_OK,
-    }
-
-    KakaoForm.SetDataForm(kakaoReponseData)
 
     return JsonResponse(KakaoForm.GetForm())
 
@@ -178,6 +169,19 @@ def GET_Menu(request):
 
         currentSellingTime = sellingTimeCheck()
 
+        try:
+            orderRecordSheet = OrderRecordSheet.objects.latest('update_date')
+        except OrderRecordSheet.DoesNotExist:
+            orderRecordSheet = OrderRecordSheet()
+
+        orderRecordSheet.user = user
+                    
+        if (orderRecordSheet.recordUpdate(ORDER_RECORD_GET_MENU)):
+            print("TimeOut")
+            newOrderRecordSheet = OrderRecordSheet()
+            newOrderRecordSheet.user = user
+            newOrderRecordSheet.recordUpdate(ORDER_RECORD_GET_MENU)
+        
         if (currentSellingTime == None):
             return errorView("Get Invalid Selling Time", "잘못된 주문 시간입니다.")
         elif currentSellingTime == SELLING_TIME_DINNER:
@@ -220,8 +224,16 @@ def GET_PickupTime(request):
         if(orderStatus != None):
             return orderStatus
 
-
         currentSellingTime = sellingTimeCheck()
+        
+        try:
+            orderRecordSheet = OrderRecordSheet.objects.latest('update_date')
+        except OrderRecordSheet.DoesNotExist:
+            orderRecordSheet = OrderRecordSheet()
+
+        orderRecordSheet.user = user
+                    
+        orderRecordSheet.recordUpdate(ORDER_RECORD_SET_PICKUP_TIEM)         
 
         KakaoForm = Kakao_SimpleForm()
         KakaoForm.SimpleForm_Init()
@@ -233,13 +245,12 @@ def GET_PickupTime(request):
         PICKUP_TIME_QUICKREPLIES_MAP = []
 
         if currentSellingTime == SELLING_TIME_LUNCH:
-            ENTRY_PICKUP_TIME_MAP = LUNCH_PICKUP_TIME
-            pikcupTime_Start = storeInstance.lunch_pickupTime_start
-            pikcupTime_End = storeInstance.lunch_pickupTime_end
+            pikcupTime_Start = store.lunch_pickupTime_start
+            pikcupTime_End = store.lunch_pickupTime_end
         else:
-            ENTRY_PICKUP_TIME_MAP = DINNER_PICKUP_TIME
-            pikcupTime_Start = storeInstance.dinner_pickupTime_start
-            pikcupTime_End = storeInstance.dinner_pickupTime_end
+  
+            pikcupTime_Start = store.dinner_pickupTime_start
+            pikcupTime_End = store.dinner_pickupTime_end
 
         for index, pickupTime in ENTRY_PICKUP_TIME_MAP:
             if(pikcupTime_Start <= index) and (index <= pikcupTime_End):
@@ -316,7 +327,7 @@ def SET_OrderSheet(request):
             {'action': "message", 'label': "{}하기".format(wordings.ORDER_PICKUP_TIME_CHANGE_COMMAND),  'messageText': "{} {}".format(
                 kakaoPayload.sellingTime, wordings.GET_PICKUP_TIME_COMMAND), 'blockId': "none", 'extra': kakaoPayload.dataActionExtra},
             {'action': "message", 'label': wordings.RETURN_HOME_QUICK_REPLISE, 'messageText': wordings.RETURN_HOME_QUICK_REPLISE,
-                'blockId': "none", 'extra': {KAKAO_PARAM_STATUS: KAKAO_PARAM_STATUS_OK}},
+                'blockId': "none", 'extra': {}},
         ]
 
         for entryPoint in GET_PICKUP_TIME_QUICKREPLIES_MAP:

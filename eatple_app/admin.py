@@ -29,6 +29,11 @@ class MenuInline(admin.StackedInline):
     ]
 
 
+class PickupTimeInline(admin.TabularInline):
+    model = PickupTime
+    extra = 0
+    min_num = 2
+    
 class StoreAdmin(admin.ModelAdmin):
     readonly_fields = ('store_id',)
 
@@ -45,7 +50,7 @@ class StoreAdmin(admin.ModelAdmin):
     list_filter = ('status',)
     list_display = ('name', 'status', 'store_id', 'crn')
 
-    inlines = [CRNInline, MenuInline]
+    inlines = [CRNInline, MenuInline, PickupTimeInline]
 
 
 admin.site.register(Store, StoreAdmin)
@@ -83,7 +88,7 @@ class OrderRecordInline(admin.TabularInline):
     extra = 0
     min_num = 0
     
-    readonly_fields = ('created_date', 'update_date')
+    readonly_fields = ('status', 'record_date', )
     
 class OrderRecordSheetAdmin(admin.ModelAdmin):
     readonly_fields = ('status', 'created_date', 'update_date')

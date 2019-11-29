@@ -11,14 +11,14 @@ from datetime import datetime, timedelta
 # Define
 from eatple_app.define import *
 
-def orderStatusUpdateByTime(orderInstance):
-    menuInstance = orderInstance.menuInstance
+def orderStatusUpdateByTime(order):
+    menuInstance = order.menuInstance
 
-    orderDate = dateByTimeZone(orderInstance.order_date)
+    orderDate = dateByTimeZone(order.order_date)
     orderDateWithoutTime = orderDate.replace(
         hour=0, minute=0, second=0, microsecond=0)
 
-    orderPickupTime = orderInstance.pickupTime
+    orderPickupTime = order.pickupTime
 
     currentDate = dateNowByTimeZone()
     currentDateWithoutTime = currentDate.replace(
@@ -70,76 +70,76 @@ def orderStatusUpdateByTime(orderInstance):
 
         # Meal Pre-
         if(prevlunchOrderTimeEnd <= currentDate) and (currentDate <= lunchOrderPickupTimeStart):
-            orderInstance.status = ORDER_STATUS[ORDER_STATUS_DICT['픽업 준비중']][0]
-            orderInstance.save()
+            order.status = ORDER_STATUS[ORDER_STATUS_DICT['픽업 준비중']][0]
+            order.save()
         # PickupTime Range
         elif(lunchOrderPickupTimeStart <= currentDate) and (currentDate <= lunchOrderPickupTimeEnd):
             # Over Order Pickup Time
             if(currentDate >= orderPickupTime):
-                orderInstance.status = ORDER_STATUS[ORDER_STATUS_DICT['픽업 가능']][0]
-                orderInstance.save()
+                order.status = ORDER_STATUS[ORDER_STATUS_DICT['픽업 가능']][0]
+                order.save()
             else:
-                orderInstance.status = ORDER_STATUS[ORDER_STATUS_DICT['픽업 준비중']][0]
-                orderInstance.save()
+                order.status = ORDER_STATUS[ORDER_STATUS_DICT['픽업 준비중']][0]
+                order.save()
         # Order Time Range
         else:
             # prev phase Order
             if(prevlunchOrderEditTimeStart <= currentDate) and (currentDate <= prevlunchOrderTimeEnd):
                 if currentDate <= prevlunchOrderEditTimeEnd:
-                    orderInstance.status = ORDER_STATUS[ORDER_STATUS_DICT['주문 완료']][0]
-                    orderInstance.save()
+                    order.status = ORDER_STATUS[ORDER_STATUS_DICT['주문 완료']][0]
+                    order.save()
 
                 else:
-                    orderInstance.status = ORDER_STATUS[ORDER_STATUS_DICT['픽업 준비중']][0]
-                    orderInstance.save()
+                    order.status = ORDER_STATUS[ORDER_STATUS_DICT['픽업 준비중']][0]
+                    order.save()
 
             # next phase Lunch order
             elif (nextlunchOrderTimeEnd >= currentDate) and (orderDateWithoutTime >= TODAY):
-                orderInstance.status = ORDER_STATUS[ORDER_STATUS_DICT['주문 완료']][0]
-                orderInstance.save()
+                order.status = ORDER_STATUS[ORDER_STATUS_DICT['주문 완료']][0]
+                order.save()
 
             # Invalid Time Range is Dinner Order Time ( prev phase lunch order ~ dinner order ~ next phase lunch order )
             else:
-                orderInstance.status = ORDER_STATUS[ORDER_STATUS_DICT['주문 만료']][0]
-                orderInstance.save()
+                order.status = ORDER_STATUS[ORDER_STATUS_DICT['주문 만료']][0]
+                order.save()
 
     # Dinner Order
     elif (SELLING_TIME_CATEGORY[SELLING_TIME_DINNER][0] == menuInstance.sellingTime) and (orderDateWithoutTime == TODAY):
         # Meal Pre-
         if(dinnerOrderTimeEnd <= currentDate) and (currentDate <= dinnerOrderPickupTimeStart):
-            orderInstance.status = ORDER_STATUS[ORDER_STATUS_DICT['픽업 준비중']][0]
-            orderInstance.save()
+            order.status = ORDER_STATUS[ORDER_STATUS_DICT['픽업 준비중']][0]
+            order.save()
         # PickupTime Range
         elif(dinnerOrderPickupTimeStart <= currentDate) and (currentDate <= dinnerOrderPickupTimeEnd):
             # Over Order Pickup Time
             if(currentDate >= orderPickupTime):
-                orderInstance.status = ORDER_STATUS[ORDER_STATUS_DICT['픽업 가능']][0]
-                orderInstance.save()
+                order.status = ORDER_STATUS[ORDER_STATUS_DICT['픽업 가능']][0]
+                order.save()
             else:
-                orderInstance.status = ORDER_STATUS[ORDER_STATUS_DICT['픽업 준비중']][0]
-                orderInstance.save()
+                order.status = ORDER_STATUS[ORDER_STATUS_DICT['픽업 준비중']][0]
+                order.save()
         else:
             # Today Order
             if(dinnerOrderEditTimeStart < currentDate) and (currentDate < dinnerOrderTimeEnd):
 
                 if orderDate <= dinnerOrderEditTimeEnd:
-                    orderInstance.status = ORDER_STATUS[ORDER_STATUS_DICT['주문 완료']][0]
-                    orderInstance.save()
+                    order.status = ORDER_STATUS[ORDER_STATUS_DICT['주문 완료']][0]
+                    order.save()
 
                 else:
-                    orderInstance.status = ORDER_STATUS[ORDER_STATUS_DICT['픽업 준비중']][0]
-                    orderInstance.save()
+                    order.status = ORDER_STATUS[ORDER_STATUS_DICT['픽업 준비중']][0]
+                    order.save()
             # Invalid Time Range is Lunch Order Time ( prev phase lunch order ~ dinner order ~ next phase lunch order )
             else:
-                orderInstance.status = ORDER_STATUS[ORDER_STATUS_DICT['주문 만료']][0]
-                orderInstance.save()
+                order.status = ORDER_STATUS[ORDER_STATUS_DICT['주문 만료']][0]
+                order.save()
 
     # Invalid Order Selling Time
     else:
-        orderInstance.status = ORDER_STATUS[ORDER_STATUS_DICT['주문 만료']][0]
-        orderInstance.save()
+        order.status = ORDER_STATUS[ORDER_STATUS_DICT['주문 만료']][0]
+        order.save()
 
-    return orderInstance.status
+    return order.status
 
 
 class Order(models.Model):
@@ -174,10 +174,10 @@ class Order(models.Model):
 
     count = models.IntegerField(default=1)
 
-    pickup_time = models.DateTimeField(default=timezone.now)
+    pickup_time = models.DateTimeField(auto_now=True)
 
-    update_date = models.DateTimeField(auto_now_add=False, auto_now=True)
-    order_date = models.DateTimeField(default=timezone.now)
+    update_date = models.DateTimeField(auto_now=True)
+    order_date = models.DateTimeField(auto_now_add=True)
 
     status = models.IntegerField(
         # max_length=STRING_LENGTH,
@@ -216,8 +216,8 @@ class storeOrderManager():
         print(availableOrders)
 
         # Order Status Update
-        for orderInstance in availableOrders:
-            orderStatusUpdateByTime(orderInstance)
+        for order in availableOrders:
+            orderStatusUpdateByTime(order)
 
         return self.getAvailableOrders()
 
@@ -301,8 +301,8 @@ class OrderSheet(models.Model):
         null=True
     )
 
-    update_date = models.DateTimeField(auto_now_add=False, auto_now=True)
-    order_date = models.DateTimeField(default=timezone.now)
+    update_date = models.DateTimeField(auto_now=True)
+    order_date = models.DateTimeField(auto_now_add=True)
 
     def __init__(self, *args, **kwargs):
         super(OrderSheet, self).__init__(*args, **kwargs)

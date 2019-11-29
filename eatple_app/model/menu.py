@@ -117,4 +117,4 @@ class Menu(MenuInfo, MenuStatus, MenuSetting):
             return DEFAULT_MENU_IMAGE_PATH
 
     def __str__(self):
-        return "{sellingTime}메뉴 - {name}".format(name=self.name, sellingTime=self.sellingTime)
+        return "{store} - {name}".format(store=self.store.name, name=self.name)

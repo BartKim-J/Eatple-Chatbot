@@ -33,6 +33,20 @@ class CRN(models.Model):
         return "{UID}-{CC}-{SN}{VN}".format(UID=self.UID, CC=self.CC, SN=self.SN, VN=self.VN)
 
 
+
+class PickupTime(models.Model):
+    STATUS_CHOICES = (
+        ('o', 'Open'),
+        ('c', 'Close'),
+    )
+
+    status = models.CharField(max_length=1, default='o', choices=STATUS_CHOICES, help_text="")
+        
+    store = models.ForeignKey('Store', on_delete=models.CASCADE, null=True)
+            
+    time = models.TimeField(auto_now_add=True)
+    
+
 class StoreInfo(models.Model):
     store_id = models.CharField(default="N/A",
                                 max_length=STRING_LENGTH, help_text="Store ID",

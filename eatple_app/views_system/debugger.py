@@ -49,7 +49,7 @@ def errorView(error_log="error message", view_log="진행하는 도중 문제가
 
     ERROR_QUICKREPLIES_MAP = [
         {'action': "message", 'label': "홈으로 돌아가기",    'messageText': "홈으로 돌아가기",
-            'blockId': "none", 'extra': {KAKAO_PARAM_STATUS: KAKAO_PARAM_STATUS_OK}},
+            'blockId': "none", 'extra': {}},
     ]
 
     for entryPoint in ERROR_QUICKREPLIES_MAP:

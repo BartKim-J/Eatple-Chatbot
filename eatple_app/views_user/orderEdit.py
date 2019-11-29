@@ -40,7 +40,7 @@ from eatple_app.define import *
 
 DEFAULT_QUICKREPLIES_MAP = [
     {'action': "message", 'label': wordings.RETURN_HOME_QUICK_REPLISE,    'messageText': wordings.RETURN_HOME_QUICK_REPLISE, 'blockId': "none",
-        'extra': {KAKAO_PARAM_STATUS: KAKAO_PARAM_STATUS_OK}},
+        'extra': {}},
 ]
 
 # # # # # # # # # # # # # # # # # # # # # # # # #
@@ -201,7 +201,7 @@ def GET_ConfirmUserCoupon(request):
             {'action': "message", 'label': "사용하기",    'messageText': wordings.USE_COUPON_COMMAND,
                 'blockId': "none", 'extra': {KAKAO_PARAM_ORDER_ID: OrderInstance.id}},
             {'action': "message", 'label': wordings.RETURN_HOME_QUICK_REPLISE,    'messageText': wordings.RETURN_HOME_QUICK_REPLISE,
-                'blockId': "none", 'extra': {KAKAO_PARAM_STATUS: KAKAO_PARAM_STATUS_OK}},
+                'blockId': "none", 'extra': {}},
         ]
 
         EatplusSkillLog("Order Check Flow")

@@ -4,10 +4,9 @@ import os
 
 # Django Library
 from django.conf import settings
-from django.utils import timezone
 
 # External Library
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 import requests
 import json
 
@@ -83,6 +82,21 @@ ORDER_STATUS = [
     (ORDER_STATUS_PICKUP_COMPLETED, '픽업 완료'),
 ]
 
+# ORDER RECORD
+ORDER_RECORD_GET_MENU = 0
+ORDER_RECORD_SET_PICKUP_TIEM = 1
+ORDER_RECORD_ORDERSHEET_CHECK = 2
+ORDER_RECORD_PAYMENT = 3
+ORDER_RECORD_PAYMENT_COMPLETED = 4
+
+ORDER_RECORD = [
+    (ORDER_RECORD_GET_MENU, '메뉴보기'),
+    (ORDER_RECORD_SET_PICKUP_TIEM, '픽업시간 설정'),
+    (ORDER_RECORD_ORDERSHEET_CHECK, '주문 확인'),
+    (ORDER_RECORD_PAYMENT, '결제준비'),
+    (ORDER_RECORD_PAYMENT_COMPLETED, '결제완료'),
+]
+
 # PICKUP TIME
 LUNCH_PICKUP_TIME = [
     (0, "11:30"), (1, "11:45"), (2, "12:00"), (3, "12:15"), 
@@ -103,23 +117,15 @@ KAKAO_BLOCK_SET_PICKUP_TIME = '5de12635b617ea0001cb037a'
 KAKAO_BLOCK_EATPLE_PASS = '5d6f6609ffa7480001c1fdb3'
 KAKAO_BLOCK_RECENT_ORDER = '5d706aed92690d0001812e49'
 
-
-
 KAKAO_PARAM_ORDER_ID = 'orderID'
 KAKAO_PARAM_STORE_ID = 'storeID'
 KAKAO_PARAM_MENU_ID = 'menuID'
 
 KAKAO_PARAM_MENU_CATEGORY = 'menuCategory'
-KAKAO_PARAM_SELLING_TIME = 'sellingTime'
 KAKAO_PARAM_PICKUP_TIME = 'pickupTime'
 
-KAKAO_PARAM_STATUS = 'status'
-KAKAO_PARAM_STATUS_OK = True
-KAKAO_PARAM_STATUS_NOT_OK = False
 
 # Time Functions
-
-
 def dateNowByTimeZone():
     """
     Returns an aware or naive datetime.datetime, depending on settings.USE_TZ.
@@ -136,5 +142,9 @@ def dateByTimeZone(datetime):
         tz = pytz.timezone(settings.TIME_ZONE)
         return tz.localize(datetime)
     except ValueError as ex:
-        KST = timezone(timedelta(hours=9))
-        return datetime.replace(tzinfo=KST)  # TO Korea
+        timeDiffrence = timedelta(hours=9)
+        KST = timezone(timeDiffrence)
+
+        localeTime = datetime.replace(tzinfo=KST) + timeDiffrence
+        
+        return localeTime # TO Korea

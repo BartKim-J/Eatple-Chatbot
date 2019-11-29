@@ -2,7 +2,7 @@ from eatple_app.model.utils import DefaultImage
 from eatple_app.model.utils import UserManual, PartnerManual
 from eatple_app.model.utils import UserIntro, PartnerIntro
 
-from eatple_app.model.store import Store, CRN
+from eatple_app.model.store import Store, CRN, PickupTime
 
 from eatple_app.model.menu import Menu
 from eatple_app.model.menu import Category, Tag

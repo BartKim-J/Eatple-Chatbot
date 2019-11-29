@@ -33,7 +33,7 @@ from eatple_app.define import *
 
 DEFAULT_QUICKREPLIES_MAP = [
     {'action': "message", 'label': wordings.RETURN_HOME_QUICK_REPLISE,    'messageText': wordings.RETURN_HOME_QUICK_REPLISE, 'blockId': "none",
-        'extra': {KAKAO_PARAM_STATUS: KAKAO_PARAM_STATUS_OK}},
+        'extra': {}},
 ]
 
 '''
@@ -58,7 +58,7 @@ def GET_OpenLunchStoreAlarm(request):
 
         buttons = [
             {'action': "message", 'label': "주문 확인하러 가기",    'messageText': "주문 조회", 'blockId': "none",
-             'extra': {KAKAO_PARAM_STATUS: KAKAO_PARAM_STATUS_OK}},
+             'extra': {}},
         ]
 
         KakaoForm.BasicCard_Add(
@@ -122,7 +122,7 @@ def GET_OpenDinnerStoreAlarm(request):
 
         buttons = [
             {'action': "message", 'label': "주문 확인하러 가기", 'messageText': "주문 조회", 'blockId': "none",
-             'extra': {KAKAO_PARAM_STATUS: KAKAO_PARAM_STATUS_OK}},
+             'extra': {}},
         ]
 
         KakaoForm.BasicCard_Add("오늘은 11시 30분부터 손님들이 오실예정이에요.\n조금만 서둘러주세요.".format(11),

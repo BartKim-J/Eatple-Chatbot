@@ -44,6 +44,8 @@ class KakaoPayLoad():
         self.dataActionExtra    = self.dataAction['clientExtra']
         self.dataActionParams   = self.dataAction['detailParams']
         
+        print(self.dataActionExtra)
+        
         # print(self.dataActionParams)
             
         # User Properties
