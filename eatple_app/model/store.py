@@ -1,4 +1,4 @@
-
+# Django Library
 from django.db import models
 from django.conf import settings
 from django.urls import reverse
@@ -7,6 +7,7 @@ from django_mysql.models import Model
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django import forms
 
+# System Library
 import os
 from random import *
 

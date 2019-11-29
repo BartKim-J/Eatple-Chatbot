@@ -8,8 +8,10 @@ from django.core.files.storage import FileSystemStorage
 from django_mysql.models import Model
 from django.core.validators import MaxValueValidator, MinValueValidator
 
-# External Library
+# System Library
 import os
+from random import *
+
 
 # Define
 from eatple_app.define import *
@@ -67,8 +69,10 @@ class MenuSetting(models.Model):
     image = models.ImageField(
         blank=True, upload_to=menu_directory_path, storage=OverwriteStorage())
 
-    sellingTime = models.CharField(
-        max_length=STRING_LENGTH, choices=SELLING_TIME_CATEGORY, default=SELLING_TIME_CATEGORY[SELLING_TIME_LUNCH])
+    sellingTime = models.IntegerField(
+        choices=SELLING_TIME_CATEGORY,
+        default=SELLING_TIME_LUNCH
+    )
 
     price = models.IntegerField(default=6000, help_text="Price")
     discount = models.IntegerField(default=0, help_text="Discount")

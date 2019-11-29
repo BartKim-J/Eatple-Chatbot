@@ -1,0 +1,82 @@
+# Django Library
+from django.shortcuts import render
+from django.views.decorators.csrf import csrf_exempt
+from django.http import JsonResponse
+
+# Models
+from eatple_app.models import *
+
+# Define
+from eatple_app.define import *
+
+# Modules
+from eatple_app.module_kakao.ReponseForm import *
+from eatple_app.module_kakao.RequestForm import *
+
+# View-System
+from eatple_app.views_system.debugger import *
+
+# Wordings
+from eatple_app.views_user.wording import wordings
+
+from eatple_app.views import *
+
+DEFAULT_QUICKREPLIES_MAP = [
+    {
+        'action': "message",
+        'label': wordings.RETURN_HOME_QUICK_REPLISE,
+        'messageText': wordings.RETURN_HOME_QUICK_REPLISE,
+        'blockid': "",
+        'extra': {KAKAO_PARAM_STATUS: KAKAO_PARAM_STATUS_OK}
+    },
+]
+
+def orderValidation(user):
+    orderManager = OrderManager(user)
+
+    orderManager.availableOrderStatusUpdate();
+
+    lunchPurchaed = orderManager.getAvailableLunchuserOrderListPurchased().exists()
+    dinnerPurchaced = orderManager.getAvailableDinnerOrderPurchased().exists()    
+    
+    KakaoForm = Kakao_SimpleForm()
+    KakaoForm.SimpleForm_Init()
+
+    for entryPoint in DEFAULT_QUICKREPLIES_MAP:
+        KakaoForm.QuickReplies_Add(
+            entryPoint['action'], 
+            entryPoint['label'],
+            entryPoint['messageText'], 
+            entryPoint['blockid'], 
+            entryPoint['extra'])
+
+    if (lunchPurchaed and dinnerPurchaced):
+        KakaoForm.SimpleText_Add(
+            "오늘 하루, 잇플로 맛있는 식사를 즐겨주셔서 감사해요. 내일도 잇플과 함께 해주실거죠?"
+        )
+        return JsonResponse(KakaoForm.GetForm())
+                
+    elif (lunchPurchaed):
+        KakaoForm.SimpleText_Add(
+            "이미 저녁 주문을 해주셨네요!\n곧 있을 내일 점심 주문시간에 잇플과 다시 함께해주세요."
+        )
+        return JsonResponse(KakaoForm.GetForm())
+    
+    elif (dinnerPurchaced):
+        KakaoForm.SimpleText_Add(
+            "이미 점심 주문을 해주셨네요!\n저녁 주문 또는 내일 다시 잇플과 함께해주세요."
+        )
+        return JsonResponse(KakaoForm.GetForm())
+        
+
+    return None
+
+def userValidation(KakaoPayload):
+    app_user_id = KakaoPayload.user_properties['app_user_id']
+
+    try:
+        user = User.objects.get(app_user_id=app_user_id)
+
+        return user
+    except User.DoesNotExist:
+        return None

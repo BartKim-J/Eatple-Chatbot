@@ -49,6 +49,7 @@ class KakaoPayLoad():
         # User Properties
         try:
             self.user_properties         = self.dataUserRequest['user']['properties']
+ 
         except (RuntimeError, TypeError, NameError, KeyError) as ex:
             self.user_properties         = NOT_APPLICABLE
 

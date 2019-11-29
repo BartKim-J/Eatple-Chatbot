@@ -1,6 +1,7 @@
 # Django Library
 from django.urls import reverse
 from django.db import models
+from django.db.models import Q
 from django_mysql.models import Model
 from django.utils import timezone
 
@@ -151,7 +152,7 @@ class Order(models.Model):
         blank=True,
         null=True
     )
-    
+
     ordersheet = models.ForeignKey(
         'OrderSheet',
         on_delete=models.CASCADE,
@@ -178,7 +179,6 @@ class Order(models.Model):
 
     update_date = models.DateTimeField(auto_now_add=False, auto_now=True)
     order_date = models.DateTimeField(default=timezone.now)
-
 
     status = models.IntegerField(
         # max_length=STRING_LENGTH,
@@ -212,80 +212,80 @@ class storeOrderManager():
     def __init__(self, storeId):
         self.storeOrderList = Order.objects.filter(storeInstance__id=storeId)
 
-    def availableCouponStatusUpdate(self):
-        availableCoupons = self.getAvailableCoupons()
+    def availableOrderStatusUpdate(self):
+        availableOrders = self.getAvailableOrders()
 
-        print(availableCoupons)
+        print(availableOrders)
 
         # Order Status Update
-        for orderInstance in availableCoupons:
+        for orderInstance in availableOrders:
             orderStatusUpdateByTime(orderInstance)
 
-        return self.getAvailableCoupons()
+        return self.getAvailableOrders()
 
-    def getUnavailableCoupons(self):
-        unavailableCoupons = self.storeOrderList.get(
-            ~Q(status=ORDER_STATUS[ORDER_STATUS_PAYMENT_COMPLETED]) &
-            ~Q(status=ORDER_STATUS[ORDER_STATUS_ORDER_CONFIRM_WAIT]) &
-            ~Q(status=ORDER_STATUS[ORDER_STATUS_PICKUP_PREPARE]) &
-            ~Q(status=ORDER_STATUS[ORDER_STATUS_PICKUP_WAIT])
+    def getUnavailableOrders(self):
+        unavailableOrders = self.storeOrderList.filter(
+            ~Q(status=ORDER_STATUS_PAYMENT_COMPLETED) &
+            ~Q(status=ORDER_STATUS_ORDER_CONFIRM_WAIT) &
+            ~Q(status=ORDER_STATUS_PICKUP_PREPARE) &
+            ~Q(status=ORDER_STATUS_PICKUP_WAIT)
         )
-        return unavailableCoupons
+        return unavailableOrders
 
-    def getAvailableCoupons(self):
-        availableCoupons = self.storeOrderList.exclude(
-            Q(status=ORDER_STATUS[ORDER_STATUS_PAYMENT_COMPLETED]) &
-            Q(status=ORDER_STATUS[ORDER_STATUS_ORDER_CONFIRM_WAIT]) &
-            Q(status=ORDER_STATUS[ORDER_STATUS_PICKUP_PREPARE]) &
-            Q(status=ORDER_STATUS[ORDER_STATUS_PICKUP_WAIT])
+    def getAvailableOrders(self):
+        availableOrders = self.storeOrderList.filter(
+            Q(status=ORDER_STATUS_PAYMENT_COMPLETED) &
+            Q(status=ORDER_STATUS_ORDER_CONFIRM_WAIT) &
+            Q(status=ORDER_STATUS_PICKUP_PREPARE) &
+            Q(status=ORDER_STATUS_PICKUP_WAIT)
         )
-        return availableCoupons
+        return availableOrders
 
 
 class OrderManager():
-    def __init__(self, userID):
+    def __init__(self, user):
         self.userOrderList = Order.objects.filter(
-            userInstance__identifier_code=userID)
+            ordersheet__user=user)
 
-    def availableCouponStatusUpdate(self):
-        availableCoupons = self.getAvailableCoupons()
+    def availableOrderStatusUpdate(self):
+        availableOrders = self.getAvailableOrders()
 
         # Order Status Update
-        for orderInstance in availableCoupons:
-            orderStatusUpdateByTime(orderInstance)
+        for order in availableOrders:
+            orderStatusUpdateByTime(order)
 
-        return self.getAvailableCoupons()
+        return self.getAvailableOrders()
 
-    def getUnavailableCoupons(self):
-        unavailableCoupons = self.userOrderList.get(
-            ~Q(status=ORDER_STATUS[ORDER_STATUS_PAYMENT_COMPLETED]) &
-            ~Q(status=ORDER_STATUS[ORDER_STATUS_ORDER_CONFIRM_WAIT]) &
-            ~Q(status=ORDER_STATUS[ORDER_STATUS_PICKUP_PREPARE]) &
-            ~Q(status=ORDER_STATUS[ORDER_STATUS_PICKUP_WAIT])
+    def getUnavailableOrders(self):
+        unavailableOrders = self.userOrderList.filter(
+            ~Q(status=ORDER_STATUS_PAYMENT_COMPLETED) &
+            ~Q(status=ORDER_STATUS_ORDER_CONFIRM_WAIT) &
+            ~Q(status=ORDER_STATUS_PICKUP_PREPARE) &
+            ~Q(status=ORDER_STATUS_PICKUP_WAIT)
         )
-        return unavailableCoupons
+        return unavailableOrders
 
-    def getAvailableCoupons(self):
-        availableCoupons = self.userOrderList.get(
-            Q(status=ORDER_STATUS[ORDER_STATUS_PAYMENT_COMPLETED]) &
-            Q(status=ORDER_STATUS[ORDER_STATUS_ORDER_CONFIRM_WAIT]) &
-            Q(status=ORDER_STATUS[ORDER_STATUS_PICKUP_PREPARE]) &
-            Q(status=ORDER_STATUS[ORDER_STATUS_PICKUP_WAIT])
+    def getAvailableOrders(self):
+        availableOrders = self.userOrderList.filter(
+            Q(status=ORDER_STATUS_PAYMENT_COMPLETED) &
+            Q(status=ORDER_STATUS_ORDER_CONFIRM_WAIT) &
+            Q(status=ORDER_STATUS_PICKUP_PREPARE) &
+            Q(status=ORDER_STATUS_PICKUP_WAIT)
         )
 
-        return availableCoupons
+        return availableOrders
 
-    def getAvailableLunchCouponPurchased(self):
-        availableCoupons = self.getAvailableCoupons()
-        lunchCoupons = availableCoupons.filter(
-            menuInstance__sellingTime=SELLING_TIME_CATEGORY[SELLING_TIME_LUNCH][0])
-        return lunchCoupons
+    def getAvailableLunchuserOrderListPurchased(self):
+        availableOrders = self.getAvailableOrders()
+        lunchOrders = availableOrders.filter(
+            menu__sellingTime=SELLING_TIME_CATEGORY[SELLING_TIME_LUNCH][0])
+        return lunchOrders
 
-    def getAvailableDinnerCouponPurchased(self):
-        availableCoupons = self.getAvailableCoupons()
-        dinnerCoupons = availableCoupons.filter(
-            menuInstance__sellingTime=SELLING_TIME_CATEGORY[SELLING_TIME_DINNER][0])
-        return dinnerCoupons
+    def getAvailableDinnerOrderPurchased(self):
+        availableOrders = self.getAvailableOrders()
+        dinnerOrders = availableOrders.filter(
+            menu__sellingTime=SELLING_TIME_CATEGORY[SELLING_TIME_DINNER][0])
+        return dinnerOrders
 
 
 class OrderSheet(models.Model):
@@ -316,49 +316,3 @@ class OrderSheet(models.Model):
     # Methods
     def __str__(self):
         return "{}".format(self.management_code)
-
-
-class OrderSheetManager():
-    def __init__(self, user):
-        self.userOrderSheets = OrderSheet.objects.get(user=user)
-
-    def availableCouponStatusUpdate(self):
-        availableCoupons = self.getAvailableCoupons()
-
-        # Order Status Update
-        for orderInstance in availableCoupons:
-            orderStatusUpdateByTime(orderInstance)
-
-        return self.getAvailableCoupons()
-
-    def getUnavailableCoupons(self):
-        unavailableCoupons = self.userOrderList.get(
-            ~Q(status=ORDER_STATUS[ORDER_STATUS_PAYMENT_COMPLETED]) &
-            ~Q(status=ORDER_STATUS[ORDER_STATUS_ORDER_CONFIRM_WAIT]) &
-            ~Q(status=ORDER_STATUS[ORDER_STATUS_PICKUP_PREPARE]) &
-            ~Q(status=ORDER_STATUS[ORDER_STATUS_PICKUP_WAIT])
-        )
-
-        return unavailableCoupons
-
-    def getAvailableCoupons(self):
-        availableCoupons = self.userOrderList.get(
-            Q(status=ORDER_STATUS[ORDER_STATUS_PAYMENT_COMPLETED]) &
-            Q(status=ORDER_STATUS[ORDER_STATUS_ORDER_CONFIRM_WAIT]) &
-            Q(status=ORDER_STATUS[ORDER_STATUS_PICKUP_PREPARE]) &
-            Q(status=ORDER_STATUS[ORDER_STATUS_PICKUP_WAIT])
-        )
-
-        return availableCoupons
-
-    def getAvailableLunchCouponPurchased(self):
-        availableCoupons = self.getAvailableCoupons()
-        lunchCoupons = availableCoupons.filter(
-            menuInstance__sellingTime=SELLING_TIME_CATEGORY[SELLING_TIME_LUNCH][0])
-        return lunchCoupons
-
-    def getAvailableDinnerCouponPurchased(self):
-        availableCoupons = self.getAvailableCoupons()
-        dinnerCoupons = availableCoupons.filter(
-            menuInstance__sellingTime=SELLING_TIME_CATEGORY[SELLING_TIME_DINNER][0])
-        return dinnerCoupons

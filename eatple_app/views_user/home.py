@@ -12,6 +12,7 @@ from eatple_app.define import *
 # Modules
 from eatple_app.module_kakao.ReponseForm import *
 from eatple_app.module_kakao.RequestForm import *
+from eatple_app.module_kakao.Validation import *
 
 # View-System
 from eatple_app.views_system.debugger import *
@@ -35,18 +36,6 @@ def userSignUp(userProfile):
     )
 
     return user
-
-
-def userVerification(user_properties):
-    user_id = user_properties['app_user_id']
-
-    try:
-        user = User.objects.get(app_user_id=user_id)
-
-        return user
-    except User.DoesNotExist:
-        return None
-
 
 def kakaoView_SignUp():
     EatplusSkillLog("Sign Up")
@@ -137,7 +126,7 @@ def GET_UserHome(request):
     try:
         kakaoPayload = KakaoPayLoad(request)
 
-        user = userVerification(kakaoPayload.user_properties)
+        user = userValidation(kakaoPayload)
 
         if(user == None):
             try:
