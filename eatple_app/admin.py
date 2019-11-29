@@ -67,7 +67,12 @@ class OrderInline(admin.TabularInline):
     model = Order
     extra = 0
     min_num = 1
-
+    
+    def has_add_permission(self, request, obj=None):
+        return False
+    
+    def has_delete_permission(self, request, obj=None):
+        return False
 
 class OrderSheetAdmin(admin.ModelAdmin):
     readonly_fields = ('management_code', 'user', 'order_date', 'update_date')

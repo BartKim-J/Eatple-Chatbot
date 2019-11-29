@@ -146,16 +146,16 @@ class Order(models.Model):
     class Meta:
         ordering = ['-pickup_time']
 
-    ordersheet = models.ForeignKey(
-        'OrderSheet',
-        on_delete=models.DO_NOTHING,
-        default=DEFAULT_OBJECT_ID
-    )
-
     order_code = models.CharField(
         max_length=MANAGEMENT_CODE_LENGTH,
         blank=True,
         null=True
+    )
+    
+    ordersheet = models.ForeignKey(
+        'OrderSheet',
+        on_delete=models.CASCADE,
+        default=DEFAULT_OBJECT_ID
     )
 
     store = models.ForeignKey(
@@ -179,8 +179,12 @@ class Order(models.Model):
     update_date = models.DateTimeField(auto_now_add=False, auto_now=True)
     order_date = models.DateTimeField(default=timezone.now)
 
-    status = models.CharField(max_length=STRING_LENGTH, choices=ORDER_STATUS,
-                              default=ORDER_STATUS[0])
+
+    status = models.IntegerField(
+        # max_length=STRING_LENGTH,
+        choices=ORDER_STATUS,
+        default=ORDER_STATUS_PAYMENT_WAIT,
+    )
 
     def __init__(self, *args, **kwargs):
         super(Order, self).__init__(*args, **kwargs)
