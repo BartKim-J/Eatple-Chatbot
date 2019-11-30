@@ -58,10 +58,14 @@ def GET_PartnerHome(request):
     EatplusSkillLog("Home")
 
     HOME_BTN_MAP = [
-        {'action': "message", 'label': wordings.GET_ORDER_LIST_TOTAL_COMMAND,
-            'messageText': wordings.GET_ORDER_LIST_TOTAL_COMMAND, 'blockId': "none", 'extra': {'Status': "OK"}},
-        {'action': "message", 'label': wordings.GET_CALCULATE_CHECK_COMMAND,
-            'messageText': wordings.GET_CALCULATE_CHECK_COMMAND, 'blockId': "none", 'extra': {'Status': "OK"}},
+        {
+            'action': "message", 'label': wordings.GET_ORDER_LIST_TOTAL_COMMAND,
+            'messageText': wordings.GET_ORDER_LIST_TOTAL_COMMAND, 'blockId': "none", 'extra': {'Status': "OK"}
+        },
+        {
+            'action': "message", 'label': wordings.GET_CALCULATE_CHECK_COMMAND,
+            'messageText': wordings.GET_CALCULATE_CHECK_COMMAND, 'blockId': "none", 'extra': {'Status': "OK"}
+        },
     ]
 
     HOME_QUICKREPLIES_MAP = [
@@ -82,7 +86,6 @@ def GET_PartnerHome(request):
             if (partnerInstance == None):
                 return errorView("partner register failed.")
 
-        print(partnerInstance.storeInstance)
 
         KakaoForm = Kakao_CarouselForm()
         KakaoForm.BasicCard_Init()

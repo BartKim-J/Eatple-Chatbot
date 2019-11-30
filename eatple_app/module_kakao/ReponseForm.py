@@ -23,7 +23,7 @@ from eatple_app.models import Category, Tag
 from eatple_app.models import Store, Menu
 
 class KakaoBaseForm():
-    def __init__(self, _version="2.0", _template={"outputs": []}, _context={"values": []}, _data={"Status": 'OK'}):
+    def __init__(self, _version='2.0', _template={'outputs': []}, _context={'values': []}, _data={'Status': 'OK'}):
         self.version  = _version
         self.template = _template
         self.context  = _context
@@ -32,15 +32,14 @@ class KakaoBaseForm():
         self.UpdateForm()
 
     def __new__(cls):
-        #print('Kaka form new created.')
         return super().__new__(cls)
 
     def UpdateForm(self):
         self.baseForm = {
-            "version":  self.version,
-            "template": self.template,
-            "context":  self.context,
-            "data":     self.data,
+            'version':  self.version,
+            'template': self.template,
+            'context':  self.context,
+            'data':     self.data,
         }
 
     def GetForm(self):
@@ -70,13 +69,12 @@ class Kakao_SimpleForm(KakaoBaseForm):
         super().SetTemplateForm(self.template)
 
     def __new__(cls):
-        #print('Kaka form new created.')
         return super().__new__(cls)
 
     def UpdateTemplateForm(self):
         self.template = {
-            "outputs": self.outputs,
-            "quickReplies": self.quickReplies,
+            'outputs': self.outputs,
+            'quickReplies': self.quickReplies,
         }
 
         super().SetTemplateForm(self.template)
@@ -87,8 +85,18 @@ class Kakao_SimpleForm(KakaoBaseForm):
         self.UpdateTemplateForm()
 
     def QuickReplies_Add(self, _action, _label, _messageText, _blockId, _extra):
-        self.quickReplies += { "action" : _action, "label" : _label, "messageText" : _messageText, "blockId": _blockId, "extra": _extra },
+        self.quickReplies += { 'action' : _action, 'label' : _label, 'messageText' : _messageText, 'blockId': _blockId, 'extra': _extra },
         
+    def QuickReplies_AddWithMap(self, quickRepliesMap):
+        for entryPoint in quickRepliesMap:
+            self.quickReplies += {
+            'action': entryPoint['action'],
+            'label': entryPoint['label'],
+            'messageText': entryPoint['messageText'], 
+            'blockId': entryPoint['blockId'], 
+            'extra': entryPoint['extra']
+        },
+              
     # SimpleForm Common
     def SimpleForm_Init(self):
         self.outputs = []
@@ -97,11 +105,11 @@ class Kakao_SimpleForm(KakaoBaseForm):
 
     # SimpleForm Text
     def SimpleText_Add(self, _text):
-        _params = { "text": _text,
+        _params = { 'text': _text,
         }
 
         self.outputs += {
-            "simpleText": _params
+            'simpleText': _params
         },
 
         self.UpdateTemplateForm()
@@ -109,12 +117,12 @@ class Kakao_SimpleForm(KakaoBaseForm):
     # SimpleForm Image
     def SimpleImage_Add(self, _imgUrl, _altText):
         _params = { 
-            "imageUrl": _imgUrl,
-            "altText": _altText,
+            'imageUrl': _imgUrl,
+            'altText': _altText,
         }
 
         self.outputs += {
-            "simpleImage": _params
+            'simpleImage': _params
         },
 
         self.UpdateTemplateForm()
@@ -135,20 +143,19 @@ class Kakao_CarouselForm(KakaoBaseForm):
         super().SetTemplateForm(self.template)
 
     def __new__(cls):
-        #print('Kaka carousel form created.')
         return super().__new__(cls)
 
     def UpdateTemplateForm(self):
         self.template = {
-            "outputs": [
+            'outputs': [
                 {
-                    "carousel": {
-                        "type": self.type,
-                        "items": self.items
+                    'carousel': {
+                        'type': self.type,
+                        'items': self.items
                     }
                 }
             ],
-            "quickReplies": self.quickReplies,
+            'quickReplies': self.quickReplies,
         }
         
         super().SetTemplateForm(self.template)
@@ -159,7 +166,17 @@ class Kakao_CarouselForm(KakaoBaseForm):
         self.UpdateTemplateForm()
 
     def QuickReplies_Add(self, _action, _label, _messageText, _blockId, _extra):
-        self.quickReplies += { "action" : _action, "label" : _label, "messageText" : _messageText, "blockId": _blockId, "extra": _extra },
+        self.quickReplies += { 'action' : _action, 'label' : _label, 'messageText' : _messageText, 'blockId': _blockId, 'extra': _extra },
+
+    def QuickReplies_AddWithMap(self, quickRepliesMap):
+        for entryPoint in quickRepliesMap:
+            self.quickReplies += {
+            'action': entryPoint['action'],
+            'label': entryPoint['label'],
+            'messageText': entryPoint['messageText'], 
+            'blockId': entryPoint['blockId'], 
+            'extra': entryPoint['extra']
+        },
 
     # Comerce Card 
     def ComerceCard_Init(self):
@@ -170,14 +187,14 @@ class Kakao_CarouselForm(KakaoBaseForm):
 
     def ComerceCard_Add(self, _description, _price, _discount,  _thumbnails, _profile, _buttons):
         self.items += {
-            "description": _description,
-            "price": _price,
-            "discount": _discount,
-            "discountPrice": None,
-            "currency": "won",
-            "thumbnails": _thumbnails,
-            "profile": _profile,
-            "buttons": _buttons
+            'description': _description,
+            'price': _price,
+            'discount': _discount,
+            'discountPrice': None,
+            'currency': 'won',
+            'thumbnails': _thumbnails,
+            'profile': _profile,
+            'buttons': _buttons
         },
 
         self.UpdateTemplateForm()
@@ -191,10 +208,10 @@ class Kakao_CarouselForm(KakaoBaseForm):
 
     def BasicCard_Add(self, _title, _description, _thumbnail, _buttons):
         self.items += {
-            "title": _title,
-            "description": _description,
-            "thumbnail": _thumbnail,
-            "buttons": _buttons
+            'title': _title,
+            'description': _description,
+            'thumbnail': _thumbnail,
+            'buttons': _buttons
         },
 
         self.UpdateTemplateForm()

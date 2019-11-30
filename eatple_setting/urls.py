@@ -32,13 +32,12 @@ urlpatterns = [
 
     # Order Flow
     path('skill/user/order/get_menu',         views.GET_Menu),
-    path('skill/user/order/get_pickupTime',   views.GET_PickupTime),
-    path('skill/user/order/set_orderSheet',   views.SET_OrderSheet),
-    path('skill/user/order/post_order',       views.POST_Order),
+    path('skill/user/order/set_pickup_time',   views.SET_PickupTime),
+    path('skill/user/order/set_order_sheet',   views.SET_OrderSheet),
 
     # Order View Flow
-    path('skill/user/orderView/get_orderList', views.GET_OrderList),
-    path('skill/user/orderView/get_coupon',    views.GET_Coupon),
+    path('skill/user/orderView/get_order_details', views.GET_OrderDetails),
+    path('skill/user/orderView/get_eatple_pass',    views.GET_EatplePass),
 
     # Order Edit Flow
     path('skill/user/orderEdit/post_orderCancel',     views.POST_OrderCancel),

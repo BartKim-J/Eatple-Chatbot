@@ -49,7 +49,9 @@ def kakaoView_SignUp():
             'label': "연동하러 가기",
             'messageText': "연동하기",
             'blockId': KAKAO_BLOCK_SIGNUP,
-            'extra': {}
+            'extra': {
+                KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_HOME
+            }
         },
     ]
     
@@ -59,12 +61,21 @@ def kakaoView_SignUp():
 
     buttons = BTN_MAP
 
-    KakaoForm.BasicCard_Add("아직 잇플에 연동되지 않은 \n카카오 계정입니다.",
-                            "함께 연동하러 가볼까요?", thumbnail, buttons)
+    KakaoForm.BasicCard_Add(
+        "아직 잇플에 연동되지 않은 \n카카오 계정입니다.",
+        "함께 연동하러 가볼까요?", 
+        thumbnail, 
+        buttons
+    )
 
     for entryPoint in QUICKREPLIES_MAP:
-        KakaoForm.QuickReplies_Add(entryPoint['action'], entryPoint['label'],
-                                   entryPoint['messageText'], entryPoint['blockId'], entryPoint['extra'])
+        KakaoForm.QuickReplies_Add(
+            entryPoint['action'], 
+            entryPoint['label'],
+            entryPoint['messageText'], 
+            entryPoint['blockId'], 
+            entryPoint['extra']
+        )
 
     return JsonResponse(KakaoForm.GetForm())
 
@@ -75,49 +86,77 @@ def kakaoView_Home(user):
     KakaoForm = Kakao_CarouselForm()
     KakaoForm.BasicCard_Init()
 
-
     BTN_MAP = [
         {
             'action': "block",
             'label': "메뉴보기",
             'messageText': "로딩중..",
             'blockId': KAKAO_BLOCK_GET_MENU,
-            'extra': {}
+            'extra': {
+                KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_HOME
+            }
         },
         {
             'action': "block",
             'label': "잇플패스 확인",
             'messageText': "로딩중..",
             'blockId': KAKAO_BLOCK_EATPLE_PASS,
-            'extra': {}
+            'extra': {
+                KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_HOME
+            }
         },
         {
             'action': "block",
-            'label': "최근 구매내역",
+            'label': "최근 주문내역",
             'messageText': "로딩중..",
-            'blockId': KAKAO_BLOCK_RECENT_ORDER,
-            'extra': {}
+            'blockId': KAKAO_BLOCK_ORDER_DETAILS,
+            'extra': {
+                KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_HOME
+            }
         },
     ]
     
     QUICKREPLIES_MAP = [
-        {'action': "message", 'label': wordings.CHANGE_LOCATION_BTN,
-            'messageText': wordings.CHANGE_LOCATION_COMMAND,    'blockId': "none", 'extra': {}},
+        {
+            'action': "message", 
+            'label': wordings.CHANGE_LOCATION_BTN,
+            'messageText': wordings.CHANGE_LOCATION_COMMAND,    
+            'blockId': "none", 
+            'extra': {
+                KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_HOME
+            }
+        },
 
-        {'action': "message", 'label': wordings.USER_MANUAL_COMMAND,
-            'messageText': wordings.USER_MANUAL_COMMAND,    'blockId': "none", 'extra': {}},
+        {
+            'action': "message", 
+            'label': wordings.USER_MANUAL_COMMAND,
+            'messageText': wordings.USER_MANUAL_COMMAND,    
+            'blockId': "none",
+            'extra': {
+                KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_HOME
+            }
+        },
     ]
 
     thumbnail = {"imageUrl": ""}
 
     buttons = BTN_MAP
 
-    KakaoForm.BasicCard_Add(wordings.HOME_TITLE_TEXT,
-                            wordings.HOME_DESCRIPT_TEXT, thumbnail, buttons)
+    KakaoForm.BasicCard_Add(
+        wordings.HOME_TITLE_TEXT,
+        wordings.HOME_DESCRIPT_TEXT, 
+        thumbnail, 
+        buttons
+    )
 
     for entryPoint in QUICKREPLIES_MAP:
-        KakaoForm.QuickReplies_Add(entryPoint['action'], entryPoint['label'],
-                                   entryPoint['messageText'], entryPoint['blockId'], entryPoint['extra'])
+        KakaoForm.QuickReplies_Add(
+            entryPoint['action'], 
+            entryPoint['label'],
+            entryPoint['messageText'], 
+            entryPoint['blockId'], 
+            entryPoint['extra']
+        )
 
     return JsonResponse(KakaoForm.GetForm())
 

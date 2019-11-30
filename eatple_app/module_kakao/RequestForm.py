@@ -14,8 +14,7 @@ from eatple_app.define import *
 from eatple_app.views_system.debugger import EatplusSkillLog, errorView
 
 #Static Defube 
-KAKAO_API_KEY = "d62991888c78ec58d809bdc591eb62f6"
-KAKAO_REST_API_KEY = "9120ecde0549629d5a049e9755541e5e"
+
 
 def getLatLng(addr):
     try:
@@ -43,8 +42,6 @@ class KakaoPayLoad():
         self.dataAction         = self.received_json_data['action']
         self.dataActionExtra    = self.dataAction['clientExtra']
         self.dataActionParams   = self.dataAction['detailParams']
-        
-        # print(self.dataActionParams)
             
         # User Properties
         try:

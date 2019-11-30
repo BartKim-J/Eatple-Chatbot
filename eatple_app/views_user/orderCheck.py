@@ -1,238 +1,287 @@
-'''
-    Author : Ben Kim
-
-    @NOTE
-    @BUG
-    @TODO
- 
-'''
-# System
-import sys
-import os
-
 # Django Library
 from django.shortcuts import render
 from django.views.decorators.csrf import csrf_exempt
 from django.http import JsonResponse
 
-# External Library
-import requests
-import json
-
 # Models
-from eatple_app.models import User
-from eatple_app.models import Order, OrderManager
-from eatple_app.models import Category, Tag
-from eatple_app.models import Store, Menu
-
-# Modules
-from eatple_app.module_kakao.ReponseForm import Kakao_SimpleForm, Kakao_CarouselForm
-from eatple_app.module_kakao.RequestForm import getLatLng, KakaoPayLoad
-
-# View-System
-from eatple_app.views_system.debugger import EatplusSkillLog, errorView
-
-# Wordings
-from eatple_app.views_user.wording import wordings
+from eatple_app.models import *
 
 # Define
 from eatple_app.define import *
 
+# Modules
+from eatple_app.module_kakao.ReponseForm import *
+from eatple_app.module_kakao.RequestForm import *
+from eatple_app.module_kakao.Validation import *
+
+# View-System
+from eatple_app.views_system.debugger import *
+
+from eatple_app.views import *
+
+
+DEFAULT_QUICKREPLIES_MAP = [
+    {
+        'action': "block",
+        'label': "홈으로 돌아가기",
+        'messageText': "로딩중..",
+        'blockId': KAKAO_BLOCK_HOME,
+        'extra': {}
+    },
+]
+
+
 # STATIC EP_define
-ORDER_LIST_LENGTH = 5
+ORDER_LIST_LENGTH = 10
 
 
-def CouponListup(userID):
-    ORDER_LIST_QUICKREPLIES_MAP = [{'action': "message", 'label': wordings.REFRESH_BTN, 'messageText': wordings.GET_COUPON_COMMAND, 'blockId': "none", 'extra': {}},
-                                   {'action': "message", 'label': wordings.RETURN_HOME_QUICK_REPLISE, 'messageText': wordings.RETURN_HOME_QUICK_REPLISE, 'blockId': "none", 'extra': {}}, ]
+def kakaoView_EatplePass(kakaoPayload):
+    # Block Validation
+    prev_block_id = prevBlockValidation(kakaoPayload)
+    if(prev_block_id != KAKAO_BLOCK_HOME and prev_block_id != KAKAO_BLOCK_EATPLE_PASS):
+        return errorView("nvalid Block Access", "정상적이지 않은 경로거나, 오류가 발생했습니다.\n다시 주문해주세요!")
 
-    OrderManagerInstance = OrderManager(userID)
+    # User Validation
+    user = userValidation(kakaoPayload)
+    if (user == None):
+        return GET_UserHome(request)
 
-    availableCoupons = OrderManagerInstance.availableCouponStatusUpdate()
+    ORDER_LIST_QUICKREPLIES_MAP = [
+        {
+            'action': "block", 
+            'label': "새로고침", 
+            'messageText': "로딩중..", 
+            'blockId': KAKAO_BLOCK_EATPLE_PASS, 
+            'extra': {
+                KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_EATPLE_PASS
+            }
+        },
+        {
+            'action': "block",
+            'label': "홈으로 돌아가기",
+            'messageText': "로딩중..",
+            'blockId': KAKAO_BLOCK_HOME,
+            'extra': {}
+        },
+    ]
 
-    # Listup Conpons
-    if availableCoupons:
+    orderManager = OrderManager(user)
+
+    availableEatplePass = orderManager.availableOrderStatusUpdate()
+
+    # Listup EatplePass
+    if availableEatplePass:
         KakaoForm = Kakao_CarouselForm()
         KakaoForm.BasicCard_Init()
 
-        for orderInstance in availableCoupons:
+        for order in availableEatplePass:
             thumbnail = {"imageUrl": ""}
 
             kakaoMapUrl = "https://map.kakao.com/link/map/{},{}".format(
-                orderInstance.storeInstance.name, getLatLng(orderInstance.storeInstance.addr))
+                order.store.name, 
+                getLatLng(order.store.addr)
+            )
 
             buttons = [
-                {'action': "webLink", 'label': wordings.SHOW_LOCATION_BTN,
-                    "webLinkUrl": kakaoMapUrl},
+                {
+                    'action': "webLink", 
+                    'label': "위치보기",
+                    "webLinkUrl": kakaoMapUrl
+                },
             ]
 
             # CAN EDIT COUPONS
-            if ORDER_STATUS_DICT[orderInstance.status] <= ORDER_STATUS_DICT['주문 완료']:
-                buttons.append({'action': "message", 'label': wordings.ORDER_CANCEL_COMMAND,  'messageText': wordings.ORDER_CANCEL_COMMAND,
-                                'extra': {KAKAO_PARAM_ORDER_ID: orderInstance.id}})
-                buttons.append({'action': "message", 'label': wordings.ORDER_PICKUP_TIME_CHANGE_COMMAND,  'messageText': "{} {}".format(orderInstance.menuInstance.sellingTime, wordings.ORDER_PICKUP_TIME_CHANGE_COMMAND),
-                                'extra': {KAKAO_PARAM_ORDER_ID: orderInstance.id}})
+            if (order.status == ORDER_STATUS_PICKUP_PREPARE or 
+                order.status == ORDER_STATUS_ORDER_CONFIRM_WAIT or
+                order.status == ORDER_STATUS_ORDER_CONFIRMED):
+                buttons.append(
+                    {
+                        'action': "block", 
+                        'label': "주문취소",  
+                        'messageText': "로딩중..",
+                        'blockId': KAKAO_BLOCK_POST_ORDER_CANCEL,
+                        'extra': {
+                            KAKAO_PARAM_ORDER_ID: order.order_id,
+                            KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_EATPLE_PASS
+                        }
+                    }
+                )
+                buttons.append(
+                    {
+                        'action': "block", 
+                        'label': "픽업시간 변경",  
+                        'messageText': "로딩중..",
+                        'blockId': '',
+                        'extra': {
+                            KAKAO_PARAM_ORDER_ID: order.order_id,
+                            KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_EATPLE_PASS
+                        }
+                    }
+                )
 
             # CAN'T EDIT COUPONS
-            elif ORDER_STATUS_DICT[orderInstance.status] == ORDER_STATUS_DICT['픽업 가능']:
-                buttons.append({'action': "message", 'label': "{}하기".format(wordings.USE_COUPON_COMMAND),  'messageText': wordings.CONFIRM_USE_COUPON_COMMAND,
-                                'extra': {KAKAO_PARAM_ORDER_ID: orderInstance.id}})
-            elif ORDER_STATUS_DICT[orderInstance.status] == ORDER_STATUS_DICT['픽업 준비중']:
+            elif (order.status == ORDER_STATUS_PICKUP_WAIT):
+                buttons.append(
+                    {
+                        'action': "message", 
+                        'label': "사용하기",  
+                        'messageText': "로딩중..",
+                        'blockId': '',
+                        'extra': {
+                            KAKAO_PARAM_ORDER_ID: order.order_id,
+                            KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_EATPLE_PASS
+                        }
+                    }
+                )
+            elif (order.status == ORDER_STATUS_PICKUP_PREPARE):
                 pass
             else:
                 errorView("Invalid Case on order status check by now time.")
-
-            # if CAN CHANGE PICKUP TIME:
-            #    buttons.append({'action': "message", 'label': "픽업 시간 변경",  'messageText': "픽업 시간 변경", 'extra': { }})
+        
             KakaoForm.BasicCard_Add(
-                "주문번호: {}".format(orderInstance.management_code),
+                "주문번호: {}".format(order.order_id),
                 " - 주문자: {}\n\n - 매장: {} \n - 메뉴: {}\n\n - 결제 금액: {}원\n - 픽업 시간: {}\n\n - 주문 상태: {}".format(
-                    orderInstance.userInstance.name,
-                    orderInstance.storeInstance.name,
-                    orderInstance.menuInstance.name,
-                    orderInstance.menuInstance.price,
-                    orderInstance.pickupTime.astimezone().strftime('%H시%M분 %m월%d일'),
-                    orderInstance.status
+                    str(order.ordersheet.user.phone_number)[9:13],
+                    order.store.name,
+                    order.menu.name,
+                    order.totalPrice,
+                    order.pickup_time,
+                    ORDER_STATUS[order.status][1]
                 ),
                 thumbnail, buttons
             )
 
-    # No Coupons
+    # No EatplePass
     else:
         KakaoForm = Kakao_SimpleForm()
         KakaoForm.SimpleForm_Init()
 
-        ORDER_LIST_QUICKREPLIES_MAP.insert(0, {'action': "message", 'label': wordings.ORDER_BTN, 'messageText': wordings.GET_SELLING_TIEM_COMMAND, 'blockId': "none",
-                                               'extra': {}})
+        ORDER_LIST_QUICKREPLIES_MAP.insert(0, {
+                'action': "block", 
+                'label': "메뉴보기", 
+                'messageText': "로딩중..", 
+                'blockId': KAKAO_BLOCK_GET_MENU,
+                'extra': {
+                    KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_EATPLE_PASS
+                }
+            }
+        )
 
-        KakaoForm.SimpleText_Add(wordings.GET_COUPON_EMPTY_TEXT)
+        KakaoForm.SimpleText_Add("현재 조회 가능한 잇플패스가 없습니다!\n주문하시려면 아래 [메뉴보기]를 눌러주세요!")
 
-    for entryPoint in ORDER_LIST_QUICKREPLIES_MAP:
-        KakaoForm.QuickReplies_Add(entryPoint['action'], entryPoint['label'],
-                                   entryPoint['messageText'], entryPoint['blockId'], entryPoint['extra'])
-
+    KakaoForm.QuickReplies_AddWithMap(ORDER_LIST_QUICKREPLIES_MAP)
+        
     return JsonResponse(KakaoForm.GetForm())
 
 
-'''
-    @name OrderListup
-    @param userID, order_status
+def kakaoView_OrderDetails(kakaoPayload):
+    # Block Validation
+    prev_block_id = prevBlockValidation(kakaoPayload)
+    if(prev_block_id != KAKAO_BLOCK_HOME and prev_block_id != KAKAO_BLOCK_ORDER_DETAILS):
+        return errorView("Invalid Store Paratmer", "정상적이지 않은 경로거나, 오류가 발생했습니다.\n다시 주문해주세요!")
 
-    @note
-    @bug
-    @todo userName to real username, now just use super user("잇플").
-'''
+    # User Validation
+    user = userValidation(kakaoPayload)
+    if (user == None):
+        return GET_UserHome(request)
 
+    ORDER_LIST_QUICKREPLIES_MAP = [
+        {
+            'action': "block",
+            'label': "새로고침",
+            'messageText': "로딩중..",
+            'blockId': KAKAO_BLOCK_ORDER_DETAILS,
+            'extra': {
+                KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_ORDER_DETAILS
+            }
+        },
+        {
+            'action': "block",
+            'label': "홈으로 돌아가기",
+            'messageText': "로딩중..",
+            'blockId': KAKAO_BLOCK_HOME,
+            'extra': {}
+        },
+    ]
 
-def OrderListup(userID):
-    ORDER_LIST_QUICKREPLIES_MAP = [{'action': "message", 'label': wordings.RETURN_HOME_QUICK_REPLISE, 'messageText': wordings.RETURN_HOME_QUICK_REPLISE, 'blockId': "none", 'extra': {}},
-                                   {'action': "message", 'label': wordings.REFRESH_BTN, 'messageText': wordings.GET_ORDER_LIST_COMMAND, 'blockId': "none", 'extra': {}}]
+    orderManager = OrderManager(user)
 
-    OrderManagerInstance = OrderManager(userID)
+    unavailableOrders = orderManager.getUnavailableOrders()[:ORDER_LIST_LENGTH]
 
-    unavailableCoupons = OrderManagerInstance.getUnavailableCoupons()[
-        :ORDER_LIST_LENGTH]
-
-    if unavailableCoupons:
+    if unavailableOrders:
         KakaoForm = Kakao_CarouselForm()
         KakaoForm.BasicCard_Init()
 
-        for orderInstance in unavailableCoupons:
-            thumbnail = {"imageUrl": ""}
+        for order in unavailableOrders:
+            thumbnail = {
+                "imageUrl": ""
+            }
 
-            #kakaoMapUrl = "https://map.kakao.com/link/map/{},{}".format(orderInstance.storeInstance.name, getLatLng(orderInstance.storeInstance.addr))
-
+            kakaoMapUrl = "https://map.kakao.com/link/map/{},{}".format(
+                order.store.name, 
+                getLatLng(order.store.addr)
+            )
+            
             buttons = [
-                #{'action': "webLink", 'label': wordings.SHOW_LOCATION_BTN,  "webLinkUrl": kakaoMapUrl},
+                {
+                    'action': "webLink", 
+                    'label': "위치보기",  
+                    "webLinkUrl": kakaoMapUrl
+                },
             ]
-
-            # CAN"T USE COUPONS
-            if ORDER_STATUS_DICT[orderInstance.status] > ORDER_STATUS_DICT['픽업 가능']:
-                KakaoForm.BasicCard_Add(
-                    "주문번호: {}".format(orderInstance.management_code),
-                    " - 주문자: {}\n\n - 매장: {} \n - 메뉴: {}\n\n - 결제 금액: {}원\n - 픽업 시간: {}\n\n - 주문 상태: {}".format(
-                        orderInstance.userInstance.name,
-                        orderInstance.storeInstance.name,
-                        orderInstance.menuInstance.name,
-                        orderInstance.menuInstance.price,
-                        orderInstance.pickupTime.astimezone().strftime('%H시%M분 %m월%d일'),
-                        orderInstance.status
-                    ),
-                    thumbnail, buttons
-                )
+            
+            KakaoForm.BasicCard_Add(
+                "주문번호: {}".format(order.order_id),
+                " - 주문자: {}\n\n - 매장: {} \n - 메뉴: {}\n\n - 결제 금액: {}원\n - 픽업 시간: {}\n\n - 주문 상태: {}".format(
+                    str(order.ordersheet.user.phone_number)[9:13],
+                    order.store.name,
+                    order.menu.name,
+                    order.totalPrice,
+                    order.pickup_time,
+                    ORDER_STATUS[order.status][1]
+                ),
+                thumbnail, buttons
+            )
     else:
         KakaoForm = Kakao_SimpleForm()
         KakaoForm.SimpleForm_Init()
 
-        ORDER_LIST_QUICKREPLIES_MAP.append({'action': "message", 'label': wordings.ORDER_BTN,
-                                            'messageText': wordings.GET_SELLING_TIEM_COMMAND, 'blockId': "none", 'extra': {}})
+        ORDER_LIST_QUICKREPLIES_MAP.insert(0,
+            {
+                'action': "block",
+                'label': "메뉴보기",
+                'messageText': "로딩중..",
+                'blockId': KAKAO_BLOCK_GET_MENU,
+                'extra': {
+                    KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_ORDER_DETAILS
+                }
+            }
+        )
 
-        KakaoForm.SimpleText_Add(wordings.GET_ORDER_LIST_EMPTY_TEXT)
+        KakaoForm.SimpleText_Add("최근 주문 내역이 존재하지 않습니다!\n주문하시려면 아래 [메뉴보기]를 눌러주세요!")
 
-    for entryPoint in ORDER_LIST_QUICKREPLIES_MAP:
-        KakaoForm.QuickReplies_Add(entryPoint['action'], entryPoint['label'],
-                                   entryPoint['messageText'], entryPoint['blockId'], entryPoint['extra'])
-
+    KakaoForm.QuickReplies_AddWithMap(ORDER_LIST_QUICKREPLIES_MAP)
+    
     return JsonResponse(KakaoForm.GetForm())
 
 
-'''
-    @name GET_OrderList
-    @param userID
-
-    @note
-    @bug
-    @tood
-'''
 @csrf_exempt
-def GET_OrderList(request):
+def GET_OrderDetails(request):
+    EatplusSkillLog("GET_OrderDetails")
     try:
         kakaoPayload = KakaoPayLoad(request)
-
-        # Invalied Path Access
-        if(kakaoPayload.userID == NOT_APPLICABLE):
-            return errorView("Parameter Invalid")
-        else:
-            try:
-                userInstance = User.objects.get(
-                    identifier_code=kakaoPayload.userID)
-            except User.DoesNotExist:
-                return errorView("User ID is Invalid")
-
-        EatplusSkillLog("Order Check Flow")
-
-        return OrderListup(kakaoPayload.userID)
+        return kakaoView_OrderDetails(kakaoPayload)
 
     except (RuntimeError, TypeError, NameError, KeyError) as ex:
         return errorView("{} ".format(ex))
 
 
-'''
-    @name GET_Coupon
-    @param userID
-
-    @note
-    @bug
-    @tood
-'''
 @csrf_exempt
-def GET_Coupon(request):
+def GET_EatplePass(request):
+    EatplusSkillLog("GET_EatplePass")
     try:
         kakaoPayload = KakaoPayLoad(request)
-
-        # Invalied Path Access
-        if(kakaoPayload.userID == NOT_APPLICABLE):
-            return errorView("Parameter Invalid")
-        else:
-            try:
-                userInstance = User.objects.get(
-                    identifier_code=kakaoPayload.userID)
-            except User.DoesNotExist:
-                return errorView("User ID is Invalid")
-
-        EatplusSkillLog("Order Check Flow")
-
-        return CouponListup(kakaoPayload.userID)
+        return kakaoView_EatplePass(kakaoPayload)
 
     except (RuntimeError, TypeError, NameError, KeyError) as ex:
         return errorView("{} ".format(ex))

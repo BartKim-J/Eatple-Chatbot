@@ -49,10 +49,12 @@ class OrderRecordSheet(models.Model):
         null=True
     )
 
-    update_date = models.DateTimeField(auto_now=True)
-    created_date = models.DateTimeField(auto_now_add=True)
+    paid = models.BooleanField(default=False)
 
     status = models.BooleanField(default=False)
+    
+    update_date = models.DateTimeField(auto_now=True)
+    created_date = models.DateTimeField(auto_now_add=True)
 
     def save(self, *args, **kwargs):
         super().save()
@@ -77,7 +79,7 @@ class OrderRecordSheet(models.Model):
         latest_date = dateByTimeZone(self.update_date)
         current_date = dateNowByTimeZone()
 
-        if (latest_date + datetime.timedelta(minutes=3) < current_date):
+        if (latest_date + datetime.timedelta(minutes=10) < current_date):
             timeOut = True
             
         return timeOut

@@ -7,14 +7,33 @@ from django_mysql.models import Model
 # Define
 from eatple_app.define import *
 
-def orderStatusUpdateByTime(order):
-    menuInstance = order.menuInstance
+def iamportOrderValidation(order):
+    iamport = Iamport(imp_key=IAMPORT_API_KEY, imp_secret=IAMPORT_API_SECRET_KEY)
+    
+    try:
+        response = iamport.find(merchant_uid=order.order_id)
+    except (KeyError, Iamport.ResponseError, Iamport.HttpError):
+        pass
+    except Iamport.HttpError as http_error:
+        order.payment_status = IAMPORT_ORDER_STATUS_FAILED
+        order.status = ORDER_STATUS_ORDER_FAILED
+        order.save()
+        
+        return errorView("Invalid Store Paratmer", "정상적이지 않은 경로거나\n잇플 패스의 주문번호가 잘못되었습니다.")
+     
+    return order.status
+
+def orderUpdate(order):
+    status = iamportOrderValidation(order)
+    
+    if(status == ORDER_STATUS_ORDER_FAILED):
+        return status
+    
+    menu = order.menu
 
     orderDate = dateByTimeZone(order.order_date)
     orderDateWithoutTime = orderDate.replace(
         hour=0, minute=0, second=0, microsecond=0)
-
-    orderPickupTime = order.pickupTime
 
     currentDate = dateNowByTimeZone()
     currentDateWithoutTime = currentDate.replace(
@@ -61,78 +80,78 @@ def orderStatusUpdateByTime(order):
         datetime.timedelta(hours=21, minutes=0)
 
     # Lunch Order
-    if (SELLING_TIME_CATEGORY[SELLING_TIME_LUNCH][0] == menuInstance.sellingTime) and \
+    if (SELLING_TIME_LUNCH == menu.sellingTime) and \
             ((YESTERDAY <= orderDateWithoutTime) and (orderDateWithoutTime <= TODAY)):
 
         # Meal Pre-
         if(prevlunchOrderTimeEnd <= currentDate) and (currentDate <= lunchOrderPickupTimeStart):
-            order.status = ORDER_STATUS[ORDER_STATUS_DICT['픽업 준비중']][0]
+            order.status = ORDER_STATUS_PICKUP_PREPARE
             order.save()
         # PickupTime Range
         elif(lunchOrderPickupTimeStart <= currentDate) and (currentDate <= lunchOrderPickupTimeEnd):
             # Over Order Pickup Time
             if(currentDate >= orderPickupTime):
-                order.status = ORDER_STATUS[ORDER_STATUS_DICT['픽업 가능']][0]
+                order.status = ORDER_STATUS_PICKUP_WAIT
                 order.save()
             else:
-                order.status = ORDER_STATUS[ORDER_STATUS_DICT['픽업 준비중']][0]
+                order.status = ORDER_STATUS_PICKUP_PREPARE
                 order.save()
         # Order Time Range
         else:
             # prev phase Order
             if(prevlunchOrderEditTimeStart <= currentDate) and (currentDate <= prevlunchOrderTimeEnd):
                 if currentDate <= prevlunchOrderEditTimeEnd:
-                    order.status = ORDER_STATUS[ORDER_STATUS_DICT['주문 완료']][0]
+                    order.status = ORDER_STATUS_ORDER_CONFIRMED
                     order.save()
 
                 else:
-                    order.status = ORDER_STATUS[ORDER_STATUS_DICT['픽업 준비중']][0]
+                    order.status = ORDER_STATUS_PICKUP_PREPARE
                     order.save()
 
             # next phase Lunch order
             elif (nextlunchOrderTimeEnd >= currentDate) and (orderDateWithoutTime >= TODAY):
-                order.status = ORDER_STATUS[ORDER_STATUS_DICT['주문 완료']][0]
+                order.status = ORDER_STATUS_ORDER_CONFIRMED
                 order.save()
 
             # Invalid Time Range is Dinner Order Time ( prev phase lunch order ~ dinner order ~ next phase lunch order )
             else:
-                order.status = ORDER_STATUS[ORDER_STATUS_DICT['주문 만료']][0]
+                order.status = ORDER_STATUS_ORDER_EXPIRED
                 order.save()
 
     # Dinner Order
-    elif (SELLING_TIME_CATEGORY[SELLING_TIME_DINNER][0] == menuInstance.sellingTime) and (orderDateWithoutTime == TODAY):
+    elif (SELLING_TIME_DINNER == menu.sellingTime) and (orderDateWithoutTime == TODAY):
         # Meal Pre-
         if(dinnerOrderTimeEnd <= currentDate) and (currentDate <= dinnerOrderPickupTimeStart):
-            order.status = ORDER_STATUS[ORDER_STATUS_DICT['픽업 준비중']][0]
+            order.status = ORDER_STATUS_PICKUP_PREPARE
             order.save()
         # PickupTime Range
         elif(dinnerOrderPickupTimeStart <= currentDate) and (currentDate <= dinnerOrderPickupTimeEnd):
             # Over Order Pickup Time
             if(currentDate >= orderPickupTime):
-                order.status = ORDER_STATUS[ORDER_STATUS_DICT['픽업 가능']][0]
+                order.status = ORDER_STATUS_PICKUP_WAIT
                 order.save()
             else:
-                order.status = ORDER_STATUS[ORDER_STATUS_DICT['픽업 준비중']][0]
+                order.status = ORDER_STATUS_PICKUP_PREPARE
                 order.save()
         else:
             # Today Order
             if(dinnerOrderEditTimeStart < currentDate) and (currentDate < dinnerOrderTimeEnd):
 
                 if orderDate <= dinnerOrderEditTimeEnd:
-                    order.status = ORDER_STATUS[ORDER_STATUS_DICT['주문 완료']][0]
+                    order.status = ORDER_STATUS_ORDER_CONFIRMED
                     order.save()
 
                 else:
-                    order.status = ORDER_STATUS[ORDER_STATUS_DICT['픽업 준비중']][0]
+                    order.status = ORDER_STATUS_PICKUP_PREPARE
                     order.save()
             # Invalid Time Range is Lunch Order Time ( prev phase lunch order ~ dinner order ~ next phase lunch order )
             else:
-                order.status = ORDER_STATUS[ORDER_STATUS_DICT['주문 만료']][0]
+                order.status = ORDER_STATUS_ORDER_EXPIRED
                 order.save()
 
     # Invalid Order Selling Time
     else:
-        order.status = ORDER_STATUS[ORDER_STATUS_DICT['주문 만료']][0]
+        order.status = ORDER_STATUS_ORDER_EXPIRED
         order.save()
 
     return order.status
@@ -168,17 +187,27 @@ class Order(models.Model):
         null=True
     )
 
+
+    totalPrice = models.IntegerField(default=0)
+
     count = models.IntegerField(default=1)
 
     pickup_time = models.TimeField(default=timezone.now)
 
+    payment_status = models.CharField(
+        max_length=10,
+        choices=IAMPORT_ORDER_STATUS,
+        default=IAMPORT_ORDER_STATUS_READY
+    )
+    
+    status = models.IntegerField(
+        choices=ORDER_STATUS,
+        default=ORDER_STATUS_PAYMENT_CHECK,
+    )
+
     update_date = models.DateTimeField(auto_now=True)
     order_date = models.DateTimeField(default=timezone.now)
 
-    status = models.IntegerField(
-        choices=ORDER_STATUS,
-        default=ORDER_STATUS_PAYMENT_WAIT,
-    )
 
     def save(self, *args, **kwargs):
         super().save()
@@ -197,7 +226,7 @@ class Order(models.Model):
 
         self.order_id = "EP{area:08X}{id:04X}".format(
             area=int(self.order_date.strftime('%f')), id=self.id)
-
+        
     @staticmethod
     def rowPickupTimeToDatetime(rowPickupTime):
         return dateNowByTimeZone().replace(hour=0, minute=0, second=0, microsecond=0) + datetime.timedelta(hours=int(rowPickupTime[0:2]), minutes=int(rowPickupTime[3:5]))
@@ -207,83 +236,60 @@ class Order(models.Model):
     def __str__(self):
         return "{}".format(self.order_id)
 
-class storeOrderManager():
-    def __init__(self, storeId):
-        self.storeOrderList = Order.objects.filter(storeInstance__id=storeId)
-
-    def availableOrderStatusUpdate(self):
-        availableOrders = self.getAvailableOrders()
-
-        print(availableOrders)
-
-        # Order Status Update
-        for order in availableOrders:
-            orderStatusUpdateByTime(order)
-
-        return self.getAvailableOrders()
-
-    def getUnavailableOrders(self):
-        unavailableOrders = self.storeOrderList.filter(
-            ~Q(status=ORDER_STATUS_PAYMENT_COMPLETED) &
-            ~Q(status=ORDER_STATUS_ORDER_CONFIRM_WAIT) &
-            ~Q(status=ORDER_STATUS_PICKUP_PREPARE) &
-            ~Q(status=ORDER_STATUS_PICKUP_WAIT)
-        )
-        return unavailableOrders
-
-    def getAvailableOrders(self):
-        availableOrders = self.storeOrderList.filter(
-            Q(status=ORDER_STATUS_PAYMENT_COMPLETED) &
-            Q(status=ORDER_STATUS_ORDER_CONFIRM_WAIT) &
-            Q(status=ORDER_STATUS_PICKUP_PREPARE) &
-            Q(status=ORDER_STATUS_PICKUP_WAIT)
-        )
-        return availableOrders
-
 class OrderManager():
     def __init__(self, user):
         self.userOrderList = Order.objects.filter(
             ordersheet__user=user)
 
+    def orderStatusUpdate(self, order):
+        return orderUpdate(order)
+
     def availableOrderStatusUpdate(self):
         availableOrders = self.getAvailableOrders()
 
         # Order Status Update
         for order in availableOrders:
-            orderStatusUpdateByTime(order)
+            orderUpdate(order)
 
         return self.getAvailableOrders()
 
     def getUnavailableOrders(self):
         unavailableOrders = self.userOrderList.filter(
-            ~Q(status=ORDER_STATUS_PAYMENT_COMPLETED) &
-            ~Q(status=ORDER_STATUS_ORDER_CONFIRM_WAIT) &
-            ~Q(status=ORDER_STATUS_PICKUP_PREPARE) &
-            ~Q(status=ORDER_STATUS_PICKUP_WAIT)
+            Q(status=ORDER_STATUS_ORDER_EXPIRED) |
+            Q(status=ORDER_STATUS_ORDER_CANCELED) |
+            Q(status=ORDER_STATUS_PAYMENT_CHECK) |
+            Q(status=ORDER_STATUS_PICKUP_COMPLETED)
         )
+        
         return unavailableOrders
 
     def getAvailableOrders(self):
         availableOrders = self.userOrderList.filter(
-            Q(status=ORDER_STATUS_PAYMENT_COMPLETED) &
-            Q(status=ORDER_STATUS_ORDER_CONFIRM_WAIT) &
-            Q(status=ORDER_STATUS_PICKUP_PREPARE) &
-            Q(status=ORDER_STATUS_PICKUP_WAIT)
+            Q(status=ORDER_STATUS_PICKUP_WAIT) |
+            Q(status=ORDER_STATUS_PICKUP_PREPARE) |
+            Q(status=ORDER_STATUS_ORDER_CONFIRM_WAIT) |
+            Q(status=ORDER_STATUS_ORDER_CONFIRMED)
         )
-
+        
         return availableOrders
 
     def getAvailableLunchuserOrderListPurchased(self):
         availableOrders = self.getAvailableOrders()
         lunchOrders = availableOrders.filter(
-            menu__sellingTime=SELLING_TIME_CATEGORY[SELLING_TIME_LUNCH][0])
+            menu__sellingTime=SELLING_TIME_LUNCH)
+        
         return lunchOrders
 
     def getAvailableDinnerOrderPurchased(self):
         availableOrders = self.getAvailableOrders()
         dinnerOrders = availableOrders.filter(
-            menu__sellingTime=SELLING_TIME_CATEGORY[SELLING_TIME_DINNER][0])
+            menu__sellingTime=SELLING_TIME_DINNER)
         return dinnerOrders
+
+class storeOrderManager(OrderManager):
+    def __init__(self, storeId):
+        self.storeOrderList = Order.objects.filter(storeInstance__id=storeId)
+
 
 class OrderSheet(models.Model):
     class Meta:
@@ -323,7 +329,7 @@ class OrderSheet(models.Model):
     def save(self, *args, **kwargs):
         super().save()
 
-    def pushOrder(self, user, store, menu, pickup_time, count):
+    def pushOrder(self, user, store, menu, pickup_time, totalPrice, count):
         self.user = user
         super().save()
         
@@ -332,6 +338,7 @@ class OrderSheet(models.Model):
         order.menu = menu
         order.store = store
         order.pickup_time = pickup_time
+        order.totalPrice = totalPrice
         order.count = 1
         order.save()
         

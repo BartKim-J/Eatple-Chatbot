@@ -58,18 +58,19 @@ def eatplePassValidation(user):
                 
     elif (lunchPurchaed):
         KakaoForm.SimpleText_Add(
-            "이미 저녁 주문을 해주셨네요!\n곧 있을 내일 점심 주문시간에 잇플과 다시 함께해주세요."
+            "이미 점심 주문을 해주셨네요!\n내일 다시 잇플과 함께해주세요."
         )
         return JsonResponse(KakaoForm.GetForm())
     
     elif (dinnerPurchaced):
         KakaoForm.SimpleText_Add(
-            "이미 점심 주문을 해주셨네요!\n저녁 주문 또는 내일 다시 잇플과 함께해주세요."
+            "이미 저녁 주문을 해주셨네요!\n곧 있을 내일 점심 주문시간에 잇플과 다시 함께해주세요."
         )
         return JsonResponse(KakaoForm.GetForm())
         
 
     return None
+
 
 def userValidation(KakaoPayload):
     try:
@@ -82,6 +83,7 @@ def userValidation(KakaoPayload):
     except (TypeError, AttributeError, KeyError):
         return None
 
+
 def menuValidation(KakaoPayload):
     try:
         menu_id = KakaoPayload.dataActionExtra[KAKAO_PARAM_MENU_ID]
@@ -92,6 +94,7 @@ def menuValidation(KakaoPayload):
             return None
     except (TypeError, AttributeError, KeyError):
         return None
+    
     
 def storeValidation(KakaoPayload):
     try:
@@ -109,9 +112,7 @@ def orderValidation(KakaoPayload):
     try:
         order_id = KakaoPayload.dataActionExtra[KAKAO_PARAM_ORDER_ID]
         try:
-            order = Order.objects.get(order_id=order_id)
-            print(order_id)
-            
+            order = Order.objects.get(order_id=order_id)            
             return order
         except Order.DoesNotExist:
             return None
@@ -123,5 +124,13 @@ def pickupTimeValidation(KakaoPayload):
     try:
         pickupTime = KakaoPayload.dataActionExtra[KAKAO_PARAM_PICKUP_TIME]
         return pickupTime
+    except (TypeError, AttributeError, KeyError):
+        return None
+
+
+def prevBlockValidation(KakaoPayload):
+    try:
+        prev_block_id = KakaoPayload.dataActionExtra[KAKAO_PARAM_PREV_BLOCK_ID]
+        return prev_block_id
     except (TypeError, AttributeError, KeyError):
         return None

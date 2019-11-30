@@ -1,17 +1,28 @@
+# User
+# Home
 from eatple_app.views_user.home import GET_UserHome
+
+# Ordeirng
 from eatple_app.views_user.ordering import GET_Menu
-from eatple_app.views_user.ordering import GET_PickupTime
+from eatple_app.views_user.ordering import SET_PickupTime
 from eatple_app.views_user.ordering import SET_OrderSheet
-from eatple_app.views_user.ordering import POST_Order
+
+# Edit
+from eatple_app.views_user.orderCheck import GET_EatplePass
+from eatple_app.views_user.orderCheck import GET_OrderDetails
+
 from eatple_app.views_user.orderEdit import GET_ConfirmUserCoupon
 from eatple_app.views_user.orderEdit import POST_UseCoupon
 from eatple_app.views_user.orderEdit import POST_OrderCancel
 from eatple_app.views_user.orderEdit import GET_PickupTimeForChange
 from eatple_app.views_user.orderEdit import SET_PickupTimeByChanged
-from eatple_app.views_user.orderCheck import GET_OrderList
-from eatple_app.views_user.orderCheck import GET_Coupon
+
+
+
 from eatple_app.views_user.etc import GET_UserManual
 from eatple_app.views_user.etc import GET_UserIntro
+
+# Partner
 from eatple_app.views_partner.home import GET_PartnerHome
 from eatple_app.views_partner.orderCheck import GET_StoreOrderList
 from eatple_app.views_partner.calculateCheck import GET_CalculateCheck
