@@ -394,7 +394,7 @@ def kakaoView_OrderPaymentCheck(kakaoPayload):
         orderRecordSheet = OrderRecordSheet.objects.latest('update_date')
     except OrderRecordSheet.DoesNotExist:
         orderRecordSheet = OrderRecordSheet()
-
+        
     if (orderRecordSheet.timeoutValidation()):
         return kakaoView_TimeOut()
 

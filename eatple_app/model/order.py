@@ -20,7 +20,13 @@ def iamportOrderValidation(order):
         order.save()
         
         return errorView("Invalid Store Paratmer", "정상적이지 않은 경로거나\n잇플 패스의 주문번호가 잘못되었습니다.")
-     
+
+    if(response['status'] == IAMPORT_ORDER_STATUS_PAID and
+        order.payment_status == IAMPORT_ORDER_STATUS_READY):
+        order.payment_status = IAMPORT_ORDER_STATUS_READY
+        order.status = ORDER_STATUS_ORDER_CONFIRM_WAIT
+        order.save()
+        
     return order.status
 
 def orderUpdate(order):
@@ -252,6 +258,15 @@ class OrderManager():
             orderUpdate(order)
 
         return self.getAvailableOrders()
+
+    def orderPaidCheck(self):
+        readyPayOrders = Order.objects.filter(
+            Q(payment_status=IAMPORT_ORDER_STATUS_READY)
+        )
+
+        # Order Status Update
+        for order in readyPayOrders:
+            orderUpdate(order)
 
     def getUnavailableOrders(self):
         unavailableOrders = self.userOrderList.filter(
