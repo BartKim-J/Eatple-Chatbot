@@ -11,7 +11,7 @@ from eatple_app.define import *
 
 class OrderRecord(models.Model):
     class Meta:
-        ordering = ['-record_date']
+        ordering = ['record_date']
 
     order_record_sheet = models.ForeignKey(
         'OrderRecordSheet',
@@ -27,7 +27,7 @@ class OrderRecord(models.Model):
     record_date = models.DateTimeField(auto_now_add=True)
 
     def save(self, *args, **kwargs):
-        super().save(*args, **kwargs)
+        super().save()
 
     def __str__(self):
         return "{}".format(self.order_record_sheet)
@@ -55,6 +55,9 @@ class OrderRecordSheet(models.Model):
     status = models.BooleanField(default=False)
 
     def save(self, *args, **kwargs):
+        super().save()
+
+    def recordUpdate(self, status, *args, **kwargs):
         isVertification = True
 
         if(self.user == None):
@@ -64,11 +67,7 @@ class OrderRecordSheet(models.Model):
             isVertification = False
 
         self.status = isVertification
-
-        super().save(*args, **kwargs)
-
-    def recordUpdate(self, status, *args, **kwargs):
-        super().save(*args, **kwargs)
+        super().save()
 
         orderRecord = OrderRecord(order_record_sheet=self, status=status)
         orderRecord.save()

@@ -35,9 +35,11 @@ ALLOWED_HOSTS = ['*']
 INSTALLED_APPS = [
     # local-app
     'eatple_app',
-
+    
     # 'suit',
     'eatple_app.apps.SuitConfig',
+    
+    'phonenumber_field',
     
     'django.contrib.admin',
     'django.contrib.auth',

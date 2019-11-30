@@ -108,7 +108,7 @@ class Menu(MenuInfo, MenuStatus, MenuSetting):
         self.menu_id = "{id:04x}".format(id=self.id)
 
     def save(self, *args, **kwargs):
-        super().save(*args, **kwargs)
+        super().save()
 
     def imgURL(self):
         try:

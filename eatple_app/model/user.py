@@ -15,6 +15,7 @@ from django.db import models
 from django_mysql.models import Model
 
 # External Library
+from phonenumber_field.modelfields import PhoneNumberField
 
 # Define
 from eatple_app.define import *
@@ -29,7 +30,7 @@ class User(models.Model):
     profile_image_url = models.CharField(
         max_length=STRING_LENGTH, null=True)
     
-    phone_number = models.CharField(
+    phone_number = PhoneNumberField(
         max_length=STRING_LENGTH, null=True)
 
     email = models.CharField(

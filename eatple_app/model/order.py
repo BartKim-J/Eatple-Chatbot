@@ -174,16 +174,18 @@ class Order(models.Model):
 
     count = models.IntegerField(default=1)
 
-    pickup_time = models.DateTimeField(auto_now=True)
+    pickup_time = models.TimeField(auto_now=True)
 
     update_date = models.DateTimeField(auto_now=True)
     order_date = models.DateTimeField(auto_now_add=True)
 
     status = models.IntegerField(
-        # max_length=STRING_LENGTH,
         choices=ORDER_STATUS,
         default=ORDER_STATUS_PAYMENT_WAIT,
     )
+
+    def save(self, *args, **kwargs):
+        super().save()
 
     def __init__(self, *args, **kwargs):
         super(Order, self).__init__(*args, **kwargs)
@@ -193,6 +195,9 @@ class Order(models.Model):
                 self.id = Order.objects.latest('id').id + 1
             except (Order.DoesNotExist) as ex:
                 self.id = 1
+
+        if(self.order_date == None):
+            self.order_date = datetime.now()
 
         self.order_code = "EP{area:08X}{id:04X}".format(
             area=int(self.order_date.strftime('%f')), id=self.id)
@@ -313,9 +318,29 @@ class OrderSheet(models.Model):
             except (OrderSheet.DoesNotExist) as ex:
                 self.id = 1
 
+        if(self.order_date == None):
+            self.order_date = datetime.now()
+            
         self.management_code = "E{area:06X}P{id:03x}".format(
             area=int(self.order_date.strftime('%f')), id=self.id)
 
+    def save(self, *args, **kwargs):
+        super().save()
+
+    def pushOrder(self, user, store, menu, pickup_time, count):
+        self.user = user
+        super().save()
+        
+        order = Order()
+        order.ordersheet = self
+        order.menu = menu
+        order.store = store
+        order.pickup_time = pickup_time
+        order.count = 1
+        order.save()
+        
+        return order
+        
     # Methods
     def __str__(self):
         return "{}".format(self.management_code)

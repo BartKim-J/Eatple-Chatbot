@@ -200,8 +200,8 @@ def GET_Menu(request):
                 @NOTE Dinner Time Close In Alpha 
             """
 
-            # return MenuListup(user, SELLING_TIME_LUNCH)
-            return errorView("Get Invalid Selling Time", "오늘 점심은 이미 마감되었어요.\n내일 점심을 기대해주세요.")
+            return MenuListup(user, SELLING_TIME_LUNCH)
+            # return errorView("Get Invalid Selling Time", "오늘 점심은 이미 마감되었어요.\n내일 점심을 기대해주세요.")
 
         return MenuListup(user, currentSellingTime)
 
@@ -297,6 +297,9 @@ def SET_OrderSheet(request):
         menu = menuValidation(kakaoPayload)
         pickup_time = pickupTimeValidation(kakaoPayload)
 
+        if(store == None or menu == None or pickup_time == None):
+            return errorView("Invalid Store Paratmer", "정상적이지 않은 경로거나, 오류가 발생했습니다.\n다시 주문해주세요!")
+
         # Order Record
         try:
             orderRecordSheet = OrderRecordSheet.objects.latest('update_date')
@@ -308,10 +311,16 @@ def SET_OrderSheet(request):
 
         orderRecordSheet.user = user
         orderRecordSheet.menu = menu
-        orderRecordSheet.recordUpdate(ORDER_RECORD_SET_PICKUP_TIEM)
-        
-        if(store == None or menu == None or pickup_time == None):
-            return errorView("Invalid Store Paratmer", "정상적이지 않은 경로거나, 오류가 발생했습니다.\n다시 주문해주세요!")
+        orderRecordSheet.recordUpdate(ORDER_RECORD_ORDERSHEET_CHECK)
+
+        orderSheet = OrderSheet()
+        order = orderSheet.pushOrder(
+            user=user, 
+            menu=menu, 
+            store=store, 
+            pickup_time=pickup_time,
+            count=1,
+        )
 
         KakaoForm = Kakao_CarouselForm()
         KakaoForm.ComerceCard_Init()
@@ -338,7 +347,15 @@ def SET_OrderSheet(request):
                 'messageText': wordings.ORDER_PUSH_COMMAND, 
                 'extra': kakaoPayload.dataActionExtra,
 
-                "webLinkUrl": "http://eatple.com/payment?storeName={storeName}&menuName={menuName}&menuPrice={menuPrice}".format(storeName=store.name, menuName=menu.name, menuPrice=menu.price )
+                "webLinkUrl": "http://eatple.com/payment?merchant_uid={merchant_uid}&storeName={storeName}&menuName={menuName}&menuPrice={menuPrice}&buyer_name={buyer_name}&buyer_tel={buyer_tel}&buyer_email={buyer_email}".format(
+                    merchant_uid=order.order_code,
+                    storeName=store.name, 
+                    menuName=menu.name, 
+                    menuPrice=menu.price,
+                    buyer_name=user.app_user_id,
+                    buyer_tel=str(user.phone_number)[3:13],
+                    buyer_email=user.email,
+                )
             }
         ]
 
@@ -383,14 +400,6 @@ def SET_OrderSheet(request):
         return errorView("{}".format(ex))
 
 
-'''
-    @name POST_Order
-    @param storeID, menuID, userID, pickupTime
-
-    @note
-    @bug
-    @todo
-'''
 @csrf_exempt
 def POST_Order(request):
     try:

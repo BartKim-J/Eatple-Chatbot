@@ -98,7 +98,7 @@ class OrderRecordInline(admin.TabularInline):
 
 
 class OrderRecordSheetAdmin(admin.ModelAdmin):
-    readonly_fields = ('status', 'created_date', 'update_date')
+    readonly_fields = ('user', 'menu', 'status', 'created_date', 'update_date')
 
     list_filter = ('update_date', 'created_date')
     list_display = ('status', 'user', 'created_date', 'update_date')
