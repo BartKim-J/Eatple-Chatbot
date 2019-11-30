@@ -40,16 +40,16 @@ urlpatterns = [
     path('skill/user/orderView/get_eatple_pass',    views.GET_EatplePass),
 
     # Order Edit Flow
-    path('skill/user/orderEdit/post_orderCancel',     views.POST_OrderCancel),
-    path('skill/user/orderEdit/get_confirmUseCoupon',
-         views.GET_ConfirmUserCoupon),
-    path('skill/user/orderEdit/post_useCoupon',       views.POST_UseCoupon),
+    path('skill/user/orderEdit/post_order_cancel',     views.POST_OrderCancel),
+    
+    path('skill/user/orderEdit/get_confirm_use_eatplepass', views.GET_ConfirmUseEatplePass),
+    path('skill/user/orderEdit/post_use_eatplepass',       views.POST_UseEatplePass),
 
     # Order Pickup Time Change Flow
-    path('skill/user/orderEdit/get_pickupTimeForChange',
-         views.GET_PickupTimeForChange),
-    path('skill/user/orderEdit/set_pickupTimeByChanged',
-         views.SET_PickupTimeByChanged),
+    path('skill/user/orderEdit/get_edit_pickup_time',
+         views.GET_EditPickupTime),
+    path('skill/user/orderEdit/set_confirm_edit_pickup_time',
+         views.SET_ConfirmEditPickupTime),
 
     # ETC
     path('skill/user/etc/get_userManual', views.GET_UserManual),

@@ -23,16 +23,6 @@ from eatple_app.views import *
 # STATIC CONFIG
 MENU_LIST_LENGTH = 10
 
-DEFAULT_QUICKREPLIES_MAP = [
-    {
-        'action': "block",
-        'label': "홈으로 돌아가기",
-        'messageText': "로딩중..",
-        'blockId': KAKAO_BLOCK_HOME,
-        'extra': {}
-    },
-]
-
 DISCOUNT_FOR_DEBUG = 5900
 
 # # # # # # # # # # # # # # # # # # # # # # # # #
@@ -156,7 +146,19 @@ def kakaoView_MenuListup(kakaoPayload):
 
         KakaoForm.SimpleText_Add("판매중인 메뉴가 없어요...")
 
-    KakaoForm.QuickReplies_AddWithMap(DEFAULT_QUICKREPLIES_MAP)
+    QUICKREPLIES_MAP = [
+        {
+            'action': "block",
+            'label': "홈으로 돌아가기",
+            'messageText': "로딩중..",
+            'blockId': KAKAO_BLOCK_HOME,
+            'extra': {
+                KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_GET_MENU
+            }
+        },
+    ]
+
+    KakaoForm.QuickReplies_AddWithMap(QUICKREPLIES_MAP)
         
 
     return JsonResponse(KakaoForm.GetForm())
@@ -192,7 +194,7 @@ def kakaoView_PickupTime(kakaoPayload):
         orderRecordSheet = OrderRecordSheet()
 
     if (orderRecordSheet.timeoutValidation()):
-        return kakaoView_TimeOut()
+        return kakaoView_TimeOut(KAKAO_BLOCK_SET_PICKUP_TIME)
 
     orderRecordSheet.user = user
     orderRecordSheet.menu = menu
@@ -284,7 +286,7 @@ def kakaoView_OrderPayment(kakaoPayload):
         orderRecordSheet = OrderRecordSheet()
 
     if (orderRecordSheet.timeoutValidation()):
-        return kakaoView_TimeOut()
+        return kakaoView_TimeOut(KAKAO_BLOCK_SET_ORDER_SHEET)
 
     orderRecordSheet.user = user
     orderRecordSheet.menu = menu
@@ -396,7 +398,7 @@ def kakaoView_OrderPaymentCheck(kakaoPayload):
         orderRecordSheet = OrderRecordSheet()
         
     if (orderRecordSheet.timeoutValidation()):
-        return kakaoView_TimeOut()
+        return kakaoView_TimeOut(KAKAO_BLOCK_SET_ORDER_SHEET)
 
     orderRecordSheet.user = user
     orderRecordSheet.menu = menu
@@ -514,7 +516,7 @@ def kakaoView_EatplePassIssuance(kakaoPayload):
             orderRecordSheet = OrderRecordSheet()
 
         if (orderRecordSheet.timeoutValidation()):
-            return kakaoView_TimeOut()
+            return kakaoView_TimeOut(KAKAO_BLOCK_SET_ORDER_SHEET)
 
         orderRecordSheet.user = user
         orderRecordSheet.menu = menu
@@ -565,19 +567,42 @@ def kakaoView_EatplePassIssuance(kakaoPayload):
             thumbnail, buttons
         )
 
-
-        KakaoForm.QuickReplies_AddWithMap(DEFAULT_QUICKREPLIES_MAP)
+        QUICKREPLIES_MAP = [
+            {
+                'action': "block",
+                'label': "홈으로 돌아가기",
+                'messageText': "로딩중..",
+                'blockId': KAKAO_BLOCK_HOME,
+                'extra': {
+                    KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_SET_ORDER_SHEET
+                }
+            },
+        ]
+        
+        KakaoForm.QuickReplies_AddWithMap(QUICKREPLIES_MAP)
 
         return JsonResponse(KakaoForm.GetForm())
 
     except (RuntimeError, TypeError, NameError, KeyError) as ex:
         return errorView("{}".format(ex))
 
-def kakaoView_TimeOut():
+def kakaoView_TimeOut(blockId):
     KakaoForm = Kakao_SimpleForm()
     KakaoForm.SimpleForm_Init()
 
-    KakaoForm.QuickReplies_AddWithMap(DEFAULT_QUICKREPLIES_MAP)
+    QUICKREPLIES_MAP = [
+        {
+            'action': "block",
+            'label': "홈으로 돌아가기",
+            'messageText': "로딩중..",
+            'blockId': KAKAO_BLOCK_HOME,
+            'extra': {
+                KAKAO_PARAM_PREV_BLOCK_ID: blockId
+            }
+        },
+    ]
+
+    KakaoForm.QuickReplies_AddWithMap(QUICKREPLIES_MAP)
 
     KakaoForm.SimpleText_Add(
         "주문시간이 초과되었습니다."

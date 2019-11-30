@@ -112,7 +112,7 @@ def kakaoView_EatplePass(kakaoPayload):
                         'action': "block", 
                         'label': "픽업시간 변경",  
                         'messageText': "로딩중..",
-                        'blockId': '',
+                        'blockId': KAKAO_BLOCK_EDIT_PICKUP_TIME,
                         'extra': {
                             KAKAO_PARAM_ORDER_ID: order.order_id,
                             KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_EATPLE_PASS
@@ -124,10 +124,10 @@ def kakaoView_EatplePass(kakaoPayload):
             elif (order.status == ORDER_STATUS_PICKUP_WAIT):
                 buttons.append(
                     {
-                        'action': "message", 
+                        'action': "block", 
                         'label': "사용하기",  
                         'messageText': "로딩중..",
-                        'blockId': '',
+                        'blockId': KAKAO_BLOCK_GET_USE_EATPLE_PASS_CONFIRM,
                         'extra': {
                             KAKAO_PARAM_ORDER_ID: order.order_id,
                             KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_EATPLE_PASS

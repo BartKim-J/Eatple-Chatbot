@@ -11,11 +11,16 @@ from eatple_app.views_user.ordering import SET_OrderSheet
 from eatple_app.views_user.orderCheck import GET_EatplePass
 from eatple_app.views_user.orderCheck import GET_OrderDetails
 
-from eatple_app.views_user.orderEdit import GET_ConfirmUserCoupon
-from eatple_app.views_user.orderEdit import POST_UseCoupon
+# Eatple Pass Use
+from eatple_app.views_user.orderEdit import GET_ConfirmUseEatplePass
+from eatple_app.views_user.orderEdit import POST_UseEatplePass
+
+# Order Cancel
 from eatple_app.views_user.orderEdit import POST_OrderCancel
-from eatple_app.views_user.orderEdit import GET_PickupTimeForChange
-from eatple_app.views_user.orderEdit import SET_PickupTimeByChanged
+
+# Edit Pickup Time
+from eatple_app.views_user.orderEdit import GET_EditPickupTime
+from eatple_app.views_user.orderEdit import SET_ConfirmEditPickupTime
 
 
 

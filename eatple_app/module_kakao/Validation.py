@@ -24,7 +24,7 @@ from eatple_app.views import *
 DEFAULT_QUICKREPLIES_MAP = [
     {
         'action': "block",
-        'label': "홈",
+        'label': "홈으로 돌아가기",
         'messageText': "로딩중..",
         'blockId': KAKAO_BLOCK_HOME,
         'extra': {}
