@@ -31,7 +31,7 @@ DEFAULT_QUICKREPLIES_MAP = [
     },
 ]
 
-def orderValidation(user):
+def eatplePassValidation(user):
     orderManager = OrderManager(user)
 
     orderManager.availableOrderStatusUpdate();
@@ -79,7 +79,7 @@ def userValidation(KakaoPayload):
             return user
         except User.DoesNotExist:
             return None
-    except (TypeError, AttributeError):
+    except (TypeError, AttributeError, KeyError):
         return None
 
 def menuValidation(KakaoPayload):
@@ -90,7 +90,7 @@ def menuValidation(KakaoPayload):
             return menu
         except Menu.DoesNotExist:
             return None
-    except (TypeError, AttributeError):
+    except (TypeError, AttributeError, KeyError):
         return None
     
 def storeValidation(KakaoPayload):
@@ -101,7 +101,21 @@ def storeValidation(KakaoPayload):
             return store
         except Store.DoesNotExist:
             return None
-    except (TypeError, AttributeError):
+    except (TypeError, AttributeError, KeyError):
+        return None
+
+
+def orderValidation(KakaoPayload):
+    try:
+        order_id = KakaoPayload.dataActionExtra[KAKAO_PARAM_ORDER_ID]
+        try:
+            order = Order.objects.get(order_id=order_id)
+            print(order_id)
+            
+            return order
+        except Order.DoesNotExist:
+            return None
+    except (TypeError, AttributeError, KeyError):
         return None
 
     
@@ -109,5 +123,5 @@ def pickupTimeValidation(KakaoPayload):
     try:
         pickupTime = KakaoPayload.dataActionExtra[KAKAO_PARAM_PICKUP_TIME]
         return pickupTime
-    except (TypeError, AttributeError):
+    except (TypeError, AttributeError, KeyError):
         return None

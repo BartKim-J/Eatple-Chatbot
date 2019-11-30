@@ -4,9 +4,11 @@ import os
 
 # Django Library
 from django.conf import settings
+from django.utils import timezone
 
 # External Library
-from datetime import datetime, timedelta, timezone
+import datetime
+
 import requests
 import json
 
@@ -142,23 +144,23 @@ KAKAO_PARAM_PICKUP_TIME = 'pickup_time'
 # Time Functions
 def dateNowByTimeZone():
     """
-    Returns an aware or naive datetime.datetime, depending on settings.USE_TZ.
+    Returns an aware or naive datetime, depending on settings.USE_TZ.
     """
     if settings.USE_TZ:
         tz = pytz.timezone(settings.TIME_ZONE)
-        return tz.localize(datetime.now())
+        return tz.localize(datetime.datetime.now())
     else:
-        return datetime.now()
+        return datetime.datetime.now()
 
 
-def dateByTimeZone(datetime):
+def dateByTimeZone(UTC):
     try:
         tz = pytz.timezone(settings.TIME_ZONE)
-        return tz.localize(datetime)
+        return tz.localize(UTC)
     except ValueError as ex:
-        timeDiffrence = timedelta(hours=9)
-        KST = timezone(timeDiffrence)
+        timeDiffrence = datetime.timedelta(hours=9)
+        KST = datetime.timezone(timeDiffrence)
 
-        localeTime = datetime.replace(tzinfo=KST) + timeDiffrence
+        localeTime = UTC.replace(tzinfo=KST) + timeDiffrence
         
         return localeTime # TO Korea

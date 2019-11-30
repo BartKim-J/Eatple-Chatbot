@@ -105,7 +105,7 @@ class Menu(MenuInfo, MenuStatus, MenuSetting):
             except (Menu.DoesNotExist) as ex:
                 self.id = 1
 
-        self.menu_id = "{id:04x}".format(id=self.id)
+        self.menu_id = "{id:04X}".format(id=self.id)
 
     def save(self, *args, **kwargs):
         super().save()

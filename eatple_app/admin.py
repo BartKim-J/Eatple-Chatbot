@@ -63,7 +63,7 @@ admin.site.register(Store, StoreAdmin)
 
 
 class OrderInline(admin.TabularInline):
-    readonly_fields = ('order_code', 'menu', 'count', 'store',
+    readonly_fields = ('status', 'order_id', 'menu', 'count', 'store',
                        'order_date', 'pickup_time')
 
     model = Order
@@ -78,10 +78,10 @@ class OrderInline(admin.TabularInline):
 
 
 class OrderSheetAdmin(admin.ModelAdmin):
-    readonly_fields = ('management_code', 'user', 'order_date', 'update_date')
+    readonly_fields = ('management_code', 'user', 'create_date', 'update_date')
 
-    list_filter = ('order_date',)
-    list_display = ('management_code', 'user', 'order_date', 'update_date')
+    list_filter = ('create_date',)
+    list_display = ('management_code', 'user', 'create_date', 'update_date')
 
     inlines = [OrderInline]
 

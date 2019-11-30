@@ -42,7 +42,7 @@ class PickupTime(models.Model):
 
     store = models.ForeignKey('Store', on_delete=models.CASCADE, null=True)
 
-    time = models.TimeField(default=datetime.now())
+    time = models.TimeField(default=timezone.now)
     
     status = models.IntegerField(
         default=OC_OPEN,
@@ -100,7 +100,7 @@ class Store(StoreInfo, StoreSetting, StoreStatus):
             except (Store.DoesNotExist) as ex:
                 self.id = 1
 
-        self.store_id = "{area:04x}-{id:04x}".format(area=0, id=self.id)
+        self.store_id = "{area:04X}-{id:04X}".format(area=0, id=self.id)
 
     def save(self, *args, **kwargs):
         super().save()

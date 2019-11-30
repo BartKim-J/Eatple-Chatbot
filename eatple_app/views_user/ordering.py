@@ -25,7 +25,6 @@ from eatple_app.views import *
 
 # STATIC CONFIG
 MENU_LIST_LENGTH = 8
-CATEGORY_LIST_LENGTH = 5
 
 DEFAULT_QUICKREPLIES_MAP = [
     {
@@ -51,19 +50,19 @@ def sellingTimeCheck():
 
     # Prev Lunch Order Time 16:30 ~ 10:30
     prevlunchOrderTimeStart = nowDateWithoutTime + \
-        timedelta(hours=16, minutes=30, days=-1)
+        datetime.timedelta(hours=16, minutes=30, days=-1)
     prevlunchOrderTimeEnd = nowDateWithoutTime + \
-        timedelta(hours=10, minutes=30)
+        datetime.timedelta(hours=10, minutes=30)
 
     # Dinner Order Time 10:30 ~ 16:30
-    dinnerOrderTimeStart = nowDateWithoutTime + timedelta(hours=10, minutes=30)
-    dinnerOrderTimeEnd = nowDateWithoutTime + timedelta(hours=16, minutes=30)
+    dinnerOrderTimeStart = nowDateWithoutTime + datetime.timedelta(hours=10, minutes=30)
+    dinnerOrderTimeEnd = nowDateWithoutTime + datetime.timedelta(hours=16, minutes=30)
 
     # Next Lunch Order Time 16:30 ~ 10:30
     nextlunchOrderTimeStart = nowDateWithoutTime + \
-        timedelta(hours=16, minutes=30)
+        datetime.timedelta(hours=16, minutes=30)
     nextlunchOrderTimeEnd = nowDateWithoutTime + \
-        timedelta(hours=10, minutes=30, days=1)
+        datetime.timedelta(hours=10, minutes=30, days=1)
 
     if(dinnerOrderTimeStart <= nowDate) and (nowDate <= dinnerOrderTimeEnd):
         return SELLING_TIME_DINNER
@@ -74,8 +73,7 @@ def sellingTimeCheck():
     else:
         return None
 
-
-def MenuListup(user, sellingTime):
+def kakaoView_MenuListup(user, sellingTime):
     QUICKREPLIES_MAP = [
         {
             'action': "block",
@@ -143,6 +141,111 @@ def MenuListup(user, sellingTime):
 
     return JsonResponse(KakaoForm.GetForm())
 
+def kakaoView_OrderPayment(user, store, menu, pickup_time, dataActionExtra):
+    # Order Record
+    try:
+        orderRecordSheet = OrderRecordSheet.objects.latest('update_date')
+    except OrderRecordSheet.DoesNotExist:
+        orderRecordSheet = OrderRecordSheet()
+
+    if (orderRecordSheet.timeoutValidation()):
+        return kakaoView_TimeOut()
+
+    orderRecordSheet.user = user
+    orderRecordSheet.menu = menu
+    orderRecordSheet.recordUpdate(ORDER_RECORD_ORDERSHEET_CHECK)
+
+    orderSheet = OrderSheet()
+    order = orderSheet.pushOrder(
+        user=user,
+        menu=menu,
+        store=store,
+        pickup_time=pickup_time,
+        count=1,
+    )
+
+    dataActionExtra[KAKAO_PARAM_ORDER_ID] = order.order_id
+    
+    KakaoForm = Kakao_CarouselForm()
+    KakaoForm.ComerceCard_Init()
+
+    # Menu Carousel Card Add
+    thumbnails = [
+        {
+            "imageUrl": "{}{}".format(HOST_URL, menu.imgURL())}
+    ]
+
+    profile = {
+        "nickname": "{name} - [ 픽업 : {pickup_time} ]".format(name=menu.name, pickup_time=pickup_time),
+        "imageUrl": None
+    }
+
+    kakaoMapUrl = "https://map.kakao.com/link/map/{},{}".format(
+        store.name, getLatLng(store.addr))
+
+    discount = 5900
+
+    buttons = [
+        {
+            'action': "webLink",
+            'label': "결제하러 가기",
+            'messageText': "로딩중..",
+            'extra': dataActionExtra,
+
+            "webLinkUrl": "http://eatple.com/payment?merchant_uid={merchant_uid}&storeName={storeName}&menuName={menuName}&menuPrice={menuPrice}&buyer_name={buyer_name}&buyer_tel={buyer_tel}&buyer_email={buyer_email}".format(
+                merchant_uid=order.order_id,
+                storeName=store.name,
+                menuName=menu.name,
+                menuPrice=menu.price,
+                buyer_name=user.app_user_id,
+                buyer_tel=str(user.phone_number)[3:13],
+                buyer_email=user.email,
+            )
+        },
+        {
+            'action': "block",
+            'label': "식권 발급",
+            'messageText': "로딩중..",
+            'blockId': KAKAO_BLOCK_SET_ORDER_SHEET,
+            'extra': dataActionExtra,
+        },
+    ]
+
+    KakaoForm.ComerceCard_Add(
+        "결제를 완료한 후에 \n식권 발급 버튼을 눌러주세요!".format(pickup_time=pickup_time),
+        menu.price,
+        discount,
+        thumbnails,
+        profile,
+        buttons
+    )
+
+    GET_PICKUP_TIME_QUICKREPLIES_MAP = [
+        {
+            'action': "block", 'label': "픽업시간 변경하기",
+            'messageText': "로딩중..",
+            'blockId': KAKAO_BLOCK_SET_PICKUP_TIME,
+            'extra': dataActionExtra
+        },
+        {
+            'action': "block", 'label': "쿠폰 사용하기",
+            'messageText': "로딩중..",
+            'blockId': KAKAO_BLOCK_SET_PICKUP_TIME,
+            'extra': dataActionExtra
+        },
+        {
+            'action': "message", 'label': "홈으로 돌아가기",
+            'messageText': "로딩중..",
+            'blockId': KAKAO_BLOCK_HOME,
+            'extra': {}
+        },
+    ]
+
+    for entryPoint in GET_PICKUP_TIME_QUICKREPLIES_MAP:
+        KakaoForm.QuickReplies_Add(entryPoint['action'], entryPoint['label'],
+                                    entryPoint['messageText'], entryPoint['blockId'], entryPoint['extra'])
+
+    return JsonResponse(KakaoForm.GetForm())
 
 def kakaoView_TimeOut():
     KakaoForm = Kakao_SimpleForm()
@@ -180,11 +283,10 @@ def GET_Menu(request):
         if (user == None):
             return GET_UserHome(request)
 
-        # User's Order Validation
-        orderStatus = orderValidation(user)
-
-        if(orderStatus != None):
-            return orderStatus
+        # User's Eatple Pass Validation
+        eatplePassStatus = eatplePassValidation(user)
+        if(eatplePassStatus != None):
+            return eatplePassStatus
 
         currentSellingTime = sellingTimeCheck()
 
@@ -200,10 +302,10 @@ def GET_Menu(request):
                 @NOTE Dinner Time Close In Alpha 
             """
 
-            return MenuListup(user, SELLING_TIME_LUNCH)
-            # return errorView("Get Invalid Selling Time", "오늘 점심은 이미 마감되었어요.\n내일 점심을 기대해주세요.")
+            # return kakaoView_MenuListup(user, SELLING_TIME_LUNCH)
+            return errorView("Get Invalid Selling Time", "오늘 점심은 이미 마감되었어요.\n내일 점심을 기대해주세요.")
 
-        return MenuListup(user, currentSellingTime)
+        return kakaoView_MenuListup(user, currentSellingTime)
 
     except (RuntimeError, TypeError, NameError, KeyError, AttributeError, ValueError) as ex:
         return errorView("{}".format(ex))
@@ -221,14 +323,14 @@ def GET_PickupTime(request):
         if (user == None):
             return GET_UserHome(request)
 
-        # User's Order Validation
-        orderStatus = orderValidation(user)
-        if(orderStatus != None):
-            return orderStatus
+        # User's Eatple Pass Validation
+        eatplePassStatus = eatplePassValidation(user)
+        if(eatplePassStatus != None):
+            return eatplePassStatus
 
         store = storeValidation(kakaoPayload)
         menu = menuValidation(kakaoPayload)
-
+        
         if(store == None or menu == None):
             return errorView("Invalid Store Paratmer", "정상적이지 않은 경로거나, 오류가 발생했습니다.\n다시 주문해주세요!")
 
@@ -258,17 +360,25 @@ def GET_PickupTime(request):
 
         pickupTimes = PickupTime.objects.filter(store=store)
 
+        order = orderValidation(kakaoPayload)
+            
         for pickupTime in pickupTimes:
+
+            dataActionExtra = {
+                KAKAO_PARAM_STORE_ID:         menu.store.store_id,
+                KAKAO_PARAM_MENU_ID:          menu.menu_id,
+                KAKAO_PARAM_PICKUP_TIME:      pickupTime.time.strftime('%H:%M'),
+            }
+            
+            if(order != None):
+                dataActionExtra[KAKAO_PARAM_ORDER_ID] = order.order_id
+            
             KakaoForm.QuickReplies_Add(
                 'block',
                 pickupTime.time.strftime('%H:%M'),
                 '로딩중..',
                 KAKAO_BLOCK_SET_ORDER_SHEET,
-                {
-                    KAKAO_PARAM_STORE_ID:         menu.store.store_id,
-                    KAKAO_PARAM_MENU_ID:          menu.menu_id,
-                    KAKAO_PARAM_PICKUP_TIME:      pickupTime.time.strftime('%H:%M'),
-                }
+                dataActionExtra
             )
 
         return JsonResponse(KakaoForm.GetForm())
@@ -283,118 +393,27 @@ def SET_OrderSheet(request):
     try:
         kakaoPayload = KakaoPayLoad(request)
 
+        print(kakaoPayload.dataActionExtra)
         # User Validation
         user = userValidation(kakaoPayload)
         if (user == None):
             return GET_UserHome(request)
 
-        # User's Order Validation
-        orderStatus = orderValidation(user)
-        if(orderStatus != None):
-            return orderStatus
+        # User's Eatple Pass Validation
+        eatplePassStatus = eatplePassValidation(user)
+        if(eatplePassStatus != None):
+            return eatplePassStatus
 
         store = storeValidation(kakaoPayload)
         menu = menuValidation(kakaoPayload)
         pickup_time = pickupTimeValidation(kakaoPayload)
 
         if(store == None or menu == None or pickup_time == None):
-            return errorView("Invalid Store Paratmer", "정상적이지 않은 경로거나, 오류가 발생했습니다.\n다시 주문해주세요!")
-
-        # Order Record
-        try:
-            orderRecordSheet = OrderRecordSheet.objects.latest('update_date')
-        except OrderRecordSheet.DoesNotExist:
-            orderRecordSheet = OrderRecordSheet()
-
-        if (orderRecordSheet.timeoutValidation()):
-            return kakaoView_TimeOut()
-
-        orderRecordSheet.user = user
-        orderRecordSheet.menu = menu
-        orderRecordSheet.recordUpdate(ORDER_RECORD_ORDERSHEET_CHECK)
-
-        orderSheet = OrderSheet()
-        order = orderSheet.pushOrder(
-            user=user, 
-            menu=menu, 
-            store=store, 
-            pickup_time=pickup_time,
-            count=1,
-        )
-
-        KakaoForm = Kakao_CarouselForm()
-        KakaoForm.ComerceCard_Init()
-
-        # Menu Carousel Card Add
-        thumbnails = [
-            {
-                "imageUrl": "{}{}".format(HOST_URL, menu.imgURL())}
-            ]
-
-
-        profile = {
-            "nickname": menu.name,
-            "imageUrl": None
-        }
+            return errorView("Invalid Store Paratmer", "정상적이지 않은 경로거나, 오류가 발생했습니다.\n다시 주문해주세요!")       
         
-        kakaoMapUrl = "https://map.kakao.com/link/map/{},{}".format(
-            store.name, getLatLng(store.addr))
-        
-        buttons = [
-            {
-                'action': "webLink", 
-                'label': "결제하러 가기",  
-                'messageText': wordings.ORDER_PUSH_COMMAND, 
-                'extra': kakaoPayload.dataActionExtra,
-
-                "webLinkUrl": "http://eatple.com/payment?merchant_uid={merchant_uid}&storeName={storeName}&menuName={menuName}&menuPrice={menuPrice}&buyer_name={buyer_name}&buyer_tel={buyer_tel}&buyer_email={buyer_email}".format(
-                    merchant_uid=order.order_code,
-                    storeName=store.name, 
-                    menuName=menu.name, 
-                    menuPrice=menu.price,
-                    buyer_name=user.app_user_id,
-                    buyer_tel=str(user.phone_number)[3:13],
-                    buyer_email=user.email,
-                )
-            }
-        ]
-
-        KakaoForm.ComerceCard_Add(
-            menu.name,
-            menu.price,
-            None,
-            None,
-            thumbnails, 
-            profile,
-            buttons
-        )
-
-        GET_PICKUP_TIME_QUICKREPLIES_MAP = [
-            {
-                'action': "block", 'label': "픽업시간 변경하기",  
-                'messageText': "로딩중..", 
-                'blockId': KAKAO_BLOCK_SET_PICKUP_TIME, 
-                'extra': kakaoPayload.dataActionExtra
-            },
-            {
-                'action': "block", 'label': "쿠폰 사용하기",  
-                'messageText': "로딩중..", 
-                'blockId': KAKAO_BLOCK_SET_PICKUP_TIME, 
-                'extra': kakaoPayload.dataActionExtra
-            },
-            {
-                'action': "message", 'label': "홈으로 돌아가기", 
-                'messageText': "로딩중..",
-                'blockId': KAKAO_BLOCK_HOME, 
-                'extra': {}
-            },
-        ]
-
-        for entryPoint in GET_PICKUP_TIME_QUICKREPLIES_MAP:
-            KakaoForm.QuickReplies_Add(entryPoint['action'], entryPoint['label'],
-                                       entryPoint['messageText'], entryPoint['blockId'], entryPoint['extra'])
-
-        return JsonResponse(KakaoForm.GetForm())
+        order = orderValidation(kakaoPayload)
+        if(order == None):
+            return kakaoView_OrderPayment(user, store, menu, pickup_time, kakaoPayload.dataActionExtra)
 
     except (RuntimeError, TypeError, NameError, KeyError) as ex:
         return errorView("{}".format(ex))
