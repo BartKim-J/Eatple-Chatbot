@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'eatple_app.apps.SuitConfig',
     
     'phonenumber_field',
+    'import_export',
     
     'django.contrib.admin',
     'django.contrib.auth',

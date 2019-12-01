@@ -18,24 +18,52 @@ def iamportOrderValidation(order):
         order.status = ORDER_STATUS_PAYMENT_CHECK
         order.save()
 
-        return IAMPORT_ORDER_STATUS_READY
+        return order
 
+    order.payment_status = response['status']
 
-    if(response['status'] == IAMPORT_ORDER_STATUS_PAID and
-            order.payment_status == IAMPORT_ORDER_STATUS_READY):
-        order.payment_status = IAMPORT_ORDER_STATUS_PAID
+    if(order.payment_status == IAMPORT_ORDER_STATUS_CANCELLED):
+        print("주문 취소됨")
+        order.status = ORDER_STATUS_ORDER_CANCELED
+        order.save()
+    
+    if(order.payment_status == IAMPORT_ORDER_STATUS_PAID):
+        print("주문 결제됨")
         order.status = ORDER_STATUS_ORDER_CONFIRM_WAIT
         order.save()
 
-    return order.status
+    if(order.payment_status == IAMPORT_ORDER_STATUS_READY):
+        print("주문 미결제 또는 진행중")
+        order.status = ORDER_STATUS_PAYMENT_CHECK
+        order.save()
+        
+    if(order.payment_status == IAMPORT_ORDER_STATUS_FAILED):
+        print("주문 실패")
+        order.status = ORDER_STATUS_ORDER_FAILED
+        order.save()
+        
+        
+    return order    
 
+def iamportOrderCancel(order, description="주문취소"):
+    iamport = Iamport(imp_key=IAMPORT_API_KEY, imp_secret=IAMPORT_API_SECRET_KEY)
 
+    try:
+        response = iamport.cancel(description, merchant_uid=order.order_id)    
+    except (KeyError, Iamport.ResponseError):
+        return False
+            
+    except Iamport.HttpError as http_error:
+        print(http_error)
+        return False
+    
+    return True
+    
 def orderUpdate(order):
-    status = iamportOrderValidation(order)
-
-    if(status == ORDER_STATUS_ORDER_FAILED):
-        return status
-
+    order = iamportOrderValidation(order)
+    if(order.payment_status != IAMPORT_ORDER_STATUS_PAID):
+        return order
+    
     menu = order.menu
 
     orderDate = dateByTimeZone(order.order_date)
@@ -52,19 +80,19 @@ def orderUpdate(order):
     TOMORROW = currentDateWithoutTime + \
         datetime.timedelta(days=1)  # Tommorrow start
 
-    # Prev Lunch Order Edit Time 16:30 ~ 9:30(~ 10:30)
+    # Prev Lunch Order Edit Time 16:30 ~ 10:25(~ 10:30)
     prevlunchOrderEditTimeStart = currentDateWithoutTime + \
         datetime.timedelta(hours=16, minutes=30, days=-1)
     prevlunchOrderEditTimeEnd = currentDateWithoutTime + \
-        datetime.timedelta(hours=9, minutes=30)
+        datetime.timedelta(hours=10, minutes=25)
     prevlunchOrderTimeEnd = currentDateWithoutTime + \
         datetime.timedelta(hours=10, minutes=30)
 
-    # Dinner Order Edit Time 11:30 ~ 15:30(~ 16:30)
+    # Dinner Order Edit Time 11:30 ~ 16:25(~ 16:30)
     dinnerOrderEditTimeStart = currentDateWithoutTime + \
         datetime.timedelta(hours=11, minutes=30)
     dinnerOrderEditTimeEnd = currentDateWithoutTime + \
-        datetime.timedelta(hours=15, minutes=30)
+        datetime.timedelta(hours=16, minutes=25)
     dinnerOrderTimeEnd = currentDateWithoutTime + \
         datetime.timedelta(hours=16, minutes=30)
 
@@ -163,7 +191,7 @@ def orderUpdate(order):
         order.status = ORDER_STATUS_ORDER_EXPIRED
         order.save()
 
-    return order.status
+    return order
 
 
 class Order(models.Model):
@@ -233,11 +261,15 @@ class Order(models.Model):
 
         if(datetime_pickup_time < currentTime):
             datetime_pickup_time += datetime.timedelta(days=1)
-            
-        print(datetime_pickup_time)
         
         return datetime_pickup_time
 
+    def orderStatusUpdate(self):
+        return orderUpdate(self)
+
+    def orderCancel(self):
+        return iamportOrderCancel(self)
+    
     def __init__(self, *args, **kwargs):
         super(Order, self).__init__(*args, **kwargs)
 
@@ -261,9 +293,6 @@ class OrderManager():
     def __init__(self, user):
         self.userOrderList = Order.objects.filter(
             ordersheet__user=user)
-
-    def orderStatusUpdate(self, order):
-        return orderUpdate(order)
 
     def availableOrderStatusUpdate(self):
         availableOrders = self.getAvailableOrders()

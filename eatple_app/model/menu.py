@@ -1,16 +1,17 @@
+# define
+from eatple_app.define import *
 # Django Library
-from eatple_app.model.utils import menu_directory_path
-from eatple_app.model.utils import OverwriteStorage
 from django.db import models
 from django.conf import settings
 from django.urls import reverse
 from django.core.files.storage import FileSystemStorage
 from django_mysql.models import Model
 from django.core.validators import MaxValueValidator, MinValueValidator
+from django import forms
 
-# System Library
-import os
-from random import *
+# Utils
+from eatple_app.model.utils import OverwriteStorage
+from eatple_app.model.utils import menu_directory_path
 
 
 # Define
@@ -18,30 +19,16 @@ from eatple_app.define import *
 
 DEFAULT_MENU_IMAGE_PATH = "STORE_DB/images/default/menuImg.png"
 
-
-class Category(models.Model):
-    # Metadata
-    class Meta:
-        # abstract = True
-        ordering = ['-index']
-
-    name = models.CharField(max_length=STRING_LENGTH, help_text="Category")
-    index = models.IntegerField(default=0, help_text="Category Index")
-
-    # Methods
-    def __str__(self):
-        return "{}".format(self.name)
-
-
 class Tag(models.Model):
     # Metadata
     class Meta:
         # abstract = True
         ordering = ['-name']
 
-    name = models.CharField(max_length=STRING_LENGTH, help_text="Tag")
-
-    # Methods
+    name = models.CharField(
+        max_length=WORD_LENGTH, 
+        help_text="검색 태그*"
+    )
 
     def __str__(self):
         return "{}".format(self.name)
@@ -51,11 +38,14 @@ class MenuInfo(models.Model):
     store = models.ForeignKey(
         'Store', on_delete=models.CASCADE, null=True)
 
-    menu_id = models.CharField(default="N/A",
-                               max_length=STRING_LENGTH, help_text="Menu ID",
-                               unique=True)
+    menu_id = models.CharField(
+        default="N/A",
+        max_length=WORD_LENGTH, 
+        unique=True,
+        help_text="메뉴 고유 번호",
+        )
 
-    name = models.CharField(max_length=STRING_LENGTH, help_text="Menu Name")
+    name = models.CharField(max_length=WORD_LENGTH, help_text="Menu Name")
 
     class Meta:
         abstract = True
@@ -64,28 +54,51 @@ class MenuInfo(models.Model):
 class MenuSetting(models.Model):
     description = models.TextField(help_text="Description", blank=True)
 
-    tag = models.ManyToManyField(Tag)
+    tag = models.ManyToManyField('Tag')
 
     image = models.ImageField(
-        blank=True, upload_to=menu_directory_path, storage=OverwriteStorage())
+        default=DEFAULT_MENU_IMAGE_PATH,
+        upload_to=menu_directory_path, 
+        storage=OverwriteStorage(),
+        help_text="메뉴 이미지*"
+    )
 
     sellingTime = models.IntegerField(
         choices=SELLING_TIME_CATEGORY,
-        default=SELLING_TIME_LUNCH
+        default=SELLING_TIME_LUNCH,
+        help_text="판매 시간*"
     )
 
-    price = models.IntegerField(default=6000, help_text="Price")
-    discount = models.IntegerField(default=0, help_text="Discount")
+    price = models.IntegerField(
+        default=6000, 
+        help_text="가격*"
+    )
+    discount = models.IntegerField(
+        default=0, 
+        help_text="가게 할인*"
+    )
 
     class Meta:
         abstract = True
 
 
 class MenuStatus(models.Model):
-    current_stock = models.IntegerField(default=0, help_text="Current Stock")
-    max_stock = models.IntegerField(default=50, help_text="Max Stock")
+    current_stock = models.IntegerField(
+        default=0, 
+        help_text="재고*"
+    )
+    
+    max_stock = models.IntegerField(
+        default=50, 
+        help_text="일일 재고*"
+    )
 
-    status = models.IntegerField(default=0, choices=(), help_text="")
+    status = models.CharField(
+        max_length=WORD_LENGTH, 
+        default=OC_OPEN, 
+        choices=OC_STATUS, 
+        help_text="메뉴 판매여부*"
+    )
 
     class Meta:
         abstract = True
@@ -98,7 +111,7 @@ class Menu(MenuInfo, MenuStatus, MenuSetting):
 
     def __init__(self, *args, **kwargs):
         super(Menu, self).__init__(*args, **kwargs)
-
+        
         if (self.id == None):
             try:
                 self.id = Menu.objects.latest('id').id + 1

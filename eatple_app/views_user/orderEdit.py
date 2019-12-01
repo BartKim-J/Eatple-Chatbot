@@ -175,37 +175,18 @@ def kakaoView_OrderCancel(kakaoPayload):
     ]
     
     # EatplePass Status Update
-    orderManager = OrderManager(user)
-    orderManager.orderStatusUpdate(order)
+    order.orderStatusUpdate()
     
     if (order.status == ORDER_STATUS_PICKUP_PREPARE or 
         order.status == ORDER_STATUS_ORDER_CONFIRM_WAIT or
         order.status == ORDER_STATUS_ORDER_CONFIRMED):
-        iamport = Iamport(imp_key=IAMPORT_API_KEY, imp_secret=IAMPORT_API_SECRET_KEY)
 
-        try:
-            response = iamport.cancel('주문 취소', merchant_uid=order.order_id)    
-        except (KeyError, Iamport.ResponseError, Iamport.HttpError):
-            try:
-                response = iamport.find(merchant_uid=order.order_id)
-            except (KeyError, Iamport.ResponseError):
-                return errorView("Invalid Paratmer", "정상적이지 않은 주문번호이거나\n진행 중 오류가 발생했습니다.")
-            except Iamport.HttpError as http_error:
-                return errorView("Invalid Paratmer", "정상적이지 않은 주문번호이거나\n진행 중 오류가 발생했습니다.")
-                
-        except Iamport.HttpError as http_error:
-            print(response)
-            return errorView("Invalid Paratmer", "정상적이지 않은 주문번호이거나\n진행 중 오류가 발생했습니다.")
+        response = order.orderCancel()
+        if(response == False):
+            return errorView("Invalid Paratmer", "정상적이지 않은 주문번호이거나\n환불 진행 중 오류가 발생했습니다.")
         
-        
-        
-        if(response['status'] == IAMPORT_ORDER_STATUS_CANCLED):
-            order.payment_status = response['status']
-            order.status = ORDER_STATUS_ORDER_CANCELED
-            order.save()
-
-        else:
-            return errorView("Invalid Paratmer", "진행 중 오류가 발생했습니다.\n다시 환불 신청을 해주세요.")
+        # Cancelled EatplePass Update
+        order.orderStatusUpdate()
         
         KakaoForm = Kakao_CarouselForm()
         KakaoForm.BasicCard_Init()

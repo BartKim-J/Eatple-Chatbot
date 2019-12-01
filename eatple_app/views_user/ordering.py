@@ -105,8 +105,12 @@ def kakaoView_MenuListup(kakaoPayload):
 
         # Menu Carousel Card Add
         for menu in menuList:
-            thumbnail = {"imageUrl": "{}{}".format(
-                HOST_URL, menu.imgURL())}
+            thumbnail = {
+                "imageUrl": "{}{}".format(HOST_URL, menu.imgURL()),
+                "fixedRatio": "true",
+                "width": 600,
+                "height": 600,
+            }
 
             kakaoMapUrl = "https://map.kakao.com/link/map/{},{}".format(
                 menu.store.name, getLatLng(menu.store.addr))
@@ -132,10 +136,7 @@ def kakaoView_MenuListup(kakaoPayload):
 
             KakaoForm.BasicCard_Add(
                 "{}".format(menu.name), 
-                "{} - {}원".format(
-                    menu.store.name,
-                    menu.price
-                ), 
+                "{}".format(menu.store.name), 
                 thumbnail, 
                 buttons
             )
@@ -315,12 +316,16 @@ def kakaoView_OrderPayment(kakaoPayload):
     # Menu Carousel Card Add
     thumbnails = [
         {
-            "imageUrl": "{}{}".format(HOST_URL, menu.imgURL())}
+            "imageUrl": "{}{}".format(HOST_URL, menu.imgURL()),
+            "fixedRatio": "true",
+            "width": 600,
+            "height": 600,
+        }
     ]
 
     profile = {
         "nickname": "{name} - [ 픽업 : {pickup_time} ]".format(name=menu.name, pickup_time=pickup_time),
-        "imageUrl": None
+        "imageUrl": "{}{}".format(HOST_URL, store.logoImgURL()),
     }
 
     kakaoMapUrl = "https://map.kakao.com/link/map/{},{}".format(
@@ -415,17 +420,9 @@ def kakaoView_OrderPaymentCheck(kakaoPayload):
     dataActionExtra[KAKAO_PARAM_ORDER_ID] = order.order_id
     dataActionExtra[KAKAO_PARAM_PREV_BLOCK_ID] = KAKAO_BLOCK_SET_ORDER_SHEET
 
-    iamport = Iamport(imp_key=IAMPORT_API_KEY, imp_secret=IAMPORT_API_SECRET_KEY)
-    
-    try:
-        response = iamport.find(merchant_uid=order.order_id)
-    except (KeyError, Iamport.ResponseError):
-         return errorView("Invalid Store Paratmer", "정상적이지 않은 경로거나, 오류가 발생했습니다.\n다시 주문해주세요!")
-    except Iamport.HttpError as http_error:
-        response = {}
-        response['status']=IAMPORT_ORDER_STATUS_READY
+    order.orderStatusUpdate()
 
-    if(response['status'] == IAMPORT_ORDER_STATUS_PAID):        
+    if(order.payment_status == IAMPORT_ORDER_STATUS_PAID):        
         return kakaoView_EatplePassIssuance(kakaoPayload)
     else:
         KakaoForm = Kakao_CarouselForm()
@@ -503,12 +500,10 @@ def kakaoView_EatplePassIssuance(kakaoPayload):
         menu = menuValidation(kakaoPayload)
         order = orderValidation(kakaoPayload)
         
-        if(order == None or order.payment_status == IAMPORT_ORDER_STATUS_PAID):
-            return errorView("Invalid Store Paratmer", "정상적이지 않은 경로거나 이미 발급이 완료되었어요!")
+        order.orderStatusUpdate()
 
-        order.payment_status = IAMPORT_ORDER_STATUS_PAID
-        order.status = ORDER_STATUS_ORDER_CONFIRM_WAIT
-        order.save()
+        if(order == None):
+            return errorView("Invalid Store Paratmer", "정상적이지 않은 경로거나 이미 발급이 완료되었어요!")
         
         # Order Record
         try:

@@ -1,6 +1,7 @@
 # System
-import sys
 import os
+import sys
+from random import *
 
 # Django Library
 from django.conf import settings
@@ -15,6 +16,7 @@ import json
 import pytz
 
 from iamport import Iamport
+from phonenumber_field.modelfields import PhoneNumberField
 
 
 EATPLUS_HOST_URL = "http://eatple.com:8000"
@@ -112,8 +114,8 @@ DINNER_PICKUP_TIME = [
 
 # OPEN & CLOSE
 
-OC_OPEN = 0
-OC_CLOSE = 1
+OC_OPEN = "open"
+OC_CLOSE = "close"
 OC_STATUS = [
     (OC_OPEN, 'Open'),
     (OC_CLOSE, 'Close'),
@@ -125,14 +127,14 @@ IAMPORT_API_KEY = '8060686596108918'
 IAMPORT_API_SECRET_KEY = 'Ag2i32vX2b0H4Cc4hl76jdZI8fYaMqOnHRGKTbIWnIDslPwDbDJvQJdZZcaMCY9kPP5I1NEpvhRQ7nui'
 
 IAMPORT_ORDER_STATUS_PAID = 'paid'
-IAMPORT_ORDER_STATUS_CANCLED = 'cancelled'
+IAMPORT_ORDER_STATUS_CANCELLED = 'cancelled'
 IAMPORT_ORDER_STATUS_FAILED = 'failed'
 IAMPORT_ORDER_STATUS_READY = 'ready'
 
 IAMPORT_ORDER_STATUS = [
     (IAMPORT_ORDER_STATUS_READY, '미결제'),
     (IAMPORT_ORDER_STATUS_PAID, '결제완료'),
-    (IAMPORT_ORDER_STATUS_CANCLED, '환불/취소'),
+    (IAMPORT_ORDER_STATUS_CANCELLED, '환불/취소'),
     (IAMPORT_ORDER_STATUS_FAILED, '결제실패'),
 ]
 

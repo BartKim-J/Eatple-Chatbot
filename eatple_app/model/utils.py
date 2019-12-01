@@ -44,7 +44,7 @@ def set_filename_format(instance, filename, toFilename):
 
 def menu_directory_path(instance, filename):
     path = "STORE_DB/images/{storename}/{menuname}/{filename}".format(
-        storename=instance.storeInstance.name,
+        storename=instance.store.name,
         menuname=instance.name,
         filename=set_filename_format(instance, filename, "menuImg"),
     )
@@ -54,7 +54,7 @@ def menu_directory_path(instance, filename):
 
 def logo_directory_path(instance, filename):
     path = "STORE_DB/images/{storename}/{filename}".format(
-        storename=instance.storeInstance.name,
+        storename=instance.store.name,
         menuname=instance.name,
         filename=set_filename_format(instance, filename, "logoImg"),
     )
