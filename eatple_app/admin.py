@@ -12,6 +12,7 @@ from import_export.admin import ExportActionModelAdmin, ImportExportMixin, Impor
 from import_export import resources
 
 from eatple_app.admins.admin_user import UserAdmin
+from eatple_app.admins.admin_partner import PartnerAdmin
 from eatple_app.admins.admin_store import StoreAdmin
 from eatple_app.admins.admin_order import OrderAdmin
 from eatple_app.admins.admin_orderSheet import OrderSheetAdmin
@@ -28,7 +29,7 @@ admin.site.register(OrderRecordSheet, OrderRecordSheetAdmin)
 
 admin.site.register(User, UserAdmin)
 
-admin.site.register(Partner)
+admin.site.register(Partner, PartnerAdmin)
 
 admin.site.register(DefaultImage, DefaultImageAdmin)
 

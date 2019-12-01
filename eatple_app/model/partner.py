@@ -12,26 +12,52 @@ from django_mysql.models import Model
 # Define
 from eatple_app.define import *
 
-class Partner(models.Model):
-    class Meta:
-        ordering = ['-storeInstance__name']
 
-    name = models.CharField(max_length=PARTNER_ID_CODE_LENGTH,
-                            help_text="Partner Name", default='')
-    storeInstance = models.ForeignKey(
-        'Store', on_delete=models.CASCADE, default=DEFAULT_OBJECT_ID)
-    identifier_code = models.CharField(
-        max_length=PARTNER_ID_CODE_LENGTH, help_text="Partner ID", default='')
+class KakaoUser(models.Model):
+    nickname = models.CharField(
+    max_length=USER_NICKNAME_LENGTH, null=True)
+
+    profile_image_url = models.CharField(
+        max_length=WORD_LENGTH, null=True)
+    
+    phone_number = PhoneNumberField(
+        max_length=WORD_LENGTH, null=True)
+
+    email = models.CharField(
+        max_length=WORD_LENGTH, null=True)
+
+    birthyear = models.CharField(
+        max_length=WORD_LENGTH, null=True)
+    birthday = models.CharField(
+        max_length=WORD_LENGTH, null=True)
+    
+    gender = models.CharField(
+        max_length=WORD_LENGTH, null=True)
+    
+    ci = models.CharField(
+        max_length=STRING_LENGTH, null=True)
+    ci_authenticated_at = models.CharField(
+        max_length=STRING_LENGTH, null=True )
+    
+    app_user_id = models.IntegerField(default=0)
+
+    class Meta:
+        abstract = True
+class Partner(KakaoUser, models.Model):
+    class Meta:
+        ordering = ['-store__name']
+    
+    store = models.ForeignKey(
+        'Store', 
+        on_delete=models.CASCADE, 
+        null=True
+    )
+
+    create_date = models.DateTimeField(auto_now=True)
 
     @classmethod
-    def registerPartner(cls, _name, _identifier_code, _storeKey):
-        try:
-            storeInstance = Store.objects.get(id=_storeKey)
-        except Store.DoesNotExist:
-            return None
-
-        registedUser = cls(
-            name=_name, identifier_code=_identifier_code, storeInstance=storeInstance)
+    def signUp(cls, *args, **kwargs):
+        registedUser = cls(*args, **kwargs)
         registedUser.save()
 
         return registedUser

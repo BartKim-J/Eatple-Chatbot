@@ -1,107 +1,192 @@
-'''
-    Author : Ben Kim
-
-    @NOTE
-    @BUG
-    @TODO
- 
-'''
 # Django Library
 from django.shortcuts import render
 from django.views.decorators.csrf import csrf_exempt
 from django.http import JsonResponse
 
-# External Library
-import json
-from random import *
-
 # Models
-from eatple_app.models import Partner
-from eatple_app.models import Order
-from eatple_app.models import Category, Tag
-from eatple_app.models import Store, Menu
-
-# View Modules
-from eatple_app.module_kakao.ReponseForm import Kakao_SimpleForm, Kakao_CarouselForm
-from eatple_app.module_kakao.RequestForm import getLatLng, KakaoPayLoad
-
-# View
-from eatple_app.views_partner.wording import wordings
-from eatple_app.views_system.debugger import EatplusSkillLog, errorView
+from eatple_app.models import *
 
 # Define
 from eatple_app.define import *
 
-DEFAULT_STORE_ID = 28  # Eatple Store Unique ID : 28
+# Modules
+from eatple_app.module_kakao.ReponseForm import *
+from eatple_app.module_kakao.RequestForm import *
+from eatple_app.module_kakao.Validation import *
 
-# Static Functions
+# View-System
+from eatple_app.views_system.debugger import *
+
+# Wordings
+from eatple_app.views_user.wording import wordings
 
 
-def registerPartner(partnerIdentifier, storeKey):
-    partnerInstance = Partner.registerPartner(
-        "잇플 파트너 {}".format(randint(1, 10000)), partnerIdentifier, storeKey)
+def userSignUp(userProfile):
+    user = User.signUp(
+        nickname=userProfile['nickname'],
+        profile_image_url=userProfile['profile_image_url'],
+        phone_number=userProfile['phone_number'],
+        email=userProfile['email'],
+        birthyear=userProfile['birthyear'],
+        birthday=userProfile['birthday'],
+        gender=userProfile['gender'],
+        ci=userProfile['ci'],
+        ci_authenticated_at=userProfile['ci_authenticated_at'],
+        app_user_id=userProfile['app_user_id'],
+    )
 
-    return partnerInstance
+    return user
+
+def kakaoView_SignUp():
+    EatplusSkillLog("Sign Up")
+
+    KakaoForm = Kakao_CarouselForm()
+    KakaoForm.BasicCard_Init()
+
+    BTN_MAP = [
+        {
+            'action': "block",
+            'label': "연동하러 가기",
+            'messageText': "연동하기",
+            'blockId': KAKAO_BLOCK_USER_SIGNUP,
+            'extra': {
+                KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_HOME
+            }
+        },
+    ]
+    
+    QUICKREPLIES_MAP = []
+
+    thumbnail = {"imageUrl": ""}
+
+    buttons = BTN_MAP
+
+    KakaoForm.BasicCard_Add(
+        "아직 잇플에 연동되지 않은 \n카카오 계정입니다.",
+        "함께 연동하러 가볼까요?", 
+        thumbnail, 
+        buttons
+    )
+
+    for entryPoint in QUICKREPLIES_MAP:
+        KakaoForm.QuickReplies_Add(
+            entryPoint['action'], 
+            entryPoint['label'],
+            entryPoint['messageText'], 
+            entryPoint['blockId'], 
+            entryPoint['extra']
+        )
+
+    return JsonResponse(KakaoForm.GetForm())
 
 
-# Viewset
-'''
-    @name GET_PartnerHome
-    @param userID
-
-    @note
-    @bug
-    @todo
-'''
-@csrf_exempt
-def GET_PartnerHome(request):
+def kakaoView_Home(user):
     EatplusSkillLog("Home")
 
-    HOME_BTN_MAP = [
+    KakaoForm = Kakao_CarouselForm()
+    KakaoForm.BasicCard_Init()
+
+    orderManager = OrderManager(user)
+    orderManager.orderPaidCheck()
+    orderManager.availableOrderStatusUpdate()        
+  
+    BTN_MAP = [
         {
-            'action': "message", 'label': wordings.GET_ORDER_LIST_TOTAL_COMMAND,
-            'messageText': wordings.GET_ORDER_LIST_TOTAL_COMMAND, 'blockId': "none", 'extra': {'Status': "OK"}
+            'action': "block",
+            'label': "메뉴보기",
+            'messageText': "로딩중..",
+            'blockId': KAKAO_BLOCK_USER_GET_MENU,
+            'extra': {
+                KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_HOME
+            }
         },
         {
-            'action': "message", 'label': wordings.GET_CALCULATE_CHECK_COMMAND,
-            'messageText': wordings.GET_CALCULATE_CHECK_COMMAND, 'blockId': "none", 'extra': {'Status': "OK"}
+            'action': "block",
+            'label': "잇플패스 확인",
+            'messageText': "로딩중..",
+            'blockId': KAKAO_BLOCK_USER_EATPLE_PASS,
+            'extra': {
+                KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_HOME
+            }
+        },
+    ]
+    
+    QUICKREPLIES_MAP = [
+        {
+            'action': "block",
+            'label': "최근 주문내역",
+            'messageText': "로딩중..",
+            'blockId': KAKAO_BLOCK_USER_ORDER_DETAILS,
+            'extra': {
+                KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_HOME
+            }
+        },
+        {
+            'action': "block", 
+            'label': "위치변경",
+            'messageText': "로딩중..",    
+            'blockId': KAKAO_BLOCK_USER_EDIT_LOCATION,
+            'extra': {
+                KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_HOME
+            }
+        },
+
+        {
+            'action': "block", 
+            'label': "사용 메뉴얼",
+            'messageText': "로딩중..",    
+            'blockId': KAKAO_BLOCK_USER_MANUAL,
+            'extra': {
+                KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_HOME
+            }
         },
     ]
 
-    HOME_QUICKREPLIES_MAP = [
-        {'action': "message", 'label': wordings.STORE_MANUAL_COMMAND,
-            'messageText': wordings.STORE_MANUAL_COMMAND,    'blockId': "none", 'extra': {}},
-    ]
+    thumbnail = {
+            "imageUrl": "",
+            "fixedRatio": "true",
+            "width": 800,
+            "height": 800,
+        }
 
+    buttons = BTN_MAP
+
+    KakaoForm.BasicCard_Add(
+        "잇플 홈 화면입니다.", 
+        "아래 명령어 중에 골라주세요!", 
+        thumbnail, 
+        buttons
+    )
+    
+    KakaoForm.QuickReplies_AddWithMap(QUICKREPLIES_MAP)
+
+    return JsonResponse(KakaoForm.GetForm())
+
+@csrf_exempt
+def GET_PartnerHome(request):
     try:
         kakaoPayload = KakaoPayLoad(request)
 
-        try:
-            partnerInstance = Partner.objects.get(
-                identifier_code=kakaoPayload.userID)
-        except Partner.DoesNotExist:
-            storeKey = DEFAULT_STORE_ID
-            partnerInstance = registerPartner(
-                kakaoPayload.userID, "{}".format(storeKey))
-            if (partnerInstance == None):
-                return errorView("partner register failed.")
+        user = userValidation(kakaoPayload)
 
+        if(user == None):
+            try:
+                otpURL = kakaoPayload.dataActionParams['user_profile']['origin']
 
-        KakaoForm = Kakao_CarouselForm()
-        KakaoForm.BasicCard_Init()
+                kakaoResponse = requests.get("{url}?rest_api_key={rest_api_key}".format(
+                    url=otpURL, rest_api_key=KAKAO_REST_API_KEY))
 
-        thumbnail = {"imageUrl": ""}
+                if(kakaoResponse.status_code == 200):
+                    user = userSignUp(kakaoResponse.json())
 
-        buttons = HOME_BTN_MAP
+                    return kakaoView_Home(user)
 
-        KakaoForm.BasicCard_Add(wordings.HOME_TITLE_TEXT,
-                                wordings.HOME_DESCRIPT_TEXT, thumbnail, buttons)
+                return kakaoView_SignUp()
 
-        for entryPoint in HOME_QUICKREPLIES_MAP:
-            KakaoForm.QuickReplies_Add(entryPoint['action'], entryPoint['label'],
-                                       entryPoint['messageText'], entryPoint['blockId'], entryPoint['extra'])
-
-        return JsonResponse(KakaoForm.GetForm())
+            except (RuntimeError, TypeError, NameError, KeyError):
+                return kakaoView_SignUp()
+        else:
+            return kakaoView_Home(user)
 
     except (RuntimeError, TypeError, NameError, KeyError) as ex:
         return errorView("{}".format(ex))

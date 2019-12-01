@@ -13,11 +13,23 @@ def iamportOrderValidation(order):
                       imp_secret=IAMPORT_API_SECRET_KEY)
     try:
         response = iamport.find(merchant_uid=order.order_id)
-    except (KeyError, Iamport.ResponseError, Iamport.HttpError):
-        order.payment_status = IAMPORT_ORDER_STATUS_READY
-        order.status = ORDER_STATUS_PAYMENT_CHECK
+    except KeyError:
+        return order
+    
+    except Iamport.ResponseError as e:
+        order.payment_status = IAMPORT_ORDER_STATUS_FAILED
+        order.status = ORDER_STATUS_ORDER_FAILED
         order.save()
-
+        
+        return order
+    
+    except Iamport.HttpError as httpError:
+        if(httpError.code == 404):
+            order.payment_status = IAMPORT_ORDER_STATUS_CANCELLED
+            order.status = ORDER_STATUS_ORDER_CANCELED
+            order.save()
+            
+        print(httpError.code)
         return order
 
     order.payment_status = response['status']
@@ -207,20 +219,18 @@ class Order(models.Model):
     ordersheet = models.ForeignKey(
         'OrderSheet',
         on_delete=models.CASCADE,
-        default=DEFAULT_OBJECT_ID
+        null=True
     )
 
     store = models.ForeignKey(
         'Store',
         on_delete=models.DO_NOTHING,
-        default=DEFAULT_OBJECT_ID,
         null=True
     )
 
     menu = models.ForeignKey(
         'Menu',
         on_delete=models.DO_NOTHING,
-        default=DEFAULT_OBJECT_ID,
         null=True
     )
 
@@ -358,7 +368,6 @@ class OrderSheet(models.Model):
     user = models.ForeignKey(
         'User',
         on_delete=models.DO_NOTHING,
-        default=DEFAULT_OBJECT_ID,
         null=True
     )
 

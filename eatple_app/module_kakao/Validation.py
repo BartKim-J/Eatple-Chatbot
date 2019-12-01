@@ -26,7 +26,7 @@ DEFAULT_QUICKREPLIES_MAP = [
         'action': "block",
         'label': "홈으로 돌아가기",
         'messageText': "로딩중..",
-        'blockId': KAKAO_BLOCK_HOME,
+        'blockId': KAKAO_BLOCK_USER_HOME,
         'extra': {}
     },
 ]

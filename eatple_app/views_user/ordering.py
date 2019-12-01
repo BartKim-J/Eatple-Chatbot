@@ -63,9 +63,9 @@ def sellingTimeCheck():
 def kakaoView_MenuListup(kakaoPayload):
     # Block Validation
     prev_block_id = prevBlockValidation(kakaoPayload)
-    if(prev_block_id != KAKAO_BLOCK_HOME and 
-       prev_block_id != KAKAO_BLOCK_EATPLE_PASS and
-       prev_block_id != KAKAO_BLOCK_ORDER_DETAILS):
+    if(prev_block_id != KAKAO_BLOCK_USER_HOME and 
+       prev_block_id != KAKAO_BLOCK_USER_EATPLE_PASS and
+       prev_block_id != KAKAO_BLOCK_USER_ORDER_DETAILS):
         return errorView("Invalid Block Access", "정상적이지 않은 경로거나, 오류가 발생했습니다.\n다시 주문해주세요!")
 
     # User Validation
@@ -118,11 +118,11 @@ def kakaoView_MenuListup(kakaoPayload):
                     'action': "block",
                     'label': "주문하기",
                     'messageText': "로딩중..",
-                    'blockId': KAKAO_BLOCK_SET_PICKUP_TIME,
+                    'blockId': KAKAO_BLOCK_USER_SET_PICKUP_TIME,
                     'extra': {
                         KAKAO_PARAM_STORE_ID: menu.store.store_id,
                         KAKAO_PARAM_MENU_ID: menu.menu_id,
-                        KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_GET_MENU
+                        KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_GET_MENU
                     }
                 },
                 {
@@ -150,9 +150,9 @@ def kakaoView_MenuListup(kakaoPayload):
             'action': "block",
             'label': "홈으로 돌아가기",
             'messageText': "로딩중..",
-            'blockId': KAKAO_BLOCK_HOME,
+            'blockId': KAKAO_BLOCK_USER_HOME,
             'extra': {
-                KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_GET_MENU
+                KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_GET_MENU
             }
         },
     ]
@@ -164,7 +164,7 @@ def kakaoView_MenuListup(kakaoPayload):
 def kakaoView_PickupTime(kakaoPayload):
     # Block Validation
     prev_block_id = prevBlockValidation(kakaoPayload)
-    if(prev_block_id != KAKAO_BLOCK_GET_MENU and prev_block_id != KAKAO_BLOCK_SET_ORDER_SHEET):
+    if(prev_block_id != KAKAO_BLOCK_USER_GET_MENU and prev_block_id != KAKAO_BLOCK_USER_SET_ORDER_SHEET):
         return errorView("Invalid Block Access", "정상적이지 않은 경로거나, 오류가 발생했습니다.\n다시 주문해주세요!")
 
     # User Validation
@@ -205,7 +205,7 @@ def kakaoView_PickupTime(kakaoPayload):
         orderRecordSheet = OrderRecordSheet()
 
     if (orderRecordSheet.timeoutValidation()):
-        return kakaoView_TimeOut(KAKAO_BLOCK_SET_PICKUP_TIME)
+        return kakaoView_TimeOut(KAKAO_BLOCK_USER_SET_PICKUP_TIME)
 
     orderRecordSheet.user = user
     orderRecordSheet.menu = menu
@@ -229,7 +229,7 @@ def kakaoView_PickupTime(kakaoPayload):
             KAKAO_PARAM_STORE_ID: menu.store.store_id,
             KAKAO_PARAM_MENU_ID: menu.menu_id,
             KAKAO_PARAM_PICKUP_TIME: pickupTime.time.strftime('%H:%M'),
-            KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_SET_PICKUP_TIME
+            KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_SET_PICKUP_TIME
         }
         
         if(order != None):
@@ -239,7 +239,7 @@ def kakaoView_PickupTime(kakaoPayload):
             'block',
             pickupTime.time.strftime('%H:%M'),
             '로딩중..',
-            KAKAO_BLOCK_SET_ORDER_SHEET,
+            KAKAO_BLOCK_USER_SET_ORDER_SHEET,
             dataActionExtra
         )
 
@@ -248,7 +248,7 @@ def kakaoView_PickupTime(kakaoPayload):
 def kakaoView_OrderPayment(kakaoPayload):
     # Block Validation
     prev_block_id = prevBlockValidation(kakaoPayload)
-    if(prev_block_id != KAKAO_BLOCK_SET_PICKUP_TIME and prev_block_id != KAKAO_BLOCK_SET_ORDER_SHEET):
+    if(prev_block_id != KAKAO_BLOCK_USER_SET_PICKUP_TIME and prev_block_id != KAKAO_BLOCK_USER_SET_ORDER_SHEET):
         return errorView("Invalid Block Access", "정상적이지 않은 경로거나, 오류가 발생했습니다.\n다시 주문해주세요!")
 
     # User Validation
@@ -297,7 +297,7 @@ def kakaoView_OrderPayment(kakaoPayload):
         orderRecordSheet = OrderRecordSheet()
 
     if (orderRecordSheet.timeoutValidation()):
-        return kakaoView_TimeOut(KAKAO_BLOCK_SET_ORDER_SHEET)
+        return kakaoView_TimeOut(KAKAO_BLOCK_USER_SET_ORDER_SHEET)
 
     orderRecordSheet.user = user
     orderRecordSheet.menu = menu
@@ -305,7 +305,7 @@ def kakaoView_OrderPayment(kakaoPayload):
     
     dataActionExtra = kakaoPayload.dataActionExtra
     dataActionExtra[KAKAO_PARAM_ORDER_ID] = order.order_id
-    dataActionExtra[KAKAO_PARAM_PREV_BLOCK_ID] = KAKAO_BLOCK_SET_ORDER_SHEET
+    dataActionExtra[KAKAO_PARAM_PREV_BLOCK_ID] = KAKAO_BLOCK_USER_SET_ORDER_SHEET
 
     KakaoForm = Kakao_CarouselForm()
     KakaoForm.ComerceCard_Init()
@@ -349,13 +349,13 @@ def kakaoView_OrderPayment(kakaoPayload):
             'action': "block",
             'label': "식권 발급",
             'messageText': "로딩중..",
-            'blockId': KAKAO_BLOCK_SET_ORDER_SHEET,
+            'blockId': KAKAO_BLOCK_USER_SET_ORDER_SHEET,
             'extra': dataActionExtra,
         },
     ]
 
     KakaoForm.ComerceCard_Add(
-        "결제를 완료한 후에 \n식권 발급 버튼을 눌러주세요!".format(pickup_time=pickup_time),
+        "결제를 완료한 후에 식권 발급 버튼을 눌러주세요!".format(pickup_time=pickup_time),
         menu.price,
         discount,
         thumbnails,
@@ -367,13 +367,13 @@ def kakaoView_OrderPayment(kakaoPayload):
         {
             'action': "block", 'label': "픽업시간 변경하기",
             'messageText': "로딩중..",
-            'blockId': KAKAO_BLOCK_SET_PICKUP_TIME,
+            'blockId': KAKAO_BLOCK_USER_SET_PICKUP_TIME,
             'extra': dataActionExtra
         },
         {
             'action': "message", 'label': "홈으로 돌아가기",
             'messageText': "로딩중..",
-            'blockId': KAKAO_BLOCK_HOME,
+            'blockId': KAKAO_BLOCK_USER_HOME,
             'extra': {}
         },
     ]
@@ -385,7 +385,7 @@ def kakaoView_OrderPayment(kakaoPayload):
 def kakaoView_OrderPaymentCheck(kakaoPayload):
     # Block Validation
     prev_block_id = prevBlockValidation(kakaoPayload)
-    if(prev_block_id != KAKAO_BLOCK_SET_ORDER_SHEET):
+    if(prev_block_id != KAKAO_BLOCK_USER_SET_ORDER_SHEET):
         return errorView("Invalid Block Access", "정상적이지 않은 경로거나, 오류가 발생했습니다.\n다시 주문해주세요!")
     
     # User Validation
@@ -407,7 +407,7 @@ def kakaoView_OrderPaymentCheck(kakaoPayload):
         orderRecordSheet = OrderRecordSheet()
         
     if (orderRecordSheet.timeoutValidation()):
-        return kakaoView_TimeOut(KAKAO_BLOCK_SET_ORDER_SHEET)
+        return kakaoView_TimeOut(KAKAO_BLOCK_USER_SET_ORDER_SHEET)
 
     orderRecordSheet.user = user
     orderRecordSheet.menu = menu
@@ -415,7 +415,7 @@ def kakaoView_OrderPaymentCheck(kakaoPayload):
     
     dataActionExtra = kakaoPayload.dataActionExtra
     dataActionExtra[KAKAO_PARAM_ORDER_ID] = order.order_id
-    dataActionExtra[KAKAO_PARAM_PREV_BLOCK_ID] = KAKAO_BLOCK_SET_ORDER_SHEET
+    dataActionExtra[KAKAO_PARAM_PREV_BLOCK_ID] = KAKAO_BLOCK_USER_SET_ORDER_SHEET
 
     order.orderStatusUpdate()
 
@@ -446,7 +446,7 @@ def kakaoView_OrderPaymentCheck(kakaoPayload):
                 'action': "block",
                 'label': "식권 발급",
                 'messageText': "로딩중..",
-                'blockId': KAKAO_BLOCK_SET_ORDER_SHEET,
+                'blockId': KAKAO_BLOCK_USER_SET_ORDER_SHEET,
                 'extra': dataActionExtra,
             },
         ]
@@ -455,13 +455,13 @@ def kakaoView_OrderPaymentCheck(kakaoPayload):
             {
                 'action': "block", 'label': "픽업시간 변경하기",
                 'messageText': "로딩중..",
-                'blockId': KAKAO_BLOCK_SET_PICKUP_TIME,
+                'blockId': KAKAO_BLOCK_USER_SET_PICKUP_TIME,
                 'extra': dataActionExtra
             },
             {
                 'action': "message", 'label': "홈으로 돌아가기",
                 'messageText': "로딩중..",
-                'blockId': KAKAO_BLOCK_HOME,
+                'blockId': KAKAO_BLOCK_USER_HOME,
                 'extra': {}
             },
         ]
@@ -485,7 +485,7 @@ def kakaoView_EatplePassIssuance(kakaoPayload):
     try:
         # Block Validation
         prev_block_id = prevBlockValidation(kakaoPayload)
-        if(prev_block_id != KAKAO_BLOCK_SET_ORDER_SHEET):
+        if(prev_block_id != KAKAO_BLOCK_USER_SET_ORDER_SHEET):
             return errorView("Invalid Block Access", "정상적이지 않은 경로거나, 오류가 발생했습니다.")
         
         # User Validation
@@ -509,7 +509,7 @@ def kakaoView_EatplePassIssuance(kakaoPayload):
             orderRecordSheet = OrderRecordSheet()
 
         if (orderRecordSheet.timeoutValidation()):
-            return kakaoView_TimeOut(KAKAO_BLOCK_SET_ORDER_SHEET)
+            return kakaoView_TimeOut(KAKAO_BLOCK_USER_SET_ORDER_SHEET)
 
         orderRecordSheet.user = user
         orderRecordSheet.menu = menu
@@ -518,7 +518,7 @@ def kakaoView_EatplePassIssuance(kakaoPayload):
 
         dataActionExtra = kakaoPayload.dataActionExtra
         dataActionExtra[KAKAO_PARAM_ORDER_ID] = order.order_id
-        dataActionExtra[KAKAO_PARAM_PREV_BLOCK_ID] = KAKAO_BLOCK_SET_ORDER_SHEET
+        dataActionExtra[KAKAO_PARAM_PREV_BLOCK_ID] = KAKAO_BLOCK_USER_SET_ORDER_SHEET
 
         KakaoForm = Kakao_CarouselForm()
         KakaoForm.BasicCard_Init()
@@ -528,23 +528,7 @@ def kakaoView_EatplePassIssuance(kakaoPayload):
         kakaoMapUrl = "https://map.kakao.com/link/map/{},{}".format(
             store.name, getLatLng(store.addr))
 
-        buttons = [
-            {
-                'action': "webLink", 
-                'label': "위치보기",
-                'webLinkUrl': kakaoMapUrl
-            },
-            {
-                'action': "block", 
-                'label': "주문취소",
-                'messageText': "로딩중..",
-                'blockId': KAKAO_BLOCK_POST_ORDER_CANCEL,
-                'extra': {
-                    KAKAO_PARAM_ORDER_ID: order.order_id,
-                    KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_SET_ORDER_SHEET
-                }
-            }
-        ]
+        buttons = []
 
         KakaoForm.BasicCard_Add(
             "잇플패스가 발급되었습니다.",
@@ -565,9 +549,9 @@ def kakaoView_EatplePassIssuance(kakaoPayload):
                 'action': "block",
                 'label': "홈으로 돌아가기",
                 'messageText': "로딩중..",
-                'blockId': KAKAO_BLOCK_HOME,
+                'blockId': KAKAO_BLOCK_USER_HOME,
                 'extra': {
-                    KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_SET_ORDER_SHEET
+                    KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_SET_ORDER_SHEET
                 }
             },
         ]
@@ -588,7 +572,7 @@ def kakaoView_TimeOut(blockId):
             'action': "block",
             'label': "홈으로 돌아가기",
             'messageText': "로딩중..",
-            'blockId': KAKAO_BLOCK_HOME,
+            'blockId': KAKAO_BLOCK_USER_HOME,
             'extra': {
                 KAKAO_PARAM_PREV_BLOCK_ID: blockId
             }
@@ -640,12 +624,12 @@ def SET_OrderSheet(request):
 
         # Block Validation
         prev_block_id = prevBlockValidation(kakaoPayload)
-        if(prev_block_id != KAKAO_BLOCK_SET_PICKUP_TIME and prev_block_id != KAKAO_BLOCK_SET_ORDER_SHEET):
+        if(prev_block_id != KAKAO_BLOCK_USER_SET_PICKUP_TIME and prev_block_id != KAKAO_BLOCK_USER_SET_ORDER_SHEET):
             return errorView("Invalid Store Paratmer", "정상적이지 않은 경로거나, 오류가 발생했습니다.\n다시 주문해주세요!")
 
-        if(prev_block_id == KAKAO_BLOCK_SET_PICKUP_TIME):
+        if(prev_block_id == KAKAO_BLOCK_USER_SET_PICKUP_TIME):
             return kakaoView_OrderPayment(kakaoPayload)
-        elif(prev_block_id == KAKAO_BLOCK_SET_ORDER_SHEET):
+        elif(prev_block_id == KAKAO_BLOCK_USER_SET_ORDER_SHEET):
             return kakaoView_OrderPaymentCheck(kakaoPayload)
         
     except (RuntimeError, TypeError, NameError, KeyError) as ex:

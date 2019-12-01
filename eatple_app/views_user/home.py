@@ -48,9 +48,9 @@ def kakaoView_SignUp():
             'action': "block",
             'label': "연동하러 가기",
             'messageText': "연동하기",
-            'blockId': KAKAO_BLOCK_SIGNUP,
+            'blockId': KAKAO_BLOCK_USER_SIGNUP,
             'extra': {
-                KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_HOME
+                KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_HOME
             }
         },
     ]
@@ -86,24 +86,27 @@ def kakaoView_Home(user):
     KakaoForm = Kakao_CarouselForm()
     KakaoForm.BasicCard_Init()
 
-
+    orderManager = OrderManager(user)
+    orderManager.orderPaidCheck()
+    orderManager.availableOrderStatusUpdate()        
+  
     BTN_MAP = [
         {
             'action': "block",
             'label': "메뉴보기",
             'messageText': "로딩중..",
-            'blockId': KAKAO_BLOCK_GET_MENU,
+            'blockId': KAKAO_BLOCK_USER_GET_MENU,
             'extra': {
-                KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_HOME
+                KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_HOME
             }
         },
         {
             'action': "block",
             'label': "잇플패스 확인",
             'messageText': "로딩중..",
-            'blockId': KAKAO_BLOCK_EATPLE_PASS,
+            'blockId': KAKAO_BLOCK_USER_EATPLE_PASS,
             'extra': {
-                KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_HOME
+                KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_HOME
             }
         },
     ]
@@ -113,18 +116,18 @@ def kakaoView_Home(user):
             'action': "block",
             'label': "최근 주문내역",
             'messageText': "로딩중..",
-            'blockId': KAKAO_BLOCK_ORDER_DETAILS,
+            'blockId': KAKAO_BLOCK_USER_ORDER_DETAILS,
             'extra': {
-                KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_HOME
+                KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_HOME
             }
         },
         {
             'action': "block", 
             'label': "위치변경",
             'messageText': "로딩중..",    
-            'blockId': "", 
+            'blockId': KAKAO_BLOCK_USER_EDIT_LOCATION,
             'extra': {
-                KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_HOME
+                KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_HOME
             }
         },
 
@@ -132,9 +135,9 @@ def kakaoView_Home(user):
             'action': "block", 
             'label': "사용 메뉴얼",
             'messageText': "로딩중..",    
-            'blockId': "",
+            'blockId': KAKAO_BLOCK_USER_MANUAL,
             'extra': {
-                KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_HOME
+                KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_HOME
             }
         },
     ]
@@ -158,7 +161,6 @@ def kakaoView_Home(user):
     KakaoForm.QuickReplies_AddWithMap(QUICKREPLIES_MAP)
 
     return JsonResponse(KakaoForm.GetForm())
-
 
 @csrf_exempt
 def GET_UserHome(request):

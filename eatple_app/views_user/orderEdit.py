@@ -32,7 +32,7 @@ MENU_LIST_LENGTH = 10
 def kakaoView_UseEatplePass(kakaoPayload):
     # Block Validation
     prev_block_id = prevBlockValidation(kakaoPayload)
-    if(prev_block_id != KAKAO_BLOCK_GET_USE_EATPLE_PASS_CONFIRM):
+    if(prev_block_id != KAKAO_BLOCK_USER_GET_USE_EATPLE_PASS_CONFIRM):
         return errorView("Invalid Block Access", "정상적이지 않은 경로거나, 오류가 발생했습니다.\n다시 주문해주세요!")
 
     # User Validation
@@ -73,9 +73,9 @@ def kakaoView_UseEatplePass(kakaoPayload):
             'action': "block",
             'label': "홈으로 돌아가기",
             'messageText': "로딩중..",
-            'blockId': KAKAO_BLOCK_HOME,
+            'blockId': KAKAO_BLOCK_USER_HOME,
             'extra': {
-                KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_ORDER_DETAILS
+                KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_ORDER_DETAILS
             }
         },
     ]
@@ -87,7 +87,7 @@ def kakaoView_UseEatplePass(kakaoPayload):
 def kakaoView_ConfirmUseEatplePass(kakaoPayload):
     # Block Validation
     prev_block_id = prevBlockValidation(kakaoPayload)
-    if(prev_block_id != KAKAO_BLOCK_EATPLE_PASS):
+    if(prev_block_id != KAKAO_BLOCK_USER_EATPLE_PASS):
         return errorView("Invalid Block Access", "정상적이지 않은 경로거나, 오류가 발생했습니다.\n다시 주문해주세요!")
 
     # User Validation
@@ -104,19 +104,19 @@ def kakaoView_ConfirmUseEatplePass(kakaoPayload):
             'action': "block", 
             'label': "사용하기",    
             'messageText': "잇플패스 사용 확인",
-            'blockId': KAKAO_BLOCK_POST_USE_EATPLE_PASS, 
+            'blockId': KAKAO_BLOCK_USER_POST_USE_EATPLE_PASS, 
             'extra': {
                 KAKAO_PARAM_ORDER_ID: order.order_id,
-                KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_ORDER_DETAILS
+                KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_ORDER_DETAILS
             }
         },
         {
             'action': "block",
             'label': "홈으로 돌아가기",
             'messageText': "로딩중..",
-            'blockId': KAKAO_BLOCK_HOME,
+            'blockId': KAKAO_BLOCK_USER_HOME,
             'extra': {
-                KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_ORDER_DETAILS
+                KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_ORDER_DETAILS
             }
         },
     ]
@@ -141,7 +141,7 @@ def kakaoView_ConfirmUseEatplePass(kakaoPayload):
 def kakaoView_OrderCancel(kakaoPayload):
     # Block Validation
     prev_block_id = prevBlockValidation(kakaoPayload)
-    if(prev_block_id != KAKAO_BLOCK_EATPLE_PASS and prev_block_id != KAKAO_BLOCK_SET_ORDER_SHEET):
+    if(prev_block_id != KAKAO_BLOCK_USER_EATPLE_PASS and prev_block_id != KAKAO_BLOCK_USER_SET_ORDER_SHEET):
         return errorView("Invalid Block Access", "정상적이지 않은 경로거나, 오류가 발생했습니다.\n다시 주문해주세요!")
 
     # User Validation
@@ -158,18 +158,18 @@ def kakaoView_OrderCancel(kakaoPayload):
             'action': "block",
             'label': "새로고침",
             'messageText': "로딩중..",
-            'blockId': KAKAO_BLOCK_ORDER_DETAILS,
+            'blockId': KAKAO_BLOCK_USER_ORDER_DETAILS,
             'extra': {
-                KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_ORDER_DETAILS
+                KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_ORDER_DETAILS
             }
         },
         {
             'action': "block",
             'label': "홈으로 돌아가기",
             'messageText': "로딩중..",
-            'blockId': KAKAO_BLOCK_HOME,
+            'blockId': KAKAO_BLOCK_USER_HOME,
             'extra': {
-                KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_ORDER_DETAILS
+                KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_ORDER_DETAILS
             }
         },
     ]
@@ -226,9 +226,9 @@ def kakaoView_OrderCancel(kakaoPayload):
                 'action': "block",
                 'label': "홈으로 돌아가기",
                 'messageText': "로딩중..",
-                'blockId': KAKAO_BLOCK_HOME,
+                'blockId': KAKAO_BLOCK_USER_HOME,
                 'extra': {
-                    KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_ORDER_DETAILS
+                    KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_ORDER_DETAILS
                 }
             },
         ]
@@ -243,7 +243,7 @@ def kakaoView_OrderCancel(kakaoPayload):
 def kakaoView_EditPickupTime(kakaoPayload):
     # Block Validation
     prev_block_id = prevBlockValidation(kakaoPayload)
-    if(prev_block_id != KAKAO_BLOCK_EATPLE_PASS):
+    if(prev_block_id != KAKAO_BLOCK_USER_EATPLE_PASS):
         return errorView("Invalid Block Access", "정상적이지 않은 경로거나, 오류가 발생했습니다.\n다시 주문해주세요!")
 
     # User Validation
@@ -277,14 +277,14 @@ def kakaoView_EditPickupTime(kakaoPayload):
         dataActionExtra = {
             KAKAO_PARAM_ORDER_ID: order.order_id,
             KAKAO_PARAM_PICKUP_TIME: pickupTime.time.strftime('%H:%M'),
-            KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_EDIT_PICKUP_TIME
+            KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_EDIT_PICKUP_TIME
         }
 
         KakaoForm.QuickReplies_Add(
             'block',
             pickupTime.time.strftime('%H:%M'),
             '로딩중..',
-            KAKAO_BLOCK_EDIT_PICKUP_TIME_CONFIRM,
+            KAKAO_BLOCK_USER_EDIT_PICKUP_TIME_CONFIRM,
             dataActionExtra
         )
 
@@ -293,7 +293,7 @@ def kakaoView_EditPickupTime(kakaoPayload):
 def kakaoView_ConfirmEditPickupTime(kakaoPayload):
     # Block Validation
     prev_block_id = prevBlockValidation(kakaoPayload)
-    if(prev_block_id != KAKAO_BLOCK_EDIT_PICKUP_TIME):
+    if(prev_block_id != KAKAO_BLOCK_USER_EDIT_PICKUP_TIME):
         return errorView("Invalid Block Access", "정상적이지 않은 경로거나, 오류가 발생했습니다.\n다시 주문해주세요!")
 
     # User Validation
@@ -341,9 +341,9 @@ def kakaoView_ConfirmEditPickupTime(kakaoPayload):
             'action': "block",
             'label': "홈으로 돌아가기",
             'messageText': "로딩중..",
-            'blockId': KAKAO_BLOCK_HOME,
+            'blockId': KAKAO_BLOCK_USER_HOME,
             'extra': {
-                KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_ORDER_DETAILS
+                KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_ORDER_DETAILS
             }
         },
     ]
