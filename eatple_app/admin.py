@@ -16,6 +16,7 @@ from eatple_app.admins.admin_store import StoreAdmin
 from eatple_app.admins.admin_order import OrderAdmin
 from eatple_app.admins.admin_orderSheet import OrderSheetAdmin
 from eatple_app.admins.admin_orderRecordSheet import OrderRecordSheetAdmin
+from eatple_app.admins.admin_defaultImage import DefaultImageAdmin
 
 admin.site.register(Store, StoreAdmin)
 
@@ -27,13 +28,10 @@ admin.site.register(OrderRecordSheet, OrderRecordSheetAdmin)
 
 admin.site.register(User, UserAdmin)
 
-# Main Models
 admin.site.register(Partner)
 
-# Defulat Images
-admin.site.register(DefaultImage)
+admin.site.register(DefaultImage, DefaultImageAdmin)
 
-# Menu Category-Tag
 admin.site.register(Category)
 admin.site.register(Tag)
 

@@ -23,16 +23,11 @@ from eatple_app.views_user.orderEdit import GET_EditPickupTime
 from eatple_app.views_user.orderEdit import SET_ConfirmEditPickupTime
 
 
-
-from eatple_app.views_user.etc import GET_UserManual
-from eatple_app.views_user.etc import GET_UserIntro
-
 # Partner
 from eatple_app.views_partner.home import GET_PartnerHome
 from eatple_app.views_partner.orderCheck import GET_StoreOrderList
 from eatple_app.views_partner.calculateCheck import GET_CalculateCheck
-from eatple_app.views_partner.etc import GET_PartnerManual
-from eatple_app.views_partner.etc import GET_PartnerIntro
+
 from eatple_app.views_partner.alarm import GET_OpenLunchStoreAlarm
 from eatple_app.views_partner.alarm import GET_CloseLunchStoreAlarm
 from eatple_app.views_partner.alarm import GET_OpenDinnerStoreAlarm

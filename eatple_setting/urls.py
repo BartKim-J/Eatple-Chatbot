@@ -41,20 +41,17 @@ urlpatterns = [
 
     # Order Edit Flow
     path('skill/user/orderEdit/post_order_cancel',     views.POST_OrderCancel),
-    
-    path('skill/user/orderEdit/get_confirm_use_eatplepass', views.GET_ConfirmUseEatplePass),
-    path('skill/user/orderEdit/post_use_eatplepass',       views.POST_UseEatplePass),
+
+    path('skill/user/orderEdit/get_confirm_use_eatplepass',
+         views.GET_ConfirmUseEatplePass),
+    path('skill/user/orderEdit/post_use_eatplepass',
+         views.POST_UseEatplePass),
 
     # Order Pickup Time Change Flow
     path('skill/user/orderEdit/get_edit_pickup_time',
          views.GET_EditPickupTime),
     path('skill/user/orderEdit/set_confirm_edit_pickup_time',
          views.SET_ConfirmEditPickupTime),
-
-    # ETC
-    path('skill/user/etc/get_userManual', views.GET_UserManual),
-    path('skill/user/etc/get_userIntro', views.GET_UserIntro),
-
 
     # Kakao Plus Partner Skills
     # Home
@@ -78,10 +75,6 @@ urlpatterns = [
          views.GET_PickupBlockEnableAlarm),
     path('skill/partner/alarmView/get_disablePickupBlock',
          views.GET_PickupBlockDisableAlarm),
-
-    # ETC
-    path('skill/partner/etc/get_partnerManual', views.GET_PartnerManual),
-    path('skill/partner/etc/get_partnerIntro', views.GET_PartnerIntro),
 ]
 
 # Media Link Url
