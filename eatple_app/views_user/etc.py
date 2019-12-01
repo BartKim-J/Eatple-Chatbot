@@ -1,33 +1,24 @@
-'''
-    Author : Ben Kim
-
-    @NOTE
-    @BUG
-    @TODO
- 
-'''
-# System
-from eatple_app.define import *
-from eatple_app.views_user.wording import wordings
-from eatple_app.views_system.debugger import EatplusSkillLog, errorView
-from eatple_app.module_kakao.RequestForm import getLatLng, KakaoPayLoad
-from eatple_app.module_kakao.ReponseForm import Kakao_SimpleForm, Kakao_CarouselForm
-from eatple_app.models import UserIntro
-from eatple_app.models import UserManual
-from eatple_app.models import Store, Menu
-from eatple_app.models import Category, Tag
-from eatple_app.models import Order, OrderManager
-from eatple_app.models import User
-import json
-import requests
-from django.http import JsonResponse
-from django.views.decorators.csrf import csrf_exempt
+# Django Library
 from django.shortcuts import render
-import sys
-import os
+from django.views.decorators.csrf import csrf_exempt
+from django.http import JsonResponse
 
+# Models
+from eatple_app.models import *
+
+# Define
+from eatple_app.define import *
+
+# Modules
+from eatple_app.module_kakao.ReponseForm import *
+from eatple_app.module_kakao.RequestForm import *
+from eatple_app.module_kakao.Validation import *
+
+# View-System
+from eatple_app.views_system.debugger import *
+
+from eatple_app.views import *
 sys.path.append(os.path.dirname(os.path.abspath(os.path.dirname(__file__))))
-
 
 # # # # # # # # # # # # # # # # # # # # # # # # #
 #
@@ -41,17 +32,15 @@ sys.path.append(os.path.dirname(os.path.abspath(os.path.dirname(__file__))))
 #
 # # # # # # # # # # # # # # # # # # # # # # # # #
 DEFAULT_QUICKREPLIES_MAP = [
-    {'action': "message", 'label': wordings.RETURN_HOME_QUICK_REPLISE, 'messageText': wordings.RETURN_HOME_QUICK_REPLISE, 'blockId': "none",
-        'extra': {}},
+    {
+        'action': "message", 
+        'label': wordings.RETURN_HOME_QUICK_REPLISE, 
+        'messageText': wordings.RETURN_HOME_QUICK_REPLISE, 
+        'blockId': "none",
+        'extra': {}
+    },
 ]
-'''
-    @name GET_UserManual
-    @param name
 
-    @note
-    @bug
-    @tood
-'''
 @csrf_exempt
 def GET_UserManual(request):
     try:
@@ -86,14 +75,7 @@ def GET_UserManual(request):
         return errorView("{}".format(ex))
 
 
-'''
-    @name GET_UserIntro
-    @param name
 
-    @note
-    @bug
-    @tood
-'''
 @csrf_exempt
 def GET_UserIntro(request):
     try:

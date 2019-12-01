@@ -1,11 +1,3 @@
-'''
-    Author : Ben Kim
-
-    @NOTE
-    @BUG
-    @TODO
- 
-'''
 # Define
 from eatple_app.define import *
 

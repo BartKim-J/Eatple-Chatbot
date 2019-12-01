@@ -86,6 +86,7 @@ def kakaoView_Home(user):
     KakaoForm = Kakao_CarouselForm()
     KakaoForm.BasicCard_Init()
 
+
     BTN_MAP = [
         {
             'action': "block",
@@ -105,6 +106,9 @@ def kakaoView_Home(user):
                 KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_HOME
             }
         },
+    ]
+    
+    QUICKREPLIES_MAP = [
         {
             'action': "block",
             'label': "최근 주문내역",
@@ -114,49 +118,44 @@ def kakaoView_Home(user):
                 KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_HOME
             }
         },
-    ]
-    
-    QUICKREPLIES_MAP = [
         {
-            'action': "message", 
-            'label': wordings.CHANGE_LOCATION_BTN,
-            'messageText': wordings.CHANGE_LOCATION_COMMAND,    
-            'blockId': "none", 
+            'action': "block", 
+            'label': "위치변경",
+            'messageText': "로딩중..",    
+            'blockId': "", 
             'extra': {
                 KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_HOME
             }
         },
 
         {
-            'action': "message", 
-            'label': wordings.USER_MANUAL_COMMAND,
-            'messageText': wordings.USER_MANUAL_COMMAND,    
-            'blockId': "none",
+            'action': "block", 
+            'label': "사용 메뉴얼",
+            'messageText': "로딩중..",    
+            'blockId': "",
             'extra': {
                 KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_HOME
             }
         },
     ]
 
-    thumbnail = {"imageUrl": ""}
+    thumbnail = {
+            "imageUrl": "",
+            "fixedRatio": "true",
+            "width": 800,
+            "height": 800,
+        }
 
     buttons = BTN_MAP
 
     KakaoForm.BasicCard_Add(
-        wordings.HOME_TITLE_TEXT,
-        wordings.HOME_DESCRIPT_TEXT, 
+        "잇플 홈 화면입니다.", 
+        "아래 명령어 중에 골라주세요!", 
         thumbnail, 
         buttons
     )
-
-    for entryPoint in QUICKREPLIES_MAP:
-        KakaoForm.QuickReplies_Add(
-            entryPoint['action'], 
-            entryPoint['label'],
-            entryPoint['messageText'], 
-            entryPoint['blockId'], 
-            entryPoint['extra']
-        )
+    
+    KakaoForm.QuickReplies_AddWithMap(QUICKREPLIES_MAP)
 
     return JsonResponse(KakaoForm.GetForm())
 

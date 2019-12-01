@@ -19,7 +19,6 @@ from eatple_app.views_system.debugger import *
 
 from eatple_app.views import *
 
-
 # STATIC CONFIG
 MENU_LIST_LENGTH = 10
 
@@ -92,8 +91,7 @@ def kakaoView_MenuListup(kakaoPayload):
         """
             @NOTE Dinner Time Close In Alpha 
         """
-
-        # return kakaoView_MenuListup(user, SELLING_TIME_LUNCH)
+        
         return errorView("Get Invalid Selling Time", "오늘 점심은 이미 마감되었어요.\n내일 점심을 기대해주세요.")
 
 
@@ -108,8 +106,8 @@ def kakaoView_MenuListup(kakaoPayload):
             thumbnail = {
                 "imageUrl": "{}{}".format(HOST_URL, menu.imgURL()),
                 "fixedRatio": "true",
-                "width": 600,
-                "height": 600,
+                "width": 800,
+                "height": 800,
             }
 
             kakaoMapUrl = "https://map.kakao.com/link/map/{},{}".format(
@@ -159,8 +157,7 @@ def kakaoView_MenuListup(kakaoPayload):
         },
     ]
 
-    KakaoForm.QuickReplies_AddWithMap(QUICKREPLIES_MAP)
-        
+    KakaoForm.QuickReplies_AddWithMap(QUICKREPLIES_MAP)       
 
     return JsonResponse(KakaoForm.GetForm())
 
@@ -318,8 +315,8 @@ def kakaoView_OrderPayment(kakaoPayload):
         {
             "imageUrl": "{}{}".format(HOST_URL, menu.imgURL()),
             "fixedRatio": "true",
-            "width": 600,
-            "height": 600,
+            "width": 800,
+            "height": 800,
         }
     ]
 
@@ -551,7 +548,7 @@ def kakaoView_EatplePassIssuance(kakaoPayload):
 
         KakaoForm.BasicCard_Add(
             "잇플패스가 발급되었습니다.",
-            "주문번호: {}\n- - - - - - - - - - - - - - - - - - - - - -\n - 주문자: {}\n\n - 매장: {} \n - 메뉴: {}\n\n - 제 금액: {}원\n\n - 픽업 시간: {}\n- - - - - - - - - - - - - - - - - - - - - -\n - 매장 위치: {}".format(
+            "주문번호: {}\n- - - - - - - - - - - - - - - - - - - - - -\n - 주문자: {}\n\n - 매장: {} \n - 메뉴: {}\n\n - 결제 금액: {}원\n\n - 픽업 시간: {}\n- - - - - - - - - - - - - - - - - - - - - -\n - 매장 위치: {}".format(
                 order.order_id,
                 str(order.ordersheet.user.phone_number)[9:13],
                 order.store.name,
