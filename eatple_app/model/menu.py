@@ -120,6 +120,8 @@ class Menu(MenuInfo, MenuStatus, MenuSetting):
 
         self.menu_id = "{id:04X}".format(id=self.id)
 
+        super(Menu, self).__init__(*args, **kwargs)
+        
     def save(self, *args, **kwargs):
         super().save()
 

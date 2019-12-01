@@ -175,7 +175,7 @@ def kakaoView_PickupTime(kakaoPayload):
 
     order = orderValidation(kakaoPayload)
     if(order != None):
-        orderManager = OrderManager(user)
+        orderManager = UserOrderManager(user)
         orderManager.orderPaidCheck()
         
         order = orderValidation(kakaoPayload)

@@ -16,8 +16,6 @@ from eatple_app.module_kakao.RequestForm import *
 # View-System
 from eatple_app.views_system.debugger import *
 
-# Wordings
-from eatple_app.views_user.wording import wordings
 
 from eatple_app.views import *
 
@@ -32,12 +30,12 @@ DEFAULT_QUICKREPLIES_MAP = [
 ]
 
 def eatplePassValidation(user):
-    orderManager = OrderManager(user)
+    orderManager = UserOrderManager(user)
     orderManager.orderPaidCheck()
     
     orderManager.availableOrderStatusUpdate();
 
-    lunchPurchaed = orderManager.getAvailableLunchuserOrderListPurchased().exists()
+    lunchPurchaed = orderManager.getAvailableLunchOrderPurchased().exists()
     dinnerPurchaced = orderManager.getAvailableDinnerOrderPurchased().exists()    
     
     KakaoForm = Kakao_SimpleForm()
@@ -72,6 +70,17 @@ def eatplePassValidation(user):
 
     return None
 
+
+def partnerValidation(KakaoPayload):
+    try:
+        app_user_id = KakaoPayload.user_properties['app_user_id']
+        try:
+            partner = Partner.objects.get(app_user_id=app_user_id)
+            return partner
+        except Partner.DoesNotExist:
+            return None
+    except (TypeError, AttributeError, KeyError):
+        return None
 
 def userValidation(KakaoPayload):
     try:

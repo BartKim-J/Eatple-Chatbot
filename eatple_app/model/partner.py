@@ -18,7 +18,7 @@ class KakaoUser(models.Model):
     max_length=USER_NICKNAME_LENGTH, null=True)
 
     profile_image_url = models.CharField(
-        max_length=WORD_LENGTH, null=True)
+        max_length=STRING_LENGTH, null=True)
     
     phone_number = PhoneNumberField(
         max_length=WORD_LENGTH, null=True)
@@ -62,6 +62,12 @@ class Partner(KakaoUser, models.Model):
 
         return registedUser
 
+    def storeRegistration(self, store):
+        self.store = store
+        super().save()
+        
+        return store
+
         # Methods
     def __str__(self):
-        return "{} : {}".format(self.name, self.storeInstance.name)
+        return "{} : {}".format(self.store.name, self.app_user_id)

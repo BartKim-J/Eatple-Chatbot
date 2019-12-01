@@ -204,8 +204,6 @@ def orderUpdate(order):
         order.save()
 
     return order
-
-
 class Order(models.Model):
     class Meta:
         ordering = ['-pickup_time']
@@ -301,8 +299,7 @@ class Order(models.Model):
 
 class OrderManager():
     def __init__(self, user):
-        self.userOrderList = Order.objects.filter(
-            ordersheet__user=user)
+        self.orderList = Order.objects.all()
 
     def availableOrderStatusUpdate(self):
         availableOrders = self.getAvailableOrders()
@@ -323,7 +320,7 @@ class OrderManager():
             orderUpdate(order)
 
     def getUnavailableOrders(self):
-        unavailableOrders = self.userOrderList.filter(
+        unavailableOrders = self.orderList.filter(
             Q(status=ORDER_STATUS_ORDER_EXPIRED) |
             Q(status=ORDER_STATUS_ORDER_CANCELED) |
             Q(status=ORDER_STATUS_PAYMENT_CHECK) |
@@ -333,7 +330,7 @@ class OrderManager():
         return unavailableOrders
 
     def getAvailableOrders(self):
-        availableOrders = self.userOrderList.filter(
+        availableOrders = self.orderList.filter(
             Q(status=ORDER_STATUS_PICKUP_WAIT) |
             Q(status=ORDER_STATUS_PICKUP_PREPARE) |
             Q(status=ORDER_STATUS_ORDER_CONFIRM_WAIT) |
@@ -342,7 +339,7 @@ class OrderManager():
 
         return availableOrders
 
-    def getAvailableLunchuserOrderListPurchased(self):
+    def getAvailableLunchOrderPurchased(self):
         availableOrders = self.getAvailableOrders()
         lunchOrders = availableOrders.filter(
             menu__sellingTime=SELLING_TIME_LUNCH)
@@ -354,12 +351,14 @@ class OrderManager():
         dinnerOrders = availableOrders.filter(
             menu__sellingTime=SELLING_TIME_DINNER)
         return dinnerOrders
-
-
-class storeOrderManager(OrderManager):
-    def __init__(self, storeId):
-        self.storeOrderList = Order.objects.filter(storeInstance__id=storeId)
-
+    
+class UserOrderManager(OrderManager):
+    def __init__(self, user):
+        self.orderList = Order.objects.filter(ordersheet__user=user)
+        
+class StoreOrderManager(OrderManager):
+    def __init__(self, store):
+        self.orderList = Order.objects.filter(store=store)
 
 class OrderSheet(models.Model):
     class Meta:

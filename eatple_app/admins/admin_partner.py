@@ -16,5 +16,4 @@ class PartnerAdmin(ImportExportMixin, admin.ModelAdmin):
                        'phone_number', 'email', 'birthyear', 'birthday', 'gender', 'ci', 'ci_authenticated_at')
 
     list_filter = ('create_date', 'gender')
-    list_display = ('app_user_id', 'nickname',
-                    'phone_number', 'email', 'gender')
+    list_display = ('store', 'app_user_id', 'phone_number', 'email', 'gender')

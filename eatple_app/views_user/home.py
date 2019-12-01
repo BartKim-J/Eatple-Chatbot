@@ -17,9 +17,6 @@ from eatple_app.module_kakao.Validation import *
 # View-System
 from eatple_app.views_system.debugger import *
 
-# Wordings
-from eatple_app.views_user.wording import wordings
-
 
 def userSignUp(userProfile):
     user = User.signUp(
@@ -86,7 +83,7 @@ def kakaoView_Home(user):
     KakaoForm = Kakao_CarouselForm()
     KakaoForm.BasicCard_Init()
 
-    orderManager = OrderManager(user)
+    orderManager = UserOrderManager(user)
     orderManager.orderPaidCheck()
     orderManager.availableOrderStatusUpdate()        
   

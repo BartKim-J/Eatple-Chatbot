@@ -65,7 +65,7 @@ def kakaoView_EatplePass(kakaoPayload):
         },
     ]
 
-    orderManager = OrderManager(user)
+    orderManager = UserOrderManager(user)
     orderManager.orderPaidCheck()
     
     availableEatplePass = orderManager.availableOrderStatusUpdate()
@@ -204,7 +204,7 @@ def kakaoView_OrderDetails(kakaoPayload):
         },
     ]
 
-    orderManager = OrderManager(user)
+    orderManager = UserOrderManager(user)
     orderManager.orderPaidCheck()
     
     unavailableOrders = orderManager.getUnavailableOrders()[:ORDER_LIST_LENGTH]

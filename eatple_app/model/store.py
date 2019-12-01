@@ -35,6 +35,13 @@ class CRN(models.Model):
         null=True
     )
 
+    CRN_id = models.CharField(
+        max_length=10, 
+        help_text="Unique ID",
+        blank=True,
+        null=True
+    )
+    
     UID = models.CharField(
         max_length=3, 
         help_text="Unique ID"
@@ -55,6 +62,19 @@ class CRN(models.Model):
         help_text="Vertification Number"
     )
 
+    def __init__(self, *args, **kwargs):
+        super(CRN, self).__init__(*args, **kwargs)
+        
+        self.CRN_id = "{}{}{}{}".format(
+            self.UID,
+            self.CC,
+            self.SN,
+            self.VN
+        )
+        
+        super(CRN, self).save()
+
+    
     def __str__(self):
         return "{UID}-{CC}-{SN}{VN}".format(
             UID=self.UID, 
@@ -62,7 +82,6 @@ class CRN(models.Model):
             SN=self.SN, 
             VN=self.VN
         )
-
 
 class PickupTime(models.Model):
     class Meta:
@@ -160,7 +179,9 @@ class Store(StoreInfo, StoreSetting, StoreStatus):
                 self.id = 1
 
         self.store_id = "{area:04X}-{id:04X}".format(area=0, id=self.id)
-
+        
+        super(Store, self).save()
+        
     def save(self, *args, **kwargs):
         super().save()
 
