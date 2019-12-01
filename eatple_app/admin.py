@@ -63,8 +63,10 @@ admin.site.register(Store, StoreAdmin)
 
 
 class OrderInline(admin.TabularInline):
-    readonly_fields = ('order_id', 'payment_status', 'status', 'totalPrice', 'menu', 'count', 'store',
+    """
+        readonly_fields = ('order_id', 'payment_status', 'status', 'totalPrice', 'menu', 'count', 'store',
                        'order_date', 'pickup_time')
+    """
 
     model = Order
     extra = 0

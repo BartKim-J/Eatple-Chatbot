@@ -62,7 +62,7 @@ def kakaoView_UseEatplePass(kakaoPayload):
             order.store.name,
             order.menu.name,
             order.totalPrice,
-            order.pickup_time,
+            dateByTimeZone(order.pickup_time).strftime('%Y-%D %H:%M'),
             ORDER_STATUS[order.status][1]
         ),
         thumbnail, buttons
@@ -234,7 +234,7 @@ def kakaoView_OrderCancel(kakaoPayload):
                 order.store.name,
                 order.menu.name,
                 order.totalPrice,
-                order.pickup_time,
+                dateByTimeZone(order.pickup_time).strftime('%m월%d일 %I시 %M분 %p').replace('AM','오전').replace('PM','오후') ,
                 ORDER_STATUS[order.status][1]
             ),
             thumbnail, buttons
@@ -327,7 +327,7 @@ def kakaoView_ConfirmEditPickupTime(kakaoPayload):
         return errorView("Invalid Paratmer", "정상적이지 않은 주문번호이거나\n진행 중 오류가 발생했습니다.")
 
     beforePickupTime = order.pickup_time
-    order.pickup_time = pickup_time
+    order.pickup_time = order.pickupTimeToDateTime(pickup_time)
     order.save()
 
     KakaoForm = Kakao_CarouselForm()
@@ -349,7 +349,7 @@ def kakaoView_ConfirmEditPickupTime(kakaoPayload):
             order.store.name,
             order.menu.name,
             order.totalPrice,
-            order.pickup_time,
+            dateByTimeZone(order.pickup_time).strftime('%m월%d일 %I시 %M분 %p').replace('AM','오전').replace('PM','오후') ,
             ORDER_STATUS[order.status][1]
         ),
         thumbnail, buttons

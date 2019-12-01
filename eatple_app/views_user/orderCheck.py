@@ -34,6 +34,11 @@ DEFAULT_QUICKREPLIES_MAP = [
 # STATIC EP_define
 ORDER_LIST_LENGTH = 10
 
+# # # # # # # # # # # # # # # # # # # # # # # # #
+#
+# Static View
+#
+# # # # # # # # # # # # # # # # # # # # # # # # #
 
 def kakaoView_EatplePass(kakaoPayload):
     # Block Validation
@@ -146,7 +151,7 @@ def kakaoView_EatplePass(kakaoPayload):
                     order.store.name,
                     order.menu.name,
                     order.totalPrice,
-                    order.pickup_time,
+                    dateByTimeZone(order.pickup_time).strftime('%m월%d일 %I시 %M분 %p').replace('AM','오전').replace('PM','오후') ,
                     ORDER_STATUS[order.status][1]
                 ),
                 thumbnail, buttons
@@ -173,7 +178,6 @@ def kakaoView_EatplePass(kakaoPayload):
     KakaoForm.QuickReplies_AddWithMap(ORDER_LIST_QUICKREPLIES_MAP)
         
     return JsonResponse(KakaoForm.GetForm())
-
 
 def kakaoView_OrderDetails(kakaoPayload):
     # Block Validation
@@ -218,19 +222,8 @@ def kakaoView_OrderDetails(kakaoPayload):
             thumbnail = {
                 "imageUrl": ""
             }
-
-            kakaoMapUrl = "https://map.kakao.com/link/map/{},{}".format(
-                order.store.name, 
-                getLatLng(order.store.addr)
-            )
             
-            buttons = [
-                {
-                    'action': "webLink", 
-                    'label': "위치보기",  
-                    "webLinkUrl": kakaoMapUrl
-                },
-            ]
+            buttons = []
             
             KakaoForm.BasicCard_Add(
                 "주문번호: {}".format(order.order_id),
@@ -239,7 +232,7 @@ def kakaoView_OrderDetails(kakaoPayload):
                     order.store.name,
                     order.menu.name,
                     order.totalPrice,
-                    order.pickup_time,
+                    dateByTimeZone(order.pickup_time).strftime('%m월%d일 %I시 %M분 %p').replace('AM','오전').replace('PM','오후') ,
                     ORDER_STATUS[order.status][1]
                 ),
                 thumbnail, buttons
@@ -266,6 +259,11 @@ def kakaoView_OrderDetails(kakaoPayload):
     
     return JsonResponse(KakaoForm.GetForm())
 
+# # # # # # # # # # # # # # # # # # # # # # # # #
+#
+# External View
+#
+# # # # # # # # # # # # # # # # # # # # # # # # #
 
 @csrf_exempt
 def GET_OrderDetails(request):
@@ -276,7 +274,6 @@ def GET_OrderDetails(request):
 
     except (RuntimeError, TypeError, NameError, KeyError) as ex:
         return errorView("{} ".format(ex))
-
 
 @csrf_exempt
 def GET_EatplePass(request):

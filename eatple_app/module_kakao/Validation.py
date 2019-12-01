@@ -32,8 +32,9 @@ DEFAULT_QUICKREPLIES_MAP = [
 ]
 
 def eatplePassValidation(user):
+    
     orderManager = OrderManager(user)
-
+    orderManager.orderPaidCheck()
     orderManager.availableOrderStatusUpdate();
 
     lunchPurchaed = orderManager.getAvailableLunchuserOrderListPurchased().exists()

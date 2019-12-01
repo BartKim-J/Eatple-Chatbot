@@ -174,6 +174,19 @@ def kakaoView_PickupTime(kakaoPayload):
     if (user == None):
         return GET_UserHome(request)
 
+
+    order = orderValidation(kakaoPayload)
+    if(order != None):
+        orderManager = OrderManager(user)
+        orderManager.orderPaidCheck()
+        
+        order = orderValidation(kakaoPayload)
+        print(order)
+        
+        if(order.payment_status == IAMPORT_ORDER_STATUS_PAID):
+            return errorView("Invalid Block Access", "이미 주문이 완료되었습니다!\n픽업시간 변경을 원하시면 잇플패스 내역에서\n 픽업시간을 변경해주세요.")
+    
+    
     # User's Eatple Pass Validation
     eatplePassStatus = eatplePassValidation(user)
     if(eatplePassStatus != None):
@@ -275,7 +288,7 @@ def kakaoView_OrderPayment(kakaoPayload):
             count=1,
         )
     else:
-        order.pickup_time = pickup_time
+        order.pickup_time = order.pickupTimeToDateTime(pickup_time)
         order.totalPrice = discountPrice
         order.save()
 
@@ -351,12 +364,6 @@ def kakaoView_OrderPayment(kakaoPayload):
     GET_PICKUP_TIME_QUICKREPLIES_MAP = [
         {
             'action': "block", 'label': "픽업시간 변경하기",
-            'messageText': "로딩중..",
-            'blockId': KAKAO_BLOCK_SET_PICKUP_TIME,
-            'extra': dataActionExtra
-        },
-        {
-            'action': "block", 'label': "쿠폰 사용하기",
             'messageText': "로딩중..",
             'blockId': KAKAO_BLOCK_SET_PICKUP_TIME,
             'extra': dataActionExtra
@@ -453,12 +460,6 @@ def kakaoView_OrderPaymentCheck(kakaoPayload):
         QUICKREPLIES_MAP = [
             {
                 'action': "block", 'label': "픽업시간 변경하기",
-                'messageText': "로딩중..",
-                'blockId': KAKAO_BLOCK_SET_PICKUP_TIME,
-                'extra': dataActionExtra
-            },
-            {
-                'action': "block", 'label': "쿠폰 사용하기",
                 'messageText': "로딩중..",
                 'blockId': KAKAO_BLOCK_SET_PICKUP_TIME,
                 'extra': dataActionExtra
@@ -561,7 +562,7 @@ def kakaoView_EatplePassIssuance(kakaoPayload):
                 order.store.name,
                 order.menu.name,
                 order.totalPrice,
-                order.pickup_time,
+                dateByTimeZone(order.pickup_time).strftime('%H:%M'),
                 order.store.addr
             ),
             thumbnail, buttons
@@ -609,6 +610,7 @@ def kakaoView_TimeOut(blockId):
     )
 
     return JsonResponse(KakaoForm.GetForm())
+
 # # # # # # # # # # # # # # # # # # # # # # # # #
 #
 # External View
@@ -631,12 +633,11 @@ def GET_Menu(request):
 def SET_PickupTime(request):
     EatplusSkillLog("Get PickupTime")
 
-    try:
-        kakaoPayload = KakaoPayLoad(request)
-        return kakaoView_PickupTime(kakaoPayload)
-    
-    except (RuntimeError, TypeError, NameError, KeyError) as ex:
-        return errorView("{}".format(ex))
+
+    kakaoPayload = KakaoPayLoad(request)
+    return kakaoView_PickupTime(kakaoPayload)
+
+
 
 
 @csrf_exempt

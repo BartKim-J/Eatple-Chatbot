@@ -7,34 +7,35 @@ from django_mysql.models import Model
 # Define
 from eatple_app.define import *
 
+
 def iamportOrderValidation(order):
-    iamport = Iamport(imp_key=IAMPORT_API_KEY, imp_secret=IAMPORT_API_SECRET_KEY)
-    
+    iamport = Iamport(imp_key=IAMPORT_API_KEY,
+                      imp_secret=IAMPORT_API_SECRET_KEY)
     try:
         response = iamport.find(merchant_uid=order.order_id)
     except (KeyError, Iamport.ResponseError, Iamport.HttpError):
-        pass
-    except Iamport.HttpError as http_error:
-        order.payment_status = IAMPORT_ORDER_STATUS_FAILED
-        order.status = ORDER_STATUS_ORDER_FAILED
+        order.payment_status = IAMPORT_ORDER_STATUS_READY
+        order.status = ORDER_STATUS_PAYMENT_CHECK
         order.save()
-        
-        return errorView("Invalid Store Paratmer", "정상적이지 않은 경로거나\n잇플 패스의 주문번호가 잘못되었습니다.")
+
+        return IAMPORT_ORDER_STATUS_READY
+
 
     if(response['status'] == IAMPORT_ORDER_STATUS_PAID and
-        order.payment_status == IAMPORT_ORDER_STATUS_READY):
-        order.payment_status = IAMPORT_ORDER_STATUS_READY
+            order.payment_status == IAMPORT_ORDER_STATUS_READY):
+        order.payment_status = IAMPORT_ORDER_STATUS_PAID
         order.status = ORDER_STATUS_ORDER_CONFIRM_WAIT
         order.save()
-        
+
     return order.status
+
 
 def orderUpdate(order):
     status = iamportOrderValidation(order)
-    
+
     if(status == ORDER_STATUS_ORDER_FAILED):
         return status
-    
+
     menu = order.menu
 
     orderDate = dateByTimeZone(order.order_date)
@@ -45,9 +46,11 @@ def orderUpdate(order):
     currentDateWithoutTime = currentDate.replace(
         hour=0, minute=0, second=0, microsecond=0)
 
-    YESTERDAY = currentDateWithoutTime + datetime.timedelta(days=-1)  # Yesterday start
+    YESTERDAY = currentDateWithoutTime + \
+        datetime.timedelta(days=-1)  # Yesterday start
     TODAY = currentDateWithoutTime
-    TOMORROW = currentDateWithoutTime + datetime.timedelta(days=1)  # Tommorrow start
+    TOMORROW = currentDateWithoutTime + \
+        datetime.timedelta(days=1)  # Tommorrow start
 
     # Prev Lunch Order Edit Time 16:30 ~ 9:30(~ 10:30)
     prevlunchOrderEditTimeStart = currentDateWithoutTime + \
@@ -57,9 +60,9 @@ def orderUpdate(order):
     prevlunchOrderTimeEnd = currentDateWithoutTime + \
         datetime.timedelta(hours=10, minutes=30)
 
-    # Dinner Order Edit Time 10:30 ~ 15:30(~ 16:30)
+    # Dinner Order Edit Time 11:30 ~ 15:30(~ 16:30)
     dinnerOrderEditTimeStart = currentDateWithoutTime + \
-        datetime.timedelta(hours=10, minutes=30)
+        datetime.timedelta(hours=11, minutes=30)
     dinnerOrderEditTimeEnd = currentDateWithoutTime + \
         datetime.timedelta(hours=15, minutes=30)
     dinnerOrderTimeEnd = currentDateWithoutTime + \
@@ -193,19 +196,18 @@ class Order(models.Model):
         null=True
     )
 
-
     totalPrice = models.IntegerField(default=0)
 
     count = models.IntegerField(default=1)
 
-    pickup_time = models.TimeField(default=timezone.now)
+    pickup_time = models.DateTimeField(default=timezone.now)
 
     payment_status = models.CharField(
         max_length=10,
         choices=IAMPORT_ORDER_STATUS,
         default=IAMPORT_ORDER_STATUS_READY
     )
-    
+
     status = models.IntegerField(
         choices=ORDER_STATUS,
         default=ORDER_STATUS_PAYMENT_CHECK,
@@ -214,9 +216,27 @@ class Order(models.Model):
     update_date = models.DateTimeField(auto_now=True)
     order_date = models.DateTimeField(default=timezone.now)
 
-
     def save(self, *args, **kwargs):
         super().save()
+
+    @staticmethod
+    def pickupTimeToDateTime(pickup_time):
+        pickup_time = [x.strip() for x in pickup_time.split(':')]
+
+        currentTime = dateByTimeZone(timezone.now())
+        datetime_pickup_time = currentTime.replace(
+                                    hour=int(pickup_time[0]), 
+                                    minute=int(pickup_time[1]),
+                                    second=0,
+                                    microsecond=0
+                                    )
+
+        if(datetime_pickup_time < currentTime):
+            datetime_pickup_time += datetime.timedelta(days=1)
+            
+        print(datetime_pickup_time)
+        
+        return datetime_pickup_time
 
     def __init__(self, *args, **kwargs):
         super(Order, self).__init__(*args, **kwargs)
@@ -232,13 +252,8 @@ class Order(models.Model):
 
         self.order_id = "EP{area:08X}{id:04X}".format(
             area=int(self.order_date.strftime('%f')), id=self.id)
-        
-    @staticmethod
-    def rowPickupTimeToDatetime(rowPickupTime):
-        return dateNowByTimeZone().replace(hour=0, minute=0, second=0, microsecond=0) + datetime.timedelta(hours=int(rowPickupTime[0:2]), minutes=int(rowPickupTime[3:5]))
 
     # Methods
-
     def __str__(self):
         return "{}".format(self.order_id)
 
@@ -275,7 +290,7 @@ class OrderManager():
             Q(status=ORDER_STATUS_PAYMENT_CHECK) |
             Q(status=ORDER_STATUS_PICKUP_COMPLETED)
         )
-        
+
         return unavailableOrders
 
     def getAvailableOrders(self):
@@ -285,14 +300,14 @@ class OrderManager():
             Q(status=ORDER_STATUS_ORDER_CONFIRM_WAIT) |
             Q(status=ORDER_STATUS_ORDER_CONFIRMED)
         )
-        
+
         return availableOrders
 
     def getAvailableLunchuserOrderListPurchased(self):
         availableOrders = self.getAvailableOrders()
         lunchOrders = availableOrders.filter(
             menu__sellingTime=SELLING_TIME_LUNCH)
-        
+
         return lunchOrders
 
     def getAvailableDinnerOrderPurchased(self):
@@ -300,6 +315,7 @@ class OrderManager():
         dinnerOrders = availableOrders.filter(
             menu__sellingTime=SELLING_TIME_DINNER)
         return dinnerOrders
+
 
 class storeOrderManager(OrderManager):
     def __init__(self, storeId):
@@ -311,15 +327,15 @@ class OrderSheet(models.Model):
         ordering = ['-create_date']
 
     user = models.ForeignKey(
-        'User',  
-        on_delete=models.DO_NOTHING, 
-        default=DEFAULT_OBJECT_ID, 
+        'User',
+        on_delete=models.DO_NOTHING,
+        default=DEFAULT_OBJECT_ID,
         null=True
     )
 
     management_code = models.CharField(
-        max_length=MANAGEMENT_CODE_LENGTH, 
-        blank=True, 
+        max_length=MANAGEMENT_CODE_LENGTH,
+        blank=True,
         null=True
     )
 
@@ -337,7 +353,7 @@ class OrderSheet(models.Model):
 
         if(self.create_date == None):
             self.create_date = datetime.datetime.now()
-            
+
         self.management_code = "E{area:06X}P{id:03X}".format(
             area=int(self.create_date.strftime('%f')), id=self.id)
 
@@ -347,20 +363,18 @@ class OrderSheet(models.Model):
     def pushOrder(self, user, store, menu, pickup_time, totalPrice, count):
         self.user = user
         super().save()
-        
+
         order = Order()
         order.ordersheet = self
         order.menu = menu
         order.store = store
-        order.pickup_time = pickup_time
+        order.pickup_time = order.pickupTimeToDateTime(pickup_time)
         order.totalPrice = totalPrice
         order.count = 1
         order.save()
-        
+
         return order
-        
+
     # Methods
     def __str__(self):
         return "{}".format(self.management_code)
-
-
