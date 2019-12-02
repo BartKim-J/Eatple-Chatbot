@@ -1,0 +1,1 @@
+sudo -u eatplus /home/eatplus/.pyenv/versions/deploy_eatple/bin/uwsgi --http :8000 -ini /home/eatplus/eatple.chatbot/.config_secret/uwsgi/deploy.ini

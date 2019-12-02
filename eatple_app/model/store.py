@@ -1,92 +1,171 @@
-
+# define
+from eatple_app.define import *
+# Django Library
 from django.db import models
 from django.conf import settings
 from django.urls import reverse
 from django.core.files.storage import FileSystemStorage
 from django_mysql.models import Model
 from django.core.validators import MaxValueValidator, MinValueValidator
-
-
-import os
-from random import *
+from django import forms
 
 # Utils
 from eatple_app.model.utils import OverwriteStorage
 from eatple_app.model.utils import logo_directory_path
 
-# define
-from eatple_app.define import EP_define
+DEFAULT_LOGO_IMAGE_PATH = "STORE_DB/images/default/logoImg.png"
 
-NOT_APPLICABLE = EP_define.NOT_APPLICABLE
-DEFAULT_OBJECT_ID = EP_define.DEFAULT_OBJECT_ID
+class Category(models.Model):
+    # Metadata
+    class Meta:
+        # abstract = True
+        ordering = ['-name']
 
-STRING_LENGTH = EP_define.STRING_LENGTH
-WORD_LENGTH = EP_define.WORD_LENGTH
+    name = models.CharField(max_length=WORD_LENGTH, help_text="Category")
 
-LUNCH_PICKUP_TIME = EP_define.LUNCH_PICKUP_TIME
-DINNER_PICKUP_TIME = EP_define.DINNER_PICKUP_TIME
-
-
-def getUniqueID(instance):
-    return "{:4d}".format(instance.id)
-
-# Models
-
+    # Methods
+    def __str__(self):
+        return "{}".format(self.name)
 
 class CRN(models.Model):
-    UID = models.CharField(default="000",
-                           max_length=STRING_LENGTH, help_text="Unique ID")
+    store = models.OneToOneField(
+        'Store', 
+        on_delete=models.CASCADE, 
+        unique=True, 
+        null=True
+    )
 
-    CC = models.CharField(default="00",
-                          max_length=STRING_LENGTH, help_text="Corporation Classification Code")
+    CRN_id = models.CharField(
+        max_length=10, 
+        help_text="Unique ID",
+        blank=True,
+        null=True
+    )
+    
+    UID = models.CharField(
+        max_length=3, 
+        help_text="Unique ID"
+    )
 
-    SN = models.CharField(default="0000",
-                          max_length=STRING_LENGTH, help_text="Serial Number")
+    CC = models.CharField(
+        max_length=2, 
+        help_text="Corporation Classification Code"
+    )
 
-    VN = models.CharField(default="0",
-                          max_length=STRING_LENGTH, help_text="Vertification Number")
+    SN = models.CharField(
+        max_length=4, 
+        help_text="Serial Number"
+    )
 
+    VN = models.CharField(
+        max_length=1, 
+        help_text="Vertification Number"
+    )
+
+    def __init__(self, *args, **kwargs):
+        super(CRN, self).__init__(*args, **kwargs)
+        
+        self.CRN_id = "{}{}{}{}".format(
+            self.UID,
+            self.CC,
+            self.SN,
+            self.VN
+        )
+        
+        super(CRN, self).save()
+
+    
     def __str__(self):
-        return "{UID}-{CC}-{SN}{VN}".format(UID=self.UID, CC=self.CC, SN=self.SN, VN=self.VN)
+        return "{UID}-{CC}-{SN}{VN}".format(
+            UID=self.UID, 
+            CC=self.CC, 
+            SN=self.SN, 
+            VN=self.VN
+        )
+
+class PickupTime(models.Model):
+    class Meta:
+        ordering = ['time']
+
+    store = models.ForeignKey(
+        'Store', 
+        on_delete=models.CASCADE, 
+        null=True
+    )
+
+    time = models.TimeField(default=timezone.now)
+    
+    status = models.CharField(
+        max_length=WORD_LENGTH,
+        default=OC_OPEN,
+        choices=OC_STATUS
+    )
 
 
 class StoreInfo(models.Model):
-    store_id = models.CharField(default="0000-0000",
-                                max_length=STRING_LENGTH, help_text="Store ID")
+    store_id = models.CharField(
+        default="N/A",
+        max_length=WORD_LENGTH, 
+        help_text="상점 고유 번호*",
+        unique=True
+        )
 
-    CRN = models.OneToOneField('CRN', on_delete=models.CASCADE,
-                               primary_key=True)
+    name = models.CharField(
+        max_length=WORD_LENGTH, 
+        help_text="상호*",
+        unique=True
+    )
 
-    name = models.CharField(max_length=STRING_LENGTH, help_text="Store Name")
+    addr = models.CharField(
+        max_length=WORD_LENGTH,
+        help_text="주소*",
+    )
 
-    addr = models.CharField(max_length=STRING_LENGTH, help_text="Address")
-
-    owner = models.CharField(max_length=WORD_LENGTH, help_text="Owner")
-
-    description = models.TextField(help_text="Store Dscription")
-
-    logo = models.ImageField(default="STORE_DB/images/default/logoImg.png",
-                             blank=True, upload_to=logo_directory_path, storage=OverwriteStorage())
+    phone_number = PhoneNumberField(
+        max_length=WORD_LENGTH, 
+        null=True,
+        blank=True,
+        help_text="전화번호*",
+    )
+        
+    owner = models.CharField(
+        max_length=WORD_LENGTH, 
+        help_text="점주명*"
+    )
 
     class Meta:
         abstract = True
 
 
 class StoreSetting(models.Model):
+    category = models.ManyToManyField('Category')
+
+    description = models.TextField(
+        blank=True,
+        help_text="가게 부가 정보*"
+    )
+
+    logo = models.ImageField(
+        default=DEFAULT_LOGO_IMAGE_PATH,
+        blank=True, 
+        upload_to=logo_directory_path, 
+        storage=OverwriteStorage(),
+        help_text="로고*", 
+    )
 
     class Meta:
         abstract = True
-
 
 class StoreStatus(models.Model):
-    status = models.IntegerField(default=0, choices=(), help_text="")
-
+    status = models.CharField(
+        max_length=WORD_LENGTH, 
+        default=OC_OPEN,
+        choices=OC_STATUS,
+        help_text="가게 상태*", 
+    )
     class Meta:
         abstract = True
-
-
 class Store(StoreInfo, StoreSetting, StoreStatus):
-    # Metadata
     class Meta:
         ordering = ['-name']
 
@@ -99,12 +178,18 @@ class Store(StoreInfo, StoreSetting, StoreStatus):
             except (Store.DoesNotExist) as ex:
                 self.id = 1
 
-        self.store_id = "{area:04x}-{id:04x}".format(area=0, id=self.id)
-
-    # Methods
+        self.store_id = "{area:04X}-{id:04X}".format(area=0, id=self.id)
+        
+        super(Store, self).save()
+        
     def save(self, *args, **kwargs):
+        super().save()
 
-        super().save(*args, **kwargs)
+    def logoImgURL(self):
+        try:
+            return self.logo.url
+        except ValueError:
+            return DEFAULT_LOGO_IMAGE_PATH
 
     def __str__(self):
-        return "[ {store_id} ] : {name}".format(store_id=self.store_id, name=self.name)
+        return "{name}".format(name=self.name)

@@ -1,49 +1,45 @@
-'''
-    Author : Ben Kim
+# Models
+from eatple_app.models import *
 
-    @NOTE
-    @BUG
-    @TODO
- 
-'''
 # Django Library
 from django.contrib import admin
+from django import forms
+from django.core import validators
+from django.utils.translation import ugettext_lazy as _
+from django.utils.safestring import mark_safe
 
-# Models
-from .models import DefaultImage
-from .models import UserManual, PartnerManual
-from .models import UserIntro, PartnerIntro
-from .models import Store, CRN
-from .models import Menu
-from .models import Category, Tag
-from .models import Order, OrderForm
-from .models import User
-from .models import Partner
+from import_export.admin import ExportActionModelAdmin, ImportExportMixin, ImportMixin
+from import_export import resources
 
-# Main Models
-admin.site.register(Partner)
-admin.site.register(User)
+from eatple_app.admins.admin_user import UserAdmin
+from eatple_app.admins.admin_partner import PartnerAdmin
+from eatple_app.admins.admin_store import StoreAdmin
+from eatple_app.admins.admin_order import OrderAdmin
+from eatple_app.admins.admin_orderSheet import OrderSheetAdmin
+from eatple_app.admins.admin_orderRecordSheet import OrderRecordSheetAdmin
+from eatple_app.admins.admin_defaultImage import DefaultImageAdmin
 
-admin.site.register(Store)
-admin.site.register(CRN)
+admin.site.register(Store, StoreAdmin)
 
-admin.site.register(Menu)
+admin.site.register(OrderSheet, OrderSheetAdmin)
 
-# Defulat Images
-admin.site.register(DefaultImage)
+admin.site.register(Order, OrderAdmin)
 
-# Order
-admin.site.register(OrderForm)
-admin.site.register(Order)
+admin.site.register(OrderRecordSheet, OrderRecordSheetAdmin)
 
-# Menu Category-Tag
+admin.site.register(User, UserAdmin)
+
+admin.site.register(Partner, PartnerAdmin)
+
+admin.site.register(DefaultImage, DefaultImageAdmin)
+
 admin.site.register(Category)
 admin.site.register(Tag)
 
 # Manual
-admin.site.register(UserManual)
-admin.site.register(PartnerManual)
+# admin.site.register(UserManual)
+# admin.site.register(PartnerManual)
 
 # Intro
-admin.site.register(UserIntro)
-admin.site.register(PartnerIntro)
+# admin.site.register(UserIntro)
+# admin.site.register(PartnerIntro)

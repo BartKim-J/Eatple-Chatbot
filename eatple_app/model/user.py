@@ -1,60 +1,62 @@
-'''
-    Author : Ben Kim
-
-    @NOTE
-    @BUG
-    @TODO
- 
-'''
+# define
+from eatple_app.define import *
 # Django Library
-from eatple_app.models import Store, Menu
-from eatple_app.models import Category, Tag
-from eatple_app.models import Order
-from django.urls import reverse
 from django.db import models
+from django.conf import settings
+from django.urls import reverse
+from django.core.files.storage import FileSystemStorage
 from django_mysql.models import Model
+from django.core.validators import MaxValueValidator, MinValueValidator
+from django import forms
 
-# External Library
+# Utils
+from eatple_app.model.utils import OverwriteStorage
+from eatple_app.model.utils import logo_directory_path
 
-# Define
-from eatple_app.define import EP_define
+class KakaoUser(models.Model):
+    nickname = models.CharField(
+    max_length=USER_NICKNAME_LENGTH, null=True)
 
-NOT_APPLICABLE = EP_define.NOT_APPLICABLE
-DEFAULT_OBJECT_ID = EP_define.DEFAULT_OBJECT_ID
+    profile_image_url = models.CharField(
+        max_length=STRING_LENGTH, null=True)
+    
+    phone_number = PhoneNumberField(
+        max_length=WORD_LENGTH, null=True)
 
-USER_NICKNAME_LENGTH = EP_define.USER_NICKNAME_LENGTH
-USER_ID_CODE_LENGTH = EP_define.USER_ID_CODE_LENGTH
+    email = models.CharField(
+        max_length=WORD_LENGTH, null=True)
 
-# Other Models
+    birthyear = models.CharField(
+        max_length=WORD_LENGTH, null=True)
+    birthday = models.CharField(
+        max_length=WORD_LENGTH, null=True)
+    
+    gender = models.CharField(
+        max_length=WORD_LENGTH, null=True)
+    
+    ci = models.CharField(
+        max_length=STRING_LENGTH, null=True)
+    ci_authenticated_at = models.CharField(
+        max_length=STRING_LENGTH, null=True )
+    
+    app_user_id = models.IntegerField(default=0)
 
-# Models
-
-
-class User(models.Model):
     class Meta:
-        ordering = ['-name']
+        abstract = True
 
-    name = models.CharField(
-        max_length=USER_NICKNAME_LENGTH, help_text="User Name")
-
-    identifier_code = models.CharField(
-        max_length=USER_ID_CODE_LENGTH, help_text="User ID", default='')
-
-    kakao_token = models.CharField(
-        max_length=USER_ID_CODE_LENGTH, help_text="Kakao Token", default='')
-
-    # flag
-    event_accout = models.BooleanField(default=False)
-
+class User(KakaoUser, models.Model):
+    class Meta:
+        ordering = ['-nickname']
+    
     create_date = models.DateTimeField(auto_now=True)
 
     @classmethod
-    def registerUser(cls, _name, _identifier_code):
-        registedUser = cls(name=_name, identifier_code=_identifier_code)
+    def signUp(cls, *args, **kwargs):
+        registedUser = cls(*args, **kwargs)
         registedUser.save()
 
         return registedUser
 
     # Methods
     def __str__(self):
-        return "{}".format(self.name)
+        return "{}".format(self.app_user_id)

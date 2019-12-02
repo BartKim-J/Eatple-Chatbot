@@ -1,104 +1,209 @@
-'''
-    Author : Ben Kim
-
-    @NOTE
-    @BUG
-    @TODO
- 
-'''
 # Django Library
 from django.shortcuts import render
 from django.views.decorators.csrf import csrf_exempt
 from django.http import JsonResponse
 
-# External Library
-import json
-from random import *
-
 # Models
-from eatple_app.models import Partner
-from eatple_app.models import Order
-from eatple_app.models import Category, Tag
-from eatple_app.models import Store, Menu
-
-# View Modules
-from eatple_app.module_kakao.ReponseForm import Kakao_SimpleForm, Kakao_CarouselForm
-from eatple_app.module_kakao.RequestForm import getLatLng, KakaoPayLoad
-
-# View
-from eatple_app.views_partner.wording import wordings
-from eatple_app.views_system.debugger import EatplusSkillLog, errorView
+from eatple_app.models import *
 
 # Define
-from eatple_app.define import EP_define
+from eatple_app.define import *
 
-DEFAULT_STORE_ID = 28  # Eatple Store Unique ID : 28
+# Modules
+from eatple_app.module_kakao.ReponseForm import *
+from eatple_app.module_kakao.RequestForm import *
+from eatple_app.module_kakao.Validation import *
 
-# Static Functions
-
-
-def registerPartner(partnerIdentifier, storeKey):
-    partnerInstance = Partner.registerPartner(
-        "잇플 파트너 {}".format(randint(1, 10000)), partnerIdentifier, storeKey)
-
-    return partnerInstance
+# View-System
+from eatple_app.views_system.debugger import *
 
 
-# Viewset
-'''
-    @name GET_PartnerHome
-    @param userID
+def partnerSignUp(partnerProfile):
+    partner = Partner.signUp(
+        nickname=partnerProfile['nickname'],
+        profile_image_url=partnerProfile['profile_image_url'],
+        phone_number=partnerProfile['phone_number'],
+        email=partnerProfile['email'],
+        birthyear=partnerProfile['birthyear'],
+        birthday=partnerProfile['birthday'],
+        gender=partnerProfile['gender'],
+        ci=partnerProfile['ci'],
+        ci_authenticated_at=partnerProfile['ci_authenticated_at'],
+        app_user_id=partnerProfile['app_user_id'],
+    )
 
-    @note
-    @bug
-    @todo
-'''
-@csrf_exempt
-def GET_PartnerHome(request):
+    return partner
+
+def kakaoView_SignUp():
+    EatplusSkillLog("Sign Up")
+
+    kakaoForm = KakaoForm()
+
+    BTN_MAP = [
+        {
+            'action': "block",
+            'label': "연동하러 가기",
+            'messageText': "로딩중..",
+            'blockId': KAKAO_BLOCK_PARTNER_SIGNUP,
+            'extra': {
+                KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_PARTNER_HOME
+            }
+        },
+    ]
+    
+    QUICKREPLIES_MAP = []
+
+    thumbnail = {"imageUrl": ""}
+
+    buttons = BTN_MAP
+
+    kakaoForm.BasicCard_Push(
+        "아직 잇플에 연동되지 않은 파트너 카카오 계정입니다.",
+        "함께 연동하러 가볼까요?", 
+        thumbnail, 
+        buttons
+    )
+    kakaoForm.BasicCard_Add()
+    
+    kakaoForm.QuickReplies_AddWithMap(QUICKREPLIES_MAP)
+
+    return JsonResponse(kakaoForm.GetForm())
+
+def kakaoView_StoreRegistration():
+    EatplusSkillLog("Store Registration")
+
+    kakaoForm = KakaoForm()
+
+    BTN_MAP = [
+        {
+            'action': "block",
+            'label': "등록하러 가기",
+            'messageText': "로딩중..",
+            'blockId': KAKAO_BLOCK_PARTNER_STORE_REGISTRATION,
+            'extra': {
+                KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_PARTNER_HOME
+            }
+        },
+    ]
+    
+    QUICKREPLIES_MAP = []
+
+    thumbnail = {"imageUrl": ""}
+
+    buttons = BTN_MAP
+
+    kakaoForm.BasicCard_Push(
+        "파트너 계정에 가게 등록 절차가 남아있습니다!",
+        "등록해보러 가볼까요?", 
+        thumbnail, 
+        buttons
+    )
+    kakaoForm.BasicCard_Add()
+    
+    kakaoForm.QuickReplies_AddWithMap(QUICKREPLIES_MAP)
+
+    return JsonResponse(kakaoForm.GetForm())
+
+def kakaoView_Home(partner):
     EatplusSkillLog("Home")
 
-    HOME_BTN_MAP = [
-        {'action': "message", 'label': wordings.GET_ORDER_LIST_TOTAL_COMMAND,
-            'messageText': wordings.GET_ORDER_LIST_TOTAL_COMMAND, 'blockid': "none", 'extra': {'Status': "OK"}},
-        {'action': "message", 'label': wordings.GET_CALCULATE_CHECK_COMMAND,
-            'messageText': wordings.GET_CALCULATE_CHECK_COMMAND, 'blockid': "none", 'extra': {'Status': "OK"}},
+    kakaoForm = KakaoForm()
+  
+    BTN_MAP = [
+        {
+            'action': "block",
+            'label': "주문보기",
+            'messageText': "로딩중..",
+            'blockId': KAKAO_BLOCK_PARTNER_GET_ORDER_DETAILS,
+            'extra': {
+                KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_PARTNER_HOME
+            }
+        },
+        {
+            'action': "block",
+            'label': "정산조회",
+            'messageText': "로딩중..",
+            'blockId': KAKAO_BLOCK_PARTNER_GET_ORDER_DETAILS,
+            'extra': {
+                KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_PARTNER_HOME
+            }
+        },
+    ]
+    
+    QUICKREPLIES_MAP = [
+        {
+            'action': "block", 
+            'label': "사용 메뉴얼",
+            'messageText': "로딩중..",    
+            'blockId': KAKAO_BLOCK_PARTNER_MANUAL,
+            'extra': {
+                KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_PARTNER_HOME
+            }
+        },
     ]
 
-    HOME_QUICKREPLIES_MAP = [
-        {'action': "message", 'label': wordings.STORE_MANUAL_COMMAND,
-            'messageText': wordings.STORE_MANUAL_COMMAND,    'blockid': "none", 'extra': {}},
-    ]
+    thumbnail = {
+            "imageUrl": "",
+            "fixedRatio": "true",
+            "width": 800,
+            "height": 800,
+        }
 
+    buttons = BTN_MAP
+
+    kakaoForm.BasicCard_Push(
+        "안녕하세요. {store}점주님!".format(store=partner.store.name), 
+        "아래 명령어 중에 골라주세요!", 
+        thumbnail, 
+        buttons
+    )
+    kakaoForm.BasicCard_Add()
+    
+    kakaoForm.QuickReplies_AddWithMap(QUICKREPLIES_MAP)
+
+    return JsonResponse(kakaoForm.GetForm())
+
+@csrf_exempt
+def GET_PartnerHome(request):
     try:
         kakaoPayload = KakaoPayLoad(request)
 
-        try:
-            partnerInstance = Partner.objects.get(
-                identifier_code=kakaoPayload.userID)
-        except Partner.DoesNotExist:
-            storeKey = DEFAULT_STORE_ID
-            partnerInstance = registerPartner(
-                kakaoPayload.userID, "{}".format(storeKey))
-            if (partnerInstance == None):
-                return errorView("partner register failed.")
+        partner = partnerValidation(kakaoPayload)
 
-        print(partnerInstance.storeInstance)
+        if(partner == None or partner.store == None):
+            try:
+                if(partner == None):
+                    otpURL = kakaoPayload.dataActionParams['partner_profile']['origin']
 
-        KakaoForm = Kakao_CarouselForm()
-        KakaoForm.BasicCard_Init()
+                    kakaoResponse = requests.get("{url}?rest_api_key={rest_api_key}".format(
+                        url=otpURL, rest_api_key=KAKAO_REST_API_KEY))
 
-        thumbnail = {"imageUrl": ""}
+                    if(kakaoResponse.status_code == 200):
+                        partner = partnerSignUp(kakaoResponse.json())
 
-        buttons = HOME_BTN_MAP
+                        return GET_PartnerHome(request)
 
-        KakaoForm.BasicCard_Add(wordings.HOME_TITLE_TEXT,
-                                wordings.HOME_DESCRIPT_TEXT, thumbnail, buttons)
+                    return kakaoView_SignUp()
+                else:
+                    CRN = kakaoPayload.dataActionParams['CRN']['origin']
 
-        for entryPoint in HOME_QUICKREPLIES_MAP:
-            KakaoForm.QuickReplies_Add(entryPoint['action'], entryPoint['label'],
-                                       entryPoint['messageText'], entryPoint['blockid'], entryPoint['extra'])
+                    try:
+                        store = Store.objects.get(crn__CRN_id=CRN)
+                        partner.storeRegistration(store)
+                        
+                        return GET_PartnerHome(request)
+                    except Store.DoesNotExist as ex:
+                        return kakaoView_StoreRegistration()
+                    
+                    return kakaoView_StoreRegistration()
 
-        return JsonResponse(KakaoForm.GetForm())
+            except (RuntimeError, TypeError, NameError, KeyError):
+                if(partner == None):
+                    return kakaoView_SignUp()
+                else:
+                    return kakaoView_StoreRegistration()
+        else:
+            return kakaoView_Home(partner)
 
     except (RuntimeError, TypeError, NameError, KeyError) as ex:
         return errorView("{}".format(ex))

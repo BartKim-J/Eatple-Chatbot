@@ -28,11 +28,22 @@ SECRET_KEY = '8b%m$==a68uz-y#zl&hb^rb$oyl3ejy5=8c!5**l5x#lou1(i$'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = [
+    'eatple.com'
+]
 
 # Application definition
 
 INSTALLED_APPS = [
+    # local-app
+    'eatple_app',
+    
+    # 'suit',
+    'eatple_app.apps.SuitConfig',
+    
+    'phonenumber_field',
+    'import_export',
+    
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -41,8 +52,6 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
 
-    # local-app
-    'eatple_app',
 ]
 
 MIDDLEWARE = [
@@ -55,7 +64,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-ROOT_URLCONF = 'eatple_setting.urls'
+ROOT_URLCONF = 'config.urls'
 
 TEMPLATES = [
     {
@@ -65,7 +74,7 @@ TEMPLATES = [
         'OPTIONS': {
             'context_processors': [
                 'django.template.context_processors.debug',
-                'django.template.context_processors.request',
+                'django.template.context_processors.request', # Make sure you have this line
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
             ],
@@ -73,7 +82,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'eatple_setting.wsgi.application'
+WSGI_APPLICATION = 'config.wsgi.base.application'
 
 
 # Database
@@ -82,8 +91,8 @@ WSGI_APPLICATION = 'eatple_setting.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',  # use mysql (not sqlite)
-        'NAME': 'eatplus_db',
-        'USER': 'eatplus',
+        'NAME': 'eatple_DB',
+        'USER': 'eatple',
         'PASSWORD': 'aisthefuture',
         'HOST': 'localhost',
         'PORT': '3306',
