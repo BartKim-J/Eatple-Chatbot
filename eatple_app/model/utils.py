@@ -9,7 +9,7 @@ from django_mysql.models import Model
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django import forms
 
-DEFAULT_IMAGE_PATH = "STORE_DB/images/default/defaultImg.png"
+DEFAULT_IMAGE_PATH = 'STORE_DB/images/default/defaultImg.png'
 
 class OverwriteStorage(FileSystemStorage):
     def get_available_name(self, name, max_length=None):
@@ -20,34 +20,34 @@ class OverwriteStorage(FileSystemStorage):
 
 
 def set_filename_format(instance, filename, toFilename):
-    return "{filename}{extension}".format(
+    return '{filename}{extension}'.format(
         filename=toFilename,
-        extension=".png",
+        extension='.png',
     )
 
 
 def menu_directory_path(instance, filename):
-    path = "STORE_DB/images/{storename}/{menuname}/{filename}".format(
+    path = 'STORE_DB/images/{storename}/{menuname}/{filename}'.format(
         storename=instance.store.name,
         menuname=instance.name,
-        filename=set_filename_format(instance, filename, "menuImg"),
+        filename=set_filename_format(instance, filename, 'menuImg'),
     )
 
     return path
 
 
 def logo_directory_path(instance, filename):
-    path = "STORE_DB/images/{storename}/{filename}".format(
+    path = 'STORE_DB/images/{storename}/{filename}'.format(
         storename=instance.store.name,
         menuname=instance.name,
-        filename=set_filename_format(instance, filename, "logoImg"),
+        filename=set_filename_format(instance, filename, 'logoImg'),
     )
 
     return path
 
 
 def default_directory_path(instance, filename):
-    path = "STORE_DB/images/default/{filename}".format(
+    path = 'STORE_DB/images/default/{filename}'.format(
         filename=set_filename_format(instance, filename, instance.filename),
     )
 
@@ -60,14 +60,14 @@ class DefaultImage(models.Model):
         ordering = ['-name']
 
     name = models.CharField(
-        default="", 
+        default='', 
         max_length=WORD_LENGTH, 
-        help_text="subject name"
+        help_text='subject name'
     )
 
     filename = models.CharField(
         max_length=WORD_LENGTH, 
-        help_text="filename"
+        help_text='filename'
     )
     
     image = models.ImageField(
@@ -78,4 +78,4 @@ class DefaultImage(models.Model):
 
     # Methodssadfasdfas
     def __str__(self):
-        return "{}".format(self.name)
+        return '{}'.format(self.name)

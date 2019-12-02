@@ -21,9 +21,9 @@ from eatple_app.views import *
 
 DEFAULT_QUICKREPLIES_MAP = [
     {
-        'action': "block",
-        'label': "홈으로 돌아가기",
-        'messageText': "로딩중..",
+        'action': 'block',
+        'label': '홈으로 돌아가기',
+        'messageText': '로딩중..',
         'blockId': KAKAO_BLOCK_USER_HOME,
         'extra': {}
     },
@@ -44,19 +44,19 @@ def eatplePassValidation(user):
 
     if (lunchPurchaed and dinnerPurchaced):
         kakaoForm.SimpleText_Add(
-            "오늘 하루, 잇플로 맛있는 식사를 즐겨주셔서 감사해요. 내일도 잇플과 함께 해주실거죠?"
+            '오늘 하루, 잇플로 맛있는 식사를 즐겨주셔서 감사해요. 내일도 잇플과 함께 해주실거죠?'
         )
         return JsonResponse(kakaoForm.GetForm())
                 
     elif (lunchPurchaed):
         kakaoForm.SimpleText_Add(
-            "이미 점심 주문을 해주셨네요!\n내일 다시 잇플과 함께해주세요."
+            '이미 점심 주문을 해주셨네요!\n내일 다시 잇플과 함께해주세요.'
         )
         return JsonResponse(kakaoForm.GetForm())
     
     elif (dinnerPurchaced):
         kakaoForm.SimpleText_Add(
-            "이미 저녁 주문을 해주셨네요!\n곧 있을 내일 점심 주문시간에 잇플과 다시 함께해주세요."
+            '이미 저녁 주문을 해주셨네요!\n곧 있을 내일 점심 주문시간에 잇플과 다시 함께해주세요.'
         )
         return JsonResponse(kakaoForm.GetForm())
         

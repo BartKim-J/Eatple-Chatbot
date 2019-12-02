@@ -33,7 +33,7 @@ def kakaoView_UseEatplePass(kakaoPayload):
     # Block Validation
     prev_block_id = prevBlockValidation(kakaoPayload)
     if(prev_block_id != KAKAO_BLOCK_USER_GET_USE_EATPLE_PASS_CONFIRM):
-        return errorView("Invalid Block Access", "정상적이지 않은 경로거나, 오류가 발생했습니다.\n다시 주문해주세요!")
+        return errorView('Invalid Block Access', '정상적이지 않은 경로거나, 오류가 발생했습니다.\n다시 주문해주세요!')
 
     # User Validation
     user = userValidation(kakaoPayload)
@@ -42,12 +42,14 @@ def kakaoView_UseEatplePass(kakaoPayload):
 
     order = orderValidation(kakaoPayload)
     if(order == None or user == None):
-        return errorView("Invalid Paratmer", "정상적이지 않은 주문번호이거나\n진행 중 오류가 발생했습니다.")
+        return errorView('Invalid Paratmer', '정상적이지 않은 주문번호이거나\n진행 중 오류가 발생했습니다.')
+
+    order = order.orderUsed()
 
     kakaoForm = KakaoForm()
 
     thumbnail = {
-        "imageUrl": ""
+        'imageUrl': ''
     }
 
     buttons = [
@@ -55,14 +57,12 @@ def kakaoView_UseEatplePass(kakaoPayload):
     ]
     
     kakaoForm.BasicCard_Push(
-        "주문번호: {}".format(order.order_id),
-        " - 주문자: {}\n\n - 매장: {} \n - 메뉴: {}\n\n - 결제 금액: {}원\n - 픽업 시간: {}\n\n - 주문 상태: {}".format(
+        '잇플패스가 사용되었습니다.',
+        ' - 주문자: {}\n\n - 매장: {} \n - 메뉴: {}\n\n - 결제 금액: {}원'.format(
             str(order.ordersheet.user.phone_number)[9:13],
             order.store.name,
             order.menu.name,
             order.totalPrice,
-            dateByTimeZone(order.pickup_time).strftime('%Y-%D %H:%M'),
-            ORDER_STATUS[order.status][1]
         ),
         thumbnail, buttons
     )
@@ -70,9 +70,9 @@ def kakaoView_UseEatplePass(kakaoPayload):
     
     QUICKREPLIES_MAP = [
         {
-            'action': "block",
-            'label': "홈으로 돌아가기",
-            'messageText': "로딩중..",
+            'action': 'block',
+            'label': '홈으로 돌아가기',
+            'messageText': '로딩중..',
             'blockId': KAKAO_BLOCK_USER_HOME,
             'extra': {
                 KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_ORDER_DETAILS
@@ -81,14 +81,14 @@ def kakaoView_UseEatplePass(kakaoPayload):
     ]
 
     kakaoForm.QuickReplies_AddWithMap(QUICKREPLIES_MAP)
-
+    
     return JsonResponse(kakaoForm.GetForm())   
 
 def kakaoView_ConfirmUseEatplePass(kakaoPayload):
     # Block Validation
     prev_block_id = prevBlockValidation(kakaoPayload)
     if(prev_block_id != KAKAO_BLOCK_USER_EATPLE_PASS):
-        return errorView("Invalid Block Access", "정상적이지 않은 경로거나, 오류가 발생했습니다.\n다시 주문해주세요!")
+        return errorView('Invalid Block Access', '정상적이지 않은 경로거나, 오류가 발생했습니다.\n다시 주문해주세요!')
 
     # User Validation
     user = userValidation(kakaoPayload)
@@ -97,51 +97,46 @@ def kakaoView_ConfirmUseEatplePass(kakaoPayload):
 
     order = orderValidation(kakaoPayload)
     if(order == None or user == None):
-        return errorView("Invalid Paratmer", "정상적이지 않은 주문번호이거나\n진행 중 오류가 발생했습니다.")
+        return errorView('Invalid Paratmer', '정상적이지 않은 주문번호이거나\n진행 중 오류가 발생했습니다.')
 
-    USE_COUPON_QUICKREPLIES_MAP = [
+    thumbnail = {
+        'fixedRatio': 'true'
+    }
+    
+    buttons = [
         {
-            'action': "block", 
-            'label': "사용하기",    
-            'messageText': "잇플패스 사용 확인",
+            'action': 'block', 
+            'label': '확인',    
+            'messageText': '로딩중..',
             'blockId': KAKAO_BLOCK_USER_POST_USE_EATPLE_PASS, 
             'extra': {
                 KAKAO_PARAM_ORDER_ID: order.order_id,
-                KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_ORDER_DETAILS
+                KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_GET_USE_EATPLE_PASS_CONFIRM
             }
         },
         {
-            'action': "block",
-            'label': "홈으로 돌아가기",
-            'messageText': "로딩중..",
+            'action': 'block',
+            'label': '돌아가기',
+            'messageText': '로딩중..',
             'blockId': KAKAO_BLOCK_USER_HOME,
             'extra': {
-                KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_ORDER_DETAILS
+                KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_GET_USE_EATPLE_PASS_CONFIRM
             }
         },
     ]
 
-    EatplusSkillLog("Order Check Flow")
-
     kakaoForm = KakaoForm()
 
-    thumbnail = {"imageUrl": ""}
-
-    buttons = [
-        # No Buttons
-    ]
-
-    kakaoForm.SimpleText_Add("잇플패스를 사용하시겠습니까?")
-
-    kakaoForm.QuickReplies_AddWithMap(USE_COUPON_QUICKREPLIES_MAP)
-
+    kakaoForm.BasicCard_Push('잇플패스를 사용하시겠습니까?','', thumbnail, buttons)
+    kakaoForm.BasicCard_Add()
+    
     return JsonResponse(kakaoForm.GetForm())
 
 def kakaoView_OrderCancel(kakaoPayload):
     # Block Validation
     prev_block_id = prevBlockValidation(kakaoPayload)
     if(prev_block_id != KAKAO_BLOCK_USER_EATPLE_PASS and prev_block_id != KAKAO_BLOCK_USER_SET_ORDER_SHEET):
-        return errorView("Invalid Block Access", "정상적이지 않은 경로거나, 오류가 발생했습니다.\n다시 주문해주세요!")
+        return errorView('Invalid Block Access', '정상적이지 않은 경로거나, 오류가 발생했습니다.\n다시 주문해주세요!')
 
     # User Validation
     user = userValidation(kakaoPayload)
@@ -150,22 +145,22 @@ def kakaoView_OrderCancel(kakaoPayload):
 
     order = orderValidation(kakaoPayload)
     if(order == None):
-        return errorView("Invalid Paratmer", "정상적이지 않은 주문번호이거나\n진행 중 오류가 발생했습니다.")
+        return errorView('Invalid Paratmer', '정상적이지 않은 주문번호이거나\n진행 중 오류가 발생했습니다.')
 
     ORDER_LIST_QUICKREPLIES_MAP = [
         {
-            'action': "block",
-            'label': "새로고침",
-            'messageText': "로딩중..",
+            'action': 'block',
+            'label': '새로고침',
+            'messageText': '로딩중..',
             'blockId': KAKAO_BLOCK_USER_ORDER_DETAILS,
             'extra': {
                 KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_ORDER_DETAILS
             }
         },
         {
-            'action': "block",
-            'label': "홈으로 돌아가기",
-            'messageText': "로딩중..",
+            'action': 'block',
+            'label': '홈으로 돌아가기',
+            'messageText': '로딩중..',
             'blockId': KAKAO_BLOCK_USER_HOME,
             'extra': {
                 KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_ORDER_DETAILS
@@ -182,7 +177,7 @@ def kakaoView_OrderCancel(kakaoPayload):
 
         response = order.orderCancel()
         if(response == False):
-            return errorView("Invalid Paratmer", "정상적이지 않은 주문번호이거나\n환불 진행 중 오류가 발생했습니다.")
+            return errorView('Invalid Paratmer', '정상적이지 않은 주문번호이거나\n환불 진행 중 오류가 발생했습니다.')
         
         # Cancelled EatplePass Update
         order.orderStatusUpdate()
@@ -190,25 +185,25 @@ def kakaoView_OrderCancel(kakaoPayload):
         kakaoForm = KakaoForm()
         
         thumbnail = {
-            "imageUrl": ""
+            'imageUrl': ''
         }
 
-        kakaoMapUrl = "https://map.kakao.com/link/map/{},{}".format(
+        kakaoMapUrl = 'https://map.kakao.com/link/map/{},{}'.format(
             order.store.name, 
             getLatLng(order.store.addr)
         )
         
         buttons = [
             {
-                'action': "webLink", 
-                'label': "위치보기",  
-                "webLinkUrl": kakaoMapUrl
+                'action': 'webLink', 
+                'label': '위치보기',  
+                'webLinkUrl': kakaoMapUrl
             },
         ]
         
         kakaoForm.BasicCard_Push(
-            "주문이 취소되었습니다.",
-            " - 주문자: {}\n\n - 매장: {} \n - 메뉴: {}\n\n - 결제 금액: {}원\n - 픽업 시간: {}\n\n - 주문 상태: {}".format(
+            '주문이 취소되었습니다.',
+            ' - 주문자: {}\n\n - 매장: {} \n - 메뉴: {}\n\n - 결제 금액: {}원\n - 픽업 시간: {}\n\n - 주문 상태: {}'.format(
                 str(order.ordersheet.user.phone_number)[9:13],
                 order.store.name,
                 order.menu.name,
@@ -222,9 +217,9 @@ def kakaoView_OrderCancel(kakaoPayload):
         
         QUICKREPLIES_MAP = [
             {
-                'action': "block",
-                'label': "홈으로 돌아가기",
-                'messageText': "로딩중..",
+                'action': 'block',
+                'label': '홈으로 돌아가기',
+                'messageText': '로딩중..',
                 'blockId': KAKAO_BLOCK_USER_HOME,
                 'extra': {
                     KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_ORDER_DETAILS
@@ -237,13 +232,13 @@ def kakaoView_OrderCancel(kakaoPayload):
         return JsonResponse(kakaoForm.GetForm())
     
     else:
-        return errorView("Invalid Paratmer", "정상적이지 않은 주문번호이거나\n진행 중 오류가 발생했습니다.")
+        return errorView('Invalid Paratmer', '정상적이지 않은 주문번호이거나\n진행 중 오류가 발생했습니다.')
 
 def kakaoView_EditPickupTime(kakaoPayload):
     # Block Validation
     prev_block_id = prevBlockValidation(kakaoPayload)
     if(prev_block_id != KAKAO_BLOCK_USER_EATPLE_PASS):
-        return errorView("Invalid Block Access", "정상적이지 않은 경로거나, 오류가 발생했습니다.\n다시 주문해주세요!")
+        return errorView('Invalid Block Access', '정상적이지 않은 경로거나, 오류가 발생했습니다.\n다시 주문해주세요!')
 
     # User Validation
     user = userValidation(kakaoPayload)
@@ -252,7 +247,7 @@ def kakaoView_EditPickupTime(kakaoPayload):
 
     order = orderValidation(kakaoPayload)
     if(order == None):
-        return errorView("Invalid Paratmer", "정상적이지 않은 주문번호이거나\n진행 중 오류가 발생했습니다.")
+        return errorView('Invalid Paratmer', '정상적이지 않은 주문번호이거나\n진행 중 오류가 발생했습니다.')
 
     menu = order.menu
     store = order.store
@@ -262,7 +257,7 @@ def kakaoView_EditPickupTime(kakaoPayload):
     kakaoForm = KakaoForm()
 
     kakaoForm.SimpleText_Add(
-        "음식을 가지러 갈 픽업시간을 설정해주세요."
+        '음식을 가지러 갈 픽업시간을 설정해주세요.'
     )
 
     PICKUP_TIME_QUICKREPLIES_MAP = []
@@ -292,7 +287,7 @@ def kakaoView_ConfirmEditPickupTime(kakaoPayload):
     # Block Validation
     prev_block_id = prevBlockValidation(kakaoPayload)
     if(prev_block_id != KAKAO_BLOCK_USER_EDIT_PICKUP_TIME):
-        return errorView("Invalid Block Access", "정상적이지 않은 경로거나, 오류가 발생했습니다.\n다시 주문해주세요!")
+        return errorView('Invalid Block Access', '정상적이지 않은 경로거나, 오류가 발생했습니다.\n다시 주문해주세요!')
 
     # User Validation
     user = userValidation(kakaoPayload)
@@ -303,7 +298,7 @@ def kakaoView_ConfirmEditPickupTime(kakaoPayload):
     pickup_time = pickupTimeValidation(kakaoPayload)
 
     if(order == None and pickupTimeValidation == None):
-        return errorView("Invalid Paratmer", "정상적이지 않은 주문번호이거나\n진행 중 오류가 발생했습니다.")
+        return errorView('Invalid Paratmer', '정상적이지 않은 주문번호이거나\n진행 중 오류가 발생했습니다.')
 
     beforePickupTime = order.pickup_time
     order.pickup_time = order.pickupTimeToDateTime(pickup_time)
@@ -312,7 +307,7 @@ def kakaoView_ConfirmEditPickupTime(kakaoPayload):
     kakaoForm = KakaoForm()
 
     thumbnail = {
-        "imageUrl": ""
+        'imageUrl': ''
     }
 
     buttons = [
@@ -321,8 +316,8 @@ def kakaoView_ConfirmEditPickupTime(kakaoPayload):
 
 
     kakaoForm.BasicCard_Push(
-        "픽업타임이 변경되었습니다.",
-        " - 주문자: {}\n\n - 매장: {} \n - 메뉴: {}\n\n - 결제 금액: {}원\n - 픽업 시간: {}\n\n - 주문 상태: {}".format(
+        '픽업타임이 변경되었습니다.',
+        ' - 주문자: {}\n\n - 매장: {} \n - 메뉴: {}\n\n - 결제 금액: {}원\n - 픽업 시간: {}\n\n - 주문 상태: {}'.format(
             str(order.ordersheet.user.phone_number)[9:13],
             order.store.name,
             order.menu.name,
@@ -336,9 +331,9 @@ def kakaoView_ConfirmEditPickupTime(kakaoPayload):
     
     QUICKREPLIES_MAP = [
         {
-            'action': "block",
-            'label': "홈으로 돌아가기",
-            'messageText': "로딩중..",
+            'action': 'block',
+            'label': '홈으로 돌아가기',
+            'messageText': '로딩중..',
             'blockId': KAKAO_BLOCK_USER_HOME,
             'extra': {
                 KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_ORDER_DETAILS
@@ -363,7 +358,7 @@ def GET_EditPickupTime(request):
         return kakaoView_EditPickupTime(kakaoPayload)
 
     except (RuntimeError, TypeError, NameError, KeyError) as ex:
-        return errorView("{}".format(ex))
+        return errorView('{}'.format(ex))
 
 @csrf_exempt
 def SET_ConfirmEditPickupTime(request):
@@ -372,33 +367,37 @@ def SET_ConfirmEditPickupTime(request):
         return kakaoView_ConfirmEditPickupTime(kakaoPayload)
 
     except (RuntimeError, TypeError, NameError, KeyError) as ex:
-        return errorView("{}".format(ex))
+        return errorView('{}'.format(ex))
 
 
 @csrf_exempt
 def GET_ConfirmUseEatplePass(request):
     try:
         kakaoPayload = KakaoPayLoad(request)
-        kakaoView_ConfirmUseEatplePass(kakaoPayload)
+        return kakaoView_ConfirmUseEatplePass(kakaoPayload)
 
     except (RuntimeError, TypeError, NameError, KeyError) as ex:
-        return errorView("{} ".format(ex))
+        return errorView('{} '.format(ex))
 
 @csrf_exempt
 def POST_UseEatplePass(request):
-    EatplusSkillLog("POST_UserEatplePass")
+    EatplusSkillLog('POST_UserEatplePass')
     try:
         kakaoPayload = KakaoPayLoad(request)
         return kakaoView_UseEatplePass(kakaoPayload)
 
     except (RuntimeError, TypeError, NameError, KeyError) as ex:
-        return errorView("{}".format(ex))
+        return errorView('{}'.format(ex))
 
 
 @csrf_exempt
 def POST_OrderCancel(request):
-    EatplusSkillLog("POST_OrderCancel")
+    EatplusSkillLog('POST_OrderCancel')
 
-    kakaoPayload = KakaoPayLoad(request)
-    return kakaoView_OrderCancel(kakaoPayload)
+    try:
+        kakaoPayload = KakaoPayLoad(request)
+        return kakaoView_OrderCancel(kakaoPayload)
+
+    except (RuntimeError, TypeError, NameError, KeyError) as ex:
+        return errorView('{}'.format(ex))
 

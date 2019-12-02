@@ -35,15 +35,15 @@ def userSignUp(userProfile):
     return user
 
 def kakaoView_SignUp():
-    EatplusSkillLog("Sign Up")
+    EatplusSkillLog('Sign Up')
 
     kakaoForm = KakaoForm()
 
     BTN_MAP = [
         {
-            'action': "block",
-            'label': "연동하러 가기",
-            'messageText': "연동하기",
+            'action': 'block',
+            'label': '연동하러 가기',
+            'messageText': '연동하기',
             'blockId': KAKAO_BLOCK_USER_SIGNUP,
             'extra': {
                 KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_HOME
@@ -51,13 +51,13 @@ def kakaoView_SignUp():
         },
     ]
 
-    thumbnail = {"imageUrl": ""}
+    thumbnail = {'imageUrl': ''}
 
     buttons = BTN_MAP
 
     kakaoForm.BasicCard_Push(
-        "아직 잇플에 연동되지 않은 \n카카오 계정입니다.",
-        "함께 연동하러 가볼까요?", 
+        '아직 잇플에 연동되지 않은 \n카카오 계정입니다.',
+        '함께 연동하러 가볼까요?', 
         thumbnail, 
         buttons
     )
@@ -67,7 +67,7 @@ def kakaoView_SignUp():
 
 
 def kakaoView_Home(user):
-    EatplusSkillLog("Home")
+    EatplusSkillLog('Home')
 
     kakaoForm = KakaoForm()
     
@@ -77,18 +77,18 @@ def kakaoView_Home(user):
   
     BTN_MAP = [
         {
-            'action': "block",
-            'label': "메뉴보기",
-            'messageText': "로딩중..",
+            'action': 'block',
+            'label': '메뉴보기',
+            'messageText': '로딩중..',
             'blockId': KAKAO_BLOCK_USER_GET_MENU,
             'extra': {
                 KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_HOME
             }
         },
         {
-            'action': "block",
-            'label': "잇플패스 확인",
-            'messageText': "로딩중..",
+            'action': 'block',
+            'label': '잇플패스 확인',
+            'messageText': '로딩중..',
             'blockId': KAKAO_BLOCK_USER_EATPLE_PASS,
             'extra': {
                 KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_HOME
@@ -98,18 +98,18 @@ def kakaoView_Home(user):
     
     QUICKREPLIES_MAP = [
         {
-            'action': "block",
-            'label': "최근 주문내역",
-            'messageText': "로딩중..",
+            'action': 'block',
+            'label': '최근 주문내역',
+            'messageText': '로딩중..',
             'blockId': KAKAO_BLOCK_USER_ORDER_DETAILS,
             'extra': {
                 KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_HOME
             }
         },
         {
-            'action': "block", 
-            'label': "위치변경",
-            'messageText': "로딩중..",    
+            'action': 'block', 
+            'label': '위치변경',
+            'messageText': '로딩중..',    
             'blockId': KAKAO_BLOCK_USER_EDIT_LOCATION,
             'extra': {
                 KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_HOME
@@ -117,9 +117,9 @@ def kakaoView_Home(user):
         },
 
         {
-            'action': "block", 
-            'label': "사용 메뉴얼",
-            'messageText': "로딩중..",    
+            'action': 'block', 
+            'label': '사용 메뉴얼',
+            'messageText': '로딩중..',    
             'blockId': KAKAO_BLOCK_USER_MANUAL,
             'extra': {
                 KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_HOME
@@ -128,17 +128,17 @@ def kakaoView_Home(user):
     ]
 
     thumbnail = {
-            "imageUrl": "",
-            "fixedRatio": "true",
-            "width": 800,
-            "height": 800,
+            'imageUrl': '',
+            'fixedRatio': 'true',
+            'width': 800,
+            'height': 800,
         }
 
     buttons = BTN_MAP
 
     kakaoForm.BasicCard_Push(
-        "잇플 홈 화면입니다.", 
-        "아래 명령어 중에 골라주세요!", 
+        '잇플 홈 화면입니다.', 
+        '아래 명령어 중에 골라주세요!', 
         thumbnail, 
         buttons
     )
@@ -158,7 +158,7 @@ def GET_UserHome(request):
             try:
                 otpURL = kakaoPayload.dataActionParams['user_profile']['origin']
 
-                kakaoResponse = requests.get("{url}?rest_api_key={rest_api_key}".format(
+                kakaoResponse = requests.get('{url}?rest_api_key={rest_api_key}'.format(
                     url=otpURL, rest_api_key=KAKAO_REST_API_KEY))
 
                 if(kakaoResponse.status_code == 200):
@@ -174,4 +174,4 @@ def GET_UserHome(request):
             return kakaoView_Home(user)
 
     except (RuntimeError, TypeError, NameError, KeyError) as ex:
-        return errorView("{}".format(ex))
+        return errorView('{}'.format(ex))

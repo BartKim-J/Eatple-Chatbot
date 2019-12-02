@@ -35,15 +35,15 @@ def partnerSignUp(partnerProfile):
     return partner
 
 def kakaoView_SignUp():
-    EatplusSkillLog("Sign Up")
+    EatplusSkillLog('Sign Up')
 
     kakaoForm = KakaoForm()
 
     BTN_MAP = [
         {
-            'action': "block",
-            'label': "연동하러 가기",
-            'messageText': "로딩중..",
+            'action': 'block',
+            'label': '연동하러 가기',
+            'messageText': '로딩중..',
             'blockId': KAKAO_BLOCK_PARTNER_SIGNUP,
             'extra': {
                 KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_PARTNER_HOME
@@ -53,13 +53,13 @@ def kakaoView_SignUp():
     
     QUICKREPLIES_MAP = []
 
-    thumbnail = {"imageUrl": ""}
+    thumbnail = {'imageUrl': ''}
 
     buttons = BTN_MAP
 
     kakaoForm.BasicCard_Push(
-        "아직 잇플에 연동되지 않은 파트너 카카오 계정입니다.",
-        "함께 연동하러 가볼까요?", 
+        '아직 잇플에 연동되지 않은 파트너 카카오 계정입니다.',
+        '함께 연동하러 가볼까요?', 
         thumbnail, 
         buttons
     )
@@ -70,15 +70,15 @@ def kakaoView_SignUp():
     return JsonResponse(kakaoForm.GetForm())
 
 def kakaoView_StoreRegistration():
-    EatplusSkillLog("Store Registration")
+    EatplusSkillLog('Store Registration')
 
     kakaoForm = KakaoForm()
 
     BTN_MAP = [
         {
-            'action': "block",
-            'label': "등록하러 가기",
-            'messageText': "로딩중..",
+            'action': 'block',
+            'label': '등록하러 가기',
+            'messageText': '로딩중..',
             'blockId': KAKAO_BLOCK_PARTNER_STORE_REGISTRATION,
             'extra': {
                 KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_PARTNER_HOME
@@ -88,13 +88,13 @@ def kakaoView_StoreRegistration():
     
     QUICKREPLIES_MAP = []
 
-    thumbnail = {"imageUrl": ""}
+    thumbnail = {'imageUrl': ''}
 
     buttons = BTN_MAP
 
     kakaoForm.BasicCard_Push(
-        "파트너 계정에 가게 등록 절차가 남아있습니다!",
-        "등록해보러 가볼까요?", 
+        '파트너 계정에 가게 등록 절차가 남아있습니다!',
+        '등록해보러 가볼까요?', 
         thumbnail, 
         buttons
     )
@@ -105,24 +105,24 @@ def kakaoView_StoreRegistration():
     return JsonResponse(kakaoForm.GetForm())
 
 def kakaoView_Home(partner):
-    EatplusSkillLog("Home")
+    EatplusSkillLog('Home')
 
     kakaoForm = KakaoForm()
   
     BTN_MAP = [
         {
-            'action': "block",
-            'label': "주문보기",
-            'messageText': "로딩중..",
+            'action': 'block',
+            'label': '주문보기',
+            'messageText': '로딩중..',
             'blockId': KAKAO_BLOCK_PARTNER_GET_ORDER_DETAILS,
             'extra': {
                 KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_PARTNER_HOME
             }
         },
         {
-            'action': "block",
-            'label': "정산조회",
-            'messageText': "로딩중..",
+            'action': 'block',
+            'label': '정산조회',
+            'messageText': '로딩중..',
             'blockId': KAKAO_BLOCK_PARTNER_GET_ORDER_DETAILS,
             'extra': {
                 KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_PARTNER_HOME
@@ -132,9 +132,9 @@ def kakaoView_Home(partner):
     
     QUICKREPLIES_MAP = [
         {
-            'action': "block", 
-            'label': "사용 메뉴얼",
-            'messageText': "로딩중..",    
+            'action': 'block', 
+            'label': '사용 메뉴얼',
+            'messageText': '로딩중..',    
             'blockId': KAKAO_BLOCK_PARTNER_MANUAL,
             'extra': {
                 KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_PARTNER_HOME
@@ -143,17 +143,17 @@ def kakaoView_Home(partner):
     ]
 
     thumbnail = {
-            "imageUrl": "",
-            "fixedRatio": "true",
-            "width": 800,
-            "height": 800,
+            'imageUrl': '',
+            'fixedRatio': 'true',
+            'width': 800,
+            'height': 800,
         }
 
     buttons = BTN_MAP
 
     kakaoForm.BasicCard_Push(
-        "안녕하세요. {store}점주님!".format(store=partner.store.name), 
-        "아래 명령어 중에 골라주세요!", 
+        '안녕하세요. {store}점주님!'.format(store=partner.store.name), 
+        '아래 명령어 중에 골라주세요!', 
         thumbnail, 
         buttons
     )
@@ -175,7 +175,7 @@ def GET_PartnerHome(request):
                 if(partner == None):
                     otpURL = kakaoPayload.dataActionParams['partner_profile']['origin']
 
-                    kakaoResponse = requests.get("{url}?rest_api_key={rest_api_key}".format(
+                    kakaoResponse = requests.get('{url}?rest_api_key={rest_api_key}'.format(
                         url=otpURL, rest_api_key=KAKAO_REST_API_KEY))
 
                     if(kakaoResponse.status_code == 200):
@@ -206,4 +206,4 @@ def GET_PartnerHome(request):
             return kakaoView_Home(partner)
 
     except (RuntimeError, TypeError, NameError, KeyError) as ex:
-        return errorView("{}".format(ex))
+        return errorView('{}'.format(ex))

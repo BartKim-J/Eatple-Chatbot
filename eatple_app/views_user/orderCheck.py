@@ -22,9 +22,9 @@ from eatple_app.views import *
 
 DEFAULT_QUICKREPLIES_MAP = [
     {
-        'action': "block",
-        'label': "홈으로 돌아가기",
-        'messageText': "로딩중..",
+        'action': 'block',
+        'label': '홈으로 돌아가기',
+        'messageText': '로딩중..',
         'blockId': KAKAO_BLOCK_USER_HOME,
         'extra': {}
     },
@@ -48,18 +48,18 @@ def kakaoView_EatplePass(kakaoPayload):
 
     ORDER_LIST_QUICKREPLIES_MAP = [
         {
-            'action': "block", 
-            'label': "새로고침", 
-            'messageText': "로딩중..", 
+            'action': 'block', 
+            'label': '새로고침', 
+            'messageText': '로딩중..', 
             'blockId': KAKAO_BLOCK_USER_EATPLE_PASS, 
             'extra': {
                 KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_EATPLE_PASS
             }
         },
         {
-            'action': "block",
-            'label': "홈으로 돌아가기",
-            'messageText': "로딩중..",
+            'action': 'block',
+            'label': '홈으로 돌아가기',
+            'messageText': '로딩중..',
             'blockId': KAKAO_BLOCK_USER_HOME,
             'extra': {}
         },
@@ -75,30 +75,32 @@ def kakaoView_EatplePass(kakaoPayload):
         kakaoForm = KakaoForm()
 
         for order in availableEatplePass:
-            thumbnail = {"imageUrl": ""}
+            thumbnail = {
+                'imageUrl': '{}{}'.format(HOST_URL, order.menu.imgURL()),
+ 
+            }
 
-            kakaoMapUrl = "https://map.kakao.com/link/map/{},{}".format(
+            kakaoMapUrl = 'https://map.kakao.com/link/map/{},{}'.format(
                 order.store.name, 
                 getLatLng(order.store.addr)
             )
 
             buttons = [
                 {
-                    'action': "webLink", 
-                    'label': "위치보기",
-                    "webLinkUrl": kakaoMapUrl
+                    'action': 'webLink', 
+                    'label': '위치보기',
+                    'webLinkUrl': kakaoMapUrl
                 },
             ]
 
             # CAN EDIT COUPONS
-            if (order.status == ORDER_STATUS_PICKUP_PREPARE or 
-                order.status == ORDER_STATUS_ORDER_CONFIRM_WAIT or
+            if (order.status == ORDER_STATUS_ORDER_CONFIRM_WAIT or
                 order.status == ORDER_STATUS_ORDER_CONFIRMED):
                 buttons.append(
                     {
-                        'action': "block", 
-                        'label': "주문취소",  
-                        'messageText': "로딩중..",
+                        'action': 'block', 
+                        'label': '주문취소',  
+                        'messageText': '로딩중..',
                         'blockId': KAKAO_BLOCK_USER_POST_ORDER_CANCEL,
                         'extra': {
                             KAKAO_PARAM_ORDER_ID: order.order_id,
@@ -108,9 +110,9 @@ def kakaoView_EatplePass(kakaoPayload):
                 )
                 buttons.append(
                     {
-                        'action': "block", 
-                        'label': "픽업시간 변경",  
-                        'messageText': "로딩중..",
+                        'action': 'block', 
+                        'label': '픽업시간 변경',  
+                        'messageText': '로딩중..',
                         'blockId': KAKAO_BLOCK_USER_EDIT_PICKUP_TIME,
                         'extra': {
                             KAKAO_PARAM_ORDER_ID: order.order_id,
@@ -123,9 +125,9 @@ def kakaoView_EatplePass(kakaoPayload):
             elif (order.status == ORDER_STATUS_PICKUP_WAIT):
                 buttons.append(
                     {
-                        'action': "block", 
-                        'label': "사용하기",  
-                        'messageText': "로딩중..",
+                        'action': 'block', 
+                        'label': '사용하기',  
+                        'messageText': '로딩중..',
                         'blockId': KAKAO_BLOCK_USER_GET_USE_EATPLE_PASS_CONFIRM,
                         'extra': {
                             KAKAO_PARAM_ORDER_ID: order.order_id,
@@ -136,19 +138,20 @@ def kakaoView_EatplePass(kakaoPayload):
             elif (order.status == ORDER_STATUS_PICKUP_PREPARE):
                 pass
             else:
-                errorView("Invalid Case on order status check by now time.")
+                errorView('Invalid Case on order status check by now time.')
         
             kakaoForm.BasicCard_Push(
-                "주문번호: {}".format(order.order_id),
-                " - 주문자: {}\n\n - 매장: {} \n - 메뉴: {}\n\n - 결제 금액: {}원\n - 픽업 시간: {}\n\n - 주문 상태: {}".format(
+                '주문번호: {}'.format(order.order_id), 
+                ' - 주문자: {}\n\n - 매장: {} \n - 메뉴: {}\n\n - 결제 금액: {}원\n - 픽업 시간: {}\n\n - 주문 상태: {}'.format(
                     str(order.ordersheet.user.phone_number)[9:13],
                     order.store.name,
                     order.menu.name,
                     order.totalPrice,
                     dateByTimeZone(order.pickup_time).strftime('%p %-I시 %-M분 - %m월%d일').replace('AM','오전').replace('PM','오후') ,
                     ORDER_STATUS[order.status][1]
-                ),
-                thumbnail, buttons
+                ), 
+                thumbnail, 
+                buttons
             )
             
         kakaoForm.BasicCard_Add()
@@ -157,9 +160,9 @@ def kakaoView_EatplePass(kakaoPayload):
         kakaoForm = KakaoForm()
 
         ORDER_LIST_QUICKREPLIES_MAP.insert(0, {
-                'action': "block", 
-                'label': "메뉴보기", 
-                'messageText': "로딩중..", 
+                'action': 'block', 
+                'label': '메뉴보기', 
+                'messageText': '로딩중..', 
                 'blockId': KAKAO_BLOCK_USER_GET_MENU,
                 'extra': {
                     KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_EATPLE_PASS
@@ -167,7 +170,7 @@ def kakaoView_EatplePass(kakaoPayload):
             }
         )
 
-        kakaoForm.SimpleText_Add("현재 조회 가능한 잇플패스가 없습니다!\n주문하시려면 아래 [메뉴보기]를 눌러주세요!")
+        kakaoForm.SimpleText_Add('현재 조회 가능한 잇플패스가 없습니다!\n주문하시려면 아래 [메뉴보기]를 눌러주세요!')
         
     kakaoForm.QuickReplies_AddWithMap(ORDER_LIST_QUICKREPLIES_MAP)
     
@@ -177,7 +180,7 @@ def kakaoView_OrderDetails(kakaoPayload):
     # Block Validation
     prev_block_id = prevBlockValidation(kakaoPayload)
     if(prev_block_id != KAKAO_BLOCK_USER_HOME and prev_block_id != KAKAO_BLOCK_USER_ORDER_DETAILS):
-        return errorView("Invalid Block ID", "정상적이지 않은 경로거나, 오류가 발생했습니다.\n다시 주문해주세요!")
+        return errorView('Invalid Block ID', '정상적이지 않은 경로거나, 오류가 발생했습니다.\n다시 주문해주세요!')
 
     # User Validation
     user = userValidation(kakaoPayload)
@@ -186,18 +189,18 @@ def kakaoView_OrderDetails(kakaoPayload):
 
     ORDER_LIST_QUICKREPLIES_MAP = [
         {
-            'action': "block",
-            'label': "새로고침",
-            'messageText': "로딩중..",
+            'action': 'block',
+            'label': '새로고침',
+            'messageText': '로딩중..',
             'blockId': KAKAO_BLOCK_USER_ORDER_DETAILS,
             'extra': {
                 KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_ORDER_DETAILS
             }
         },
         {
-            'action': "block",
-            'label': "홈으로 돌아가기",
-            'messageText': "로딩중..",
+            'action': 'block',
+            'label': '홈으로 돌아가기',
+            'messageText': '로딩중..',
             'blockId': KAKAO_BLOCK_USER_HOME,
             'extra': {}
         },
@@ -213,14 +216,14 @@ def kakaoView_OrderDetails(kakaoPayload):
 
         for order in unavailableOrders:
             thumbnail = {
-                "imageUrl": ""
+                'imageUrl': ''
             }
             
             buttons = []
             
             kakaoForm.BasicCard_Push(
-                "주문번호: {}".format(order.order_id),
-                " - 주문자: {}\n\n - 매장: {} \n - 메뉴: {}\n\n - 결제 금액: {}원\n - 픽업 시간: {}\n\n - 주문 상태: {}".format(
+                '주문번호: {}'.format(order.order_id),
+                ' - 주문자: {}\n\n - 매장: {} \n - 메뉴: {}\n\n - 결제 금액: {}원\n - 픽업 시간: {}\n\n - 주문 상태: {}'.format(
                     str(order.ordersheet.user.phone_number)[9:13],
                     order.store.name,
                     order.menu.name,
@@ -237,9 +240,9 @@ def kakaoView_OrderDetails(kakaoPayload):
 
         ORDER_LIST_QUICKREPLIES_MAP.insert(0,
             {
-                'action': "block",
-                'label': "메뉴보기",
-                'messageText': "로딩중..",
+                'action': 'block',
+                'label': '메뉴보기',
+                'messageText': '로딩중..',
                 'blockId': KAKAO_BLOCK_USER_GET_MENU,
                 'extra': {
                     KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_ORDER_DETAILS
@@ -247,7 +250,7 @@ def kakaoView_OrderDetails(kakaoPayload):
             }
         )
 
-        kakaoForm.SimpleText_Add("최근 주문 내역이 존재하지 않습니다!\n주문하시려면 아래 [메뉴보기]를 눌러주세요!")
+        kakaoForm.SimpleText_Add('최근 주문 내역이 존재하지 않습니다!\n주문하시려면 아래 [메뉴보기]를 눌러주세요!')
 
     kakaoForm.QuickReplies_AddWithMap(ORDER_LIST_QUICKREPLIES_MAP)
     
@@ -261,20 +264,20 @@ def kakaoView_OrderDetails(kakaoPayload):
 
 @csrf_exempt
 def GET_OrderDetails(request):
-    EatplusSkillLog("GET_OrderDetails")
+    EatplusSkillLog('GET_OrderDetails')
     try:
         kakaoPayload = KakaoPayLoad(request)
         return kakaoView_OrderDetails(kakaoPayload)
 
     except (RuntimeError, TypeError, NameError, KeyError) as ex:
-        return errorView("{} ".format(ex))
+        return errorView('{} '.format(ex))
 
 @csrf_exempt
 def GET_EatplePass(request):
-    EatplusSkillLog("GET_EatplePass")
+    EatplusSkillLog('GET_EatplePass')
     try:
         kakaoPayload = KakaoPayLoad(request)
         return kakaoView_EatplePass(kakaoPayload)
 
     except (RuntimeError, TypeError, NameError, KeyError) as ex:
-        return errorView("{} ".format(ex))
+        return errorView('{} '.format(ex))

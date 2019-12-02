@@ -105,6 +105,6 @@ class KakaoForm():
             'description': _description,
             'imageUrl': _imageUrl,
             'link': {
-                "web": _link
+                'web': _link
             }
         },

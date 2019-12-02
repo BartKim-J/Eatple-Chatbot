@@ -70,4 +70,4 @@ class Partner(KakaoUser, models.Model):
 
         # Methods
     def __str__(self):
-        return "{} : {}".format(self.store.name, self.app_user_id)
+        return '{} : {}'.format(self.store.name, self.app_user_id)

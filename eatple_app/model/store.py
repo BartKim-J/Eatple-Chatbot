@@ -13,7 +13,7 @@ from django import forms
 from eatple_app.model.utils import OverwriteStorage
 from eatple_app.model.utils import logo_directory_path
 
-DEFAULT_LOGO_IMAGE_PATH = "STORE_DB/images/default/logoImg.png"
+DEFAULT_LOGO_IMAGE_PATH = 'STORE_DB/images/default/logoImg.png'
 
 class Category(models.Model):
     # Metadata
@@ -21,11 +21,11 @@ class Category(models.Model):
         # abstract = True
         ordering = ['-name']
 
-    name = models.CharField(max_length=WORD_LENGTH, help_text="Category")
+    name = models.CharField(max_length=WORD_LENGTH, help_text='Category')
 
     # Methods
     def __str__(self):
-        return "{}".format(self.name)
+        return '{}'.format(self.name)
 
 class CRN(models.Model):
     store = models.OneToOneField(
@@ -37,35 +37,35 @@ class CRN(models.Model):
 
     CRN_id = models.CharField(
         max_length=10, 
-        help_text="Unique ID",
+        help_text='Unique ID',
         blank=True,
         null=True
     )
     
     UID = models.CharField(
         max_length=3, 
-        help_text="Unique ID"
+        help_text='Unique ID'
     )
 
     CC = models.CharField(
         max_length=2, 
-        help_text="Corporation Classification Code"
+        help_text='Corporation Classification Code'
     )
 
     SN = models.CharField(
         max_length=4, 
-        help_text="Serial Number"
+        help_text='Serial Number'
     )
 
     VN = models.CharField(
         max_length=1, 
-        help_text="Vertification Number"
+        help_text='Vertification Number'
     )
 
     def __init__(self, *args, **kwargs):
         super(CRN, self).__init__(*args, **kwargs)
         
-        self.CRN_id = "{}{}{}{}".format(
+        self.CRN_id = '{}{}{}{}'.format(
             self.UID,
             self.CC,
             self.SN,
@@ -76,7 +76,7 @@ class CRN(models.Model):
 
     
     def __str__(self):
-        return "{UID}-{CC}-{SN}{VN}".format(
+        return '{UID}-{CC}-{SN}{VN}'.format(
             UID=self.UID, 
             CC=self.CC, 
             SN=self.SN, 
@@ -104,33 +104,33 @@ class PickupTime(models.Model):
 
 class StoreInfo(models.Model):
     store_id = models.CharField(
-        default="N/A",
+        default='N/A',
         max_length=WORD_LENGTH, 
-        help_text="상점 고유 번호*",
+        help_text='상점 고유 번호*',
         unique=True
         )
 
     name = models.CharField(
         max_length=WORD_LENGTH, 
-        help_text="상호*",
+        help_text='상호*',
         unique=True
     )
 
     addr = models.CharField(
         max_length=WORD_LENGTH,
-        help_text="주소*",
+        help_text='주소*',
     )
 
     phone_number = PhoneNumberField(
         max_length=WORD_LENGTH, 
         null=True,
         blank=True,
-        help_text="전화번호*",
+        help_text='전화번호*',
     )
         
     owner = models.CharField(
         max_length=WORD_LENGTH, 
-        help_text="점주명*"
+        help_text='점주명*'
     )
 
     class Meta:
@@ -142,7 +142,7 @@ class StoreSetting(models.Model):
 
     description = models.TextField(
         blank=True,
-        help_text="가게 부가 정보*"
+        help_text='가게 부가 정보*'
     )
 
     logo = models.ImageField(
@@ -150,7 +150,7 @@ class StoreSetting(models.Model):
         blank=True, 
         upload_to=logo_directory_path, 
         storage=OverwriteStorage(),
-        help_text="로고*", 
+        help_text='로고*', 
     )
 
     class Meta:
@@ -161,7 +161,7 @@ class StoreStatus(models.Model):
         max_length=WORD_LENGTH, 
         default=OC_OPEN,
         choices=OC_STATUS,
-        help_text="가게 상태*", 
+        help_text='가게 상태*', 
     )
     class Meta:
         abstract = True
@@ -179,7 +179,7 @@ class Store(StoreInfo, StoreSetting, StoreStatus):
             except (Store.DoesNotExist) as ex:
                 self.id = 1
 
-        self.store_id = "{area:04X}-{id:04X}".format(area=0, id=self.id)
+        self.store_id = '{area:04X}-{id:04X}'.format(area=0, id=self.id)
 
     def logoImgURL(self):
         try:
@@ -188,4 +188,4 @@ class Store(StoreInfo, StoreSetting, StoreStatus):
             return DEFAULT_LOGO_IMAGE_PATH
 
     def __str__(self):
-        return "{name}".format(name=self.name)
+        return '{name}'.format(name=self.name)

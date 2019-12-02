@@ -22,9 +22,9 @@ from eatple_app.views import *
 
 DEFAULT_QUICKREPLIES_MAP = [
     {
-        'action': "block",
-        'label': "홈으로 돌아가기",
-        'messageText': "로딩중..",
+        'action': 'block',
+        'label': '홈으로 돌아가기',
+        'messageText': '로딩중..',
         'blockId': KAKAO_BLOCK_USER_HOME,
         'extra': {}
     },
@@ -48,18 +48,18 @@ def kakaoView_OrderDetails(kakaoPayload):
 
     ORDER_LIST_QUICKREPLIES_MAP = [
         {
-            'action': "block",
-            'label': "새로고침",
-            'messageText': "로딩중..",
+            'action': 'block',
+            'label': '새로고침',
+            'messageText': '로딩중..',
             'blockId': KAKAO_BLOCK_PARTNER_GET_ORDER_DETAILS,
             'extra': {
                 KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_PARTNER_GET_ORDER_DETAILS
             }
         },
         {
-            'action': "block",
-            'label': "홈으로 돌아가기",
-            'messageText': "로딩중..",
+            'action': 'block',
+            'label': '홈으로 돌아가기',
+            'messageText': '로딩중..',
             'blockId': KAKAO_BLOCK_PARTNER_HOME,
             'extra': {
                 KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_PARTNER_GET_ORDER_DETAILS
@@ -80,17 +80,17 @@ def kakaoView_OrderDetails(kakaoPayload):
         # Total Count
         for order in availableOrders:            
             header = {
-                "title": "오늘 총 주문량은 {count}개 입니다.".format(count=1),
-                "imageUrl": "{}{}".format(HOST_URL, "/media/STORE_DB/images/default/partnerOrderSheet.png"),
+                'title': '오늘 총 주문량은 {count}개 입니다.'.format(count=1),
+                'imageUrl': '{}{}'.format(HOST_URL, '/media/STORE_DB/images/default/partnerOrderSheet.png'),
             }
             
             print(order.pickup_time)
             
-            imageUrl = "{}{}".format(HOST_URL, order.store.logoImgURL())
+            imageUrl = '{}{}'.format(HOST_URL, order.store.logoImgURL())
 
             kakaoForm.ListCard_Push(
-                "{}-{}".format(order.menu.name, str(order.ordersheet.user.phone_number)[9:13]),
-                "{}".format(                    
+                '{}-{}'.format(order.menu.name, str(order.ordersheet.user.phone_number)[9:13]),
+                '{}'.format(                    
                     dateByTimeZone(order.pickup_time).strftime('%p %-I시 %-M분 - %m월%d일').replace('AM','오전').replace('PM','오후') ,
                 ),
                 imageUrl, 
@@ -104,16 +104,16 @@ def kakaoView_OrderDetails(kakaoPayload):
             
             for order in orderByPickupTime:
                 header = {
-                    "title": "주문량은 {count}개 입니다.".format(count=1),
-                    "imageUrl": "{}{}".format(HOST_URL, "/media/STORE_DB/images/default/partnerOrderSheet.png"),
+                    'title': '주문량은 {count}개 입니다.'.format(count=1),
+                    'imageUrl': '{}{}'.format(HOST_URL, '/media/STORE_DB/images/default/partnerOrderSheet.png'),
                 }
 
-                imageUrl = "{}{}".format(HOST_URL, order.store.logoImgURL())
+                imageUrl = '{}{}'.format(HOST_URL, order.store.logoImgURL())
 
                 kakaoForm.ListCard_Push(
-                    "{}-{}".format(order.menu.name,
+                    '{}-{}'.format(order.menu.name,
                                 str(order.ordersheet.user.phone_number)[9:13]),
-                    "{}".format(
+                    '{}'.format(
                         dateByTimeZone(order.pickup_time).strftime(
                             '%p %-I시 %-M분 - %m월%d일').replace('AM', '오전').replace('PM', '오후'),
                     ),
@@ -129,9 +129,9 @@ def kakaoView_OrderDetails(kakaoPayload):
 
         ORDER_LIST_QUICKREPLIES_MAP.insert(0,
             {
-                'action': "block",
-                'label': "메뉴보기",
-                'messageText': "로딩중..",
+                'action': 'block',
+                'label': '메뉴보기',
+                'messageText': '로딩중..',
                 'blockId': KAKAO_BLOCK_USER_GET_MENU,
                 'extra': {
                     KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_ORDER_DETAILS
@@ -139,7 +139,7 @@ def kakaoView_OrderDetails(kakaoPayload):
             }
         )
 
-        kakaoForm.SimpleText_Add("최근 주문 내역이 존재하지 않습니다!\n주문하시려면 아래 [메뉴보기]를 눌러주세요!")
+        kakaoForm.SimpleText_Add('최근 주문 내역이 존재하지 않습니다!\n주문하시려면 아래 [메뉴보기]를 눌러주세요!')
         
     kakaoForm.QuickReplies_AddWithMap(ORDER_LIST_QUICKREPLIES_MAP)
     
@@ -153,11 +153,11 @@ def kakaoView_OrderDetails(kakaoPayload):
 
 @csrf_exempt
 def GET_ParnterOrderDetails(request):
-    EatplusSkillLog("GET_OrderDetails")
+    EatplusSkillLog('GET_OrderDetails')
     try:
         kakaoPayload = KakaoPayLoad(request)
         return kakaoView_OrderDetails(kakaoPayload)
 
     except (RuntimeError, TypeError, NameError, KeyError) as ex:
-        return errorView("{} ".format(ex))
+        return errorView('{} '.format(ex))
 

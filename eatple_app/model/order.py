@@ -18,46 +18,23 @@ def iamportOrderValidation(order):
     
     except Iamport.ResponseError as e:
         order.payment_status = IAMPORT_ORDER_STATUS_FAILED
-        order.status = ORDER_STATUS_ORDER_FAILED
         order.save()
         
         return order
     
-    except Iamport.HttpError as httpError:
-        if(httpError.code == 404):
+    except Iamport.HttpError as http_error:
+        if(http_error.code == 404):
             order.payment_status = IAMPORT_ORDER_STATUS_CANCELLED
-            order.status = ORDER_STATUS_ORDER_CANCELED
             order.save()
-            
-        print(httpError.code)
+
         return order
 
     order.payment_status = response['status']
-
-    if(order.payment_status == IAMPORT_ORDER_STATUS_CANCELLED):
-        print("주문 취소됨")
-        order.status = ORDER_STATUS_ORDER_CANCELED
-        order.save()
-    
-    if(order.payment_status == IAMPORT_ORDER_STATUS_PAID):
-        print("주문 결제됨")
-        order.status = ORDER_STATUS_ORDER_CONFIRM_WAIT
-        order.save()
-
-    if(order.payment_status == IAMPORT_ORDER_STATUS_READY):
-        print("주문 미결제 또는 진행중")
-        order.status = ORDER_STATUS_PAYMENT_CHECK
-        order.save()
-        
-    if(order.payment_status == IAMPORT_ORDER_STATUS_FAILED):
-        print("주문 실패")
-        order.status = ORDER_STATUS_ORDER_FAILED
-        order.save()
-        
+    order.save()
         
     return order    
 
-def iamportOrderCancel(order, description="주문취소"):
+def iamportOrderCancel(order, description='주문취소'):
     iamport = Iamport(imp_key=IAMPORT_API_KEY, imp_secret=IAMPORT_API_SECRET_KEY)
 
     try:
@@ -66,27 +43,45 @@ def iamportOrderCancel(order, description="주문취소"):
         return False
             
     except Iamport.HttpError as http_error:
-        print(http_error)
         return False
     
     return True
     
 def orderUpdate(order):
     order = iamportOrderValidation(order)
+    
+    if(order.payment_status == IAMPORT_ORDER_STATUS_CANCELLED):
+        order.status = ORDER_STATUS_ORDER_CANCELED
+        order.save()
+        print('주문 취소됨')
+
+    if(order.payment_status == IAMPORT_ORDER_STATUS_READY):
+        print('주문 미결제 또는 진행중')
+        
+    if(order.payment_status == IAMPORT_ORDER_STATUS_FAILED):
+        order.status = ORDER_STATUS_ORDER_FAILED
+        order.save()
+        print('주문 실패')
+        
+    if(order.payment_status == IAMPORT_ORDER_STATUS_PAID):
+        print('주문 결제됨')
+        
     if(order.payment_status != IAMPORT_ORDER_STATUS_PAID):
         return order
     
     menu = order.menu
 
-    print("Hi")
-
     orderDate = dateByTimeZone(order.order_date)
+    print(orderDate)
     orderDateWithoutTime = orderDate.replace(
         hour=0, minute=0, second=0, microsecond=0)
 
     currentDate = dateNowByTimeZone()
     currentDateWithoutTime = currentDate.replace(
         hour=0, minute=0, second=0, microsecond=0)
+
+    # Time Test
+    # currentDate = currentDate.replace(hour=0, minute=0, second=0, microsecond=0)
 
     YESTERDAY = currentDateWithoutTime + \
         datetime.timedelta(days=-1)  # Yesterday start
@@ -95,64 +90,46 @@ def orderUpdate(order):
         datetime.timedelta(days=1)  # Tommorrow start
 
     # Prev Lunch Order Edit Time 16:30 ~ 10:25(~ 10:30)
-    prevlunchOrderEditTimeStart = currentDateWithoutTime + \
-        datetime.timedelta(hours=16, minutes=30, days=-1)
-    prevlunchOrderEditTimeEnd = currentDateWithoutTime + \
-        datetime.timedelta(hours=10, minutes=25)
-    prevlunchOrderTimeEnd = currentDateWithoutTime + \
-        datetime.timedelta(hours=10, minutes=30)
+    prevlunchOrderEditTimeStart = currentDateWithoutTime + datetime.timedelta(hours=16, minutes=30, days=-1)
+    prevlunchOrderEditTimeEnd = currentDateWithoutTime + datetime.timedelta(hours=10, minutes=25)
+    prevlunchOrderTimeEnd = currentDateWithoutTime + datetime.timedelta(hours=10, minutes=30)
 
     # Dinner Order Edit Time 11:30 ~ 16:25(~ 16:30)
-    dinnerOrderEditTimeStart = currentDateWithoutTime + \
-        datetime.timedelta(hours=11, minutes=30)
-    dinnerOrderEditTimeEnd = currentDateWithoutTime + \
-        datetime.timedelta(hours=16, minutes=25)
-    dinnerOrderTimeEnd = currentDateWithoutTime + \
-        datetime.timedelta(hours=16, minutes=30)
+    dinnerOrderEditTimeStart = currentDateWithoutTime + datetime.timedelta(hours=11, minutes=30)
+    dinnerOrderEditTimeEnd = currentDateWithoutTime + datetime.timedelta(hours=16, minutes=25)
+    dinnerOrderTimeEnd = currentDateWithoutTime + datetime.timedelta(hours=16, minutes=30)
 
     # Next Lunch Order Edit Time 16:30 ~ 9:30(~ 10:30)
-    nextlunchOrderEditTimeStart = currentDateWithoutTime + \
-        datetime.timedelta(hours=16, minutes=30)
-    nextlunchOrderEditTimeEnd = currentDateWithoutTime + \
-        datetime.timedelta(hours=9, minutes=30, days=1)
-    nextlunchOrderTimeEnd = currentDateWithoutTime + \
-        datetime.timedelta(hours=10, minutes=30, days=1)
+    nextlunchOrderEditTimeStart = currentDateWithoutTime + datetime.timedelta(hours=16, minutes=30)
+    nextlunchOrderEditTimeEnd = currentDateWithoutTime + datetime.timedelta(hours=9, minutes=30, days=1)
+    nextlunchOrderTimeEnd = currentDateWithoutTime + datetime.timedelta(hours=10, minutes=30, days=1)
 
-    # Lunch Order Pickup Time (10:30 ~)11:30 ~ 13:30
-    lunchOrderPickupTimeStart = currentDateWithoutTime + \
-        datetime.timedelta(hours=11, minutes=30)
-    lunchOrderPickupTimeEnd = currentDateWithoutTime + \
-        datetime.timedelta(hours=13, minutes=30)
+    # Lunch Order Pickup Time (10:30 ~)11:30 ~ 14:00
+    lunchOrderPickupTimeStart = currentDateWithoutTime + datetime.timedelta(hours=11, minutes=30)
+    lunchOrderPickupTimeEnd = currentDateWithoutTime + datetime.timedelta(hours=14, minutes=00)
 
     # Dinner Order Pickup Time (16:30 ~)17:30 ~ 21:00
-    dinnerOrderPickupTimeStart = currentDateWithoutTime + \
-        datetime.timedelta(hours=17, minutes=30)
-    dinnerOrderPickupTimeEnd = currentDateWithoutTime + \
-        datetime.timedelta(hours=21, minutes=0)
+    dinnerOrderPickupTimeStart = currentDateWithoutTime + datetime.timedelta(hours=17, minutes=30)
+    dinnerOrderPickupTimeEnd = currentDateWithoutTime + datetime.timedelta(hours=21, minutes=0)
 
     # Lunch Order
-    if (SELLING_TIME_LUNCH == menu.sellingTime) and \
-            ((YESTERDAY <= orderDateWithoutTime) and (orderDateWithoutTime <= TODAY)):
-        print("Hi")
-        # Meal Pre-
-        if(prevlunchOrderTimeEnd <= currentDate) and (currentDate <= lunchOrderPickupTimeStart):
+    if (SELLING_TIME_LUNCH == menu.sellingTime) and ((YESTERDAY <= orderDateWithoutTime) and (orderDateWithoutTime <= TODAY)):
+        # Pickup Prepare Time 10:30  ~ 11:30
+        if(prevlunchOrderTimeEnd <= currentDate) and (currentDate < lunchOrderPickupTimeStart):
             order.status = ORDER_STATUS_PICKUP_PREPARE
             order.save()
-        # PickupTime Range
-        elif(lunchOrderPickupTimeStart <= currentDate) and (currentDate <= lunchOrderPickupTimeEnd):
+        # PickupTime Waiting Time 11:31 ~ 13:59
+        elif(lunchOrderPickupTimeStart < currentDate) and (currentDate < lunchOrderPickupTimeEnd):
             # Over Order Pickup Time
-            if(currentDate >= orderPickupTime):
+            if(currentDate >= order.pickup_time ):
                 order.status = ORDER_STATUS_PICKUP_WAIT
                 order.save()
             else:
                 order.status = ORDER_STATUS_PICKUP_PREPARE
                 order.save()
         # Order Time Range
-        else:
-            print(prevlunchOrderEditTimeStart)
-            print(currentDate)
-            
-            # prev phase Order
+        else:            
+            # prev phase Order YD 16:30 ~ TD 10:30
             if(prevlunchOrderEditTimeStart <= currentDate) and (currentDate <= prevlunchOrderTimeEnd):
 
                 if currentDate <= prevlunchOrderEditTimeEnd:
@@ -162,9 +139,8 @@ def orderUpdate(order):
                     order.status = ORDER_STATUS_PICKUP_PREPARE
                     order.save()
 
-            # next phase Lunch order
-            elif (nextlunchOrderTimeEnd >= currentDate) and (orderDateWithoutTime >= TODAY):
-                print("Hi")
+            # next phase Lunch order TD 16:30 ~ TM 10:30
+            elif (nextlunchOrderTimeEnd >= currentDate) and (orderDate >= lunchOrderPickupTimeEnd):
                 order.status = ORDER_STATUS_ORDER_CONFIRMED
                 order.save()
 
@@ -206,6 +182,7 @@ def orderUpdate(order):
 
     # Invalid Order Selling Time
     else:
+        order.payment_status = ORDER_STATUS
         order.status = ORDER_STATUS_ORDER_EXPIRED
         order.save()
 
@@ -213,7 +190,7 @@ def orderUpdate(order):
 
 class Order(models.Model):
     class Meta:
-        ordering = ['-pickup_time']
+        ordering = ['-order_date']
 
     order_id = models.CharField(
         max_length=MANAGEMENT_CODE_LENGTH,
@@ -284,25 +261,15 @@ class Order(models.Model):
 
     def orderCancel(self):
         return iamportOrderCancel(self)
-    
-    def __init__(self, *args, **kwargs):
-        super(Order, self).__init__(*args, **kwargs)
 
-        if (self.id == None):
-            try:
-                self.id = Order.objects.latest('id').id + 1
-            except (Order.DoesNotExist) as ex:
-                self.id = 1
-
-        if(self.order_date == None):
-            self.order_date = datetime.datetime.now()
-
-        self.order_id = "EP{area:08X}{id:04X}".format(
-            area=int(self.order_date.strftime('%f')), id=self.id)
-
+    def orderUsed(self):
+        self.status = ORDER_STATUS_PICKUP_COMPLETED
+        super().save()
+        
+        return order
     # Methods
     def __str__(self):
-        return "{}".format(self.order_id)
+        return '{}'.format(self.order_id)
 
 class OrderManager():
     def __init__(self, user):
@@ -416,7 +383,7 @@ class OrderSheet(models.Model):
         if(self.create_date == None):
             self.create_date = datetime.datetime.now()
 
-        self.management_code = "E{area:06X}P{id:03X}".format(
+        self.management_code = 'E{area:06X}P{id:03X}'.format(
             area=int(self.create_date.strftime('%f')), id=self.id)
 
     def save(self, *args, **kwargs):
@@ -426,8 +393,17 @@ class OrderSheet(models.Model):
         self.user = user
         super().save()
 
+        try:
+            order_id = Order.objects.latest('id').id + 1
+        except (Order.DoesNotExist) as ex:
+            order_id = 1
+
+        order_id = 'EP{area:08X}{id:04X}'.format(
+            area=int(datetime.datetime.now().strftime('%f')), id=self.id)
+        
         order = Order()
         order.ordersheet = self
+        order.order_id = order_id
         order.menu = menu
         order.store = store
         order.pickup_time = order.pickupTimeToDateTime(pickup_time)
@@ -439,4 +415,4 @@ class OrderSheet(models.Model):
 
     # Methods
     def __str__(self):
-        return "{}".format(self.management_code)
+        return '{}'.format(self.management_code)

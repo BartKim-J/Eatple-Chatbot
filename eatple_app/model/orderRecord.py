@@ -30,7 +30,7 @@ class OrderRecord(models.Model):
         super().save()
 
     def __str__(self):
-        return "{}".format(self.order_record_sheet)
+        return '{}'.format(self.order_record_sheet)
 
 
 class OrderRecordSheet(models.Model):
@@ -86,4 +86,4 @@ class OrderRecordSheet(models.Model):
     
     # Methods
     def __str__(self):
-        return "{}".format(self.user)
+        return '{}'.format(self.user)
