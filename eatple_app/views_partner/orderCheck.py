@@ -67,37 +67,65 @@ def kakaoView_OrderDetails(kakaoPayload):
         },
     ]
 
-    orderManager = UserOrderManager(partner)
+    orderManager = PartnerOrderManager(partner)
     orderManager.orderPaidCheck()
     
-    unavailableOrders = orderManager.getUnavailableOrders()[:ORDER_LIST_LENGTH]
+    availableOrders = orderManager.getAvailableOrders()[:ORDER_LIST_LENGTH]
 
-    if unavailableOrders:
-        KakaoForm = Kakao_CarouselForm()
-        KakaoForm.BasicCard_Init()
+    pickupTimes = PickupTime.objects.filter(store=partner.store)
 
-        for order in unavailableOrders:
-            thumbnail = {
-                "imageUrl": ""
+    if availableOrders:
+        kakaoForm = KakaoForm()
+
+        # Total Count
+        for order in availableOrders:            
+            header = {
+                "title": "오늘 총 주문량은 {count}개 입니다.".format(count=1),
+                "imageUrl": "{}{}".format(HOST_URL, "/media/STORE_DB/images/default/partnerOrderSheet.png"),
             }
             
-            buttons = []
+            print(order.pickup_time)
             
-            KakaoForm.BasicCard_Add(
-                "주문번호: {}".format(order.order_id),
-                " - 주문자: {}\n\n - 매장: {} \n - 메뉴: {}\n\n - 결제 금액: {}원\n - 픽업 시간: {}\n\n - 주문 상태: {}".format(
-                    str(order.ordersheet.user.phone_number)[9:13],
-                    order.store.name,
-                    order.menu.name,
-                    order.totalPrice,
+            imageUrl = "{}{}".format(HOST_URL, order.store.logoImgURL())
+
+            kakaoForm.ListCard_Push(
+                "{}-{}".format(order.menu.name, str(order.ordersheet.user.phone_number)[9:13]),
+                "{}".format(                    
                     dateByTimeZone(order.pickup_time).strftime('%p %-I시 %-M분 - %m월%d일').replace('AM','오전').replace('PM','오후') ,
-                    ORDER_STATUS[order.status][1]
                 ),
-                thumbnail, buttons
+                imageUrl, 
+                None
             )
+            
+            kakaoForm.ListCard_Add(header)
+            
+        for pickupTime in pickupTimes:
+            orderByPickupTime = orderManager.orderListByPickupTime(pickupTime.time)
+            
+            for order in orderByPickupTime:
+                header = {
+                    "title": "주문량은 {count}개 입니다.".format(count=1),
+                    "imageUrl": "{}{}".format(HOST_URL, "/media/STORE_DB/images/default/partnerOrderSheet.png"),
+                }
+
+                imageUrl = "{}{}".format(HOST_URL, order.store.logoImgURL())
+
+                kakaoForm.ListCard_Push(
+                    "{}-{}".format(order.menu.name,
+                                str(order.ordersheet.user.phone_number)[9:13]),
+                    "{}".format(
+                        dateByTimeZone(order.pickup_time).strftime(
+                            '%p %-I시 %-M분 - %m월%d일').replace('AM', '오전').replace('PM', '오후'),
+                    ),
+                    imageUrl,
+                    None
+                )
+
+                kakaoForm.ListCard_Add(header)
+            
+            
     else:
-        KakaoForm = Kakao_SimpleForm()
-        KakaoForm.SimpleForm_Init()
+        kakaoForm = KakaoForm()
 
         ORDER_LIST_QUICKREPLIES_MAP.insert(0,
             {
@@ -111,11 +139,11 @@ def kakaoView_OrderDetails(kakaoPayload):
             }
         )
 
-        KakaoForm.SimpleText_Add("최근 주문 내역이 존재하지 않습니다!\n주문하시려면 아래 [메뉴보기]를 눌러주세요!")
+        kakaoForm.SimpleText_Add("최근 주문 내역이 존재하지 않습니다!\n주문하시려면 아래 [메뉴보기]를 눌러주세요!")
 
-    KakaoForm.QuickReplies_AddWithMap(ORDER_LIST_QUICKREPLIES_MAP)
+    kakaoForm.QuickReplies_AddWithMap(ORDER_LIST_QUICKREPLIES_MAP)
     
-    return JsonResponse(KakaoForm.GetForm())
+    return JsonResponse(kakaoForm.GetForm())
 
 # # # # # # # # # # # # # # # # # # # # # # # # #
 #
@@ -124,7 +152,7 @@ def kakaoView_OrderDetails(kakaoPayload):
 # # # # # # # # # # # # # # # # # # # # # # # # #
 
 @csrf_exempt
-def GET_OrderDetails(request):
+def GET_ParnterOrderDetails(request):
     EatplusSkillLog("GET_OrderDetails")
     try:
         kakaoPayload = KakaoPayLoad(request)

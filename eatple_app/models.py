@@ -8,7 +8,7 @@ from eatple_app.model.menu import Tag
 
 from eatple_app.model.order import OrderSheet, Order
 from eatple_app.model.orderRecord import OrderRecordSheet, OrderRecord
-from eatple_app.model.order import StoreOrderManager, UserOrderManager
+from eatple_app.model.order import PartnerOrderManager, UserOrderManager
 
 from eatple_app.model.user import User
 

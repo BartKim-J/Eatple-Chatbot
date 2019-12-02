@@ -1,20 +1,16 @@
-#Django Library
+# Define
+from eatple_app.define import *
+
+# Django Library
 from django.shortcuts import render
 from django.views.decorators.csrf import csrf_exempt
 from django.http import JsonResponse
 
-#External Library
-import requests
-import json
-
-#Models
-from eatple_app.define import *
+# Models
+from eatple_app.models import *
 
 #View
 from eatple_app.views_system.debugger import EatplusSkillLog, errorView
-
-#Static Defube 
-
 
 def getLatLng(addr):
     try:

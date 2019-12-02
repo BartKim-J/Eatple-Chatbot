@@ -72,8 +72,7 @@ def kakaoView_EatplePass(kakaoPayload):
 
     # Listup EatplePass
     if availableEatplePass:
-        KakaoForm = Kakao_CarouselForm()
-        KakaoForm.BasicCard_Init()
+        kakaoForm = KakaoForm()
 
         for order in availableEatplePass:
             thumbnail = {"imageUrl": ""}
@@ -139,7 +138,7 @@ def kakaoView_EatplePass(kakaoPayload):
             else:
                 errorView("Invalid Case on order status check by now time.")
         
-            KakaoForm.BasicCard_Add(
+            kakaoForm.BasicCard_Push(
                 "주문번호: {}".format(order.order_id),
                 " - 주문자: {}\n\n - 매장: {} \n - 메뉴: {}\n\n - 결제 금액: {}원\n - 픽업 시간: {}\n\n - 주문 상태: {}".format(
                     str(order.ordersheet.user.phone_number)[9:13],
@@ -154,8 +153,7 @@ def kakaoView_EatplePass(kakaoPayload):
 
     # No EatplePass
     else:
-        KakaoForm = Kakao_SimpleForm()
-        KakaoForm.SimpleForm_Init()
+        kakaoForm = KakaoForm()
 
         ORDER_LIST_QUICKREPLIES_MAP.insert(0, {
                 'action': "block", 
@@ -168,17 +166,18 @@ def kakaoView_EatplePass(kakaoPayload):
             }
         )
 
-        KakaoForm.SimpleText_Add("현재 조회 가능한 잇플패스가 없습니다!\n주문하시려면 아래 [메뉴보기]를 눌러주세요!")
+        kakaoForm.SimpleText_Add("현재 조회 가능한 잇플패스가 없습니다!\n주문하시려면 아래 [메뉴보기]를 눌러주세요!")
 
-    KakaoForm.QuickReplies_AddWithMap(ORDER_LIST_QUICKREPLIES_MAP)
+    kakaoForm.QuickReplies_AddWithMap(ORDER_LIST_QUICKREPLIES_MAP)
         
-    return JsonResponse(KakaoForm.GetForm())
+    kakaoForm.BasicCard_Add()
+    return JsonResponse(kakaoForm.GetForm())
 
 def kakaoView_OrderDetails(kakaoPayload):
     # Block Validation
     prev_block_id = prevBlockValidation(kakaoPayload)
     if(prev_block_id != KAKAO_BLOCK_USER_HOME and prev_block_id != KAKAO_BLOCK_USER_ORDER_DETAILS):
-        return errorView("Invalid Store Paratmer", "정상적이지 않은 경로거나, 오류가 발생했습니다.\n다시 주문해주세요!")
+        return errorView("Invalid Block ID", "정상적이지 않은 경로거나, 오류가 발생했습니다.\n다시 주문해주세요!")
 
     # User Validation
     user = userValidation(kakaoPayload)
@@ -210,8 +209,7 @@ def kakaoView_OrderDetails(kakaoPayload):
     unavailableOrders = orderManager.getUnavailableOrders()[:ORDER_LIST_LENGTH]
 
     if unavailableOrders:
-        KakaoForm = Kakao_CarouselForm()
-        KakaoForm.BasicCard_Init()
+        kakaoForm = KakaoForm()
 
         for order in unavailableOrders:
             thumbnail = {
@@ -220,7 +218,7 @@ def kakaoView_OrderDetails(kakaoPayload):
             
             buttons = []
             
-            KakaoForm.BasicCard_Add(
+            kakaoForm.BasicCard_Push(
                 "주문번호: {}".format(order.order_id),
                 " - 주문자: {}\n\n - 매장: {} \n - 메뉴: {}\n\n - 결제 금액: {}원\n - 픽업 시간: {}\n\n - 주문 상태: {}".format(
                     str(order.ordersheet.user.phone_number)[9:13],
@@ -233,8 +231,7 @@ def kakaoView_OrderDetails(kakaoPayload):
                 thumbnail, buttons
             )
     else:
-        KakaoForm = Kakao_SimpleForm()
-        KakaoForm.SimpleForm_Init()
+        kakaoForm = KakaoForm()
 
         ORDER_LIST_QUICKREPLIES_MAP.insert(0,
             {
@@ -248,11 +245,12 @@ def kakaoView_OrderDetails(kakaoPayload):
             }
         )
 
-        KakaoForm.SimpleText_Add("최근 주문 내역이 존재하지 않습니다!\n주문하시려면 아래 [메뉴보기]를 눌러주세요!")
+        kakaoForm.SimpleText_Add("최근 주문 내역이 존재하지 않습니다!\n주문하시려면 아래 [메뉴보기]를 눌러주세요!")
 
-    KakaoForm.QuickReplies_AddWithMap(ORDER_LIST_QUICKREPLIES_MAP)
+    kakaoForm.QuickReplies_AddWithMap(ORDER_LIST_QUICKREPLIES_MAP)
+    kakaoForm.BasicCard_Add()
     
-    return JsonResponse(KakaoForm.GetForm())
+    return JsonResponse(kakaoForm.GetForm())
 
 # # # # # # # # # # # # # # # # # # # # # # # # #
 #

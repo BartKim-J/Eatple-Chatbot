@@ -38,34 +38,27 @@ def eatplePassValidation(user):
     lunchPurchaed = orderManager.getAvailableLunchOrderPurchased().exists()
     dinnerPurchaced = orderManager.getAvailableDinnerOrderPurchased().exists()    
     
-    KakaoForm = Kakao_SimpleForm()
-    KakaoForm.SimpleForm_Init()
+    kakaoForm = KakaoForm()
 
-    for entryPoint in DEFAULT_QUICKREPLIES_MAP:
-        KakaoForm.QuickReplies_Add(
-            entryPoint['action'], 
-            entryPoint['label'],
-            entryPoint['messageText'], 
-            entryPoint['blockId'], 
-            entryPoint['extra'])
+    kakaoForm.QuickReplies_AddWithMap(DEFAULT_QUICKREPLIES_MAP)
 
     if (lunchPurchaed and dinnerPurchaced):
-        KakaoForm.SimpleText_Add(
+        kakaoForm.SimpleText_Add(
             "오늘 하루, 잇플로 맛있는 식사를 즐겨주셔서 감사해요. 내일도 잇플과 함께 해주실거죠?"
         )
-        return JsonResponse(KakaoForm.GetForm())
+        return JsonResponse(kakaoForm.GetForm())
                 
     elif (lunchPurchaed):
-        KakaoForm.SimpleText_Add(
+        kakaoForm.SimpleText_Add(
             "이미 점심 주문을 해주셨네요!\n내일 다시 잇플과 함께해주세요."
         )
-        return JsonResponse(KakaoForm.GetForm())
+        return JsonResponse(kakaoForm.GetForm())
     
     elif (dinnerPurchaced):
-        KakaoForm.SimpleText_Add(
+        kakaoForm.SimpleText_Add(
             "이미 저녁 주문을 해주셨네요!\n곧 있을 내일 점심 주문시간에 잇플과 다시 함께해주세요."
         )
-        return JsonResponse(KakaoForm.GetForm())
+        return JsonResponse(kakaoForm.GetForm())
         
 
     return None

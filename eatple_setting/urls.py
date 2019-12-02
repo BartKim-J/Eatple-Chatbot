@@ -56,6 +56,9 @@ urlpatterns = [
     # Kakao Plus Partner Skills
     # Home
     path('skill/partner/home', views.GET_PartnerHome),
+    
+    # Order View Flow
+    path('skill/partner/orderView/get_order_details', views.GET_ParnterOrderDetails),
 ]
 
 # Media Link Url

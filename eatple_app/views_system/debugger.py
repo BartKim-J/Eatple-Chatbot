@@ -24,8 +24,7 @@ from eatple_app.models import Category, Tag
 from eatple_app.models import Store, Menu
 
 # View Modules
-from eatple_app.module_kakao.ReponseForm import Kakao_SimpleForm, Kakao_CarouselForm
-
+from eatple_app.module_kakao.ReponseForm import *
 
 # SKill Log
 def EatplusSkillLog(flow="some flow"):
@@ -44,18 +43,20 @@ def errorView(error_log="error message", view_log="진행하는 도중 문제가
     print("-  error  => {}   ".format(error_log))
     print("- - - - - - - - - - - - - - - - - - - - - - - - -")
 
-    KakaoForm = Kakao_SimpleForm()
-    KakaoForm.SimpleForm_Init()
+    kakaoForm = KakaoForm()
 
     ERROR_QUICKREPLIES_MAP = [
-        {'action': "message", 'label': "홈으로 돌아가기",    'messageText': "홈으로 돌아가기",
-            'blockId': "none", 'extra': {}},
+        {
+            'action': "message", 
+            'label': "홈으로 돌아가기",    
+            'messageText': "로딩중..",
+            'blockId': "none", 
+            'extra': {}
+        },
     ]
 
-    for entryPoint in ERROR_QUICKREPLIES_MAP:
-        KakaoForm.QuickReplies_Add(entryPoint['action'], entryPoint['label'],
-                                   entryPoint['messageText'], entryPoint['blockId'], entryPoint['extra'])
+    kakaoForm.QuickReplies_AddWithMap(ERROR_QUICKREPLIES_MAP)
 
-    KakaoForm.SimpleText_Add(view_log)
+    kakaoForm.SimpleText_Add(view_log)
 
-    return JsonResponse(KakaoForm.GetForm())
+    return JsonResponse(kakaoForm.GetForm())

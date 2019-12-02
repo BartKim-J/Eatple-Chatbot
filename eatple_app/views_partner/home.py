@@ -37,8 +37,7 @@ def partnerSignUp(partnerProfile):
 def kakaoView_SignUp():
     EatplusSkillLog("Sign Up")
 
-    KakaoForm = Kakao_CarouselForm()
-    KakaoForm.BasicCard_Init()
+    kakaoForm = KakaoForm()
 
     BTN_MAP = [
         {
@@ -58,29 +57,22 @@ def kakaoView_SignUp():
 
     buttons = BTN_MAP
 
-    KakaoForm.BasicCard_Add(
+    kakaoForm.BasicCard_Push(
         "아직 잇플에 연동되지 않은 파트너 카카오 계정입니다.",
         "함께 연동하러 가볼까요?", 
         thumbnail, 
         buttons
     )
+    kakaoForm.BasicCard_Add()
+    
+    kakaoForm.QuickReplies_AddWithMap(QUICKREPLIES_MAP)
 
-    for entryPoint in QUICKREPLIES_MAP:
-        KakaoForm.QuickReplies_Add(
-            entryPoint['action'], 
-            entryPoint['label'],
-            entryPoint['messageText'], 
-            entryPoint['blockId'], 
-            entryPoint['extra']
-        )
-
-    return JsonResponse(KakaoForm.GetForm())
+    return JsonResponse(kakaoForm.GetForm())
 
 def kakaoView_StoreRegistration():
     EatplusSkillLog("Store Registration")
 
-    KakaoForm = Kakao_CarouselForm()
-    KakaoForm.BasicCard_Init()
+    kakaoForm = KakaoForm()
 
     BTN_MAP = [
         {
@@ -100,29 +92,22 @@ def kakaoView_StoreRegistration():
 
     buttons = BTN_MAP
 
-    KakaoForm.BasicCard_Add(
+    kakaoForm.BasicCard_Push(
         "파트너 계정에 가게 등록 절차가 남아있습니다!",
         "등록해보러 가볼까요?", 
         thumbnail, 
         buttons
     )
+    kakaoForm.BasicCard_Add()
+    
+    kakaoForm.QuickReplies_AddWithMap(QUICKREPLIES_MAP)
 
-    for entryPoint in QUICKREPLIES_MAP:
-        KakaoForm.QuickReplies_Add(
-            entryPoint['action'], 
-            entryPoint['label'],
-            entryPoint['messageText'], 
-            entryPoint['blockId'], 
-            entryPoint['extra']
-        )
-
-    return JsonResponse(KakaoForm.GetForm())
+    return JsonResponse(kakaoForm.GetForm())
 
 def kakaoView_Home(partner):
     EatplusSkillLog("Home")
 
-    KakaoForm = Kakao_CarouselForm()
-    KakaoForm.BasicCard_Init()
+    kakaoForm = KakaoForm()
   
     BTN_MAP = [
         {
@@ -166,16 +151,17 @@ def kakaoView_Home(partner):
 
     buttons = BTN_MAP
 
-    KakaoForm.BasicCard_Add(
+    kakaoForm.BasicCard_Push(
         "안녕하세요. {store}점주님!".format(store=partner.store.name), 
         "아래 명령어 중에 골라주세요!", 
         thumbnail, 
         buttons
     )
+    kakaoForm.BasicCard_Add()
     
-    KakaoForm.QuickReplies_AddWithMap(QUICKREPLIES_MAP)
+    kakaoForm.QuickReplies_AddWithMap(QUICKREPLIES_MAP)
 
-    return JsonResponse(KakaoForm.GetForm())
+    return JsonResponse(kakaoForm.GetForm())
 
 @csrf_exempt
 def GET_PartnerHome(request):

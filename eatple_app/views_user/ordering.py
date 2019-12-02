@@ -98,8 +98,7 @@ def kakaoView_MenuListup(kakaoPayload):
     menuList = Menu.objects.filter(sellingTime=sellingTime)[:MENU_LIST_LENGTH]
 
     if menuList:
-        KakaoForm = Kakao_CarouselForm()
-        KakaoForm.BasicCard_Init()
+        kakaoForm = KakaoForm()
 
         # Menu Carousel Card Add
         for menu in menuList:
@@ -132,18 +131,17 @@ def kakaoView_MenuListup(kakaoPayload):
                 },
             ]
 
-            KakaoForm.BasicCard_Add(
+            kakaoForm.BasicCard_Push(
                 "{}".format(menu.name), 
                 "{}".format(menu.store.name), 
                 thumbnail, 
                 buttons
             )
-
+    
     else:
-        KakaoForm = Kakao_SimpleForm()
-        KakaoForm.SimpleForm_Init()
+        kakaoForm = KakaoForm()
 
-        KakaoForm.SimpleText_Add("판매중인 메뉴가 없어요...")
+        kakaoForm.SimpleText_Add("판매중인 메뉴가 없어요...")
 
     QUICKREPLIES_MAP = [
         {
@@ -157,9 +155,10 @@ def kakaoView_MenuListup(kakaoPayload):
         },
     ]
 
-    KakaoForm.QuickReplies_AddWithMap(QUICKREPLIES_MAP)       
+    kakaoForm.BasicCard_Add()
+    kakaoForm.QuickReplies_AddWithMap(QUICKREPLIES_MAP)       
 
-    return JsonResponse(KakaoForm.GetForm())
+    return JsonResponse(kakaoForm.GetForm())
 
 def kakaoView_PickupTime(kakaoPayload):
     # Block Validation
@@ -211,10 +210,9 @@ def kakaoView_PickupTime(kakaoPayload):
     orderRecordSheet.menu = menu
     orderRecordSheet.recordUpdate(ORDER_RECORD_SET_PICKUP_TIEM)
 
-    KakaoForm = Kakao_SimpleForm()
-    KakaoForm.SimpleForm_Init()
+    kakaoForm = KakaoForm()
 
-    KakaoForm.SimpleText_Add(
+    kakaoForm.SimpleText_Add(
         "음식을 가지러 갈 픽업시간을 설정해주세요."
     )
 
@@ -235,7 +233,7 @@ def kakaoView_PickupTime(kakaoPayload):
         if(order != None):
             dataActionExtra[KAKAO_PARAM_ORDER_ID] = order.order_id
         
-        KakaoForm.QuickReplies_Add(
+        kakaoForm.QuickReplies_Add(
             'block',
             pickupTime.time.strftime('%H:%M'),
             '로딩중..',
@@ -243,7 +241,7 @@ def kakaoView_PickupTime(kakaoPayload):
             dataActionExtra
         )
 
-    return JsonResponse(KakaoForm.GetForm())
+    return JsonResponse(kakaoForm.GetForm())
 
 def kakaoView_OrderPayment(kakaoPayload):
     # Block Validation
@@ -307,8 +305,7 @@ def kakaoView_OrderPayment(kakaoPayload):
     dataActionExtra[KAKAO_PARAM_ORDER_ID] = order.order_id
     dataActionExtra[KAKAO_PARAM_PREV_BLOCK_ID] = KAKAO_BLOCK_USER_SET_ORDER_SHEET
 
-    KakaoForm = Kakao_CarouselForm()
-    KakaoForm.ComerceCard_Init()
+    kakaoForm = KakaoForm()
 
     # Menu Carousel Card Add
     thumbnails = [
@@ -354,7 +351,7 @@ def kakaoView_OrderPayment(kakaoPayload):
         },
     ]
 
-    KakaoForm.ComerceCard_Add(
+    kakaoForm.ComerceCard_Push(
         "결제를 완료한 후에 식권 발급 버튼을 눌러주세요!".format(pickup_time=pickup_time),
         menu.price,
         discount,
@@ -362,7 +359,8 @@ def kakaoView_OrderPayment(kakaoPayload):
         profile,
         buttons
     )
-
+    kakaoForm.ComerceCard_Add()
+    
     GET_PICKUP_TIME_QUICKREPLIES_MAP = [
         {
             'action': "block", 'label': "픽업시간 변경하기",
@@ -378,9 +376,9 @@ def kakaoView_OrderPayment(kakaoPayload):
         },
     ]
         
-    KakaoForm.QuickReplies_AddWithMap(GET_PICKUP_TIME_QUICKREPLIES_MAP)
+    kakaoForm.QuickReplies_AddWithMap(GET_PICKUP_TIME_QUICKREPLIES_MAP)
 
-    return JsonResponse(KakaoForm.GetForm())
+    return JsonResponse(kakaoForm.GetForm())
 
 def kakaoView_OrderPaymentCheck(kakaoPayload):
     # Block Validation
@@ -422,8 +420,7 @@ def kakaoView_OrderPaymentCheck(kakaoPayload):
     if(order.payment_status == IAMPORT_ORDER_STATUS_PAID):        
         return kakaoView_EatplePassIssuance(kakaoPayload)
     else:
-        KakaoForm = Kakao_CarouselForm()
-        KakaoForm.BasicCard_Init()
+        kakaoForm = KakaoForm()
 
         BTN_MAP = [
             {
@@ -470,16 +467,17 @@ def kakaoView_OrderPaymentCheck(kakaoPayload):
 
         buttons = BTN_MAP
 
-        KakaoForm.BasicCard_Add(
+        kakaoForm.BasicCard_Push(
             "아직 결제가 완료되지 않았어요!",
             "{menu} - {price}원".format(menu=menu.name, price=order.totalPrice),
             thumbnail, 
             buttons
         )
+        kakaoForm.BasicCard_Add()
+        
+        kakaoForm.QuickReplies_AddWithMap(QUICKREPLIES_MAP)
 
-        KakaoForm.QuickReplies_AddWithMap(QUICKREPLIES_MAP)
-
-        return JsonResponse(KakaoForm.GetForm())
+        return JsonResponse(kakaoForm.GetForm())
 
 def kakaoView_EatplePassIssuance(kakaoPayload):
     try:
@@ -520,8 +518,7 @@ def kakaoView_EatplePassIssuance(kakaoPayload):
         dataActionExtra[KAKAO_PARAM_ORDER_ID] = order.order_id
         dataActionExtra[KAKAO_PARAM_PREV_BLOCK_ID] = KAKAO_BLOCK_USER_SET_ORDER_SHEET
 
-        KakaoForm = Kakao_CarouselForm()
-        KakaoForm.BasicCard_Init()
+        kakaoForm = KakaoForm()
 
         thumbnail = {"imageUrl": ""}
 
@@ -530,7 +527,7 @@ def kakaoView_EatplePassIssuance(kakaoPayload):
 
         buttons = []
 
-        KakaoForm.BasicCard_Add(
+        kakaoForm.BasicCard_Push(
             "잇플패스가 발급되었습니다.",
             "주문번호: {}\n- - - - - - - - - - - - - - - - - - - - - -\n - 주문자: {}\n\n - 매장: {} \n - 메뉴: {}\n\n - 결제 금액: {}원\n\n - 픽업 시간: {}\n- - - - - - - - - - - - - - - - - - - - - -\n - 매장 위치: {}".format(
                 order.order_id,
@@ -543,7 +540,8 @@ def kakaoView_EatplePassIssuance(kakaoPayload):
             ),
             thumbnail, buttons
         )
-
+        kakaoForm.BasicCard_Add()
+        
         QUICKREPLIES_MAP = [
             {
                 'action': "block",
@@ -556,16 +554,15 @@ def kakaoView_EatplePassIssuance(kakaoPayload):
             },
         ]
         
-        KakaoForm.QuickReplies_AddWithMap(QUICKREPLIES_MAP)
+        kakaoForm.QuickReplies_AddWithMap(QUICKREPLIES_MAP)
 
-        return JsonResponse(KakaoForm.GetForm())
+        return JsonResponse(kakaoForm.GetForm())
 
     except (RuntimeError, TypeError, NameError, KeyError) as ex:
         return errorView("{}".format(ex))
 
 def kakaoView_TimeOut(blockId):
-    KakaoForm = Kakao_SimpleForm()
-    KakaoForm.SimpleForm_Init()
+    kakaoForm = KakaoForm()
 
     QUICKREPLIES_MAP = [
         {
@@ -579,13 +576,13 @@ def kakaoView_TimeOut(blockId):
         },
     ]
 
-    KakaoForm.QuickReplies_AddWithMap(QUICKREPLIES_MAP)
+    kakaoForm.QuickReplies_AddWithMap(QUICKREPLIES_MAP)
 
-    KakaoForm.SimpleText_Add(
+    kakaoForm.SimpleText_Add(
         "주문시간이 초과되었습니다."
     )
 
-    return JsonResponse(KakaoForm.GetForm())
+    return JsonResponse(kakaoForm.GetForm())
 
 # # # # # # # # # # # # # # # # # # # # # # # # #
 #

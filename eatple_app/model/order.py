@@ -204,6 +204,7 @@ def orderUpdate(order):
         order.save()
 
     return order
+
 class Order(models.Model):
     class Meta:
         ordering = ['-pickup_time']
@@ -342,23 +343,41 @@ class OrderManager():
     def getAvailableLunchOrderPurchased(self):
         availableOrders = self.getAvailableOrders()
         lunchOrders = availableOrders.filter(
-            menu__sellingTime=SELLING_TIME_LUNCH)
+            menu__sellingTime=SELLING_TIME_LUNCH
+        )
 
         return lunchOrders
 
     def getAvailableDinnerOrderPurchased(self):
         availableOrders = self.getAvailableOrders()
         dinnerOrders = availableOrders.filter(
-            menu__sellingTime=SELLING_TIME_DINNER)
+            menu__sellingTime=SELLING_TIME_DINNER
+        )
+        
         return dinnerOrders
     
 class UserOrderManager(OrderManager):
     def __init__(self, user):
         self.orderList = Order.objects.filter(ordersheet__user=user)
         
-class StoreOrderManager(OrderManager):
-    def __init__(self, store):
-        self.orderList = Order.objects.filter(store=store)
+class PartnerOrderManager(OrderManager):
+    def __init__(self, partner):
+        self.orderList = Order.objects.filter(store=partner.store)
+    def orderListByPickupTime(self, pickup_time):
+        
+        print(datetime.datetime.combine(
+            dateNowByTimeZone(), pickup_time))
+        pickup_time = datetime.datetime.combine(
+            dateNowByTimeZone(), pickup_time) + datetime.timedelta(hours=-9)
+
+        orderList = super().getAvailableOrders()
+        print(orderList)
+        
+        orderList = orderList.filter(
+            pickup_time__hour=pickup_time.hour
+        )
+        print(orderList)
+        return orderList
 
 class OrderSheet(models.Model):
     class Meta:

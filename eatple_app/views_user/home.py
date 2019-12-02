@@ -37,8 +37,7 @@ def userSignUp(userProfile):
 def kakaoView_SignUp():
     EatplusSkillLog("Sign Up")
 
-    KakaoForm = Kakao_CarouselForm()
-    KakaoForm.BasicCard_Init()
+    kakaoForm = KakaoForm()
 
     BTN_MAP = [
         {
@@ -51,38 +50,27 @@ def kakaoView_SignUp():
             }
         },
     ]
-    
-    QUICKREPLIES_MAP = []
 
     thumbnail = {"imageUrl": ""}
 
     buttons = BTN_MAP
 
-    KakaoForm.BasicCard_Add(
+    kakaoForm.BasicCard_Push(
         "아직 잇플에 연동되지 않은 \n카카오 계정입니다.",
         "함께 연동하러 가볼까요?", 
         thumbnail, 
         buttons
     )
-
-    for entryPoint in QUICKREPLIES_MAP:
-        KakaoForm.QuickReplies_Add(
-            entryPoint['action'], 
-            entryPoint['label'],
-            entryPoint['messageText'], 
-            entryPoint['blockId'], 
-            entryPoint['extra']
-        )
-
+    kakaoForm.BasicCard_Add()
+    
     return JsonResponse(KakaoForm.GetForm())
 
 
 def kakaoView_Home(user):
     EatplusSkillLog("Home")
 
-    KakaoForm = Kakao_CarouselForm()
-    KakaoForm.BasicCard_Init()
-
+    kakaoForm = KakaoForm()
+    
     orderManager = UserOrderManager(user)
     orderManager.orderPaidCheck()
     orderManager.availableOrderStatusUpdate()        
@@ -148,16 +136,16 @@ def kakaoView_Home(user):
 
     buttons = BTN_MAP
 
-    KakaoForm.BasicCard_Add(
+    kakaoForm.BasicCard_Push(
         "잇플 홈 화면입니다.", 
         "아래 명령어 중에 골라주세요!", 
         thumbnail, 
         buttons
     )
+    kakaoForm.BasicCard_Add()
     
-    KakaoForm.QuickReplies_AddWithMap(QUICKREPLIES_MAP)
-
-    return JsonResponse(KakaoForm.GetForm())
+    kakaoForm.QuickReplies_AddWithMap(QUICKREPLIES_MAP)
+    return JsonResponse(kakaoForm.GetForm())
 
 @csrf_exempt
 def GET_UserHome(request):

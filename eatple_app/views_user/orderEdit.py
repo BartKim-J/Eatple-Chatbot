@@ -44,8 +44,7 @@ def kakaoView_UseEatplePass(kakaoPayload):
     if(order == None or user == None):
         return errorView("Invalid Paratmer", "정상적이지 않은 주문번호이거나\n진행 중 오류가 발생했습니다.")
 
-    KakaoForm = Kakao_CarouselForm()
-    KakaoForm.BasicCard_Init()
+    kakaoForm = KakaoForm()
 
     thumbnail = {
         "imageUrl": ""
@@ -55,7 +54,7 @@ def kakaoView_UseEatplePass(kakaoPayload):
         # No Buttons
     ]
     
-    KakaoForm.BasicCard_Add(
+    kakaoForm.BasicCard_Push(
         "주문번호: {}".format(order.order_id),
         " - 주문자: {}\n\n - 매장: {} \n - 메뉴: {}\n\n - 결제 금액: {}원\n - 픽업 시간: {}\n\n - 주문 상태: {}".format(
             str(order.ordersheet.user.phone_number)[9:13],
@@ -67,7 +66,8 @@ def kakaoView_UseEatplePass(kakaoPayload):
         ),
         thumbnail, buttons
     )
-
+    kakaoForm.BasicCard_Add()
+    
     QUICKREPLIES_MAP = [
         {
             'action': "block",
@@ -80,9 +80,9 @@ def kakaoView_UseEatplePass(kakaoPayload):
         },
     ]
 
-    KakaoForm.QuickReplies_AddWithMap(QUICKREPLIES_MAP)
+    kakaoForm.QuickReplies_AddWithMap(QUICKREPLIES_MAP)
 
-    return JsonResponse(KakaoForm.GetForm())   
+    return JsonResponse(kakaoForm.GetForm())   
 
 def kakaoView_ConfirmUseEatplePass(kakaoPayload):
     # Block Validation
@@ -123,8 +123,7 @@ def kakaoView_ConfirmUseEatplePass(kakaoPayload):
 
     EatplusSkillLog("Order Check Flow")
 
-    KakaoForm = Kakao_SimpleForm()
-    KakaoForm.SimpleForm_Init()
+    kakaoForm = KakaoForm()
 
     thumbnail = {"imageUrl": ""}
 
@@ -132,11 +131,11 @@ def kakaoView_ConfirmUseEatplePass(kakaoPayload):
         # No Buttons
     ]
 
-    KakaoForm.SimpleText_Add("잇플패스를 사용하시겠습니까?")
+    kakaoForm.SimpleText_Add("잇플패스를 사용하시겠습니까?")
 
-    KakaoForm.QuickReplies_AddWithMap(USE_COUPON_QUICKREPLIES_MAP)
+    kakaoForm.QuickReplies_AddWithMap(USE_COUPON_QUICKREPLIES_MAP)
 
-    return JsonResponse(KakaoForm.GetForm())
+    return JsonResponse(kakaoForm.GetForm())
 
 def kakaoView_OrderCancel(kakaoPayload):
     # Block Validation
@@ -188,8 +187,7 @@ def kakaoView_OrderCancel(kakaoPayload):
         # Cancelled EatplePass Update
         order.orderStatusUpdate()
         
-        KakaoForm = Kakao_CarouselForm()
-        KakaoForm.BasicCard_Init()
+        kakaoForm = KakaoForm()
         
         thumbnail = {
             "imageUrl": ""
@@ -208,7 +206,7 @@ def kakaoView_OrderCancel(kakaoPayload):
             },
         ]
         
-        KakaoForm.BasicCard_Add(
+        kakaoForm.BasicCard_Push(
             "주문이 취소되었습니다.",
             " - 주문자: {}\n\n - 매장: {} \n - 메뉴: {}\n\n - 결제 금액: {}원\n - 픽업 시간: {}\n\n - 주문 상태: {}".format(
                 str(order.ordersheet.user.phone_number)[9:13],
@@ -220,7 +218,8 @@ def kakaoView_OrderCancel(kakaoPayload):
             ),
             thumbnail, buttons
         )
-
+        kakaoForm.BasicCard_Add()
+        
         QUICKREPLIES_MAP = [
             {
                 'action': "block",
@@ -233,9 +232,9 @@ def kakaoView_OrderCancel(kakaoPayload):
             },
         ]
 
-        KakaoForm.QuickReplies_AddWithMap(QUICKREPLIES_MAP)
+        kakaoForm.QuickReplies_AddWithMap(QUICKREPLIES_MAP)
         
-        return JsonResponse(KakaoForm.GetForm())
+        return JsonResponse(kakaoForm.GetForm())
     
     else:
         return errorView("Invalid Paratmer", "정상적이지 않은 주문번호이거나\n진행 중 오류가 발생했습니다.")
@@ -260,10 +259,9 @@ def kakaoView_EditPickupTime(kakaoPayload):
         
     currentSellingTime = order.menu.sellingTime
 
-    KakaoForm = Kakao_SimpleForm()
-    KakaoForm.SimpleForm_Init()
+    kakaoForm = KakaoForm()
 
-    KakaoForm.SimpleText_Add(
+    kakaoForm.SimpleText_Add(
         "음식을 가지러 갈 픽업시간을 설정해주세요."
     )
 
@@ -280,7 +278,7 @@ def kakaoView_EditPickupTime(kakaoPayload):
             KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_EDIT_PICKUP_TIME
         }
 
-        KakaoForm.QuickReplies_Add(
+        kakaoForm.QuickReplies_Add(
             'block',
             pickupTime.time.strftime('%H:%M'),
             '로딩중..',
@@ -311,8 +309,7 @@ def kakaoView_ConfirmEditPickupTime(kakaoPayload):
     order.pickup_time = order.pickupTimeToDateTime(pickup_time)
     order.save()
 
-    KakaoForm = Kakao_CarouselForm()
-    KakaoForm.BasicCard_Init()
+    kakaoForm = KakaoForm()
 
     thumbnail = {
         "imageUrl": ""
@@ -323,7 +320,7 @@ def kakaoView_ConfirmEditPickupTime(kakaoPayload):
     ]
 
 
-    KakaoForm.BasicCard_Add(
+    kakaoForm.BasicCard_Push(
         "픽업타임이 변경되었습니다.",
         " - 주문자: {}\n\n - 매장: {} \n - 메뉴: {}\n\n - 결제 금액: {}원\n - 픽업 시간: {}\n\n - 주문 상태: {}".format(
             str(order.ordersheet.user.phone_number)[9:13],
@@ -335,7 +332,8 @@ def kakaoView_ConfirmEditPickupTime(kakaoPayload):
         ),
         thumbnail, buttons
     )
-
+    kakaoForm.BasicCard_Add()
+    
     QUICKREPLIES_MAP = [
         {
             'action': "block",
@@ -348,9 +346,9 @@ def kakaoView_ConfirmEditPickupTime(kakaoPayload):
         },
     ]
 
-    KakaoForm.QuickReplies_AddWithMap(QUICKREPLIES_MAP)
+    kakaoForm.QuickReplies_AddWithMap(QUICKREPLIES_MAP)
 
-    return JsonResponse(KakaoForm.GetForm())
+    return JsonResponse(kakaoForm.GetForm())
     
 # # # # # # # # # # # # # # # # # # # # # # # # #
 #
