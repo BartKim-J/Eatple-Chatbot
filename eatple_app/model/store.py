@@ -165,6 +165,7 @@ class StoreStatus(models.Model):
     )
     class Meta:
         abstract = True
+        
 class Store(StoreInfo, StoreSetting, StoreStatus):
     class Meta:
         ordering = ['-name']
@@ -179,11 +180,6 @@ class Store(StoreInfo, StoreSetting, StoreStatus):
                 self.id = 1
 
         self.store_id = "{area:04X}-{id:04X}".format(area=0, id=self.id)
-        
-        super(Store, self).save()
-        
-    def save(self, *args, **kwargs):
-        super().save()
 
     def logoImgURL(self):
         try:

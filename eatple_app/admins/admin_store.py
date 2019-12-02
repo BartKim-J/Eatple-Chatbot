@@ -15,6 +15,7 @@ class CRNInline(admin.TabularInline):
     model = CRN
     min_num = 1
 
+    readonly_fields = ('CRN_id',)
 
 class MenuInline(admin.StackedInline):
     model = Menu
