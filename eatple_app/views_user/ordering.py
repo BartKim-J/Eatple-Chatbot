@@ -137,6 +137,8 @@ def kakaoView_MenuListup(kakaoPayload):
                 thumbnail, 
                 buttons
             )
+            
+        kakaoForm.BasicCard_Add()
     
     else:
         kakaoForm = KakaoForm()
@@ -155,7 +157,6 @@ def kakaoView_MenuListup(kakaoPayload):
         },
     ]
 
-    kakaoForm.BasicCard_Add()
     kakaoForm.QuickReplies_AddWithMap(QUICKREPLIES_MAP)       
 
     return JsonResponse(kakaoForm.GetForm())
@@ -342,24 +343,30 @@ def kakaoView_OrderPayment(kakaoPayload):
                 buyer_email=user.email,
             )
         },
-        {
-            'action': "block",
-            'label': "식권 발급",
-            'messageText': "로딩중..",
-            'blockId': KAKAO_BLOCK_USER_SET_ORDER_SHEET,
-            'extra': dataActionExtra,
-        },
     ]
 
     kakaoForm.ComerceCard_Push(
-        "결제를 완료한 후에 식권 발급 버튼을 눌러주세요!".format(pickup_time=pickup_time),
+        "",
         menu.price,
         discount,
         thumbnails,
         profile,
         buttons
     )
+    
     kakaoForm.ComerceCard_Add()
+    
+    buttons = [
+        {
+            'action': "block",
+            'label': "잇플패스 발급",
+            'messageText': "로딩중..",
+            'blockId': KAKAO_BLOCK_USER_SET_ORDER_SHEET,
+            'extra': dataActionExtra,
+        },
+    ]
+    kakaoForm.BasicCard_Push("결제가 완료되었다면 아래\n잇플패스 발급하기 버튼을 눌러주세요.", "", {}, buttons)
+    kakaoForm.BasicCard_Add()
     
     GET_PICKUP_TIME_QUICKREPLIES_MAP = [
         {
@@ -441,7 +448,7 @@ def kakaoView_OrderPaymentCheck(kakaoPayload):
             },
             {
                 'action': "block",
-                'label': "식권 발급",
+                'label': "잇플패스  발급",
                 'messageText': "로딩중..",
                 'blockId': KAKAO_BLOCK_USER_SET_ORDER_SHEET,
                 'extra': dataActionExtra,

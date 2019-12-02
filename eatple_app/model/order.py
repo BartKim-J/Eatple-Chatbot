@@ -78,6 +78,8 @@ def orderUpdate(order):
     
     menu = order.menu
 
+    print("Hi")
+
     orderDate = dateByTimeZone(order.order_date)
     orderDateWithoutTime = orderDate.replace(
         hour=0, minute=0, second=0, microsecond=0)
@@ -131,7 +133,7 @@ def orderUpdate(order):
     # Lunch Order
     if (SELLING_TIME_LUNCH == menu.sellingTime) and \
             ((YESTERDAY <= orderDateWithoutTime) and (orderDateWithoutTime <= TODAY)):
-
+        print("Hi")
         # Meal Pre-
         if(prevlunchOrderTimeEnd <= currentDate) and (currentDate <= lunchOrderPickupTimeStart):
             order.status = ORDER_STATUS_PICKUP_PREPARE
@@ -147,18 +149,22 @@ def orderUpdate(order):
                 order.save()
         # Order Time Range
         else:
+            print(prevlunchOrderEditTimeStart)
+            print(currentDate)
+            
             # prev phase Order
             if(prevlunchOrderEditTimeStart <= currentDate) and (currentDate <= prevlunchOrderTimeEnd):
+
                 if currentDate <= prevlunchOrderEditTimeEnd:
                     order.status = ORDER_STATUS_ORDER_CONFIRMED
                     order.save()
-
                 else:
                     order.status = ORDER_STATUS_PICKUP_PREPARE
                     order.save()
 
             # next phase Lunch order
             elif (nextlunchOrderTimeEnd >= currentDate) and (orderDateWithoutTime >= TODAY):
+                print("Hi")
                 order.status = ORDER_STATUS_ORDER_CONFIRMED
                 order.save()
 

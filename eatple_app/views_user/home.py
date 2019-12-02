@@ -63,7 +63,7 @@ def kakaoView_SignUp():
     )
     kakaoForm.BasicCard_Add()
     
-    return JsonResponse(KakaoForm.GetForm())
+    return JsonResponse(kakaoForm.GetForm())
 
 
 def kakaoView_Home(user):

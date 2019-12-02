@@ -150,7 +150,8 @@ def kakaoView_EatplePass(kakaoPayload):
                 ),
                 thumbnail, buttons
             )
-
+            
+        kakaoForm.BasicCard_Add()
     # No EatplePass
     else:
         kakaoForm = KakaoForm()
@@ -167,10 +168,9 @@ def kakaoView_EatplePass(kakaoPayload):
         )
 
         kakaoForm.SimpleText_Add("현재 조회 가능한 잇플패스가 없습니다!\n주문하시려면 아래 [메뉴보기]를 눌러주세요!")
-
-    kakaoForm.QuickReplies_AddWithMap(ORDER_LIST_QUICKREPLIES_MAP)
         
-    kakaoForm.BasicCard_Add()
+    kakaoForm.QuickReplies_AddWithMap(ORDER_LIST_QUICKREPLIES_MAP)
+    
     return JsonResponse(kakaoForm.GetForm())
 
 def kakaoView_OrderDetails(kakaoPayload):
@@ -230,6 +230,8 @@ def kakaoView_OrderDetails(kakaoPayload):
                 ),
                 thumbnail, buttons
             )
+            
+        kakaoForm.BasicCard_Add()
     else:
         kakaoForm = KakaoForm()
 
@@ -248,7 +250,6 @@ def kakaoView_OrderDetails(kakaoPayload):
         kakaoForm.SimpleText_Add("최근 주문 내역이 존재하지 않습니다!\n주문하시려면 아래 [메뉴보기]를 눌러주세요!")
 
     kakaoForm.QuickReplies_AddWithMap(ORDER_LIST_QUICKREPLIES_MAP)
-    kakaoForm.BasicCard_Add()
     
     return JsonResponse(kakaoForm.GetForm())
 

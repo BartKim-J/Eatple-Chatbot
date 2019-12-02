@@ -58,5 +58,5 @@ def errorView(error_log="error message", view_log="진행하는 도중 문제가
     kakaoForm.QuickReplies_AddWithMap(ERROR_QUICKREPLIES_MAP)
 
     kakaoForm.SimpleText_Add(view_log)
-
+    
     return JsonResponse(kakaoForm.GetForm())

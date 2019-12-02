@@ -286,7 +286,7 @@ def kakaoView_EditPickupTime(kakaoPayload):
             dataActionExtra
         )
 
-    return JsonResponse(KakaoForm.GetForm())
+    return JsonResponse(kakaoForm.GetForm())
 
 def kakaoView_ConfirmEditPickupTime(kakaoPayload):
     # Block Validation
