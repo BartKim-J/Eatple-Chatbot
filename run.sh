@@ -1,5 +1,5 @@
 #!/bin/bash
-cd /home/eatplus/eatple.chatbot
+cd /home/ubuntu/eatple-chatbot
 
-sudo sh /home/eatplus/eatple.chatbot/migrate.sh
-sudo python /home/eatplus/eatple.chatbot/manage.py runserver 0.0.0.0:8000
+sh /home/ubuntu/eatple-chatbot/migrate.sh
+python /home/ubuntu/eatple-chatbot/manage.py runserver 0.0.0.0:8000

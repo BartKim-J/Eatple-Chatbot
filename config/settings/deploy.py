@@ -39,7 +39,7 @@ INSTALLED_APPS = [
     'eatple_app',
     
     # 'suit',
-    'eatple_app.apps.SuitConfig',
+    # 'eatple_app.apps.SuitConfig',
     
     'phonenumber_field',
     'import_export',
@@ -93,7 +93,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',  # use mysql (not sqlite)
         'NAME': 'eatple_DB',
         'USER': 'eatple',
-        'PASSWORD': 'aisthefuture',
+        'PASSWORD': 'eatple0000',
         'HOST': 'localhost',
         'PORT': '3306',
         'OPTIONS': {
