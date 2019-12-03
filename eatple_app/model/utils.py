@@ -27,20 +27,22 @@ def set_filename_format(instance, filename, toFilename):
 
 
 def menu_directory_path(instance, filename):
-    path = 'STORE_DB/images/{storename}/{menuname}/{filename}'.format(
+    path = 'STORE_DB/images/{storename}/{menuname}/{number}{filename}'.format(
         storename=instance.store.name,
         menuname=instance.name,
         filename=set_filename_format(instance, filename, 'menuImg'),
+        number=dateNowByTimeZone().strftime("%f"),
     )
 
     return path
 
 
 def logo_directory_path(instance, filename):
-    path = 'STORE_DB/images/{storename}/{filename}'.format(
+    path = 'STORE_DB/images/{storename}/{number}{filename}'.format(
         storename=instance.store.name,
         menuname=instance.name,
         filename=set_filename_format(instance, filename, 'logoImg'),
+        number=dateNowByTimeZone().strftime('%f'),
     )
 
     return path

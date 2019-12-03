@@ -30,10 +30,6 @@ DEFAULT_QUICKREPLIES_MAP = [
     },
 ]
 
-
-# STATIC EP_define
-ORDER_LIST_LENGTH = 10
-
 # # # # # # # # # # # # # # # # # # # # # # # # #
 #
 # Static View
