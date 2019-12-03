@@ -58,9 +58,9 @@ def promotionOrderUpdate(order):
         hour=0, minute=0, second=0, microsecond=0)
 
     # Time QA DEBUG
-    currentDate = currentDate.replace(day=11, hour=11, minute=48, second=0, microsecond=0)
-    currentDateWithoutTime = currentDate.replace(hour=0, minute=0, second=0, microsecond=0)
-    print(currentDate)
+    # currentDate = currentDate.replace(day=10, hour=17, minute=50, second=0, microsecond=0)
+    # currentDateWithoutTime = currentDate.replace(hour=0, minute=0, second=0, microsecond=0)
+    # print(currentDate)
     
     promotion_month = 12
     promotion_day = int(order.menu.name[0:2])
