@@ -136,3 +136,15 @@ def GET_ParnterOrderDetails(request):
     except (RuntimeError, TypeError, NameError, KeyError) as ex:
         return errorView('{} '.format(ex))
 
+@csrf_exempt
+def GET_A(request):
+    EatplusSkillLog('GET_OrderDetails')
+    try:
+        kakaoPayload = KakaoPayLoad(request)
+        return kakaoView_OrderDetails(kakaoPayload)
+
+    except (RuntimeError, TypeError, NameError, KeyError) as ex:
+        return errorView('{} '.format(ex))
+
+
+

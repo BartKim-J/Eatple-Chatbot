@@ -15,10 +15,9 @@ from eatple_app.model.utils import logo_directory_path
 
 class KakaoUser(models.Model):
     nickname = models.CharField(
-    max_length=USER_NICKNAME_LENGTH, null=True)
-
-    profile_image_url = models.CharField(
-        max_length=STRING_LENGTH, null=True)
+        max_length=USER_NICKNAME_LENGTH, 
+        null=True
+    )
     
     phone_number = PhoneNumberField(
         max_length=WORD_LENGTH, null=True)

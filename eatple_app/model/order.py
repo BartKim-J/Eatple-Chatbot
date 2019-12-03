@@ -208,13 +208,13 @@ class Order(models.Model):
 
     store = models.ForeignKey(
         'Store',
-        on_delete=models.DO_NOTHING,
+        on_delete=models.CASCADE,
         null=True
     )
 
     menu = models.ForeignKey(
         'Menu',
-        on_delete=models.DO_NOTHING,
+        on_delete=models.CASCADE,
         null=True
     )
 
@@ -339,21 +339,6 @@ class UserOrderManager(OrderManager):
 class PartnerOrderManager(OrderManager):
     def __init__(self, partner):
         self.orderList = Order.objects.filter(store=partner.store)
-    def orderListByPickupTime(self, pickup_time):
-        
-        print(datetime.datetime.combine(
-            dateNowByTimeZone(), pickup_time))
-        pickup_time = datetime.datetime.combine(
-            dateNowByTimeZone(), pickup_time) + datetime.timedelta(hours=-9)
-
-        orderList = super().getAvailableOrders()
-        print(orderList)
-        
-        orderList = orderList.filter(
-            pickup_time__hour=pickup_time.hour
-        )
-        print(orderList)
-        return orderList
 
 class OrderSheet(models.Model):
     class Meta:
@@ -361,7 +346,7 @@ class OrderSheet(models.Model):
 
     user = models.ForeignKey(
         'User',
-        on_delete=models.DO_NOTHING,
+        on_delete=models.CASCADE,
         null=True
     )
 

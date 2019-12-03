@@ -224,8 +224,6 @@ def kakaoView_PickupTime(kakaoPayload):
 
     pickupTimes = menu.pickupTime.filter(sellingTime=currentSellingTime)
 
-    print(pickupTimes)
-    
     order = orderValidation(kakaoPayload)
         
     for pickupTime in pickupTimes:

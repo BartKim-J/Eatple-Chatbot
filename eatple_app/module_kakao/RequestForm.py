@@ -38,7 +38,7 @@ class KakaoPayLoad():
         self.dataAction         = self.received_json_data['action']
         self.dataActionExtra    = self.dataAction['clientExtra']
         self.dataActionParams   = self.dataAction['detailParams']
-            
+        
         # User Properties
         try:
             self.user_properties         = self.dataUserRequest['user']['properties']

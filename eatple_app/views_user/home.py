@@ -21,7 +21,6 @@ from eatple_app.views_system.debugger import *
 def userSignUp(userProfile):
     user = User.signUp(
         nickname=userProfile['nickname'],
-        profile_image_url=userProfile['profile_image_url'],
         phone_number=userProfile['phone_number'],
         email=userProfile['email'],
         birthyear=userProfile['birthyear'],
@@ -160,10 +159,10 @@ def GET_UserHome(request):
 
                 kakaoResponse = requests.get('{url}?rest_api_key={rest_api_key}'.format(
                     url=otpURL, rest_api_key=KAKAO_REST_API_KEY))
-
+                
                 if(kakaoResponse.status_code == 200):
                     user = userSignUp(kakaoResponse.json())
-
+                    
                     return kakaoView_Home(user)
 
                 return kakaoView_SignUp()
