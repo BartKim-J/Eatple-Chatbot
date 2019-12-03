@@ -36,6 +36,7 @@ def sellingTimeCheck():
 
     # Time Test
     # currentDate = currentDate.replace(hour=16, minute=31, second=0, microsecond=0)
+    # currentDateWithoutTime = currentDate.replace(hour=0, minute=0, second=0, microsecond=0)
 
     # Prev Lunch Order Time 16:30 ~ 10:30
     prevlunchOrderTimeStart = currentDateWithoutTime + \
