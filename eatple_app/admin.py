@@ -19,6 +19,9 @@ from eatple_app.admins.admin_orderSheet import OrderSheetAdmin
 from eatple_app.admins.admin_orderRecordSheet import OrderRecordSheetAdmin
 from eatple_app.admins.admin_defaultImage import DefaultImageAdmin
 
+
+admin.site.register(PickupTime)
+
 admin.site.register(Store, StoreAdmin)
 
 admin.site.register(OrderSheet, OrderSheetAdmin)

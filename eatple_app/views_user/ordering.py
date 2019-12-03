@@ -97,7 +97,7 @@ def kakaoView_MenuListup(kakaoPayload):
         return errorView('Get Invalid Selling Time', '오늘 점심은 이미 마감되었어요.\n내일 점심을 기대해주세요.')
 
 
-    menuList = Menu.objects.filter(sellingTime=sellingTime)[:MENU_LIST_LENGTH]
+    menuList = Menu.objects.filter(sellingTime=sellingTime, store__type=STORE_TYPE_NORMAL)[:MENU_LIST_LENGTH]
 
     if menuList:
         kakaoForm = KakaoForm()
@@ -222,8 +222,10 @@ def kakaoView_PickupTime(kakaoPayload):
 
     PICKUP_TIME_QUICKREPLIES_MAP = []
 
-    pickupTimes = PickupTime.objects.filter(store=store)
+    pickupTimes = menu.pickupTime.filter(sellingTime=currentSellingTime)
 
+    print(pickupTimes)
+    
     order = orderValidation(kakaoPayload)
         
     for pickupTime in pickupTimes:

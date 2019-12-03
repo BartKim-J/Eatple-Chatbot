@@ -34,6 +34,24 @@ class Tag(models.Model):
         return '{}'.format(self.name)
 
 
+
+class PickupTime(models.Model):
+    class Meta:
+        ordering = ['time']
+
+    sellingTime = models.CharField(
+        max_length=WORD_LENGTH,
+        choices=SELLING_TIME_CATEGORY,
+        default=SELLING_TIME_LUNCH,
+        help_text='판매 시간*'
+    )
+
+    time = models.TimeField(default=timezone.now)
+    
+    def __str__(self):
+        return '{} - {}'.format(self.time.strftime("%H시 %M분"), dict(SELLING_TIME_CATEGORY)[self.sellingTime])
+
+
 class MenuInfo(models.Model):
     store = models.ForeignKey(
         'Store', on_delete=models.CASCADE, null=True)
@@ -63,16 +81,23 @@ class MenuSetting(models.Model):
         help_text='메뉴 이미지*'
     )
 
-    sellingTime = models.IntegerField(
+    sellingTime = models.CharField(
+        max_length=WORD_LENGTH,
         choices=SELLING_TIME_CATEGORY,
         default=SELLING_TIME_LUNCH,
         help_text='판매 시간*'
+    )
+
+
+    pickupTime = models.ManyToManyField(
+        'PickupTime'
     )
 
     price = models.IntegerField(
         default=6000, 
         help_text='가격*'
     )
+    
     discount = models.IntegerField(
         default=0, 
         help_text='가게 할인*'

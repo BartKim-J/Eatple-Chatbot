@@ -262,7 +262,7 @@ def kakaoView_EditPickupTime(kakaoPayload):
 
     PICKUP_TIME_QUICKREPLIES_MAP = []
 
-    pickupTimes = PickupTime.objects.filter(store=store)
+    pickupTimes = menu.pickupTime.all()
 
     order = orderValidation(kakaoPayload)
 

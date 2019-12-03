@@ -17,6 +17,7 @@ class CRNInline(admin.TabularInline):
 
     readonly_fields = ('CRN_id',)
 
+
 class MenuInline(admin.StackedInline):
     model = Menu
     extra = 0
@@ -36,22 +37,11 @@ class MenuInline(admin.StackedInline):
         (None,                  {'fields': ['menu_id']}),
         (None,                  {'fields': ['name']}),
         (None,                  {'fields': [
-         'sellingTime', 'tag', 'description', 'image','image_preview', 'price', 'discount']}),
+         'sellingTime', 'pickupTime','tag', 'description', 'image','image_preview', 'price', 'discount']}),
         (None,                  {'fields': [
          'current_stock', 'max_stock', 'status']}),
     ]
-
-
-class PickupTimeInline(admin.TabularInline):
-    model = PickupTime
-    extra = 0
-    min_num = 2
-
-    fieldsets = [
-        (None, {'fields': ['status', 'time']}),
-    ]
-
-
+    
 class StoreAdmin(ImportExportMixin, admin.ModelAdmin):
     readonly_fields = ('store_id', 'logo_preview')
 
@@ -61,7 +51,7 @@ class StoreAdmin(ImportExportMixin, admin.ModelAdmin):
         (None,                   {'fields': ['store_id']}),
         ('Information',          {'fields': ['name', 'addr', 'owner' ,'phone_number']}),
         ('Setting',              {'fields': ['category', 'description', 'logo', 'logo_preview']}),
-        ('Status',               {'fields': ['status']}),
+        ('Status',               {'fields': ['status', 'type']}),
     ]
 
     def logo_preview(self, obj):
@@ -75,4 +65,4 @@ class StoreAdmin(ImportExportMixin, admin.ModelAdmin):
     list_filter = ('status',)
     list_display = ('name', 'status', 'store_id', 'crn')
 
-    inlines = [CRNInline, MenuInline, PickupTimeInline]
+    inlines = [CRNInline, MenuInline]

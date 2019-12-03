@@ -83,32 +83,13 @@ class CRN(models.Model):
             VN=self.VN
         )
 
-class PickupTime(models.Model):
-    class Meta:
-        ordering = ['time']
-
-    store = models.ForeignKey(
-        'Store', 
-        on_delete=models.CASCADE, 
-        null=True
-    )
-
-    time = models.TimeField(default=timezone.now)
-    
-    status = models.CharField(
-        max_length=WORD_LENGTH,
-        default=OC_OPEN,
-        choices=OC_STATUS
-    )
-
-
 class StoreInfo(models.Model):
     store_id = models.CharField(
         default='N/A',
         max_length=WORD_LENGTH, 
         help_text='상점 고유 번호*',
         unique=True
-        )
+    )
 
     name = models.CharField(
         max_length=WORD_LENGTH, 
@@ -163,6 +144,15 @@ class StoreStatus(models.Model):
         choices=OC_STATUS,
         help_text='가게 상태*', 
     )
+    
+    
+    type = models.CharField(
+        max_length=WORD_LENGTH, 
+        default=STORE_TYPE_NORMAL,
+        choices=STORE_TYPE,
+        help_text='가게 유형*', 
+    )
+    
     class Meta:
         abstract = True
         
