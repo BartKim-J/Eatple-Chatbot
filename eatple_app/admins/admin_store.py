@@ -10,6 +10,7 @@ from django import forms
 from django.core import validators
 from django.utils.translation import ugettext_lazy as _
 from django.utils.safestring import mark_safe
+
 class LanlngInline(admin.TabularInline):
     model = CRN
     min_num = 1

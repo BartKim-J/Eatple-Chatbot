@@ -58,9 +58,9 @@ def promotionOrderUpdate(order):
         hour=0, minute=0, second=0, microsecond=0)
 
     # Time QA DEBUG
-    # currentDate = currentDate.replace(day=11, hour=0, minute=0, second=0, microsecond=0)
-    # currentDateWithoutTime = currentDate.replace(hour=0, minute=0, second=0, microsecond=0)
-    # print(currentDate)
+    currentDate = currentDate.replace(day=11, hour=11, minute=48, second=0, microsecond=0)
+    currentDateWithoutTime = currentDate.replace(hour=0, minute=0, second=0, microsecond=0)
+    print(currentDate)
     
     promotion_month = 12
     promotion_day = int(order.menu.name[0:2])
@@ -86,7 +86,7 @@ def promotionOrderUpdate(order):
             order.save()
             
         elif(PickupTimeStart <= currentDate) and (currentDate < PickupTimeEnd):
-            if(currentDate >= order.pickup_time):
+            if(currentDate >= order.pickup_time + datetime.timedelta(minutes=-15)):
                 order.status = ORDER_STATUS_PICKUP_WAIT
                 order.save()
             else:

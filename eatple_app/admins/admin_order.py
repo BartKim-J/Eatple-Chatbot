@@ -47,6 +47,12 @@ class OrderAdmin(ImportExportMixin, admin.ModelAdmin):
     )
     """
     
-    list_filter = ('order_date', 'store', 'menu', 'payment_status')
+    list_filter = (
+        'order_date', 
+        'store', 
+        'menu',
+        ('payment_status', ChoiceDropdownFilter),
+    )
+    
     list_display = ('order_id', 'store', 'menu', 'type',
                     'payment_status', 'status', 'order_date')

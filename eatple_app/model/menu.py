@@ -129,7 +129,7 @@ class MenuStatus(models.Model):
 class Menu(MenuInfo, MenuStatus, MenuSetting):
     # Metadata
     class Meta:
-        ordering = ['-menu_id']
+        ordering = ['menu_id']
 
     def __init__(self, *args, **kwargs):
         super(Menu, self).__init__(*args, **kwargs)

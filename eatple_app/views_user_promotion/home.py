@@ -54,8 +54,13 @@ def PromotionEatplePassValidation(user):
 
     kakaoForm.QuickReplies_AddWithMap(DEFAULT_QUICKREPLIES_MAP)
 
-
-    if (lunchPurchaed or dinnerPurchaced or user.flag_promotion):
+    if ((lunchPurchaed or dinnerPurchaced) and user.flag_promotion == False):
+        kakaoForm.SimpleText_Add(
+            '아직 사용하지 않은 잇플패스가 있어요.\n발급된 잇플패스를 먼저 사용해주세요.'
+        )
+        return JsonResponse(kakaoForm.GetForm())
+     
+    if ((lunchPurchaed or dinnerPurchaced) or user.flag_promotion):
         kakaoForm.SimpleText_Add(
             '이미 프로모션에 참여해주셨습니다.\n프로모션은 한 번만 참여 가능합니다.'
         )
@@ -92,7 +97,7 @@ def kakaoView_MenuListup(kakaoPayload):
     menuList = Menu.objects.filter(
         store__type=STORE_TYPE_EVENT,
         store__area=area,
-        )[:MENU_LIST_LENGTH]
+        ).order_by('menu_id')[:MENU_LIST_LENGTH]
 
     if menuList:
         kakaoForm = KakaoForm()
@@ -240,7 +245,7 @@ def kakaoView_OrderPayment(kakaoPayload):
     ]
 
     profile = {
-        'nickname': '{name} - [ 픽업 : {pickup_time} ]'.format(name=menu.name, pickup_time=pickup_time),
+        'nickname': '{name}'.format(name=menu.name),
         'imageUrl': '{}{}'.format(HOST_URL, store.logoImgURL()),
     }
 
@@ -455,14 +460,14 @@ def kakaoView_EatplePassIssuance(kakaoPayload):
 
         kakaoForm.BasicCard_Push(
             '잇플패스가 발급되었습니다.',
-            '주문번호: {}\n- - - - - - - - - - - - - - - - - - - - - -\n - 주문자: {}\n\n - 매장: {} \n - 메뉴: {}\n\n - 결제 금액: {}원\n\n - 픽업 시간: {}\n- - - - - - - - - - - - - - - - - - - - - -\n - 매장 위치: {}'.format(
+            '주문번호: {}\n- - - - - - - - - - - - - - - - - - - - - -\n - 주문자: {}\n\n - 매장: {}\n - 주소: {}\n - 메뉴: {}\n\n - 결제 금액: {}원\n\n - 픽업 시간: {}\n- - - - - - - - - - - - - - - - - - - - - -'.format(
                 order.order_id,
                 str(order.ordersheet.user.phone_number)[9:13],
                 order.store.name,
+                order.store.addr,
                 order.menu.name,
                 order.totalPrice,
                 dateByTimeZone(order.pickup_time).strftime('%H:%M'),
-                order.store.addr
             ),
             thumbnail, buttons
         )
