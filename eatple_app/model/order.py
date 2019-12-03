@@ -80,7 +80,7 @@ def orderUpdate(order):
     currentDateWithoutTime = currentDate.replace(
         hour=0, minute=0, second=0, microsecond=0)
 
-    # Time Test
+    # Time QA DEBUG
     # currentDate = currentDate.replace(day=4, hour=13, minute=11, second=0, microsecond=0)
     # currentDateWithoutTime = currentDate.replace(hour=0, minute=0, second=0, microsecond=0)
     # print(currentDate)

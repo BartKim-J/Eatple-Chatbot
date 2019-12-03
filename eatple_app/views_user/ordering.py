@@ -29,30 +29,54 @@ DISCOUNT_FOR_DEBUG = 5900
 # Static View
 #
 # # # # # # # # # # # # # # # # # # # # # # # # #
+# @PROMOTION
+def eventLock():
+    kakaoForm = KakaoForm()
+    
+    kakaoForm.BasicCard_Push('다음주에 OPEN 됩니다.', 
+                            '12월 9일에 만나요!', 
+                            {}, 
+                            []
+                        )
+    
+    kakaoForm.BasicCard_Add()
+    
+    QUICKREPLIES_MAP = [
+        {
+            'action': 'block',
+            'label': '홈으로 돌아가기',
+            'messageText': '로딩중..',
+            'blockId': KAKAO_BLOCK_USER_HOME,
+            'extra': {
+                KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_GET_MENU
+            }
+        },
+    ]
+
+    kakaoForm.QuickReplies_AddWithMap(QUICKREPLIES_MAP)       
+    
+    return JsonResponse(kakaoForm.GetForm())
+    
 
 def sellingTimeCheck():
     currentDate = dateNowByTimeZone()
     currentDateWithoutTime = currentDate.replace(hour=0, minute=0, second=0, microsecond=0)
 
-    # Time Test
+    # Time QA DEBUG
     # currentDate = currentDate.replace(hour=16, minute=31, second=0, microsecond=0)
     # currentDateWithoutTime = currentDate.replace(hour=0, minute=0, second=0, microsecond=0)
 
     # Prev Lunch Order Time 16:30 ~ 10:30
-    prevlunchOrderTimeStart = currentDateWithoutTime + \
-        datetime.timedelta(hours=16, minutes=30, days=-1)
-    prevlunchOrderTimeEnd = currentDateWithoutTime + \
-        datetime.timedelta(hours=10, minutes=30)
+    prevlunchOrderTimeStart = currentDateWithoutTime + datetime.timedelta(hours=16, minutes=30, days=-1)
+    prevlunchOrderTimeEnd = currentDateWithoutTime + datetime.timedelta(hours=10, minutes=30)
 
     # Dinner Order Time 10:30 ~ 16:30
     dinnerOrderTimeStart = currentDateWithoutTime + datetime.timedelta(hours=10, minutes=30)
     dinnerOrderTimeEnd = currentDateWithoutTime + datetime.timedelta(hours=16, minutes=30)
 
     # Next Lunch Order Time 16:30 ~ 10:30
-    nextlunchOrderTimeStart = currentDateWithoutTime + \
-        datetime.timedelta(hours=16, minutes=30)
-    nextlunchOrderTimeEnd = currentDateWithoutTime + \
-        datetime.timedelta(hours=10, minutes=30, days=1)
+    nextlunchOrderTimeStart = currentDateWithoutTime + datetime.timedelta(hours=16, minutes=30)
+    nextlunchOrderTimeEnd = currentDateWithoutTime + datetime.timedelta(hours=10, minutes=30, days=1)
 
     if(dinnerOrderTimeStart <= currentDate) and (currentDate <= dinnerOrderTimeEnd):
         return SELLING_TIME_DINNER
@@ -172,11 +196,13 @@ def kakaoView_PickupTime(kakaoPayload):
     if(prev_block_id != KAKAO_BLOCK_USER_GET_MENU and prev_block_id != KAKAO_BLOCK_USER_SET_ORDER_SHEET):
         return errorView('Invalid Block Access', '정상적이지 않은 경로거나, 오류가 발생했습니다.\n다시 주문해주세요!')
 
+    # @PROMOTION
+    return eventLock()
+
     # User Validation
     user = userValidation(kakaoPayload)
     if (user == None):
         return GET_UserHome(request)
-
 
     order = orderValidation(kakaoPayload)
     if(order != None):
@@ -216,10 +242,14 @@ def kakaoView_PickupTime(kakaoPayload):
     orderRecordSheet.recordUpdate(ORDER_RECORD_SET_PICKUP_TIEM)
 
     kakaoForm = KakaoForm()
-
-    kakaoForm.SimpleText_Add(
-        '음식을 가지러 갈 픽업시간을 설정해주세요.'
-    )
+    
+    kakaoForm.BasicCard_Push('픽업시간을 설정해주세요.', 
+                             '{} - {}'.format(menu.store.name, menu.name), 
+                             {}, 
+                             []
+                             )
+    
+    kakaoForm.BasicCard_Add()
 
     PICKUP_TIME_QUICKREPLIES_MAP = []
 

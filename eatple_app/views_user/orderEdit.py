@@ -192,13 +192,7 @@ def kakaoView_OrderCancel(kakaoPayload):
             getLatLng(order.store.addr)
         )
         
-        buttons = [
-            {
-                'action': 'webLink', 
-                'label': '위치보기',  
-                'webLinkUrl': kakaoMapUrl
-            },
-        ]
+        buttons = []
         
         kakaoForm.BasicCard_Push(
             '주문이 취소되었습니다.',

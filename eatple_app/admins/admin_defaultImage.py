@@ -1,3 +1,6 @@
+# Define
+from eatple_app.define import *
+
 # Models
 from eatple_app.models import *
 

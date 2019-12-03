@@ -40,8 +40,8 @@ def orderCheckTimeValidation():
     currentDate = dateNowByTimeZone()
     currentDateWithoutTime = currentDate.replace(hour=0, minute=0, second=0, microsecond=0)
 
-    # Time Test
-    currentDate = currentDate.replace(hour=13, minute=31, second=0, microsecond=0)
+    # Time QA DEBUG
+    # currentDate = currentDate.replace(hour=13, minute=31, second=0, microsecond=0)
     # currentDateWithoutTime = currentDate.replace(hour=0, minute=0, second=0, microsecond=0)
 
     # Prev Lunch Order Time 10:30 ~ 14:00

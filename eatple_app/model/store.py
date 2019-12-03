@@ -153,6 +153,13 @@ class StoreStatus(models.Model):
         help_text='가게 유형*', 
     )
     
+    area = models.CharField(
+        max_length=WORD_LENGTH, 
+        default=STORE_AREA_A_3,
+        choices=STORE_AREA,
+        help_text='가게 지역코드*', 
+    )
+    
     class Meta:
         abstract = True
         

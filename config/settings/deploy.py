@@ -44,6 +44,8 @@ INSTALLED_APPS = [
     'phonenumber_field',
     'import_export',
     
+    'django_admin_listfilter_dropdown',
+    
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',

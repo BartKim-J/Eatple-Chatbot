@@ -1,3 +1,6 @@
+# Define
+from eatple_app.define import *
+
 # Models
 from eatple_app.models import *
 
@@ -7,10 +10,6 @@ from django import forms
 from django.core import validators
 from django.utils.translation import ugettext_lazy as _
 from django.utils.safestring import mark_safe
-
-from import_export.admin import ExportActionModelAdmin, ImportExportMixin, ImportMixin
-from import_export import resources
-
 class CRNInline(admin.TabularInline):
     model = CRN
     min_num = 1
@@ -46,13 +45,13 @@ class MenuInline(admin.StackedInline):
 class StoreAdmin(ImportExportMixin, admin.ModelAdmin):
     readonly_fields = ('store_id', 'logo_preview')
 
-    list_editable = ('status',)
+    list_editable = ('status', )
 
     fieldsets = [
         (None,                   {'fields': ['store_id']}),
         ('Information',          {'fields': ['name', 'addr', 'owner' ,'phone_number']}),
         ('Setting',              {'fields': ['category', 'description', 'logo', 'logo_preview']}),
-        ('Status',               {'fields': ['status', 'type']}),
+        ('Status',               {'fields': ['status', 'type', 'area']}),
     ]
 
     def logo_preview(self, obj):
@@ -63,7 +62,10 @@ class StoreAdmin(ImportExportMixin, admin.ModelAdmin):
         )
     )
 
-    list_filter = ('status',)
-    list_display = ('name', 'status', 'store_id', 'crn')
+    list_filter = (
+        ('status', ChoiceDropdownFilter), ('area', ChoiceDropdownFilter), ('type', ChoiceDropdownFilter)
+    )
+    
+    list_display = ('name', 'status', 'store_id', 'crn', 'type', 'area')
 
     inlines = [CRNInline, MenuInline]

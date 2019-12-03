@@ -18,6 +18,10 @@ import pytz
 from iamport import Iamport
 from phonenumber_field.modelfields import PhoneNumberField
 
+from django_admin_listfilter_dropdown.filters import DropdownFilter, RelatedDropdownFilter, ChoiceDropdownFilter
+
+from import_export.admin import ExportActionModelAdmin, ImportExportMixin, ImportMixin
+from import_export import resources
 
 EATPLUS_HOST_URL = "http://eatple.com:8000"
 VALUE_NOT_APPLICABLE = 'N/A'
@@ -124,6 +128,29 @@ STORE_TYPE_EVENT = "event"
 STORE_TYPE = [
     (STORE_TYPE_NORMAL, '일반'),
     (STORE_TYPE_EVENT, '이벤트'),
+]
+
+# AREA_CODE
+STORE_AREA_A_1 = 'A1'
+STORE_AREA_A_2 = 'A2'
+STORE_AREA_A_3 = 'A3'
+STORE_AREA_A_4 = 'A4'
+
+STORE_AREA_B_1 = 'B1' 
+STORE_AREA_B_2 = 'B2'
+
+STORE_AREA_Z_1 = 'Z1'
+
+STORE_AREA = [
+    (STORE_AREA_A_1, '강남 1호점'),
+    (STORE_AREA_A_2, '강남 2호점'),
+    (STORE_AREA_A_3, '강남 3호점'),
+    (STORE_AREA_A_4, '강남 4호점'),
+    
+    (STORE_AREA_B_1, '역삼 1호점'),
+    (STORE_AREA_B_2, '역삼 2호점'),
+    
+    (STORE_AREA_Z_1, '기타 지역'),
 ]
 
 
