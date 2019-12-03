@@ -69,7 +69,7 @@ def kakaoView_EatplePass(kakaoPayload):
     orderManager.orderPaidCheck()
     
     availableEatplePass = orderManager.availableOrderStatusUpdate()
-
+    
     # Listup EatplePass
     if availableEatplePass:
         kakaoForm = KakaoForm()

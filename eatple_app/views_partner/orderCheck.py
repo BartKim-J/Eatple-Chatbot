@@ -71,16 +71,18 @@ def kakaoView_OrderDetails(kakaoPayload):
     orderManager.orderPaidCheck()
     
     availableOrders = orderManager.getAvailableOrders()[:ORDER_LIST_LENGTH]
-
-    pickupTimes = menu.pickupTime.all()
-
-    if availableOrders:
+    
+    if availableOrders:        
         kakaoForm = KakaoForm()
 
+
+        # pickupTimes = order.menu.pickupTime.all()
+        pickupTimes = []
+        
         # Total Count
         for order in availableOrders:            
             header = {
-                'title': '오늘 총 주문량은 {count}개 입니다.'.format(count=1),
+                'title': '오늘 총 주문량은 {count}개 입니다.'.format(count=13),
                 'imageUrl': '{}{}'.format(HOST_URL, '/media/STORE_DB/images/default/partnerOrderSheet.png'),
             }
             
@@ -89,14 +91,18 @@ def kakaoView_OrderDetails(kakaoPayload):
             imageUrl = '{}{}'.format(HOST_URL, order.store.logoImgURL())
 
             kakaoForm.ListCard_Push(
-                '{}-{}'.format(order.menu.name, str(order.ordersheet.user.phone_number)[9:13]),
-                '{}'.format(                    
-                    dateByTimeZone(order.pickup_time).strftime('%p %-I시 %-M분 - %m월%d일').replace('AM','오전').replace('PM','오후') ,
-                ),
+                '12시 10분',
+                '10개',
                 imageUrl, 
                 None
             )
-            
+            kakaoForm.ListCard_Push(
+                '13시 10분',
+                '10개',
+                imageUrl, 
+                None
+            )
+
             kakaoForm.ListCard_Add(header)
             
         for pickupTime in pickupTimes:

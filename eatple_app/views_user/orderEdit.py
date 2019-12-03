@@ -58,11 +58,10 @@ def kakaoView_UseEatplePass(kakaoPayload):
     
     kakaoForm.BasicCard_Push(
         '잇플패스가 사용되었습니다.',
-        ' - 주문자: {}\n\n - 매장: {} \n - 메뉴: {}\n\n - 결제 금액: {}원'.format(
+        '\n - 주문자: {}\n\n - 매장: {} \n - 메뉴: {}'.format(
             str(order.ordersheet.user.phone_number)[9:13],
             order.store.name,
             order.menu.name,
-            order.totalPrice,
         ),
         thumbnail, buttons
     )
@@ -118,7 +117,7 @@ def kakaoView_ConfirmUseEatplePass(kakaoPayload):
             'action': 'block',
             'label': '돌아가기',
             'messageText': '로딩중..',
-            'blockId': KAKAO_BLOCK_USER_HOME,
+            'blockId': KAKAO_BLOCK_USER_EATPLE_PASS,
             'extra': {
                 KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_GET_USE_EATPLE_PASS_CONFIRM
             }
@@ -353,6 +352,7 @@ def kakaoView_ConfirmEditPickupTime(kakaoPayload):
 
 @csrf_exempt
 def GET_EditPickupTime(request):
+    EatplusSkillLog('GET_EditPickupTime')
     try:
         kakaoPayload = KakaoPayLoad(request)
         return kakaoView_EditPickupTime(kakaoPayload)
@@ -362,6 +362,7 @@ def GET_EditPickupTime(request):
 
 @csrf_exempt
 def SET_ConfirmEditPickupTime(request):
+    EatplusSkillLog('SET_ConfirmEditPickupTime')
     try:
         kakaoPayload = KakaoPayLoad(request)
         return kakaoView_ConfirmEditPickupTime(kakaoPayload)
@@ -372,6 +373,7 @@ def SET_ConfirmEditPickupTime(request):
 
 @csrf_exempt
 def GET_ConfirmUseEatplePass(request):
+    EatplusSkillLog('GET_ConfirmUseEatplePass')
     try:
         kakaoPayload = KakaoPayLoad(request)
         return kakaoView_ConfirmUseEatplePass(kakaoPayload)

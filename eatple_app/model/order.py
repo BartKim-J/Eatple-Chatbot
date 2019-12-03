@@ -81,8 +81,11 @@ def orderUpdate(order):
         hour=0, minute=0, second=0, microsecond=0)
 
     # Time Test
-    # currentDate = currentDate.replace(hour=0, minute=0, second=0, microsecond=0)
-
+    currentDate = currentDate.replace(day=4, hour=13, minute=11, second=0, microsecond=0)
+    currentDateWithoutTime = currentDate.replace(
+        hour=0, minute=0, second=0, microsecond=0)
+    print(currentDate)
+    
     YESTERDAY = currentDateWithoutTime + \
         datetime.timedelta(days=-1)  # Yesterday start
     TODAY = currentDateWithoutTime
@@ -266,7 +269,8 @@ class Order(models.Model):
         self.status = ORDER_STATUS_PICKUP_COMPLETED
         super().save()
         
-        return order
+        return self
+    
     # Methods
     def __str__(self):
         return '{}'.format(self.order_id)
