@@ -23,7 +23,7 @@ from django_admin_listfilter_dropdown.filters import DropdownFilter, RelatedDrop
 from import_export.admin import ExportActionModelAdmin, ImportExportMixin, ImportMixin
 from import_export import resources
 
-EATPLUS_HOST_URL = "http://eatple.com:8000"
+EATPLUS_HOST_URL = 'http://eatple.com:8000'
 VALUE_NOT_APPLICABLE = 'N/A'
 
 # Eatplus App Global Defines
@@ -38,7 +38,7 @@ HOST_URL = EATPLUS_HOST_URL
 NOT_APPLICABLE = VALUE_NOT_APPLICABLE
 
 # IMAGE DB PATH
-PATH_IMG_DB = "STORE_DB/images"
+PATH_IMG_DB = 'STORE_DB/images'
 
 # USER LENGTH
 USER_NICKNAME_LENGTH = STRING_32
@@ -56,8 +56,8 @@ WORD_LENGTH = STRING_32
 MANAGEMENT_CODE_DEFAULT = VALUE_NOT_APPLICABLE
 MANAGEMENT_CODE_LENGTH = STRING_256
 
-SELLING_TIME_LUNCH = "lunch"
-SELLING_TIME_DINNER = "dinner"
+SELLING_TIME_LUNCH = 'lunch'
+SELLING_TIME_DINNER = 'dinner'
 SELLING_TIME_CATEGORY = [
     (SELLING_TIME_LUNCH, '점심'),
     (SELLING_TIME_DINNER, '저녁'),
@@ -105,27 +105,27 @@ ORDER_RECORD = [
 
 # PICKUP TIME
 LUNCH_PICKUP_TIME = [
-    (0, "11:30"), (1, "11:45"), (2, "12:00"), (3, "12:15"), 
-    (4, "12:30"), (5, "12:45"), (6, "13:00"), (7, "13:15"), (8, "13:30")
+    (0, '11:30'), (1, '11:45'), (2, '12:00'), (3, '12:15'), 
+    (4, '12:30'), (5, '12:45'), (6, '13:00'), (7, '13:15'), (8, '13:30')
 ]
 
 DINNER_PICKUP_TIME = [
-    (0, "17:30"), (1, "18:00"), (2, "18:30"),
-    (3, "19:00"), (4, "19:30"), (5, "20:00"), (6, "20:30"), (7, "21:00")
+    (0, '17:30'), (1, '18:00'), (2, '18:30'),
+    (3, '19:00'), (4, '19:30'), (5, '20:00'), (6, '20:30'), (7, '21:00')
 ]
 
 # OPEN & CLOSE
-OC_OPEN = "open"
-OC_CLOSE = "close"
+OC_OPEN = 'open'
+OC_CLOSE = 'close'
 OC_STATUS = [
     (OC_OPEN, '열림'),
     (OC_CLOSE, '닫힘'),
 ]
 
 # STORE_TYPE 
-ORDER_TYPE_NORMAL = "normal"
-ORDER_TYPE_EVENT = "event"
-ORDER_TYPE_PROMOTION = "promotion"
+ORDER_TYPE_NORMAL = 'normal'
+ORDER_TYPE_EVENT = 'event'
+ORDER_TYPE_PROMOTION = 'promotion'
 ORDER_TYPE = [
     (ORDER_TYPE_NORMAL, '일반'),
     (ORDER_TYPE_EVENT, '이벤트'),
@@ -134,8 +134,9 @@ ORDER_TYPE = [
 
 
 # STORE_TYPE 
-STORE_TYPE_NORMAL = "normal"
-STORE_TYPE_EVENT = "event"
+STORE_TYPE_NORMAL = 'normal'
+STORE_TYPE_EVENT = 'event'
+STORE_TYPE_PROMOTION = 'promotion'
 STORE_TYPE = [
     (STORE_TYPE_NORMAL, '일반'),
     (STORE_TYPE_EVENT, '이벤트'),
@@ -182,8 +183,8 @@ IAMPORT_ORDER_STATUS = [
 ]
 
 # Kakao API KEY
-KAKAO_API_KEY = "d62991888c78ec58d809bdc591eb62f6"
-KAKAO_REST_API_KEY = "9120ecde0549629d5a049e9755541e5e"
+KAKAO_API_KEY = 'd62991888c78ec58d809bdc591eb62f6'
+KAKAO_REST_API_KEY = '9120ecde0549629d5a049e9755541e5e'
 
 # Kakao Block ID
 ## User
@@ -232,9 +233,9 @@ KAKAO_PARAM_PICKUP_TIME = 'pickup_time'
 
 # Time Functions
 def dateNowByTimeZone():
-    """
+    '''
     Returns an aware or naive datetime, depending on settings.USE_TZ.
-    """
+    '''
     if settings.USE_TZ:
         tz = pytz.timezone(settings.TIME_ZONE)
         return tz.localize(datetime.datetime.now())

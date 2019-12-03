@@ -50,7 +50,12 @@ def iamportOrderCancel(order, description='주문취소'):
 def orderUpdate(order):
     order = iamportOrderValidation(order)
     
+    #Payment State Update
     if(order.payment_status == IAMPORT_ORDER_STATUS_CANCELLED):
+        #@PROMOTION
+        if(order.type == ORDER_TYPE_PROMOTION):
+            order.ordersheet.user.cancelPromotion()
+            
         order.status = ORDER_STATUS_ORDER_CANCELED
         order.save()
         print('주문 취소됨')
@@ -64,15 +69,18 @@ def orderUpdate(order):
         print('주문 실패')
         
     if(order.payment_status == IAMPORT_ORDER_STATUS_PAID):
+        #@PROMOTION
+        if(order.type == ORDER_TYPE_PROMOTION):
+            order.ordersheet.user.applyPromotion()
         print('주문 결제됨')
         
     if(order.payment_status != IAMPORT_ORDER_STATUS_PAID):
         return order
-    
+
+    #Ordering State Update    
     menu = order.menu
 
     orderDate = dateByTimeZone(order.order_date)
-    print(orderDate)
     orderDateWithoutTime = orderDate.replace(
         hour=0, minute=0, second=0, microsecond=0)
 

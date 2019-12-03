@@ -68,9 +68,11 @@ class User(KakaoUser, models.Model):
     #@PROTMOTION
     def applyPromotion(self):
         self.flag_promotion = True;
+        self.save()
         
     def cancelPromotion(self):
         self.flag_promotion = False;
+        self.save()
         
     # Methods
     def __str__(self):
