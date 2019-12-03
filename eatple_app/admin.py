@@ -20,11 +20,21 @@ from eatple_app.admins.admin_orderRecordSheet import OrderRecordSheetAdmin
 from eatple_app.admins.admin_defaultImage import DefaultImageAdmin
 
 
-admin.site.register(PickupTime)
+class HideAdmin(admin.ModelAdmin):
+    def get_model_perms(self, request):
+        """
+        Return empty perms dict thus hiding the model from admin index.
+        """
+        return {}
+
+admin.site.register(PickupTime, HideAdmin)
+admin.site.register(Category, HideAdmin)
+admin.site.register(Tag, HideAdmin)
+admin.site.register(OrderSheet, HideAdmin)
+
+admin.site.register(DefaultImage, DefaultImageAdmin)
 
 admin.site.register(Store, StoreAdmin)
-
-admin.site.register(OrderSheet, OrderSheetAdmin)
 
 admin.site.register(Order, OrderAdmin)
 
@@ -34,15 +44,3 @@ admin.site.register(User, UserAdmin)
 
 admin.site.register(Partner, PartnerAdmin)
 
-admin.site.register(DefaultImage, DefaultImageAdmin)
-
-admin.site.register(Category)
-admin.site.register(Tag)
-
-# Manual
-# admin.site.register(UserManual)
-# admin.site.register(PartnerManual)
-
-# Intro
-# admin.site.register(UserIntro)
-# admin.site.register(PartnerIntro)
