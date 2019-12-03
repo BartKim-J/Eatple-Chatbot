@@ -76,13 +76,12 @@ def kakaoView_EatplePass(kakaoPayload):
 
         for order in availableEatplePass:
             thumbnail = {
-                'imageUrl': '{}{}'.format(HOST_URL, order.menu.imgURL()),
- 
+                'imageUrl': '{}{}'.format(HOST_URL, '/media/STORE_DB/images/default/eatplePassImg.png'),
             }
 
             kakaoMapUrl = 'https://map.kakao.com/link/map/{},{}'.format(
                 order.store.name, 
-                getLatLng(order.store.addr)
+                order.store.latlng
             )
 
             buttons = [

@@ -400,7 +400,7 @@ def kakaoView_OrderPayment(kakaoPayload):
             'extra': dataActionExtra,
         },
     ]
-    kakaoForm.BasicCard_Push('결제가 완료되었다면 아래\n잇플패스 발급하기 버튼을 눌러주세요.', '', {}, buttons)
+    kakaoForm.BasicCard_Push('결제가 완료되었다면 아래 잇플패스 발급하기 버튼을 눌러주세요.', '', {}, buttons)
     kakaoForm.BasicCard_Add()
     
     GET_PICKUP_TIME_QUICKREPLIES_MAP = [
@@ -483,7 +483,7 @@ def kakaoView_OrderPaymentCheck(kakaoPayload):
             },
             {
                 'action': 'block',
-                'label': '잇플패스  발급',
+                'label': '잇플패스 발급',
                 'messageText': '로딩중..',
                 'blockId': KAKAO_BLOCK_USER_SET_ORDER_SHEET,
                 'extra': dataActionExtra,

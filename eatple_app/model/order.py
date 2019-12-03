@@ -24,7 +24,7 @@ def iamportOrderValidation(order):
     
     except Iamport.HttpError as http_error:
         if(http_error.code == 404):
-            order.payment_status = IAMPORT_ORDER_STATUS_CANCELLED
+            #order.payment_status = IAMPORT_ORDER_STATUS_CANCELLED
             order.save()
 
         return order

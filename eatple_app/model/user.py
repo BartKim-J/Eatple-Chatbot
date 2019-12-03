@@ -45,6 +45,9 @@ class KakaoUser(models.Model):
         null=True
     )
     
+    #@PROTMOTINO
+    flag_promotion = models.BooleanField(default=False)
+    
     class Meta:
         abstract = True
 
@@ -61,6 +64,14 @@ class User(KakaoUser, models.Model):
 
         return registedUser
 
+
+    #@PROTMOTION
+    def applyPromotion(self):
+        self.flag_promotion = True;
+        
+    def cancelPromotion(self):
+        self.flag_promotion = False;
+        
     # Methods
     def __str__(self):
         return '{}'.format(self.app_user_id)
