@@ -33,3 +33,9 @@ from eatple_app.views_partner.home import GET_PartnerHome
 ## Check
 from eatple_app.views_partner.orderCheck import GET_ParnterOrderDetails
 
+
+
+# Kakao 
+
+from eatple_app.views_kakao.leave import POST_KAKAO_Leave
+from eatple_app.views_kakao.channel import POST_KAKAO_ChannelLog

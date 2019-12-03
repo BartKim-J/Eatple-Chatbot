@@ -65,6 +65,11 @@ urlpatterns += [
     path('skill/partner/orderView/get_order_details', views.GET_ParnterOrderDetails),
 ]
 
+urlpatterns += [
+    path('kakao/auth/leave', views.POST_KAKAO_Leave),
+    path('kakao/channel/log', views.POST_KAKAO_ChannelLog)
+]
+
 # Media Link Url
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
