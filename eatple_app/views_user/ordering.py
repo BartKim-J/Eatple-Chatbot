@@ -126,7 +126,7 @@ def kakaoView_MenuListup(kakaoPayload):
     menuList = Menu.objects.filter(
         sellingTime=sellingTime, 
         store__type=STORE_TYPE_NORMAL,
-        store__area=area,
+        #store__area=area,
         )[:MENU_LIST_LENGTH]
 
     if menuList:

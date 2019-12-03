@@ -43,7 +43,7 @@ def kakaoView_SignUp():
         {
             'action': 'block',
             'label': '연동하러 가기',
-            'messageText': '연동하기',
+            'messageText': '로딩중..',
             'blockId': KAKAO_BLOCK_USER_SIGNUP,
             'extra': {
                 KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_HOME
