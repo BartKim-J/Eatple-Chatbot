@@ -81,10 +81,9 @@ def orderUpdate(order):
         hour=0, minute=0, second=0, microsecond=0)
 
     # Time Test
-    currentDate = currentDate.replace(day=4, hour=13, minute=11, second=0, microsecond=0)
-    currentDateWithoutTime = currentDate.replace(
-        hour=0, minute=0, second=0, microsecond=0)
-    print(currentDate)
+    # currentDate = currentDate.replace(day=4, hour=13, minute=11, second=0, microsecond=0)
+    # currentDateWithoutTime = currentDate.replace(hour=0, minute=0, second=0, microsecond=0)
+    # print(currentDate)
     
     YESTERDAY = currentDateWithoutTime + \
         datetime.timedelta(days=-1)  # Yesterday start
