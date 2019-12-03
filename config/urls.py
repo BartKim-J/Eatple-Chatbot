@@ -22,7 +22,9 @@ from django.conf.urls.static import static
 from eatple_app import views
 
 # Urls
-urlpatterns = [
+urlpatterns = []
+
+urlpatterns += [
     # Admin
     path('admin/', admin.site.urls),
 
@@ -52,7 +54,9 @@ urlpatterns = [
          views.GET_EditPickupTime),
     path('skill/user/orderEdit/set_confirm_edit_pickup_time',
          views.SET_ConfirmEditPickupTime),
+]
 
+urlpatterns += [
     # Kakao Plus Partner Skills
     # Home
     path('skill/partner/home', views.GET_PartnerHome),

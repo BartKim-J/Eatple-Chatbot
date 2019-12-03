@@ -27,6 +27,29 @@ class Category(models.Model):
     def __str__(self):
         return '{}'.format(self.name)
 
+class latlng(models.Model):
+    store = models.OneToOneField(
+        'Store', 
+        on_delete=models.CASCADE, 
+        unique=True, 
+        null=True
+    )
+    
+    lat = models.DecimalField(
+        default=0.00000,
+        max_digits=9, 
+        decimal_places=6
+    )
+
+    long = models.DecimalField(
+        default=0.00000,
+        max_digits=9, 
+        decimal_places=6
+    )
+
+    def __str__(self):
+        return '{}, {}'.format(self.lat, self.long)
+
 class CRN(models.Model):
     store = models.OneToOneField(
         'Store', 

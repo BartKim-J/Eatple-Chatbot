@@ -33,8 +33,8 @@ DISCOUNT_FOR_DEBUG = 5900
 def eventLock():
     kakaoForm = KakaoForm()
     
-    kakaoForm.BasicCard_Push('다음주에 OPEN 됩니다.', 
-                            '12월 9일에 만나요!', 
+    kakaoForm.BasicCard_Push('프로모션 코드를 대화창에 입력해주세요.', 
+                            '일반 메뉴의 경우 12월 10일부터 주문하실 수 있어요.\n지금은 프로모션 메뉴만 이용해주세요.', 
                             {}, 
                             []
                         )
@@ -57,7 +57,6 @@ def eventLock():
     
     return JsonResponse(kakaoForm.GetForm())
     
-
 def sellingTimeCheck():
     currentDate = dateNowByTimeZone()
     currentDateWithoutTime = currentDate.replace(hour=0, minute=0, second=0, microsecond=0)
@@ -139,7 +138,7 @@ def kakaoView_MenuListup(kakaoPayload):
             }
 
             kakaoMapUrl = 'https://map.kakao.com/link/map/{},{}'.format(
-                menu.store.name, getLatLng(menu.store.addr))
+                menu.store.name, menu.store.latlng)
 
             buttons = [
                 {
@@ -358,7 +357,7 @@ def kakaoView_OrderPayment(kakaoPayload):
     }
 
     kakaoMapUrl = 'https://map.kakao.com/link/map/{},{}'.format(
-        store.name, getLatLng(store.addr))
+        store.name, menu.store.latlng)
     
     buttons = [
         {
@@ -564,7 +563,7 @@ def kakaoView_EatplePassIssuance(kakaoPayload):
         thumbnail = {'imageUrl': ''}
 
         kakaoMapUrl = 'https://map.kakao.com/link/map/{},{}'.format(
-            store.name, getLatLng(store.addr))
+            store.name, menu.store.latlng)
 
         buttons = []
 
@@ -650,9 +649,6 @@ def SET_PickupTime(request):
 
     kakaoPayload = KakaoPayLoad(request)
     return kakaoView_PickupTime(kakaoPayload)
-
-
-
 
 @csrf_exempt
 def SET_OrderSheet(request):

@@ -40,6 +40,11 @@ class KakaoUser(models.Model):
     
     app_user_id = models.IntegerField(default=0)
 
+    location = models.CharField(
+        max_length=STRING_LENGTH, 
+        null=True
+    )
+    
     class Meta:
         abstract = True
 

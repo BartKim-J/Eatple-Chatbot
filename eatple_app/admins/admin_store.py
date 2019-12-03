@@ -10,12 +10,15 @@ from django import forms
 from django.core import validators
 from django.utils.translation import ugettext_lazy as _
 from django.utils.safestring import mark_safe
-class CRNInline(admin.TabularInline):
+class LanlngInline(admin.TabularInline):
     model = CRN
     min_num = 1
 
     readonly_fields = ('CRN_id',)
 
+class CRNInline(admin.TabularInline):
+    model = latlng
+    min_num = 1
 
 class MenuInline(admin.StackedInline):
     model = Menu
@@ -66,6 +69,6 @@ class StoreAdmin(ImportExportMixin, admin.ModelAdmin):
         ('status', ChoiceDropdownFilter), ('area', ChoiceDropdownFilter), ('type', ChoiceDropdownFilter)
     )
     
-    list_display = ('name', 'status', 'store_id', 'crn', 'type', 'area')
+    list_display = ('name', 'status', 'store_id', 'crn', 'type', 'area', 'latlng')
 
-    inlines = [CRNInline, MenuInline]
+    inlines = [LanlngInline, CRNInline, MenuInline]

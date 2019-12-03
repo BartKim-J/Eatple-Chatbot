@@ -33,8 +33,6 @@ class Tag(models.Model):
     def __str__(self):
         return '{}'.format(self.name)
 
-
-
 class PickupTime(models.Model):
     class Meta:
         ordering = ['time']
@@ -50,8 +48,7 @@ class PickupTime(models.Model):
     
     def __str__(self):
         return '{} - {}'.format(self.time.strftime("%H시 %M분"), dict(SELLING_TIME_CATEGORY)[self.sellingTime])
-
-
+        
 class MenuInfo(models.Model):
     store = models.ForeignKey(
         'Store', on_delete=models.CASCADE, null=True)

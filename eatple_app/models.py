@@ -1,6 +1,6 @@
 from eatple_app.model.utils import DefaultImage
 
-from eatple_app.model.store import Store, CRN
+from eatple_app.model.store import Store, CRN, latlng
 from eatple_app.model.store import Category
 
 from eatple_app.model.menu import Menu, PickupTime

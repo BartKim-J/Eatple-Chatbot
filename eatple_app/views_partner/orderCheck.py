@@ -154,6 +154,11 @@ def kakaoView_OrderDetails(kakaoPayload):
     
     return JsonResponse(kakaoForm.GetForm())
 
+# @TODO
+def kakaoView_CalculateDetails(kakaoPaylaod):
+    return errorView('{}'.format(ex))
+
+
 # # # # # # # # # # # # # # # # # # # # # # # # #
 #
 # External View
@@ -162,7 +167,7 @@ def kakaoView_OrderDetails(kakaoPayload):
 
 @csrf_exempt
 def GET_ParnterOrderDetails(request):
-    EatplusSkillLog('GET_OrderDetails')
+    EatplusSkillLog('GET_ParnterOrderDetails')
     try:
         kakaoPayload = KakaoPayLoad(request)
         return kakaoView_OrderDetails(kakaoPayload)
@@ -171,11 +176,11 @@ def GET_ParnterOrderDetails(request):
         return errorView('{} '.format(ex))
 
 @csrf_exempt
-def GET_A(request):
-    EatplusSkillLog('GET_OrderDetails')
+def GET_CalculateDetails(request):
+    EatplusSkillLog('GET_CalculateDetails')
     try:
         kakaoPayload = KakaoPayLoad(request)
-        return kakaoView_OrderDetails(kakaoPayload)
+        return kakaoView_CalculateDetails(kakaoPayload)
 
     except (RuntimeError, TypeError, NameError, KeyError) as ex:
         return errorView('{} '.format(ex))
