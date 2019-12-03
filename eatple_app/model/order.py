@@ -46,7 +46,73 @@ def iamportOrderCancel(order, description='주문취소'):
         return False
     
     return True
+
+#@PROMOTION 
+def promotionOrderUpdate(order):
+    orderDate = dateByTimeZone(order.order_date)
+    orderDateWithoutTime = orderDate.replace(
+        hour=0, minute=0, second=0, microsecond=0)
+
+    currentDate = dateNowByTimeZone()
+    currentDateWithoutTime = currentDate.replace(
+        hour=0, minute=0, second=0, microsecond=0)
+
+    # Time QA DEBUG
+    # currentDate = currentDate.replace(day=4, hour=13, minute=11, second=0, microsecond=0)
+    # currentDateWithoutTime = currentDate.replace(hour=0, minute=0, second=0, microsecond=0)
+    # print(currentDate)
+
+    PROMOTION_DAY = currentDate.replace(month=12, day=10, hour=0, minute=0, second=0, microsecond=0)
     
+    YESTERDAY = PROMOTION_DAY + datetime.timedelta(days=-1)  # Yesterday start
+    TOMORROW = PROMOTION_DAY + datetime.timedelta(days=1)  # Tommorrow start
+
+    # Order Edit Time 16:30 ~ 10:25(~ 10:30)
+    OrderEditTimeStart = PROMOTION_DAY + datetime.timedelta(days=-10)
+    OrderEditTimeEnd = PROMOTION_DAY + datetime.timedelta(hours=17, minutes=55, days=-1)
+    OrderTimeEnd = PROMOTION_DAY + datetime.timedelta(hours=18, minutes=0, days=-1)
+
+    # Pickup Time (10:30 ~)11:00 ~ 16:00
+    PickupTimeStart = PROMOTION_DAY + datetime.timedelta(hours=11, minutes=0)
+    PickupTimeEnd = PROMOTION_DAY + datetime.timedelta(hours=16, minutes=0)
+        
+    # Lunch Order
+    if((currentDate <= PROMOTION_DAY)):
+        # Order Lunch
+        if(OrderTimeEnd <= currentDate) and (currentDate < PickupTimeStart):
+            order.status = ORDER_STATUS_PICKUP_PREPARE
+            order.save()
+            
+        elif(PickupTimeStart <= currentDate) and (currentDate < PickupTimeEnd):
+            if(currentDate >= order.pickup_time):
+                order.status = ORDER_STATUS_PICKUP_WAIT
+                order.save()
+            else:
+                order.status = ORDER_STATUS_PICKUP_PREPARE
+                order.save()
+        # Order Prepare
+        else:
+            if(OrderEditTimeStart <= currentDate) and (currentDate < OrderTimeEnd):
+                if currentDate <= OrderEditTimeEnd:
+                    order.status = ORDER_STATUS_ORDER_CONFIRMED
+                    order.save()
+                else:
+                    order.status = ORDER_STATUS_PICKUP_PREPARE
+                    order.save()
+
+            # Invalid Time Range is Dinner Order Time ( prev phase lunch order ~ dinner order ~ next phase lunch order )
+            else:
+                order.status = ORDER_STATUS_ORDER_EXPIRED
+                order.save()
+
+    # Promotion Expire 
+    else:
+        order.payment_status = ORDER_STATUS
+        order.status = ORDER_STATUS_ORDER_EXPIRED
+        order.save()
+
+    return order
+  
 def orderUpdate(order):
     order = iamportOrderValidation(order)
     
@@ -77,6 +143,10 @@ def orderUpdate(order):
     if(order.payment_status != IAMPORT_ORDER_STATUS_PAID):
         return order
 
+    #@PROMOTION
+    if(order.type == ORDER_TYPE_PROMOTION):
+        return promotionOrderUpdate(order)
+    
     #Ordering State Update    
     menu = order.menu
 

@@ -197,7 +197,7 @@ def kakaoView_PickupTime(kakaoPayload):
         return errorView('Invalid Block Access', '정상적이지 않은 경로거나, 오류가 발생했습니다.\n다시 주문해주세요!')
 
     # @PROMOTION
-    return eventLock()
+    # return eventLock()
 
     # User Validation
     user = userValidation(kakaoPayload)
