@@ -123,7 +123,7 @@ def kakaoView_Home(partner):
             'action': 'block',
             'label': '정산조회',
             'messageText': '로딩중..',
-            'blockId': KAKAO_BLOCK_PARTNER_GET_ORDER_DETAILS,
+            'blockId': KAKAO_BLOCK_PARTNER_CALCULATE,
             'extra': {
                 KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_PARTNER_HOME
             }
