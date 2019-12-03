@@ -208,9 +208,7 @@ def kakaoView_OrderPayment(kakaoPayload):
             type=ORDER_TYPE_PROMOTION
         )
     else:
-        order.pickup_time = order.pickupTimeToDateTime(pickup_time)
-        order.totalPrice = discountPrice
-        order.save()
+        return errorView('Invalid Store Paratmer', '정상적이지 않은 경로거나, 오류가 발생했습니다.\n다시 주문해주세요!')
 
     # Order Record
     try:

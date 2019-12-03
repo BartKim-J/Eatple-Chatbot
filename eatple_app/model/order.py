@@ -61,11 +61,12 @@ def promotionOrderUpdate(order):
     # currentDate = currentDate.replace(day=4, hour=13, minute=11, second=0, microsecond=0)
     # currentDateWithoutTime = currentDate.replace(hour=0, minute=0, second=0, microsecond=0)
     # print(currentDate)
-
-    PROMOTION_DAY = currentDate.replace(month=12, day=10, hour=0, minute=0, second=0, microsecond=0)
     
+    promotion_month = 12
+    promotion_day = int(order.menu.name[0:2])
+
+    PROMOTION_DAY = currentDate.replace(month=promotion_month, day=promotion_day, hour=0, minute=0, second=0, microsecond=0)
     YESTERDAY = PROMOTION_DAY + datetime.timedelta(days=-1)  # Yesterday start
-    TOMORROW = PROMOTION_DAY + datetime.timedelta(days=1)  # Tommorrow start
 
     # Order Edit Time 16:30 ~ 10:25(~ 10:30)
     OrderEditTimeStart = PROMOTION_DAY + datetime.timedelta(days=-10)
@@ -479,7 +480,22 @@ class OrderSheet(models.Model):
         order.order_id = order_id
         order.menu = menu
         order.store = store
-        order.pickup_time = order.pickupTimeToDateTime(pickup_time)
+        
+        #@PROMOTION
+        if(type == ORDER_TYPE_PROMOTION):
+            pickup_time = [x.strip() for x in pickup_time.split(':')]
+            currentTime = dateByTimeZone(timezone.now())
+            datetime_pickup_time = currentTime.replace(
+                                        day=int(menu.name[0:2]),
+                                        hour=int(pickup_time[0]), 
+                                        minute=int(pickup_time[1]),
+                                        second=0,
+                                        microsecond=0
+                                        )
+            order.pickup_time = datetime_pickup_time
+        else:
+            order.pickup_time = order.pickupTimeToDateTime(pickup_time)
+        
         order.totalPrice = totalPrice
         order.count = count
         order.type = type
