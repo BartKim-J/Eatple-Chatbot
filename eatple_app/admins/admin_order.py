@@ -18,6 +18,7 @@ class OrderResource(resources.ModelResource):
             'order_id',
             'order_date',
             'totalPrice',
+            'type'
             'payment_status',
             'status',
             'store__name',
@@ -30,11 +31,9 @@ class OrderResource(resources.ModelResource):
 class OrderAdmin(ImportExportMixin, admin.ModelAdmin):
     resource_class = OrderResource
 
-    """
     readonly_fields = ('ordersheet', 'order_id', 'payment_status', 'status', 'totalPrice', 'menu', 'count', 'store',
                        'order_date', 'pickup_time')
-    """
     
     list_filter = ('order_date', 'store', 'menu', 'payment_status')
-    list_display = ('order_id', 'store', 'menu',
+    list_display = ('order_id', 'store', 'menu', 'type',
                     'payment_status', 'status', 'order_date')

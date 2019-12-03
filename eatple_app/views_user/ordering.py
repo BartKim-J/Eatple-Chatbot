@@ -22,7 +22,8 @@ from eatple_app.views import *
 # STATIC CONFIG
 MENU_LIST_LENGTH = 10
 
-DISCOUNT_FOR_DEBUG = 5900
+#DISCOUNT_FOR_DEBUG = 5900
+DISCOUNT_FOR_DEBUG = None
 
 # # # # # # # # # # # # # # # # # # # # # # # # #
 #
@@ -34,7 +35,7 @@ def eventLock():
     kakaoForm = KakaoForm()
     
     kakaoForm.BasicCard_Push('프로모션 코드를 대화창에 입력해주세요.', 
-                            '일반 메뉴의 경우 12월 10일부터 주문하실 수 있어요.\n지금은 프로모션 메뉴만 이용해주세요.', 
+                            '일반 메뉴의 경우 12월 10일부터 주문하실 수 있어요. 지금은 프로모션 메뉴만 이용해주세요', 
                             {}, 
                             []
                         )
@@ -158,10 +159,10 @@ def kakaoView_MenuListup(kakaoPayload):
                     'webLinkUrl': kakaoMapUrl
                 },
             ]
-
+            
             kakaoForm.BasicCard_Push(
                 '{}'.format(menu.name), 
-                '{}'.format(menu.store.name), 
+                '{}\n{}'.format(menu.store.name, menu.description), 
                 thumbnail, 
                 buttons
             )
@@ -316,6 +317,7 @@ def kakaoView_OrderPayment(kakaoPayload):
             pickup_time=pickup_time,
             totalPrice=discountPrice,
             count=1,
+            type=ORDER_TYPE_NORMAL
         )
     else:
         order.pickup_time = order.pickupTimeToDateTime(pickup_time)

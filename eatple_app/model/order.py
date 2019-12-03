@@ -235,6 +235,13 @@ class Order(models.Model):
         default=ORDER_STATUS_PAYMENT_CHECK,
     )
 
+    type = models.CharField(
+        max_length=WORD_LENGTH, 
+        default=ORDER_TYPE_NORMAL,
+        choices=ORDER_TYPE,
+        help_text='가게 유형*', 
+    )
+    
     update_date = models.DateTimeField(auto_now=True)
     order_date = models.DateTimeField(default=timezone.now)
 
@@ -377,7 +384,7 @@ class OrderSheet(models.Model):
     def save(self, *args, **kwargs):
         super().save()
 
-    def pushOrder(self, user, store, menu, pickup_time, totalPrice, count):
+    def pushOrder(self, user, store, menu, pickup_time, totalPrice, count, type):
         self.user = user
         super().save()
 
@@ -396,7 +403,8 @@ class OrderSheet(models.Model):
         order.store = store
         order.pickup_time = order.pickupTimeToDateTime(pickup_time)
         order.totalPrice = totalPrice
-        order.count = 1
+        order.count = count
+        order.type = type
         order.save()
 
         return order

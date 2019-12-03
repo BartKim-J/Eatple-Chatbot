@@ -64,9 +64,9 @@ def eatplePassValidation(user):
     return None
 
 
-def partnerValidation(KakaoPayload):
+def partnerValidation(kakaoPayload):
     try:
-        app_user_id = KakaoPayload.user_properties['app_user_id']
+        app_user_id = kakaoPayload.user_properties['app_user_id']
         try:
             partner = Partner.objects.get(app_user_id=app_user_id)
             return partner
@@ -75,9 +75,9 @@ def partnerValidation(KakaoPayload):
     except (TypeError, AttributeError, KeyError):
         return None
 
-def userValidation(KakaoPayload):
+def userValidation(kakaoPayload):
     try:
-        app_user_id = KakaoPayload.user_properties['app_user_id']
+        app_user_id = kakaoPayload.user_properties['app_user_id']
         try:
             user = User.objects.get(app_user_id=app_user_id)
             return user
@@ -87,9 +87,9 @@ def userValidation(KakaoPayload):
         return None
 
 
-def menuValidation(KakaoPayload):
+def menuValidation(kakaoPayload):
     try:
-        menu_id = KakaoPayload.dataActionExtra[KAKAO_PARAM_MENU_ID]
+        menu_id = kakaoPayload.dataActionExtra[KAKAO_PARAM_MENU_ID]
         try:
             menu = Menu.objects.get(menu_id=menu_id)
             return menu
@@ -99,9 +99,9 @@ def menuValidation(KakaoPayload):
         return None
     
     
-def storeValidation(KakaoPayload):
+def storeValidation(kakaoPayload):
     try:
-        store_id = KakaoPayload.dataActionExtra[KAKAO_PARAM_STORE_ID]
+        store_id = kakaoPayload.dataActionExtra[KAKAO_PARAM_STORE_ID]
         try:
             store = Store.objects.get(store_id=store_id)
             return store
@@ -111,9 +111,9 @@ def storeValidation(KakaoPayload):
         return None
 
 
-def orderValidation(KakaoPayload):
+def orderValidation(kakaoPayload):
     try:
-        order_id = KakaoPayload.dataActionExtra[KAKAO_PARAM_ORDER_ID]
+        order_id = kakaoPayload.dataActionExtra[KAKAO_PARAM_ORDER_ID]
         try:
             order = Order.objects.get(order_id=order_id)            
             return order
@@ -123,17 +123,17 @@ def orderValidation(KakaoPayload):
         return None
 
     
-def pickupTimeValidation(KakaoPayload):
+def pickupTimeValidation(kakaoPayload):
     try:
-        pickupTime = KakaoPayload.dataActionExtra[KAKAO_PARAM_PICKUP_TIME]
+        pickupTime = kakaoPayload.dataActionExtra[KAKAO_PARAM_PICKUP_TIME]
         return pickupTime
     except (TypeError, AttributeError, KeyError):
         return None
 
 
-def prevBlockValidation(KakaoPayload):
+def prevBlockValidation(kakaoPayload):
     try:
-        prev_block_id = KakaoPayload.dataActionExtra[KAKAO_PARAM_PREV_BLOCK_ID]
+        prev_block_id = kakaoPayload.dataActionExtra[KAKAO_PARAM_PREV_BLOCK_ID]
         return prev_block_id
     except (TypeError, AttributeError, KeyError):
         return None

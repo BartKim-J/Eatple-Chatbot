@@ -117,7 +117,6 @@ class StoreInfo(models.Model):
     name = models.CharField(
         max_length=WORD_LENGTH, 
         help_text='상호*',
-        unique=True
     )
 
     addr = models.CharField(

@@ -14,21 +14,22 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path
+from django.urls import path, include
 
 from django.conf import settings
 from django.conf.urls.static import static
+from django.conf.urls import url
 
 from eatple_app import views
 
 # Urls
-urlpatterns = []
-
-urlpatterns += [
+urlpatterns = [
     # Admin
     path('admin/', admin.site.urls),
+]
 
-    # Kakao Plus User Skills
+# Urls - User App
+urlpatterns += [
     # Home
     path('skill/user/home', views.GET_UserHome),
 
@@ -56,6 +57,13 @@ urlpatterns += [
          views.SET_ConfirmEditPickupTime),
 ]
 
+# Urls - Events App
+urlpatterns += [
+    # Home
+    path('skill/promotion/home', views.GET_ProMotionHome),
+]
+
+# Urls - Partner App
 urlpatterns += [
     # Kakao Plus Partner Skills
     # Home
@@ -65,6 +73,7 @@ urlpatterns += [
     path('skill/partner/orderView/get_order_details', views.GET_ParnterOrderDetails),
 ]
 
+# Urls - KAKAO API
 urlpatterns += [
     path('kakao/auth/leave', views.POST_KAKAO_Leave),
     path('kakao/channel/log', views.POST_KAKAO_ChannelLog)

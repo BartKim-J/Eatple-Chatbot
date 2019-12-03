@@ -95,16 +95,19 @@ def kakaoView_Home(user):
         },
     ]
     
+    """
+    {
+        'action': 'block',
+        'label': '최근 주문내역',
+        'messageText': '로딩중..',
+        'blockId': KAKAO_BLOCK_USER_ORDER_DETAILS,
+        'extra': {
+            KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_HOME
+        }
+    },
+    """
     QUICKREPLIES_MAP = [
-        {
-            'action': 'block',
-            'label': '최근 주문내역',
-            'messageText': '로딩중..',
-            'blockId': KAKAO_BLOCK_USER_ORDER_DETAILS,
-            'extra': {
-                KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_HOME
-            }
-        },
+    
         {
             'action': 'block', 
             'label': '위치변경',

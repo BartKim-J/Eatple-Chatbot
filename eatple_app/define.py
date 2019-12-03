@@ -123,6 +123,17 @@ OC_STATUS = [
 ]
 
 # STORE_TYPE 
+ORDER_TYPE_NORMAL = "normal"
+ORDER_TYPE_EVENT = "event"
+ORDER_TYPE_PROMOTION = "promotion"
+ORDER_TYPE = [
+    (ORDER_TYPE_NORMAL, '일반'),
+    (ORDER_TYPE_EVENT, '이벤트'),
+    (ORDER_TYPE_PROMOTION, '프로모션'),
+]
+
+
+# STORE_TYPE 
 STORE_TYPE_NORMAL = "normal"
 STORE_TYPE_EVENT = "event"
 STORE_TYPE = [
