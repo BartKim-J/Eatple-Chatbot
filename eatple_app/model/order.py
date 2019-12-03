@@ -24,7 +24,7 @@ def iamportOrderValidation(order):
     
     except Iamport.HttpError as http_error:
         if(http_error.code == 404):
-            #order.payment_status = IAMPORT_ORDER_STATUS_CANCELLED
+            order.payment_status = IAMPORT_ORDER_STATUS_CANCELLED
             order.save()
 
         return order
@@ -58,7 +58,7 @@ def promotionOrderUpdate(order):
         hour=0, minute=0, second=0, microsecond=0)
 
     # Time QA DEBUG
-    # currentDate = currentDate.replace(day=4, hour=13, minute=11, second=0, microsecond=0)
+    # currentDate = currentDate.replace(day=11, hour=0, minute=0, second=0, microsecond=0)
     # currentDateWithoutTime = currentDate.replace(hour=0, minute=0, second=0, microsecond=0)
     # print(currentDate)
     
@@ -66,19 +66,20 @@ def promotionOrderUpdate(order):
     promotion_day = int(order.menu.name[0:2])
 
     PROMOTION_DAY = currentDate.replace(month=promotion_month, day=promotion_day, hour=0, minute=0, second=0, microsecond=0)
+    TOMORROW  = PROMOTION_DAY + datetime.timedelta(days=1)
     YESTERDAY = PROMOTION_DAY + datetime.timedelta(days=-1)  # Yesterday start
 
     # Order Edit Time 16:30 ~ 10:25(~ 10:30)
-    OrderEditTimeStart = PROMOTION_DAY + datetime.timedelta(days=-10)
+    OrderEditTimeStart = PROMOTION_DAY + datetime.timedelta(days=-14)
     OrderEditTimeEnd = PROMOTION_DAY + datetime.timedelta(hours=17, minutes=55, days=-1)
     OrderTimeEnd = PROMOTION_DAY + datetime.timedelta(hours=18, minutes=0, days=-1)
 
     # Pickup Time (10:30 ~)11:00 ~ 16:00
     PickupTimeStart = PROMOTION_DAY + datetime.timedelta(hours=11, minutes=0)
-    PickupTimeEnd = PROMOTION_DAY + datetime.timedelta(hours=16, minutes=0)
+    PickupTimeEnd = TOMORROW
         
     # Lunch Order
-    if((currentDate <= PROMOTION_DAY)):
+    if((currentDate <= TOMORROW)):
         # Order Lunch
         if(OrderTimeEnd <= currentDate) and (currentDate < PickupTimeStart):
             order.status = ORDER_STATUS_PICKUP_PREPARE
@@ -108,7 +109,6 @@ def promotionOrderUpdate(order):
 
     # Promotion Expire 
     else:
-        order.payment_status = ORDER_STATUS
         order.status = ORDER_STATUS_ORDER_EXPIRED
         order.save()
 
@@ -160,9 +160,9 @@ def orderUpdate(order):
         hour=0, minute=0, second=0, microsecond=0)
 
     # Time QA DEBUG
-    # currentDate = currentDate.replace(day=4, hour=13, minute=11, second=0, microsecond=0)
-    # currentDateWithoutTime = currentDate.replace(hour=0, minute=0, second=0, microsecond=0)
-    # print(currentDate)
+    #currentDate = currentDate.replace(day=4, hour=13, minute=11, second=0, microsecond=0)
+    #currentDateWithoutTime = currentDate.replace(hour=0, minute=0, second=0, microsecond=0)
+    #print(currentDate)
     
     YESTERDAY = currentDateWithoutTime + \
         datetime.timedelta(days=-1)  # Yesterday start

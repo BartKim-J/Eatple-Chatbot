@@ -33,6 +33,7 @@ def userSignUp(userProfile):
 
     return user
 
+
 def kakaoView_SignUp():
     EatplusSkillLog('Sign Up')
 
@@ -56,12 +57,12 @@ def kakaoView_SignUp():
 
     kakaoForm.BasicCard_Push(
         '아직 잇플에 연동되지 않은 \n카카오 계정입니다.',
-        '함께 연동하러 가볼까요?', 
-        thumbnail, 
+        '함께 연동하러 가볼까요?',
+        thumbnail,
         buttons
     )
     kakaoForm.BasicCard_Add()
-    
+
     return JsonResponse(kakaoForm.GetForm())
 
 
@@ -69,11 +70,11 @@ def kakaoView_Home(user):
     EatplusSkillLog('Home')
 
     kakaoForm = KakaoForm()
-    
+
     orderManager = UserOrderManager(user)
     orderManager.orderPaidCheck()
-    orderManager.availableOrderStatusUpdate()        
-  
+    orderManager.availableOrderStatusUpdate()
+
     BTN_MAP = [
         {
             'action': 'block',
@@ -94,20 +95,8 @@ def kakaoView_Home(user):
             }
         },
     ]
-    
+
     """
-    {
-        'action': 'block',
-        'label': '최근 주문내역',
-        'messageText': '로딩중..',
-        'blockId': KAKAO_BLOCK_USER_ORDER_DETAILS,
-        'extra': {
-            KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_HOME
-        }
-    },
-    """
-    QUICKREPLIES_MAP = [
-    
         {
             'action': 'block', 
             'label': '위치변경',
@@ -117,11 +106,21 @@ def kakaoView_Home(user):
                 KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_HOME
             }
         },
-
+    """
+    QUICKREPLIES_MAP = [
         {
-            'action': 'block', 
+            'action': 'block',
+            'label': '최근 주문내역',
+            'messageText': '로딩중..',
+            'blockId': KAKAO_BLOCK_USER_ORDER_DETAILS,
+            'extra': {
+                KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_HOME
+            }
+        },
+        {
+            'action': 'block',
             'label': '사용 메뉴얼',
-            'messageText': '로딩중..',    
+            'messageText': '로딩중..',
             'blockId': KAKAO_BLOCK_USER_MANUAL,
             'extra': {
                 KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_HOME
@@ -130,24 +129,25 @@ def kakaoView_Home(user):
     ]
 
     thumbnail = {
-            'imageUrl': '',
-            'fixedRatio': 'true',
-            'width': 800,
-            'height': 800,
-        }
+        'imageUrl': '',
+        'fixedRatio': 'true',
+        'width': 800,
+        'height': 800,
+    }
 
     buttons = BTN_MAP
 
     kakaoForm.BasicCard_Push(
-        '잇플 홈 화면입니다.', 
-        '아래 명령어 중에 골라주세요!', 
-        thumbnail, 
+        '잇플 홈 화면입니다.',
+        '아래 명령어 중에 골라주세요!',
+        thumbnail,
         buttons
     )
     kakaoForm.BasicCard_Add()
-    
+
     kakaoForm.QuickReplies_AddWithMap(QUICKREPLIES_MAP)
     return JsonResponse(kakaoForm.GetForm())
+
 
 @csrf_exempt
 def GET_UserHome(request):
@@ -162,10 +162,10 @@ def GET_UserHome(request):
 
                 kakaoResponse = requests.get('{url}?rest_api_key={rest_api_key}'.format(
                     url=otpURL, rest_api_key=KAKAO_REST_API_KEY))
-                
+
                 if(kakaoResponse.status_code == 200):
                     user = userSignUp(kakaoResponse.json())
-                    
+
                     return kakaoView_Home(user)
 
                 return kakaoView_SignUp()
