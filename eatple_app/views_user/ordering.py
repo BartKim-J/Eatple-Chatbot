@@ -121,8 +121,13 @@ def kakaoView_MenuListup(kakaoPayload):
         
         return errorView('Get Invalid Selling Time', '오늘 점심은 이미 마감되었어요.\n내일 점심을 기대해주세요.')
 
-
-    menuList = Menu.objects.filter(sellingTime=sellingTime, store__type=STORE_TYPE_NORMAL)[:MENU_LIST_LENGTH]
+    #@DEBUG 
+    # area = STORE_AREA_A_3
+    menuList = Menu.objects.filter(
+        sellingTime=sellingTime, 
+        store__type=STORE_TYPE_NORMAL,
+        store__area=area,
+        )[:MENU_LIST_LENGTH]
 
     if menuList:
         kakaoForm = KakaoForm()
@@ -197,7 +202,7 @@ def kakaoView_PickupTime(kakaoPayload):
         return errorView('Invalid Block Access', '정상적이지 않은 경로거나, 오류가 발생했습니다.\n다시 주문해주세요!')
 
     # @PROMOTION
-    # return eventLock()
+    return eventLock()
 
     # User Validation
     user = userValidation(kakaoPayload)
