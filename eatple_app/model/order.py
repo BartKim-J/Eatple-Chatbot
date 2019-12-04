@@ -28,14 +28,14 @@ def iamportOrderValidation(order):
         order.payment_status = IAMPORT_ORDER_STATUS_CANCELLED
         order.save()
 
-        print(e.code)
-        print(e.reason)
+        print(http_error.code)
+        print(http_error.reason)
         
         return order
 
     order.payment_status = response['status']
     order.save()
-        
+    
     return order    
 
 def iamportOrderCancel(order, description='주문취소'):
@@ -379,10 +379,14 @@ class OrderManager():
         return self.getAvailableOrders()
 
     def orderPaidCheck(self):
+        currentDate = dateNowByTimeZone()
+        expireDate = currentDate + datetime.timedelta(hours=-12)
+        
         readyPayOrders = Order.objects.filter(
-            Q(payment_status=IAMPORT_ORDER_STATUS_READY)
+            Q(payment_status=IAMPORT_ORDER_STATUS_READY) &
+            Q(order_date__gt=expireDate)
         )
-
+    
         # Order Status Update
         for order in readyPayOrders:
             orderUpdate(order)
