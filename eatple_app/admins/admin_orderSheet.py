@@ -12,10 +12,8 @@ from django.utils.translation import ugettext_lazy as _
 from django.utils.safestring import mark_safe
 
 class OrderInline(ImportExportMixin, admin.TabularInline):
-    """
-        readonly_fields = ('order_id', 'payment_status', 'status', 'totalPrice', 'menu', 'count', 'store',
-                       'order_date', 'pickup_time')
-    """
+    readonly_fields = ('type', 'order_id', 'payment_status', 'status', 'totalPrice', 'menu', 'count', 'store',
+                    'order_date', 'pickup_time')
 
     model = Order
     extra = 0
@@ -31,7 +29,7 @@ class OrderInline(ImportExportMixin, admin.TabularInline):
 class OrderSheetAdmin(ImportExportMixin, admin.ModelAdmin):
     readonly_fields = ('management_code', 'user', 'create_date', 'update_date')
 
-    list_filter = ('create_date',)
+    list_filter = ('create_date', 'user')
     list_display = ('management_code', 'user', 'create_date', 'update_date')
 
     inlines = [OrderInline]

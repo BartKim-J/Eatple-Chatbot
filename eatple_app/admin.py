@@ -19,7 +19,6 @@ from eatple_app.admins.admin_orderSheet import OrderSheetAdmin
 from eatple_app.admins.admin_orderRecordSheet import OrderRecordSheetAdmin
 from eatple_app.admins.admin_defaultImage import DefaultImageAdmin
 
-
 class HideAdmin(admin.ModelAdmin):
     def get_model_perms(self, request):
         """
@@ -30,7 +29,7 @@ class HideAdmin(admin.ModelAdmin):
 admin.site.register(PickupTime, HideAdmin)
 admin.site.register(Category, HideAdmin)
 admin.site.register(Tag, HideAdmin)
-admin.site.register(OrderSheet, HideAdmin)
+admin.site.register(OrderSheet, OrderSheetAdmin)
 
 admin.site.register(DefaultImage, DefaultImageAdmin)
 

@@ -1,11 +1,11 @@
+# Define
+from eatple_app.define import *
+
 # Django Library
 from django.urls import reverse
 from django.db import models
 from django.db.models import Q
 from django_mysql.models import Model
-
-# Define
-from eatple_app.define import *
 
 
 def iamportOrderValidation(order):
@@ -19,14 +19,18 @@ def iamportOrderValidation(order):
     except Iamport.ResponseError as e:
         order.payment_status = IAMPORT_ORDER_STATUS_FAILED
         order.save()
+        print(e.code)
+        print(e.message)
         
         return order
     
     except Iamport.HttpError as http_error:
-        if(http_error.code == 404):
-            order.payment_status = IAMPORT_ORDER_STATUS_CANCELLED
-            order.save()
+        order.payment_status = IAMPORT_ORDER_STATUS_CANCELLED
+        order.save()
 
+        print(e.code)
+        print(e.reason)
+        
         return order
 
     order.payment_status = response['status']

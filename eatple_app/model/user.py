@@ -37,8 +37,6 @@ class KakaoUser(models.Model):
         max_length=STRING_LENGTH, null=True)
     ci_authenticated_at = models.CharField(
         max_length=STRING_LENGTH, null=True )
-    
-
 
     location = models.CharField(
         max_length=STRING_LENGTH, 

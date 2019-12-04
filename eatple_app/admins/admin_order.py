@@ -31,7 +31,6 @@ class OrderResource(resources.ModelResource):
 class OrderAdmin(ImportExportMixin, admin.ModelAdmin):
     resource_class = OrderResource
 
-    """
     readonly_fields = (
         'ordersheet', 
         'order_id', 
@@ -45,7 +44,6 @@ class OrderAdmin(ImportExportMixin, admin.ModelAdmin):
         'pickup_time',
         'type',
     )
-    """
     
     list_filter = (
         'order_date', 

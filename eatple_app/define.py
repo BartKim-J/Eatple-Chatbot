@@ -15,7 +15,8 @@ import json
 
 import pytz
 
-from iamport import Iamport
+from eatple_app.module_iamport.Iamport import Iamport
+
 from phonenumber_field.modelfields import PhoneNumberField
 
 from django_admin_listfilter_dropdown.filters import DropdownFilter, RelatedDropdownFilter, ChoiceDropdownFilter
