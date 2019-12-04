@@ -62,10 +62,10 @@ def orderCheckTimeValidation():
     return False
 
 def kakaoView_OrderDetails(kakaoPayload):
-    # User Validation
+    # Partner Validation
     partner = partnerValidation(kakaoPayload)
     if (partner == None):
-        return GET_PartnerHome(request)
+        return errorView('Invalid Block Access', '정상적이지 않은 경로거나, 잘못된 계정입니다.')
 
     ORDER_LIST_QUICKREPLIES_MAP = [
         {
@@ -156,6 +156,12 @@ def kakaoView_OrderDetails(kakaoPayload):
 
 # @TODO
 def kakaoView_CalculateDetails(kakaoPaylaod):
+    
+    # Partner Validation
+    partner = partnerValidation(kakaoPayload)
+    if (partner == None):
+        return errorView('Invalid Block Access', '정상적이지 않은 경로거나, 잘못된 계정입니다.')
+
     return errorView('{}'.format(ex))
 
 
@@ -170,6 +176,12 @@ def GET_ParnterOrderDetails(request):
     EatplusSkillLog('GET_ParnterOrderDetails')
     try:
         kakaoPayload = KakaoPayLoad(request)
+        
+        # User Validation
+        partner = partnerValidation(kakaoPayload)
+        if (partner == None):
+            return GET_PartnerHome(request)
+        
         return kakaoView_OrderDetails(kakaoPayload)
 
     except (RuntimeError, TypeError, NameError, KeyError) as ex:
@@ -180,6 +192,12 @@ def GET_CalculateDetails(request):
     EatplusSkillLog('GET_CalculateDetails')
     try:
         kakaoPayload = KakaoPayLoad(request)
+        
+        # User Validation
+        partner = partnerValidation(kakaoPayload)
+        if (partner == None):
+            return GET_PartnerHome(request)
+        
         return kakaoView_CalculateDetails(kakaoPayload)
 
     except (RuntimeError, TypeError, NameError, KeyError) as ex:

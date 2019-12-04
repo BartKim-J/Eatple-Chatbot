@@ -98,7 +98,7 @@ def kakaoView_MenuListup(kakaoPayload):
     # User Validation
     user = userValidation(kakaoPayload)
     if (user == None):
-        return GET_UserHome(request)
+        return errorView('Invalid Block Access', '정상적이지 않은 경로거나, 잘못된 계정입니다.')
 
     # User's Eatple Pass Validation
     eatplePassStatus = eatplePassValidation(user)
@@ -207,7 +207,7 @@ def kakaoView_PickupTime(kakaoPayload):
     # User Validation
     user = userValidation(kakaoPayload)
     if (user == None):
-        return GET_UserHome(request)
+        return errorView('Invalid Block Access', '정상적이지 않은 경로거나, 잘못된 계정입니다.')
 
     order = orderValidation(kakaoPayload)
     if(order != None):
@@ -288,12 +288,12 @@ def kakaoView_OrderPayment(kakaoPayload):
     prev_block_id = prevBlockValidation(kakaoPayload)
     if(prev_block_id != KAKAO_BLOCK_USER_SET_PICKUP_TIME and prev_block_id != KAKAO_BLOCK_USER_SET_ORDER_SHEET):
         return errorView('Invalid Block Access', '정상적이지 않은 경로거나, 오류가 발생했습니다.\n다시 주문해주세요!')
-
+    
     # User Validation
     user = userValidation(kakaoPayload)
     if (user == None):
-        return GET_UserHome(request)
-
+        return errorView('Invalid Block Access', '정상적이지 않은 경로거나, 잘못된 계정입니다.')
+    
     # User's Eatple Pass Validation
     eatplePassStatus = eatplePassValidation(user)
     if(eatplePassStatus != None):
@@ -432,11 +432,11 @@ def kakaoView_OrderPaymentCheck(kakaoPayload):
     prev_block_id = prevBlockValidation(kakaoPayload)
     if(prev_block_id != KAKAO_BLOCK_USER_SET_ORDER_SHEET):
         return errorView('Invalid Block Access', '정상적이지 않은 경로거나, 오류가 발생했습니다.\n다시 주문해주세요!')
-    
+
     # User Validation
     user = userValidation(kakaoPayload)
     if (user == None):
-        return GET_UserHome(request)
+        return errorView('Invalid Block Access', '정상적이지 않은 경로거나, 잘못된 계정입니다.')
 
     store = storeValidation(kakaoPayload)
     menu = menuValidation(kakaoPayload)
@@ -532,12 +532,12 @@ def kakaoView_EatplePassIssuance(kakaoPayload):
         prev_block_id = prevBlockValidation(kakaoPayload)
         if(prev_block_id != KAKAO_BLOCK_USER_SET_ORDER_SHEET):
             return errorView('Invalid Block Access', '정상적이지 않은 경로거나, 오류가 발생했습니다.')
-        
+
         # User Validation
         user = userValidation(kakaoPayload)
         if (user == None):
-            return GET_UserHome(request)
-
+            return errorView('Invalid Block Access', '정상적이지 않은 경로거나, 오류가 발생했습니다.\n다시 주문해주세요!')
+            
         store = storeValidation(kakaoPayload)
         menu = menuValidation(kakaoPayload)
         order = orderValidation(kakaoPayload)
@@ -644,6 +644,12 @@ def GET_Menu(request):
 
     try:
         kakaoPayload = KakaoPayLoad(request)
+        
+        # User Validation
+        user = userValidation(kakaoPayload)
+        if (user == None):
+            return GET_UserHome(request)
+        
         return kakaoView_MenuListup(kakaoPayload)
     except (RuntimeError, TypeError, NameError, KeyError) as ex:
         return errorView('{}'.format(ex))
@@ -653,9 +659,17 @@ def GET_Menu(request):
 def SET_PickupTime(request):
     EatplusSkillLog('Get PickupTime')
 
+    try:
+        kakaoPayload = KakaoPayLoad(request)
 
-    kakaoPayload = KakaoPayLoad(request)
-    return kakaoView_PickupTime(kakaoPayload)
+        # User Validation
+        user = userValidation(kakaoPayload)
+        if (user == None):
+            return GET_UserHome(request)
+
+        return kakaoView_PickupTime(kakaoPayload)
+    except (RuntimeError, TypeError, NameError, KeyError) as ex:
+        return errorView('{}'.format(ex))
 
 @csrf_exempt
 def SET_OrderSheet(request):
@@ -663,6 +677,11 @@ def SET_OrderSheet(request):
     try:
         kakaoPayload = KakaoPayLoad(request)
 
+        # User Validation
+        user = userValidation(kakaoPayload)
+        if (user == None):
+            return GET_UserHome(request)
+        
         # Block Validation
         prev_block_id = prevBlockValidation(kakaoPayload)
         if(prev_block_id != KAKAO_BLOCK_USER_SET_PICKUP_TIME and prev_block_id != KAKAO_BLOCK_USER_SET_ORDER_SHEET):

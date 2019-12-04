@@ -75,10 +75,10 @@ def PromotionEatplePassValidation(user):
 # # # # # # # # # # # # # # # # # # # # # # # # #
    
 def kakaoView_MenuListup(kakaoPayload):
-    # User Validation
+     # User Validation
     user = userValidation(kakaoPayload)
     if (user == None):
-        return GET_UserHome(request)
+        return errorView('Invalid Block Access', '정상적이지 않은 경로거나, 잘못된 계정입니다.')
 
     # User's Eatple Pass Validation
     eatplePassStatus = PromotionEatplePassValidation(user)
@@ -174,7 +174,7 @@ def kakaoView_OrderPayment(kakaoPayload):
     # User Validation
     user = userValidation(kakaoPayload)
     if (user == None):
-        return GET_UserHome(request)
+        return errorView('Invalid Block Access', '정상적이지 않은 경로거나, 잘못된 계정입니다.')
 
     # User's Eatple Pass Validation
     eatplePassStatus = PromotionEatplePassValidation(user)
@@ -326,7 +326,7 @@ def kakaoView_OrderPaymentCheck(kakaoPayload):
     # User Validation
     user = userValidation(kakaoPayload)
     if (user == None):
-        return GET_UserHome(request)
+        return errorView('Invalid Block Access', '정상적이지 않은 경로거나, 잘못된 계정입니다.')
 
     store = storeValidation(kakaoPayload)
     menu = menuValidation(kakaoPayload)
@@ -420,7 +420,7 @@ def kakaoView_EatplePassIssuance(kakaoPayload):
         # User Validation
         user = userValidation(kakaoPayload)
         if (user == None):
-            return GET_UserHome(request)
+            return errorView('Invalid Block Access', '정상적이지 않은 경로거나, 오류가 발생했습니다.\n다시 주문해주세요!')
 
         store = storeValidation(kakaoPayload)
         menu = menuValidation(kakaoPayload)

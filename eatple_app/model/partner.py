@@ -14,8 +14,10 @@ from eatple_app.define import *
 
 
 class KakaoUser(models.Model):
+    app_user_id = models.IntegerField(default=0)
+    
     nickname = models.CharField(
-    max_length=USER_NICKNAME_LENGTH, null=True)
+        max_length=WORD_LENGTH, null=True)
     
     phone_number = PhoneNumberField(
         max_length=WORD_LENGTH, null=True)
@@ -36,8 +38,6 @@ class KakaoUser(models.Model):
     ci_authenticated_at = models.CharField(
         max_length=STRING_LENGTH, null=True )
     
-    app_user_id = models.IntegerField(default=0)
-
     class Meta:
         abstract = True
 class Partner(KakaoUser, models.Model):
@@ -67,4 +67,9 @@ class Partner(KakaoUser, models.Model):
 
         # Methods
     def __str__(self):
-        return '{} : {}'.format(self.store.name, self.app_user_id)
+        if(self.store == None):
+            store_name = "N/A"
+        else:
+            store_name = self.store.name
+            
+        return '{} : {}'.format(store_name, self.app_user_id)

@@ -44,8 +44,8 @@ def kakaoView_EatplePass(kakaoPayload):
     # User Validation
     user = userValidation(kakaoPayload)
     if (user == None):
-        return GET_UserHome(request)
-
+        return errorView('Invalid Block Access', '정상적이지 않은 경로거나, 잘못된 계정입니다.')
+    
     ORDER_LIST_QUICKREPLIES_MAP = [
         {
             'action': 'block', 
@@ -187,7 +187,7 @@ def kakaoView_OrderDetails(kakaoPayload):
     # User Validation
     user = userValidation(kakaoPayload)
     if (user == None):
-        return GET_UserHome(request)
+        return errorView('Invalid Block Access', '정상적이지 않은 경로거나, 잘못된 계정입니다.')
 
     ORDER_LIST_QUICKREPLIES_MAP = [
         {
@@ -269,6 +269,12 @@ def GET_OrderDetails(request):
     EatplusSkillLog('GET_OrderDetails')
     try:
         kakaoPayload = KakaoPayLoad(request)
+        
+        # User Validation
+        user = userValidation(kakaoPayload)
+        if (user == None):
+            return GET_UserHome(request)
+        
         return kakaoView_OrderDetails(kakaoPayload)
 
     except (RuntimeError, TypeError, NameError, KeyError) as ex:
@@ -279,6 +285,12 @@ def GET_EatplePass(request):
     EatplusSkillLog('GET_EatplePass')
     try:
         kakaoPayload = KakaoPayLoad(request)
+        
+        # User Validation
+        user = userValidation(kakaoPayload)
+        if (user == None):
+            return GET_UserHome(request)
+            
         return kakaoView_EatplePass(kakaoPayload)
 
     except (RuntimeError, TypeError, NameError, KeyError) as ex:

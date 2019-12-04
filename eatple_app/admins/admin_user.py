@@ -14,7 +14,6 @@ from django.utils.safestring import mark_safe
 class UserAdmin(ImportExportMixin, admin.ModelAdmin):
     readonly_fields = (
         'app_user_id', 
-        'nickname',
         'phone_number', 
         'email', 
         'birthyear', 
@@ -33,7 +32,6 @@ class UserAdmin(ImportExportMixin, admin.ModelAdmin):
     
     list_display = (
         'app_user_id', 
-        'nickname',
         'phone_number', 
         'email', 
         'gender',

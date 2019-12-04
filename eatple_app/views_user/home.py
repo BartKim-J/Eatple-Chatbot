@@ -20,7 +20,6 @@ from eatple_app.views_system.debugger import *
 
 def userSignUp(userProfile):
     user = User.signUp(
-        nickname=userProfile['nickname'],
         phone_number=userProfile['phone_number'],
         email=userProfile['email'],
         birthyear=userProfile['birthyear'],

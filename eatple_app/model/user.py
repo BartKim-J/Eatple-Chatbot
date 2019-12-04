@@ -14,10 +14,10 @@ from eatple_app.model.utils import OverwriteStorage
 from eatple_app.model.utils import logo_directory_path
 
 class KakaoUser(models.Model):
+    app_user_id = models.IntegerField(default=0)
+    
     nickname = models.CharField(
-        max_length=USER_NICKNAME_LENGTH, 
-        null=True
-    )
+        max_length=WORD_LENGTH, null=True)
     
     phone_number = PhoneNumberField(
         max_length=WORD_LENGTH, null=True)
@@ -38,7 +38,7 @@ class KakaoUser(models.Model):
     ci_authenticated_at = models.CharField(
         max_length=STRING_LENGTH, null=True )
     
-    app_user_id = models.IntegerField(default=0)
+
 
     location = models.CharField(
         max_length=STRING_LENGTH, 
@@ -53,7 +53,7 @@ class KakaoUser(models.Model):
 
 class User(KakaoUser, models.Model):
     class Meta:
-        ordering = ['-nickname']
+        ordering = ['-app_user_id']
     
     create_date = models.DateTimeField(auto_now=True)
 

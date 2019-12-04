@@ -38,8 +38,8 @@ def kakaoView_UseEatplePass(kakaoPayload):
     # User Validation
     user = userValidation(kakaoPayload)
     if (user == None):
-        return GET_UserHome(request)
-
+        return errorView('Invalid Block Access', '정상적이지 않은 경로거나, 잘못된 계정입니다.')
+    
     order = orderValidation(kakaoPayload)
     if(order == None or user == None):
         return errorView('Invalid Paratmer', '정상적이지 않은 주문번호이거나\n진행 중 오류가 발생했습니다.')
@@ -114,8 +114,8 @@ def kakaoView_ConfirmUseEatplePass(kakaoPayload):
     # User Validation
     user = userValidation(kakaoPayload)
     if (user == None):
-        return GET_UserHome(request)
-
+        return errorView('Invalid Block Access', '정상적이지 않은 경로거나, 잘못된 계정입니다.')
+    
     order = orderValidation(kakaoPayload)
     if(order == None or user == None):
         return errorView('Invalid Paratmer', '정상적이지 않은 주문번호이거나\n진행 중 오류가 발생했습니다.')
@@ -187,7 +187,7 @@ def kakaoView_OrderCancel(kakaoPayload):
     # User Validation
     user = userValidation(kakaoPayload)
     if (user == None):
-        return GET_UserHome(request)
+        return errorView('Invalid Block Access', '정상적이지 않은 경로거나, 잘못된 계정입니다.')
 
     order = orderValidation(kakaoPayload)
     if(order == None):
@@ -283,8 +283,8 @@ def kakaoView_EditPickupTime(kakaoPayload):
     # User Validation
     user = userValidation(kakaoPayload)
     if (user == None):
-        return GET_UserHome(request)
-
+        return errorView('Invalid Block Access', '정상적이지 않은 경로거나, 잘못된 계정입니다.')
+    
     order = orderValidation(kakaoPayload)
     if(order == None):
         return errorView('Invalid Paratmer', '정상적이지 않은 주문번호이거나\n진행 중 오류가 발생했습니다.')
@@ -332,7 +332,7 @@ def kakaoView_ConfirmEditPickupTime(kakaoPayload):
     # User Validation
     user = userValidation(kakaoPayload)
     if (user == None):
-        return GET_UserHome(request)
+        return errorView('Invalid Block Access', '정상적이지 않은 경로거나, 잘못된 계정입니다.')
 
     order = orderValidation(kakaoPayload)
     pickup_time = pickupTimeValidation(kakaoPayload)
@@ -396,6 +396,12 @@ def GET_EditPickupTime(request):
     EatplusSkillLog('GET_EditPickupTime')
     try:
         kakaoPayload = KakaoPayLoad(request)
+        
+        # User Validation
+        user = userValidation(kakaoPayload)
+        if (user == None):
+            return GET_UserHome(request)
+        
         return kakaoView_EditPickupTime(kakaoPayload)
 
     except (RuntimeError, TypeError, NameError, KeyError) as ex:
@@ -406,6 +412,12 @@ def SET_ConfirmEditPickupTime(request):
     EatplusSkillLog('SET_ConfirmEditPickupTime')
     try:
         kakaoPayload = KakaoPayLoad(request)
+
+        # User Validation
+        user = userValidation(kakaoPayload)
+        if (user == None):
+            return GET_UserHome(request)
+        
         return kakaoView_ConfirmEditPickupTime(kakaoPayload)
 
     except (RuntimeError, TypeError, NameError, KeyError) as ex:
@@ -417,6 +429,12 @@ def GET_ConfirmUseEatplePass(request):
     EatplusSkillLog('GET_ConfirmUseEatplePass')
     try:
         kakaoPayload = KakaoPayLoad(request)
+
+        # User Validation
+        user = userValidation(kakaoPayload)
+        if (user == None):
+            return GET_UserHome(request)
+        
         return kakaoView_ConfirmUseEatplePass(kakaoPayload)
 
     except (RuntimeError, TypeError, NameError, KeyError) as ex:
@@ -427,6 +445,12 @@ def POST_UseEatplePass(request):
     EatplusSkillLog('POST_UserEatplePass')
     try:
         kakaoPayload = KakaoPayLoad(request)
+
+        # User Validation
+        user = userValidation(kakaoPayload)
+        if (user == None):
+            return GET_UserHome(request)
+        
         return kakaoView_UseEatplePass(kakaoPayload)
 
     except (RuntimeError, TypeError, NameError, KeyError) as ex:
@@ -439,6 +463,12 @@ def POST_OrderCancel(request):
 
     try:
         kakaoPayload = KakaoPayLoad(request)
+
+        # User Validation
+        user = userValidation(kakaoPayload)
+        if (user == None):
+            return GET_UserHome(request)
+        
         return kakaoView_OrderCancel(kakaoPayload)
 
     except (RuntimeError, TypeError, NameError, KeyError) as ex:
