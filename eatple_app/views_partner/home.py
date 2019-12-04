@@ -21,7 +21,6 @@ from eatple_app.views_system.debugger import *
 def partnerSignUp(partnerProfile):
     partner = Partner.signUp(
         nickname=partnerProfile['nickname'],
-        profile_image_url=partnerProfile['profile_image_url'],
         phone_number=partnerProfile['phone_number'],
         email=partnerProfile['email'],
         birthyear=partnerProfile['birthyear'],
@@ -193,7 +192,7 @@ def GET_PartnerHome(request):
                         
                         return GET_PartnerHome(request)
                     except Store.DoesNotExist as ex:
-                        return kakaoView_StoreRegistration()
+                        return errorView('Get Invalid CRN', '잇플에 등록되지 않은 사업자 번호입니다.')
                     
                     return kakaoView_StoreRegistration()
 

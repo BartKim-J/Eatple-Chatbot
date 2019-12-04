@@ -12,7 +12,7 @@ from django.utils.translation import ugettext_lazy as _
 from django.utils.safestring import mark_safe
 
 class PartnerAdmin(ImportExportMixin, admin.ModelAdmin):
-    readonly_fields = ('store', 'app_user_id', 'nickname', 'profile_image_url',
+    readonly_fields = ('store', 'app_user_id', 'nickname',
                        'phone_number', 'email', 'birthyear', 'birthday', 'gender', 'ci', 'ci_authenticated_at')
 
     list_filter = ('create_date', 'gender')
