@@ -19,7 +19,6 @@ from eatple_app.views_system.debugger import *
 
 
 def partnerSignUp(partnerProfile):
-    print(partnerProfile)
     partner = Partner.signUp(
         nickname=partnerProfile['nickname'],
         phone_number=partnerProfile['phone_number'],

@@ -32,6 +32,7 @@ class UserAdmin(ImportExportMixin, admin.ModelAdmin):
     
     list_display = (
         'app_user_id', 
+        'nickname',
         'phone_number', 
         'email', 
         'gender',
