@@ -43,12 +43,14 @@ INSTALLED_APPS = [
 
     # 'suit',
     # 'eatple_app.apps.SuitConfig',
-    
+
     'import_export',
     'phonenumber_field',
-    
+
     'django_admin_listfilter_dropdown',
-    
+
+    'django.contrib.gis',
+
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -77,7 +79,7 @@ TEMPLATES = [
         'OPTIONS': {
             'context_processors': [
                 'django.template.context_processors.debug',
-                'django.template.context_processors.request', # Make sure you have this line
+                'django.template.context_processors.request',  # Make sure you have this line
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
             ],
@@ -93,7 +95,7 @@ WSGI_APPLICATION = 'config.wsgi.debug.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql',  # use mysql (not sqlite)
+        'ENGINE': 'django.contrib.gis.db.backends.mysql',
         'NAME': 'eatple_DB_Test',
         'USER': 'eatple',
         'PASSWORD': 'eatple0000',

@@ -91,7 +91,6 @@ def userLocationValidation(user):
         return location
     except Location.DoesNotExist:
         return None
-
     
 def menuValidation(kakaoPayload):
     try:

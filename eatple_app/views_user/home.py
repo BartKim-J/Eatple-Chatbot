@@ -18,6 +18,13 @@ from eatple_app.module_kakao.Validation import *
 from eatple_app.views_system.debugger import *
 
 
+def isLocationParam(kakaoPayload):
+    try:
+        param = kakaoPayload.dataActionParams['location']['origin']
+        return True
+    except (TypeError, AttributeError, KeyError):
+        return False
+        
 def userSignUp(userProfile):
     user = User.signUp(
         nickname=userProfile['nickname'],
@@ -35,12 +42,12 @@ def userSignUp(userProfile):
 
 def userLocationRegistration(user, locationData):
     try:
-        user.location.lat = locationData['latitude'],
-        user.locationlong = locationData['longitude'],
-        user.locationaddress = locationData['address'],
-        user.locationpoint = Point(
+        user.location.lat = locationData['latitude']
+        user.location.long = locationData['longitude']
+        user.location.address = locationData['address']
+        user.location.point = Point(
             float(locationData['latitude']), 
-            float(locationData['longitude'])
+            float(locationData['longitude']),
         )
         user.save()
         
@@ -244,7 +251,7 @@ def GET_UserHome(request):
 
             except (RuntimeError, TypeError, NameError, KeyError):
                 return kakaoView_SignUp()
-        elif(location == None):
+        elif(location == None or isLocationParam(kakaoPayload)):
             try: 
                 otpURL = kakaoPayload.dataActionParams['location']['origin']
 
@@ -254,7 +261,7 @@ def GET_UserHome(request):
                 if(kakaoResponse.status_code == 200):
                     user = userLocationRegistration(user, kakaoResponse.json())
 
-                    return GET_UserHome(request)
+                    return kakaoView_Home(user)
 
                 return kakaoView_LocationRegistration()
             except (RuntimeError, TypeError, NameError, KeyError):
