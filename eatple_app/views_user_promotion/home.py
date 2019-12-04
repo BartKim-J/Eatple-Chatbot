@@ -33,7 +33,14 @@ DISCOUNT_FOR_PROMOTION = 5900
 def areaValidation(kakaoPayload):
     try:
         area = kakaoPayload.dataActionParams['area']['origin']
-        area_id = 'A' # A = 강남
+        
+        if(area.count('강남')):
+            area_id = 'A' # A = 강남
+        elif(area.count('역삼')):
+            area_id = 'B'
+        else:
+            area_id = 'A'
+            
         area_code = area[2:3]
         
         return '{id}{code}'.format(id=area_id, code=area_code)
