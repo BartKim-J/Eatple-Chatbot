@@ -11,14 +11,14 @@ from django.core import validators
 from django.utils.translation import ugettext_lazy as _
 from django.utils.safestring import mark_safe
 
-class LanlngInline(admin.TabularInline):
+class CRNInline(admin.TabularInline):
     model = CRN
     min_num = 1
 
     readonly_fields = ('CRN_id',)
 
-class CRNInline(admin.TabularInline):
-    model = latlng
+class PlaceInline(admin.TabularInline):
+    model = Place
     min_num = 1
 
 class MenuInline(admin.StackedInline):
@@ -70,6 +70,6 @@ class StoreAdmin(ImportExportMixin, admin.ModelAdmin):
         ('status', ChoiceDropdownFilter), ('area', ChoiceDropdownFilter), ('type', ChoiceDropdownFilter)
     )
     
-    list_display = ('name', 'status', 'store_id', 'crn', 'type', 'area', 'latlng')
+    list_display = ('name', 'status', 'store_id', 'crn', 'type', 'area', 'place')
 
-    inlines = [LanlngInline, CRNInline, MenuInline]
+    inlines = [PlaceInline, CRNInline, MenuInline]

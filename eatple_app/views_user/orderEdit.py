@@ -236,7 +236,7 @@ def kakaoView_OrderCancel(kakaoPayload):
 
         kakaoMapUrl = 'https://map.kakao.com/link/map/{},{}'.format(
             order.store.name, 
-            order.store.latlng
+            order.store.place
         )
         
         buttons = []

@@ -13,6 +13,34 @@ from django import forms
 from eatple_app.model.utils import OverwriteStorage
 from eatple_app.model.utils import logo_directory_path
 
+class Location(models.Model):
+    user = models.OneToOneField(
+        'User', 
+        on_delete=models.CASCADE, 
+        unique=True, 
+        null=True
+    )
+    
+    lat = models.DecimalField(
+        default=0.00000000000000,
+        max_digits=18, 
+        decimal_places=14
+    )
+
+    long = models.DecimalField(
+        default=0.00000000000000,
+        max_digits=18, 
+        decimal_places=14
+    )
+    
+    address = models.CharField(
+        max_length=STRING_LENGTH,
+        null=True,
+    )
+
+    def __str__(self):
+        return '{}, {}'.format(self.lat, self.long)
+
 class KakaoUser(models.Model):
     app_user_id = models.IntegerField(default=0)
     
@@ -37,11 +65,6 @@ class KakaoUser(models.Model):
         max_length=STRING_LENGTH, null=True)
     ci_authenticated_at = models.CharField(
         max_length=STRING_LENGTH, null=True )
-
-    location = models.CharField(
-        max_length=STRING_LENGTH, 
-        null=True
-    )
     
     #@PROTMOTINO
     flag_promotion = models.BooleanField(default=False)

@@ -11,9 +11,16 @@ from django.core import validators
 from django.utils.translation import ugettext_lazy as _
 from django.utils.safestring import mark_safe
 
+class LocationInline(admin.TabularInline):
+    model = Location
+    min_num = 0
+    
+    readonly_field = ('lat', 'long', 'address')
+
 class UserAdmin(ImportExportMixin, admin.ModelAdmin):
     readonly_fields = (
         'app_user_id', 
+        'nickname',
         'phone_number', 
         'email', 
         'birthyear', 
@@ -37,4 +44,7 @@ class UserAdmin(ImportExportMixin, admin.ModelAdmin):
         'email', 
         'gender',
         'flag_promotion',
+        'location'
     )
+    
+    inlines = [LocationInline]

@@ -63,7 +63,6 @@ def eatplePassValidation(user):
 
     return None
 
-
 def partnerValidation(kakaoPayload):
     try:
         app_user_id = kakaoPayload.user_properties['app_user_id']
@@ -86,7 +85,14 @@ def userValidation(kakaoPayload):
     except (TypeError, AttributeError, KeyError):
         return None
 
+def userLocationValidation(user):
+    try:
+        location = Location.objects.get(user=user)
+        return location
+    except Location.DoesNotExist:
+        return None
 
+    
 def menuValidation(kakaoPayload):
     try:
         menu_id = kakaoPayload.dataActionExtra[KAKAO_PARAM_MENU_ID]
@@ -97,7 +103,6 @@ def menuValidation(kakaoPayload):
             return None
     except (TypeError, AttributeError, KeyError):
         return None
-    
     
 def storeValidation(kakaoPayload):
     try:
@@ -110,7 +115,6 @@ def storeValidation(kakaoPayload):
     except (TypeError, AttributeError, KeyError):
         return None
 
-
 def orderValidation(kakaoPayload):
     try:
         order_id = kakaoPayload.dataActionExtra[KAKAO_PARAM_ORDER_ID]
@@ -122,14 +126,12 @@ def orderValidation(kakaoPayload):
     except (TypeError, AttributeError, KeyError):
         return None
 
-    
 def pickupTimeValidation(kakaoPayload):
     try:
         pickupTime = kakaoPayload.dataActionExtra[KAKAO_PARAM_PICKUP_TIME]
         return pickupTime
     except (TypeError, AttributeError, KeyError):
         return None
-
 
 def prevBlockValidation(kakaoPayload):
     try:

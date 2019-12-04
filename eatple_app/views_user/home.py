@@ -33,6 +33,20 @@ def userSignUp(userProfile):
 
     return user
 
+def userLocationRegistration(user, locationData):
+    location = Location(
+        user = user,
+        lat = locationData['latitude'],
+        long = locationData['longitude'],
+        address = locationData['address'],
+    )
+    location.save()
+    
+    user.location = location
+    user.save()
+    
+    return user
+    
 
 def kakaoView_SignUp():
     EatplusSkillLog('Sign Up')
@@ -65,6 +79,36 @@ def kakaoView_SignUp():
 
     return JsonResponse(kakaoForm.GetForm())
 
+def kakaoView_LocationRegistration():
+    EatplusSkillLog('Location Registration')
+
+    kakaoForm = KakaoForm()
+
+    BTN_MAP = [
+        {
+            'action': 'block',
+            'label': '등록하러 가기',
+            'messageText': '로딩중..',
+            'blockId': KAKAO_BLOCK_USER_EDIT_LOCATION,
+            'extra': {
+                KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_HOME
+            }
+        },
+    ]
+
+    thumbnail = {'imageUrl': ''}
+
+    buttons = BTN_MAP
+
+    kakaoForm.BasicCard_Push(
+        '보다 정확한 메뉴를 불러오기 위해 사용자의 위치 정보가 필요해요!',
+        '현재 위치를 등록하러 가볼까요?',
+        thumbnail,
+        buttons
+    )
+    kakaoForm.BasicCard_Add()
+
+    return JsonResponse(kakaoForm.GetForm())
 
 def kakaoView_Home(user):
     EatplusSkillLog('Home')
@@ -118,6 +162,15 @@ def kakaoView_Home(user):
             }
         },
         {
+            'action': 'block', 
+            'label': '위치 확인',
+            'messageText': '로딩중..',    
+            'blockId': KAKAO_BLOCK_USER_EDIT_LOCATION,
+            'extra': {
+                KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_HOME
+            }
+        },
+        {
             'action': 'block',
             'label': '사용 메뉴얼',
             'messageText': '로딩중..',
@@ -138,6 +191,13 @@ def kakaoView_Home(user):
     buttons = BTN_MAP
 
     kakaoForm.BasicCard_Push(
+        '등록된 주소',
+        '{}'.format(user.location.address),
+        {},
+        []
+    )
+    kakaoForm.BasicCard_Add()
+    kakaoForm.BasicCard_Push(
         '잇플 홈 화면입니다.',
         '아래 명령어 중에 골라주세요!',
         thumbnail,
@@ -147,15 +207,15 @@ def kakaoView_Home(user):
 
     kakaoForm.QuickReplies_AddWithMap(QUICKREPLIES_MAP)
     return JsonResponse(kakaoForm.GetForm())
-
-
+    
 @csrf_exempt
 def GET_UserHome(request):
     try:
         kakaoPayload = KakaoPayLoad(request)
-
+        
         user = userValidation(kakaoPayload)
-
+        location = userLocationValidation(user)
+        
         if(user == None):
             try:
                 otpURL = kakaoPayload.dataActionParams['user_profile']['origin']
@@ -172,6 +232,21 @@ def GET_UserHome(request):
 
             except (RuntimeError, TypeError, NameError, KeyError):
                 return kakaoView_SignUp()
+        elif(location == None):
+            try: 
+                otpURL = kakaoPayload.dataActionParams['location']['origin']
+
+                kakaoResponse = requests.get('{url}?rest_api_key={rest_api_key}'.format(
+                    url=otpURL, rest_api_key=KAKAO_REST_API_KEY))
+                
+                if(kakaoResponse.status_code == 200):
+                    user = userLocationRegistration(user, kakaoResponse.json())
+
+                    return kakaoView_Home(user)
+
+                return kakaoView_LocationRegistration()
+            except (RuntimeError, TypeError, NameError, KeyError):
+                return kakaoView_LocationRegistration()                     
         else:
             return kakaoView_Home(user)
 

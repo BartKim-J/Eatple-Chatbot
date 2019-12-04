@@ -145,7 +145,7 @@ def kakaoView_MenuListup(kakaoPayload):
             }
 
             kakaoMapUrl = 'https://map.kakao.com/link/map/{},{}'.format(
-                menu.store.name, menu.store.latlng)
+                menu.store.name, menu.store.place)
 
             buttons = [
                 {
@@ -365,7 +365,7 @@ def kakaoView_OrderPayment(kakaoPayload):
     }
 
     kakaoMapUrl = 'https://map.kakao.com/link/map/{},{}'.format(
-        store.name, menu.store.latlng)
+        store.name, menu.store.place)
     
     buttons = [
         {
@@ -571,7 +571,7 @@ def kakaoView_EatplePassIssuance(kakaoPayload):
         thumbnail = {'imageUrl': ''}
 
         kakaoMapUrl = 'https://map.kakao.com/link/map/{},{}'.format(
-            store.name, menu.store.latlng)
+            store.name, menu.store.place)
 
         buttons = []
 

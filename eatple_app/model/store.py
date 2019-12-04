@@ -27,7 +27,7 @@ class Category(models.Model):
     def __str__(self):
         return '{}'.format(self.name)
 
-class latlng(models.Model):
+class Place(models.Model):
     store = models.OneToOneField(
         'Store', 
         on_delete=models.CASCADE, 
@@ -36,15 +36,15 @@ class latlng(models.Model):
     )
     
     lat = models.DecimalField(
-        default=0.00000,
-        max_digits=9, 
-        decimal_places=6
+        default=0.00000000000000,
+        max_digits=18, 
+        decimal_places=14
     )
 
     long = models.DecimalField(
-        default=0.00000,
-        max_digits=9, 
-        decimal_places=6
+        default=0.00000000000000,
+        max_digits=18, 
+        decimal_places=14
     )
 
     def __str__(self):
