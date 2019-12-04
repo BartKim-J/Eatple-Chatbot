@@ -17,7 +17,6 @@ from eatple_app.module_kakao.Validation import *
 # View-System
 from eatple_app.views_system.debugger import *
 
-
 def partnerSignUp(partnerProfile):
     partner = Partner.signUp(
         nickname=partnerProfile['nickname'],

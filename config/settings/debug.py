@@ -48,6 +48,8 @@ INSTALLED_APPS = [
     'phonenumber_field',
     
     'django_admin_listfilter_dropdown',
+
+    'django.contrib.gis',
     
     'django.contrib.admin',
     'django.contrib.auth',
@@ -93,7 +95,7 @@ WSGI_APPLICATION = 'config.wsgi.debug.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql',  # use mysql (not sqlite)
+        'ENGINE': 'django.contrib.gis.db.backends.mysql',
         'NAME': 'eatple_DB_Test',
         'USER': 'eatple',
         'PASSWORD': 'eatple0000',

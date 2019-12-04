@@ -34,17 +34,29 @@ def userSignUp(userProfile):
     return user
 
 def userLocationRegistration(user, locationData):
-    location = Location(
-        user = user,
-        lat = locationData['latitude'],
-        long = locationData['longitude'],
-        address = locationData['address'],
-    )
-    location.save()
-    
-    user.location = location
-    user.save()
-    
+    try:
+        user.location.lat = locationData['latitude'],
+        user.locationlong = locationData['longitude'],
+        user.locationaddress = locationData['address'],
+        user.locationpoint = Point(
+            float(locationData['latitude']), 
+            float(locationData['longitude'])
+        )
+        user.save()
+        
+    except User.location.RelatedObjectDoesNotExist:
+        location = Location(
+            user = user,
+            lat = locationData['latitude'],
+            long = locationData['longitude'],
+            address = locationData['address'],
+            point = Point(float(locationData['latitude']), float(locationData['longitude'])),
+        )
+        location.save()
+        
+        user.location = location
+        user.save()        
+
     return user
     
 
@@ -226,7 +238,7 @@ def GET_UserHome(request):
                 if(kakaoResponse.status_code == 200):
                     user = userSignUp(kakaoResponse.json())
 
-                    return kakaoView_Home(user)
+                    return GET_UserHome(request)
 
                 return kakaoView_SignUp()
 
@@ -242,7 +254,7 @@ def GET_UserHome(request):
                 if(kakaoResponse.status_code == 200):
                     user = userLocationRegistration(user, kakaoResponse.json())
 
-                    return kakaoView_Home(user)
+                    return GET_UserHome(request)
 
                 return kakaoView_LocationRegistration()
             except (RuntimeError, TypeError, NameError, KeyError):

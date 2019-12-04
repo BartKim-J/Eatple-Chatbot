@@ -2,6 +2,7 @@
 from eatple_app.define import *
 # Django Library
 from django.db import models
+from django.contrib.gis.db import models
 from django.conf import settings
 from django.urls import reverse
 from django.core.files.storage import FileSystemStorage
@@ -12,6 +13,8 @@ from django import forms
 # Utils
 from eatple_app.model.utils import OverwriteStorage
 from eatple_app.model.utils import logo_directory_path
+
+
 
 class Location(models.Model):
     user = models.OneToOneField(
@@ -36,6 +39,13 @@ class Location(models.Model):
     address = models.CharField(
         max_length=STRING_LENGTH,
         null=True,
+    )
+    
+    point = models.PointField(
+        null=True, 
+        blank=True, 
+        srid=4326, 
+        verbose_name="Location"
     )
 
     def __str__(self):

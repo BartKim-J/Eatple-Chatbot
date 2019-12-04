@@ -24,6 +24,9 @@ from django_admin_listfilter_dropdown.filters import DropdownFilter, RelatedDrop
 from import_export.admin import ExportActionModelAdmin, ImportExportMixin, ImportMixin
 from import_export import resources
 
+from django.contrib.gis.geos import *
+
+
 EATPLUS_HOST_URL = 'http://eatple.com:8000'
 VALUE_NOT_APPLICABLE = 'N/A'
 
