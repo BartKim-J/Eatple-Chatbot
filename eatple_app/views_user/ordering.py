@@ -581,7 +581,7 @@ def kakaoView_EatplePassIssuance(kakaoPayload):
 
         kakaoForm.BasicCard_Push(
             '잇플패스가 발급되었습니다.',
-            '주문번호: {}\n- - - - - - - - - - - - - - - - - -\n - 주문자: {}\n\n - 매장: {}\n - 주소: {}\n - 메뉴: {}\n\n - 결제 금액: {}원\n\n - 픽업 시간: {}\n- - - - - - - - - - - - - - - - - - - - - -'.format(
+            '주문번호: {}\n- - - - - - - - - - - - - - - - -\n - 주문자: {}\n\n - 매장: {}\n - 주소: {}\n - 메뉴: {}\n\n - 결제 금액: {}원\n\n - 픽업 시간: {}\n- - - - - - - - - - - - - - - - -'.format(
                 order.order_id,
                 str(order.ordersheet.user.phone_number)[9:13],
                 order.store.name,

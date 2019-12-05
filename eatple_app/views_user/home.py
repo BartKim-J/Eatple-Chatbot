@@ -212,7 +212,19 @@ def kakaoView_Home(user):
     try:
         address = user.location.address
     except User.location.RelatedObjectDoesNotExist:
-        address = "미등록"
+        location = Location(
+            user=user,
+            lat=37.497907,
+            long=127.027635,
+            address="강남 사거리",
+            point=Point(37.497907, 127.027635),
+        )
+        location.save()
+
+        user.location = location
+        user.save()
+        
+        address = user.location.address
     
     kakaoForm.BasicCard_Push(
         '등록된 주소',
