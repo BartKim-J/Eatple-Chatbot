@@ -66,6 +66,10 @@ def sellingTimeCheck():
     # currentDate = currentDate.replace(hour=16, minute=31, second=0, microsecond=0)
     # currentDateWithoutTime = currentDate.replace(hour=0, minute=0, second=0, microsecond=0)
 
+    #@PROMOTION
+    currentDate = currentDate.replace(hour=10, minute=0, second=0, microsecond=0)
+    currentDateWithoutTime = currentDate.replace(hour=0, minute=0, second=0, microsecond=0)
+    
     # Prev Lunch Order Time 16:30 ~ 10:30
     prevlunchOrderTimeStart = currentDateWithoutTime + datetime.timedelta(hours=16, minutes=30, days=-1)
     prevlunchOrderTimeEnd = currentDateWithoutTime + datetime.timedelta(hours=10, minutes=30)

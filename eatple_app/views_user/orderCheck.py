@@ -161,18 +161,7 @@ def kakaoView_EatplePass(kakaoPayload):
     else:
         kakaoForm = KakaoForm()
 
-        ORDER_LIST_QUICKREPLIES_MAP.insert(0, {
-                'action': 'block', 
-                'label': '메뉴보기', 
-                'messageText': '로딩중..', 
-                'blockId': KAKAO_BLOCK_USER_GET_MENU,
-                'extra': {
-                    KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_EATPLE_PASS
-                }
-            }
-        )
-
-        kakaoForm.SimpleText_Add('현재 조회 가능한 잇플패스가 없습니다!\n주문하시려면 아래 [메뉴보기]를 눌러주세요!')
+        kakaoForm.SimpleText_Add('현재 조회 가능한 잇플패스가 없습니다! 주문을 먼저 해주세요!')
         
     kakaoForm.QuickReplies_AddWithMap(ORDER_LIST_QUICKREPLIES_MAP)
     
@@ -239,20 +228,8 @@ def kakaoView_OrderDetails(kakaoPayload):
         kakaoForm.BasicCard_Add()
     else:
         kakaoForm = KakaoForm()
-
-        ORDER_LIST_QUICKREPLIES_MAP.insert(0,
-            {
-                'action': 'block',
-                'label': '메뉴보기',
-                'messageText': '로딩중..',
-                'blockId': KAKAO_BLOCK_USER_GET_MENU,
-                'extra': {
-                    KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_ORDER_DETAILS
-                }
-            }
-        )
-
-        kakaoForm.SimpleText_Add('최근 주문 내역이 존재하지 않습니다!\n주문하시려면 아래 [메뉴보기]를 눌러주세요!')
+        
+        kakaoForm.SimpleText_Add('현재 조회 가능한 잇플패스가 없습니다! 주문을 먼저 해주세요!')
 
     kakaoForm.QuickReplies_AddWithMap(ORDER_LIST_QUICKREPLIES_MAP)
     
