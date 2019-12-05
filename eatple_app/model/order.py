@@ -385,7 +385,7 @@ class OrderManager():
         readyPayOrders = Order.objects.filter(
             Q(payment_status=IAMPORT_ORDER_STATUS_READY) &
             Q(order_date__gt=expireDate)
-        )
+        )[:2]
     
         # Order Status Update
         for order in readyPayOrders:
