@@ -2,6 +2,7 @@
 from eatple_app.define import *
 # Django Library
 from django.db import models
+from django.contrib.gis.db import models
 from django.conf import settings
 from django.urls import reverse
 from django.core.files.storage import FileSystemStorage
@@ -45,6 +46,13 @@ class Place(models.Model):
         default=0.00000000000000,
         max_digits=18, 
         decimal_places=14
+    )
+
+    point = models.PointField(
+        null=True, 
+        blank=True, 
+        srid=4326, 
+        verbose_name="Location"
     )
 
     def __str__(self):
