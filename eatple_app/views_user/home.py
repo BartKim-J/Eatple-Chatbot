@@ -49,7 +49,7 @@ def userLocationRegistration(user, locationData):
             float(locationData['latitude']), 
             float(locationData['longitude']),
         )
-        user.save()
+        user.location.save()
         
     except User.location.RelatedObjectDoesNotExist:
         location = Location(
@@ -66,7 +66,6 @@ def userLocationRegistration(user, locationData):
 
     return user
     
-
 def kakaoView_SignUp():
     EatplusSkillLog('Sign Up')
 
@@ -209,9 +208,15 @@ def kakaoView_Home(user):
 
     buttons = BTN_MAP
 
+    #@PROMOTION
+    try:
+        address = user.location.address
+    except User.location.RelatedObjectDoesNotExist:
+        address = "미등록"
+    
     kakaoForm.BasicCard_Push(
         '등록된 주소',
-        '{}'.format(user.location.address),
+        '{}'.format(address),
         {},
         []
     )
@@ -245,13 +250,13 @@ def GET_UserHome(request):
                 if(kakaoResponse.status_code == 200):
                     user = userSignUp(kakaoResponse.json())
 
-                    return GET_UserHome(request)
+                    return kakaoView_LocationRegistration()
 
                 return kakaoView_SignUp()
 
             except (RuntimeError, TypeError, NameError, KeyError):
                 return kakaoView_SignUp()
-        elif(location == None or isLocationParam(kakaoPayload)):
+        elif(isLocationParam(kakaoPayload)):
             try: 
                 otpURL = kakaoPayload.dataActionParams['location']['origin']
 
