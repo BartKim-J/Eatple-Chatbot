@@ -28,20 +28,20 @@ from eatple_app.module_kakao.ReponseForm import *
 
 # SKill Log
 def EatplusSkillLog(flow='some flow'):
-    print('- - - - - - - - - - - - - - - - - - - - - - - - -')
+    print('- - - - - - - - - - - - - - - - -')
     print('- [ {} ]'.format(flow))
     print('-  func() => {}   '.format(sys._getframe(1).f_code.co_name + '()'))
-    print('- - - - - - - - - - - - - - - - - - - - - - - - -')
+    print('- - - - - - - - - - - - - - - - -')
 
 # Error View
 
 
 def errorView(error_log='error message', view_log='진행하는 도중 문제가생겼어요ㅠㅜ'):
-    print('- - - - - - - - - - - - - - - - - - - - - - - - -')
+    print('- - - - - - - - - - - - - - - - -')
     print('- [ ERROR! ]')
     print('-  func() => {}   '.format(sys._getframe(1).f_code.co_name + '()'))
     print('-  error  => {}   '.format(error_log))
-    print('- - - - - - - - - - - - - - - - - - - - - - - - -')
+    print('- - - - - - - - - - - - - - - - -')
 
     kakaoForm = KakaoForm()
 
