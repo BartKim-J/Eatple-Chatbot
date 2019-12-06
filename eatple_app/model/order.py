@@ -489,20 +489,7 @@ class OrderSheet(models.Model):
         order.menu = menu
         order.store = store
         
-        #@PROMOTION
-        if(type == ORDER_TYPE_PROMOTION and menu != None):
-            pickup_time = [x.strip() for x in pickup_time.split(':')]
-            currentTime = dateByTimeZone(timezone.now())
-            datetime_pickup_time = currentTime.replace(
-                                        day=int(menu.name[0:2]),
-                                        hour=int(pickup_time[0]), 
-                                        minute=int(pickup_time[1]),
-                                        second=0,
-                                        microsecond=0
-                                        )
-            order.pickup_time = datetime_pickup_time
-        else:
-            order.pickup_time = order.pickupTimeToDateTime(pickup_time)
+        order.pickup_time = order.pickupTimeToDateTime(pickup_time)
         
         order.totalPrice = totalPrice
         order.count = count
