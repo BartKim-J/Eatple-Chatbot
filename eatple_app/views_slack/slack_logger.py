@@ -1,3 +1,9 @@
+# Define
+from eatple_app.define import *
+
+# Models
+from eatple_app.models import *
+
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
@@ -24,8 +30,6 @@ def SlackLogSignUp(user):
 
 
 def SlackLogPayOrder(order):
-    print(order.order_id)
-    
     res = client.chat_postMessage(
         channel=SLACK_CHANNEL_EATPLE_LOG,
         text="{name}님이 {menu} 잇플패스를 발급했습니다.".format(
@@ -37,8 +41,6 @@ def SlackLogPayOrder(order):
     return res
     
 def SlackLogCancelOrder(order):
-    print(order.order_id)
-    
     res = client.chat_postMessage(
         channel=SLACK_CHANNEL_EATPLE_LOG,
         text="{name}님이 {menu} 잇플패스를 취소했습니다.".format(

@@ -1,3 +1,10 @@
+# Define
+from eatple_app.define import *
+
+# Models
+from eatple_app.models import *
+from django.db.models import Q
+
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
@@ -11,6 +18,27 @@ SLACK_VERIFICATION_TOKEN = 'qM7JgIwtYjTnMZ6KP9KbNo5o'
 SLACK_BOT_USER_TOKEN = 'xoxb-808658240627-864289607191-jQUdG2eS12XZLNZ3Xz53gz8a'
 
 client = slack.WebClient(token=SLACK_BOT_USER_TOKEN)
+
+
+SLACK_COMMAND_STATUS = 'status'
+SLACK_COMMAND_PROMOTION_STATUS ='p_status'
+
+def eatple_status():
+    res = client.chat_postMessage(
+        channel=SLACK_CHANNEL_EATPLE_LOG,
+        text="전체 가입자수 : {userCount}명, 주문수: {orderCount}개".format(
+            userCount=User.objects.all().count(), 
+            orderCount=Order.objects.all().filter(
+                Q(status=ORDER_STATUS_PICKUP_WAIT) |
+                Q(status=ORDER_STATUS_PICKUP_PREPARE) |
+                Q(status=ORDER_STATUS_ORDER_CONFIRM_WAIT) |
+                Q(status=ORDER_STATUS_ORDER_CONFIRMED)
+            ).count()
+        )
+    )
+
+    return Response(status=status.HTTP_200_OK)
+
 
 class Events(APIView):
     def post(self, request, *args, **kwargs):
@@ -35,11 +63,9 @@ class Events(APIView):
             text = event_message.get('text')
             channel = event_message.get('channel')
 
-            bot_text = 'Hi <@{}> :wave:'.format(user)
-            if 'hi' in text.lower():
-                client.chat_postEphemeral(
-                    channel=channel, text="Hello", user=user)
+            if SLACK_COMMAND_STATUS in text.lower():
+                return eatple_status()
                 
-                return Response(status=status.HTTP_200_OK)
+
 
         return Response(status=status.HTTP_200_OK)
