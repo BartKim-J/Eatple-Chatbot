@@ -400,7 +400,7 @@ class OrderManager():
     def availableOrderStatusUpdate(self):
         availableOrders = self.getAvailableOrders()
 
-        # Order Status Update
+        # Order Status Update   
         for order in availableOrders:
             orderUpdate(order)
 
@@ -412,8 +412,10 @@ class OrderManager():
         
         readyPayOrders = Order.objects.filter(
             Q(payment_status=IAMPORT_ORDER_STATUS_NOT_PUSHED) &
-            Q(order_date__gt=expireDate)
-        )[:5]
+            Q(order_date__gt=expireDate) &
+            ~Q(store=None) &
+            ~Q(menu=None)
+        )
     
         # Order Status Update
         for order in readyPayOrders:
