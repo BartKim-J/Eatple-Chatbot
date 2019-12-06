@@ -28,7 +28,7 @@ def iamportOrderValidation(order):
         print(http_error.code)
         print(http_error.reason)
 
-        order.payment_status = IAMPORT_ORDER_STATUS_CANCELLED            
+        order.payment_status = IAMPORT_ORDER_STATUS_NOT_PUSHED            
         order.save()
         
         return order
@@ -121,7 +121,7 @@ def promotionOrderUpdate(order):
 def orderUpdate(order):
             
     if(order.menu == None or order.store == None):
-        order.payment_status = IAMPORT_ORDER_STATUS_CANCELLED
+        order.payment_status = IAMPORT_ORDER_STATUS_NOT_PUSHED
         order.save()
     else:
         order = iamportOrderValidation(order)
@@ -144,8 +144,13 @@ def orderUpdate(order):
         order.save()
         print('주문 실패')
         
+    if(order.payment_status == IAMPORT_ORDER_STATUS_NOT_PUSHED):
+        order.status = ORDER_STATUS_MENU_CHOCIED
+        order.save()
+        print('메뉴 선택중')
+        
     if(order.payment_status == IAMPORT_ORDER_STATUS_PAID):
-        if(order.status == ORDER_STATUS_ORDER_CANCELED): #ORDER_STATUS_PAYMENT_CHECK
+        if(order.status == ORDER_STATUS_MENU_CHOCIED):
             order.status = ORDER_STATUS_ORDER_CONFIRM_WAIT
             order.save()
             
@@ -406,9 +411,9 @@ class OrderManager():
         expireDate = currentDate + datetime.timedelta(hours=-12)
         
         readyPayOrders = Order.objects.filter(
-            Q(payment_status=IAMPORT_ORDER_STATUS_READY) &
+            Q(payment_status=IAMPORT_ORDER_STATUS_NOT_PUSHED) &
             Q(order_date__gt=expireDate)
-        )[:2]
+        )[:5]
     
         # Order Status Update
         for order in readyPayOrders:

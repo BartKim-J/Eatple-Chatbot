@@ -23,7 +23,7 @@ client = slack.WebClient(token=SLACK_BOT_USER_TOKEN)
 def SlackLogSignUp(user):    
     res = client.chat_postMessage(
         channel=SLACK_CHANNEL_EATPLE_LOG,
-        text="{name}님이 가입했습니다.".format(name=user.nickname)
+        text="{name}님이 잇플에 들어옴, 흥폭발:face_with_hand_over_mouth:".format(name=user.nickname)
     )
     
     return res
@@ -32,7 +32,7 @@ def SlackLogSignUp(user):
 def SlackLogPayOrder(order):
     res = client.chat_postMessage(
         channel=SLACK_CHANNEL_EATPLE_LOG,
-        text="{name}님이 {menu} 잇플패스를 발급했습니다.".format(
+        text="{name}님이 잇플패스를 발급함, 마니머겅:blue_heart:".format(
             name=order.ordersheet.user.nickname, 
             menu=order.menu.name
         )
@@ -43,7 +43,7 @@ def SlackLogPayOrder(order):
 def SlackLogCancelOrder(order):
     res = client.chat_postMessage(
         channel=SLACK_CHANNEL_EATPLE_LOG,
-        text="{name}님이 {menu} 잇플패스를 취소했습니다.".format(
+        text="{name}님이 잇플을 취소함, 에라이:bart:".format(
             name=order.ordersheet.user.nickname, 
             menu=order.menu.name
         )
