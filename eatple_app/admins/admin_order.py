@@ -37,8 +37,7 @@ class OrderAdmin(ImportExportMixin, admin.ModelAdmin):
     readonly_fields = (
         'ordersheet', 
         'order_id', 
-        'payment_status', 
-        'status', 
+        'payment_status',  
         'totalPrice', 
         'menu', 
         'count', 

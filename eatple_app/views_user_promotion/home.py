@@ -108,8 +108,8 @@ def kakaoView_MenuListup(kakaoPayload):
             user=user,
             menu=None,
             store=None,
-            pickup_time="12:00",
-            totalPrice=100,
+            pickup_time="00:00",
+            totalPrice=0,
             count=1,
             type=ORDER_TYPE_PROMOTION
         )
@@ -226,8 +226,6 @@ def kakaoView_OrderPayment(kakaoPayload):
     order = orderValidation(kakaoPayload)
     if(order == None):
         return errorView('Invalid Store Paratmer', '정상적이지 않은 경로거나, 오류가 발생했습니다.\n다시 주문해주세요!')
-            
-        orderSheet = OrderSheet()
     else:
         order.user = user
         order.menu = menu

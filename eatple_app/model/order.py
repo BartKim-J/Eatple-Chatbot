@@ -163,6 +163,9 @@ def orderUpdate(order):
         hour=0, minute=0, second=0, microsecond=0)
 
     # Time QA DEBUG
+    # orderDate = dateByTimeZone(order.order_date)
+    # orderDateWithoutTime = orderDate.replace(hour=0, minute=0, second=0, microsecond=0)
+    
     # currentDate = currentDate.replace(day=4, hour=15, minute=20, second=0, microsecond=0)
     # currentDateWithoutTime = currentDate.replace(hour=0, minute=0, second=0, microsecond=0)
     # print(currentDate)
@@ -173,7 +176,8 @@ def orderUpdate(order):
     TOMORROW = currentDateWithoutTime + \
         datetime.timedelta(days=1)  # Tommorrow start
 
-    PICKUP_DAY = order.pickup_time.replace(hour=0, minute=0, second=0, microsecond=0)
+    PICKUP_DAY = dateByTimeZone(order.pickup_time).replace(hour=0, minute=0, second=0, microsecond=0)
+    PICKUP_YESTER_DAY = PICKUP_DAY + datetime.timedelta(days=-1)
     
     # Prev Lunch Order Edit Time 16:30 ~ 10:25(~ 10:30)
     prevlunchOrderEditTimeStart = currentDateWithoutTime + datetime.timedelta(hours=16, minutes=30, days=-1)
@@ -197,16 +201,18 @@ def orderUpdate(order):
     # Dinner Order Pickup Time (16:30 ~)17:30 ~ 21:00
     dinnerOrderPickupTimeStart = currentDateWithoutTime + datetime.timedelta(hours=17, minutes=30)
     dinnerOrderPickupTimeEnd = currentDateWithoutTime + datetime.timedelta(hours=21, minutes=0)
+
     # Lunch Order
     if (SELLING_TIME_LUNCH == menu.sellingTime) and \
-        ((YESTERDAY <= orderDateWithoutTime) and (TODAY <= PICKUP_DAY)):
-            
+        ((PICKUP_YESTER_DAY <= orderDateWithoutTime) and (TODAY <= PICKUP_DAY)):
         # Pickup Prepare Time 10:30  ~ 11:30
-        if(prevlunchOrderTimeEnd <= currentDate) and (currentDate < lunchOrderPickupTimeStart):
+        if(prevlunchOrderTimeEnd <= currentDate) and (currentDate < lunchOrderPickupTimeStart) and \
+           (TODAY == PICKUP_DAY):
             order.status = ORDER_STATUS_PICKUP_PREPARE
             order.save()
         # PickupTime Waiting Time 11:31 ~ 13:59
-        elif(lunchOrderPickupTimeStart < currentDate) and (currentDate < lunchOrderPickupTimeEnd):
+        elif(lunchOrderPickupTimeStart < currentDate) and (currentDate < lunchOrderPickupTimeEnd) and \
+            (TODAY == PICKUP_DAY):
             # Over Order Pickup Time
             if(currentDate >= order.pickup_time + datetime.timedelta(minutes=-15)):
                 order.status = ORDER_STATUS_PICKUP_WAIT
@@ -225,8 +231,8 @@ def orderUpdate(order):
                     order.status = ORDER_STATUS_PICKUP_PREPARE
                     order.save()
 
-            # next phase Lunch order TD 16:30 ~ TM 10:30
-            elif (nextlunchOrderTimeEnd >= currentDate) and (orderDate >= nextlunchOrderEditTimeStart):
+            # next phase Lunch order
+            elif (nextlunchOrderEditTimeStart >= currentDate) and (orderDate >= prevlunchOrderTimeEnd):
                 order.status = ORDER_STATUS_ORDER_CONFIRMED
                 order.save()
 

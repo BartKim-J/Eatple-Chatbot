@@ -22,8 +22,8 @@ from eatple_app.views import *
 # STATIC CONFIG
 MENU_LIST_LENGTH = 10
 
-#DISCOUNT_FOR_DEBUG = 5900
-DISCOUNT_FOR_DEBUG = None
+DISCOUNT_FOR_DEBUG = 5900
+#DISCOUNT_FOR_DEBUG = None
 
 # # # # # # # # # # # # # # # # # # # # # # # # #
 #
@@ -116,6 +116,23 @@ def kakaoView_MenuListup(kakaoPayload):
     orderRecordSheet.user = user
     orderRecordSheet.recordUpdate(ORDER_RECORD_GET_MENU)
 
+    order = orderValidation(kakaoPayload)
+    if(order == None):
+        orderSheet = OrderSheet()
+        order = orderSheet.pushOrder(
+            user=user,
+            menu=None,
+            store=None,
+            pickup_time="00:00",
+            totalPrice=0,
+            count=1,
+            type=ORDER_TYPE_NORMAL
+        )
+    else:
+        order.pickup_time = order.pickupTimeToDateTime(pickup_time)
+        order.totalPrice = discountPrice
+        order.save()
+
     if (sellingTime == None):
         return errorView('Get Invalid Selling Time', '잘못된 주문 시간입니다.')
     elif sellingTime == SELLING_TIME_DINNER:
@@ -160,6 +177,7 @@ def kakaoView_MenuListup(kakaoPayload):
                     'extra': {
                         KAKAO_PARAM_STORE_ID: menu.store.store_id,
                         KAKAO_PARAM_MENU_ID: menu.menu_id,
+                        KAKAO_PARAM_ORDER_ID: order.order_id,
                         KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_GET_MENU
                     }
                 },
@@ -215,7 +233,7 @@ def kakaoView_PickupTime(kakaoPayload):
         return errorView('Invalid Block Access', '정상적이지 않은 경로거나, 잘못된 계정입니다.')
 
     order = orderValidation(kakaoPayload)
-    if(order != None):
+    if(order.menu != None or order.store != None):
         orderManager = UserOrderManager(user)
         orderManager.orderPaidCheck()
         
@@ -271,6 +289,7 @@ def kakaoView_PickupTime(kakaoPayload):
         dataActionExtra = {
             KAKAO_PARAM_STORE_ID: menu.store.store_id,
             KAKAO_PARAM_MENU_ID: menu.menu_id,
+            KAKAO_PARAM_ORDER_ID: order.order_id,
             KAKAO_PARAM_PICKUP_TIME: pickupTime.time.strftime('%H:%M'),
             KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_SET_PICKUP_TIME
         }
@@ -319,19 +338,15 @@ def kakaoView_OrderPayment(kakaoPayload):
 
     order = orderValidation(kakaoPayload)
     if(order == None):
-        orderSheet = OrderSheet()
-        order = orderSheet.pushOrder(
-            user=user,
-            menu=menu,
-            store=store,
-            pickup_time=pickup_time,
-            totalPrice=discountPrice,
-            count=1,
-            type=ORDER_TYPE_NORMAL
-        )
+        return errorView('Invalid Store Paratmer', '정상적이지 않은 경로거나, 오류가 발생했습니다.\n다시 주문해주세요!')
     else:
+        order.user = user
+        order.menu = menu
+        order.store = store
         order.pickup_time = order.pickupTimeToDateTime(pickup_time)
         order.totalPrice = discountPrice
+        order.count = 1
+        order.type = ORDER_TYPE_NORMAL
         order.save()
 
     # Order Record
@@ -447,6 +462,9 @@ def kakaoView_OrderPaymentCheck(kakaoPayload):
     menu = menuValidation(kakaoPayload)
     order = orderValidation(kakaoPayload)
     
+    if(order.store != store or order.menu != menu):
+        return kakaoView_OrderPayment(kakaoPayload)
+        
     if(store == None or menu == None or order == None ):
         return errorView('Invalid Store Paratmer', '정상적이지 않은 경로거나, 오류가 발생했습니다.\n다시 주문해주세요!')
 
