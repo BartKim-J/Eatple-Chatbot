@@ -335,12 +335,12 @@ class Order(models.Model):
     payment_status = models.CharField(
         max_length=10,
         choices=IAMPORT_ORDER_STATUS,
-        default=IAMPORT_ORDER_STATUS_READY
+        default=IAMPORT_ORDER_STATUS_NOT_PUSHED
     )
 
     status = models.IntegerField(
         choices=ORDER_STATUS,
-        default=ORDER_STATUS_PAYMENT_CHECK,
+        default=ORDER_STATUS_MENU_CHOCIED,
     )
 
     type = models.CharField(
