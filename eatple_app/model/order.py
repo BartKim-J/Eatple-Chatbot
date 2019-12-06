@@ -25,10 +25,11 @@ def iamportOrderValidation(order):
         return order
     
     except Iamport.HttpError as http_error:
-        order.payment_status = IAMPORT_ORDER_STATUS_CANCELLED
-        order.save()
         print(http_error.code)
         print(http_error.reason)
+
+        order.payment_status = IAMPORT_ORDER_STATUS_CANCELLED            
+        order.save()
         
         return order
 
@@ -118,8 +119,13 @@ def promotionOrderUpdate(order):
     return order
   
 def orderUpdate(order):
-    order = iamportOrderValidation(order)
-    
+            
+    if(order.menu == None or order.store == None):
+        order.payment_status = IAMPORT_ORDER_STATUS_CANCELLED
+        order.save()
+    else:
+        order = iamportOrderValidation(order)
+        
     #Payment State Update
     if(order.payment_status == IAMPORT_ORDER_STATUS_CANCELLED):
         #@PROMOTION
