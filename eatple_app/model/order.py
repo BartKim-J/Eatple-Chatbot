@@ -145,9 +145,17 @@ def orderUpdate(order):
         print('주문 실패')
         
     if(order.payment_status == IAMPORT_ORDER_STATUS_PAID):
+        if(order.status == ORDER_STATUS_ORDER_CANCELED): #ORDER_STATUS_PAYMENT_CHECK
+            order.status = ORDER_STATUS_ORDER_CONFIRM_WAIT
+            order.save()
+            
+            #@SLACK LOGGER
+            SlackLogPayOrder(order)
+            
         #@PROMOTION
         if(order.type == ORDER_TYPE_PROMOTION):
             order.ordersheet.user.applyPromotion()
+            
         print('주문 결제됨')
         
     if(order.payment_status != IAMPORT_ORDER_STATUS_PAID):
@@ -364,6 +372,10 @@ class Order(models.Model):
         return orderUpdate(self)
 
     def orderCancel(self):
+        
+        #@SLACK LOGGER
+        SlackLogCancelOrder(self)
+
         return iamportOrderCancel(self)
 
     def orderUsed(self):

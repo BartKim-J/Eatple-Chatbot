@@ -17,13 +17,13 @@ from eatple_app.module_kakao.Validation import *
 # View-System
 from eatple_app.views_system.debugger import *
 
-
 def isLocationParam(kakaoPayload):
     try:
         param = kakaoPayload.dataActionParams['location']['origin']
         return True
     except (TypeError, AttributeError, KeyError):
         return False
+
         
 def userSignUp(userProfile):
     user = User.signUp(
@@ -261,7 +261,10 @@ def GET_UserHome(request):
 
                 if(kakaoResponse.status_code == 200):
                     user = userSignUp(kakaoResponse.json())
-
+                    
+                    #@SLACK LOGGER
+                    SlackLogSignUp(user)
+                    
                     return kakaoView_LocationRegistration()
 
                 return kakaoView_SignUp()

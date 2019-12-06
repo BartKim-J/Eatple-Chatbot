@@ -16,6 +16,7 @@ import json
 import pytz
 
 from eatple_app.module_iamport.Iamport import Iamport
+from eatple_app.views_slack.slack_logger import *
 
 from phonenumber_field.modelfields import PhoneNumberField
 

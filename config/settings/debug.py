@@ -50,6 +50,7 @@ INSTALLED_APPS = [
     'django_admin_listfilter_dropdown',
 
     'django.contrib.gis',
+    'rest_framework',
     
     'django.contrib.admin',
     'django.contrib.auth',
@@ -161,3 +162,4 @@ STATIC_ROOT = os.path.join(ROOT_DIR, 'static')
 #
 #CSRF_COOKIE_SECURE = True
 #SESSION_COOKIE_SECURE = False
+
