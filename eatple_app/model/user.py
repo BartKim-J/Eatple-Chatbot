@@ -25,18 +25,19 @@ class Location(models.Model):
     )
     
     lat = models.DecimalField(
-        default=0.00000000000000,
+        default=37.497907,
         max_digits=18, 
         decimal_places=14
     )
 
     long = models.DecimalField(
-        default=0.00000000000000,
+        default=127.027635,
         max_digits=18, 
         decimal_places=14
     )
     
     address = models.CharField(
+        default="강남사거리",
         max_length=STRING_LENGTH,
         null=True,
     )

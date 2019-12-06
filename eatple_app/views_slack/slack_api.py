@@ -20,13 +20,13 @@ SLACK_BOT_USER_TOKEN = 'xoxb-808658240627-864289607191-jQUdG2eS12XZLNZ3Xz53gz8a'
 client = slack.WebClient(token=SLACK_BOT_USER_TOKEN)
 
 
-SLACK_COMMAND_STATUS = 'status'
-SLACK_COMMAND_PROMOTION_STATUS ='p_status'
+SLACK_COMMAND_DAILY_STATUS = 'ds'
+SLACK_COMMAND_TOTAL_STATUS = 'ts'
 
-def eatple_status():
+def eatple_total_status():
     res = client.chat_postMessage(
         channel=SLACK_CHANNEL_EATPLE_LOG,
-        text="전체 가입자수 : {userCount}명, 주문수: {orderCount}개".format(
+        text="전체 가입자수 : {userCount}명, 전체 주문수: {orderCount}개".format(
             userCount=User.objects.all().count(), 
             orderCount=Order.objects.all().filter(
                 Q(status=ORDER_STATUS_PICKUP_WAIT) |
@@ -39,6 +39,36 @@ def eatple_status():
 
     return Response(status=status.HTTP_200_OK)
 
+
+def eatple_daily_status():
+    currentDate = dateNowByTimeZone()
+    currentDateWithoutTime = currentDate.replace(
+        hour=0, minute=0, second=0, microsecond=0)
+
+    YESTERDAY = currentDateWithoutTime + datetime.timedelta(days=-1)  # Yesterday start
+    TODAY = currentDateWithoutTime
+    TOMORROW = currentDateWithoutTime + datetime.timedelta(days=1)  # Tommorrow start
+
+    res = client.chat_postMessage(
+        channel=SLACK_CHANNEL_EATPLE_LOG,
+        text="일일 가입자수 : {userCount}명, 일일 주문수: {orderCount}개".format(
+            userCount=User.objects.all().filter(
+                Q(create_date__gte=TODAY) &
+                Q(create_date__lte=TOMORROW)
+            ).count(),
+            orderCount=Order.objects.all().filter(
+                Q(status=ORDER_STATUS_PICKUP_WAIT) |
+                Q(status=ORDER_STATUS_PICKUP_PREPARE) |
+                Q(status=ORDER_STATUS_ORDER_CONFIRM_WAIT) |
+                Q(status=ORDER_STATUS_ORDER_CONFIRMED)
+            ).filter(
+                Q(order_date__gte=TODAY) &
+                Q(order_date__lte=TOMORROW)
+            ).count()
+        )
+    )
+
+    return Response(status=status.HTTP_200_OK)
 
 class Events(APIView):
     def post(self, request, *args, **kwargs):
@@ -63,9 +93,10 @@ class Events(APIView):
             text = event_message.get('text')
             channel = event_message.get('channel')
 
-            if SLACK_COMMAND_STATUS in text.lower():
-                return eatple_status()
+            if SLACK_COMMAND_DAILY_STATUS in text.lower():
+                return eatple_daily_status()
                 
-
+            if SLACK_COMMAND_TOTAL_STATUS in text.lower():
+                return eatple_total_status()
 
         return Response(status=status.HTTP_200_OK)
