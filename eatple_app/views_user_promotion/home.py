@@ -29,7 +29,7 @@ DISCOUNT_FOR_PROMOTION = 5900
 # Validation
 #
 # # # # # # # # # # # # # # # # # # # # # # # # #
-   
+
 def areaValidation(kakaoPayload):
     try:
         area = kakaoPayload.dataActionParams['area']['origin']
@@ -101,6 +101,21 @@ def kakaoView_MenuListup(kakaoPayload):
     orderRecordSheet.user = user
     orderRecordSheet.recordUpdate(ORDER_RECORD_GET_MENU)
 
+    order = orderValidation(kakaoPayload)
+    if(order == None):
+        orderSheet = OrderSheet()
+        order = orderSheet.pushOrder(
+            user=user,
+            menu=None,
+            store=None,
+            pickup_time="12:00",
+            totalPrice=100,
+            count=1,
+            type=ORDER_TYPE_PROMOTION
+        )
+    else:
+        return errorView('Invalid Store Paratmer', '정상적이지 않은 경로거나, 오류가 발생했습니다.\n다시 주문해주세요!')
+
     menuList = Menu.objects.filter(
         store__type=STORE_TYPE_EVENT,
         store__area=area,
@@ -132,6 +147,7 @@ def kakaoView_MenuListup(kakaoPayload):
                     'extra': {
                         KAKAO_PARAM_STORE_ID: menu.store.store_id,
                         KAKAO_PARAM_MENU_ID: menu.menu_id,
+                        KAKAO_PARAM_ORDER_ID: order.order_id,
                         KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_PROMOTION
                     }
                 },
@@ -209,18 +225,29 @@ def kakaoView_OrderPayment(kakaoPayload):
 
     order = orderValidation(kakaoPayload)
     if(order == None):
-        orderSheet = OrderSheet()
-        order = orderSheet.pushOrder(
-            user=user,
-            menu=menu,
-            store=store,
-            pickup_time=pickup_time,
-            totalPrice=discountPrice,
-            count=1,
-            type=ORDER_TYPE_PROMOTION
-        )
-    else:
         return errorView('Invalid Store Paratmer', '정상적이지 않은 경로거나, 오류가 발생했습니다.\n다시 주문해주세요!')
+            
+        orderSheet = OrderSheet()
+    else:
+        order.user = user
+        order.menu = menu
+        order.store = store
+        
+        pickup_time = [x.strip() for x in pickup_time.split(':')]
+        currentTime = dateByTimeZone(timezone.now())
+        datetime_pickup_time = currentTime.replace(
+                                    day=int(menu.name[0:2]),
+                                    hour=int(pickup_time[0]), 
+                                    minute=int(pickup_time[1]),
+                                    second=0,
+                                    microsecond=0
+                                )
+
+        order.pickup_time = datetime_pickup_time
+        order.totalPrice = discountPrice
+        order.count = 1
+        order.type = ORDER_TYPE_PROMOTION
+        order.save()
 
     # Order Record
     try:
@@ -338,7 +365,10 @@ def kakaoView_OrderPaymentCheck(kakaoPayload):
     store = storeValidation(kakaoPayload)
     menu = menuValidation(kakaoPayload)
     order = orderValidation(kakaoPayload)
-
+        
+    if(order.store != store or order.menu != menu):
+        return kakaoView_OrderPayment(kakaoPayload)
+    
     if(store == None or menu == None or order == None):
         return errorView('Invalid Store Paratmer', '정상적이지 않은 경로거나, 오류가 발생했습니다.\n다시 주문해주세요!')
 
@@ -532,30 +562,29 @@ def kakaoView_TimeOut(blockId):
 def GET_ProMotionHome(request):
     EatplusSkillLog('GET_ProMotionHome')
 
-    try:
-        kakaoPayload = KakaoPayLoad(request)
-        
-        user = userValidation(kakaoPayload)
-        if (user == None):
-            return GET_UserHome(request)
 
-        store = storeValidation(kakaoPayload)
-        menu = menuValidation(kakaoPayload)
-        order = orderValidation(kakaoPayload)
+    kakaoPayload = KakaoPayLoad(request)
+    
+    user = userValidation(kakaoPayload)
+    if (user == None):
+        return GET_UserHome(request)
 
-        #GET MENU
-        if(store == None and menu == None and order == None):
-            return kakaoView_MenuListup(kakaoPayload)
+    store = storeValidation(kakaoPayload)
+    menu = menuValidation(kakaoPayload)
+    order = orderValidation(kakaoPayload)
+
+    #GET MENU
+    if(store == None and menu == None and order == None):
+        return kakaoView_MenuListup(kakaoPayload)
+    
+    #ORDER SHEET & CHECK
+    elif(store != None and menu != None):
+        if(order.store == None or order.menu == None):
+            return kakaoView_OrderPayment(kakaoPayload)
+        elif(order != None):
+            return kakaoView_OrderPaymentCheck(kakaoPayload)
         
-        #ORDER SHEET & CHECK
-        elif(store != None and menu != None):
-            if(order == None):
-                return kakaoView_OrderPayment(kakaoPayload)
-            elif(order != None):
-                return kakaoView_OrderPaymentCheck(kakaoPayload)
-            
-        else:
-            return kakaoView_MenuListup(kakaoPayload)
-        
-    except (RuntimeError, TypeError, NameError, KeyError) as ex:
-        return errorView('{}'.format(ex))
+    else:
+        return kakaoView_MenuListup(kakaoPayload)
+    
+

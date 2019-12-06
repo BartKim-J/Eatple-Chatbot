@@ -490,7 +490,7 @@ class OrderSheet(models.Model):
         order.store = store
         
         #@PROMOTION
-        if(type == ORDER_TYPE_PROMOTION):
+        if(type == ORDER_TYPE_PROMOTION and menu != None):
             pickup_time = [x.strip() for x in pickup_time.split(':')]
             currentTime = dateByTimeZone(timezone.now())
             datetime_pickup_time = currentTime.replace(
