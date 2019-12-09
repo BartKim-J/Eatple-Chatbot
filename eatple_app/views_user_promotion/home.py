@@ -117,8 +117,11 @@ def kakaoView_MenuListup(kakaoPayload):
         return errorView('Invalid Store Paratmer', '정상적이지 않은 경로거나, 오류가 발생했습니다.\n다시 주문해주세요!')
 
     menuList = Menu.objects.filter(
-        store__type=STORE_TYPE_EVENT,
         store__area=area,
+        
+        sellingTime=sellingTime, 
+        store__type=STORE_TYPE_EVENT,
+        store__status=OC_OPEN,
         ).order_by('menu_id')[:MENU_LIST_LENGTH]
 
     if menuList:
