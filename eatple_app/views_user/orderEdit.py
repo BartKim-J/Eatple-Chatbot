@@ -262,7 +262,7 @@ def kakaoView_OrderCancel(kakaoPayload):
                 'messageText': '로딩중..',
                 'blockId': KAKAO_BLOCK_USER_HOME,
                 'extra': {
-                    KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_ORDER_DETAILS
+                    KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_EDIT_PICKUP_TIME
                 }
             },
         ]
@@ -297,7 +297,7 @@ def kakaoView_EditPickupTime(kakaoPayload):
     kakaoForm = KakaoForm()
 
     kakaoForm.SimpleText_Add(
-        '음식을 가지러 갈 픽업시간을 설정해주세요.'
+        '변경할 픽업시간을 설정해주세요.'
     )
 
     PICKUP_TIME_QUICKREPLIES_MAP = []
@@ -372,11 +372,11 @@ def kakaoView_ConfirmEditPickupTime(kakaoPayload):
     QUICKREPLIES_MAP = [
         {
             'action': 'block',
-            'label': '홈으로 돌아가기',
+            'label': '돌아가기',
             'messageText': '로딩중..',
-            'blockId': KAKAO_BLOCK_USER_HOME,
+            'blockId': KAKAO_BLOCK_USER_EATPLE_PASS,
             'extra': {
-                KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_ORDER_DETAILS
+                KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_EDIT_PICKUP_TIME_CONFIRM
             }
         },
     ]

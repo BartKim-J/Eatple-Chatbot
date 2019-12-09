@@ -27,6 +27,13 @@ DEFAULT_QUICKREPLIES_MAP = [
         'blockId': KAKAO_BLOCK_USER_HOME,
         'extra': {}
     },
+    {
+        'action': 'block',
+        'label': '잇플패스 확인하기',
+        'messageText': '로딩중..',
+        'blockId': KAKAO_BLOCK_USER_EATPLE_PASS,
+        'extra': {}
+    },
 ]
 
 def eatplePassValidation(user):

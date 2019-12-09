@@ -237,6 +237,7 @@ def kakaoView_PickupTime(kakaoPayload):
     if (user == None):
         return errorView('Invalid Block Access', '정상적이지 않은 경로거나, 잘못된 계정입니다.')
 
+    
     order = orderValidation(kakaoPayload)
     if(order.menu != None or order.store != None):
         orderManager = UserOrderManager(user)
@@ -247,11 +248,11 @@ def kakaoView_PickupTime(kakaoPayload):
         if(order.payment_status == IAMPORT_ORDER_STATUS_PAID):
             return errorView('Invalid Block Access', '이미 주문이 완료되었습니다!\n픽업시간 변경을 원하시면 잇플패스 내역에서\n 픽업시간을 변경해주세요.')
     
-    
-    # User's Eatple Pass Validation
-    eatplePassStatus = eatplePassValidation(user)
-    if(eatplePassStatus != None):
-        return eatplePassStatus
+    else:
+        # User's Eatple Pass Validation
+        eatplePassStatus = eatplePassValidation(user)
+        if(eatplePassStatus != None):
+            return eatplePassStatus
 
     store = storeValidation(kakaoPayload)
     menu = menuValidation(kakaoPayload)
@@ -259,8 +260,9 @@ def kakaoView_PickupTime(kakaoPayload):
     if(store == None or menu == None):
         return errorView('Invalid Store Paratmer', '정상적이지 않은 경로거나, 오류가 발생했습니다.\n다시 주문해주세요!')
 
-    currentSellingTime = sellingTimeCheck()
 
+    currentSellingTime = sellingTimeCheck()
+    
     # Order Record
     try:
         orderRecordSheet = OrderRecordSheet.objects.latest('update_date')
