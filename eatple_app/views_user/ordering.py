@@ -144,12 +144,14 @@ def kakaoView_MenuListup(kakaoPayload):
 
     #@DEBUG 
     # area = STORE_AREA_A_3
+    
     menuList = Menu.objects.filter(
         sellingTime=sellingTime, 
         store__type=STORE_TYPE_NORMAL,
         store__status=OC_OPEN,
-        #store__area=area,
-        )[:MENU_LIST_LENGTH]
+    ).annotate(
+        distance=Distance('store__place__point', user.location.point)
+    ).order_by('-distance')[:MENU_LIST_LENGTH]
 
     if menuList:
         kakaoForm = KakaoForm()
@@ -158,6 +160,8 @@ def kakaoView_MenuListup(kakaoPayload):
         for menu in menuList:
             imageUrl = '{}{}'.format(HOST_URL, menu.imgURL())
             
+            distance = int(menu.store.place.point.distance(user.location.point) * 100 * 1000)
+
             thumbnail = {
                 'imageUrl': imageUrl,
                 'fixedRatio': 'true',
@@ -190,7 +194,7 @@ def kakaoView_MenuListup(kakaoPayload):
             
             kakaoForm.BasicCard_Push(
                 '{}'.format(menu.name), 
-                '{}\n{}'.format(menu.store.name, menu.description), 
+                '{} - {}미터\n{}'.format(menu.store.name, distance, menu.description, ), 
                 thumbnail, 
                 buttons
             )
@@ -665,17 +669,15 @@ def kakaoView_TimeOut(blockId):
 def GET_Menu(request):
     EatplusSkillLog('Get Menu')
 
-    try:
-        kakaoPayload = KakaoPayLoad(request)
-        
-        # User Validation
-        user = userValidation(kakaoPayload)
-        if (user == None):
-            return GET_UserHome(request)
-        
-        return kakaoView_MenuListup(kakaoPayload)
-    except (RuntimeError, TypeError, NameError, KeyError) as ex:
-        return errorView('{}'.format(ex))
+    kakaoPayload = KakaoPayLoad(request)
+    
+    # User Validation
+    user = userValidation(kakaoPayload)
+    if (user == None):
+        return GET_UserHome(request)
+    
+    return kakaoView_MenuListup(kakaoPayload)
+
 
 
 @csrf_exempt

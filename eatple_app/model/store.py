@@ -1,14 +1,12 @@
 # define
 from eatple_app.define import *
 # Django Library
-from django.db import models
 from django.contrib.gis.db import models
 from django.conf import settings
 from django.urls import reverse
 from django.core.files.storage import FileSystemStorage
 from django_mysql.models import Model
 from django.core.validators import MaxValueValidator, MinValueValidator
-from django import forms
 
 # Utils
 from eatple_app.model.utils import OverwriteStorage
@@ -31,19 +29,19 @@ class Category(models.Model):
 class Place(models.Model):
     store = models.OneToOneField(
         'Store', 
-        on_delete=models.CASCADE, 
+        on_delete=models.CASCADE,
         unique=True, 
         null=True
     )
     
     lat = models.DecimalField(
-        default=0.00000000000000,
+        default=LOCATION_DEFAULT_LAT,
         max_digits=18, 
         decimal_places=14
     )
 
     long = models.DecimalField(
-        default=0.00000000000000,
+        default=LOCATION_DEFAULT_LNG,
         max_digits=18, 
         decimal_places=14
     )
@@ -52,9 +50,19 @@ class Place(models.Model):
         null=True, 
         blank=True, 
         srid=4326, 
+        geography=False,
         verbose_name="Location"
     )
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        
+        if(self.lat <= 0 or self.long <= 0):
+            self.lat = LOCATION_DEFAULT_LAT
+            self.long = LOCATION_DEFAULT_LNG
+        
+        self.point = Point(y=float(self.lat), x=float(self.long))
+        
     def __str__(self):
         return '{}, {}'.format(self.lat, self.long)
 

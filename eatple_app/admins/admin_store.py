@@ -5,12 +5,14 @@ from eatple_app.define import *
 from eatple_app.models import *
 
 # Django Library
-from django.contrib import admin
-from django import forms
+from django.contrib.gis import admin
+from django.contrib.gis import forms
+from django.contrib.gis.db import models
+
 from django.core import validators
 from django.utils.translation import ugettext_lazy as _
 from django.utils.safestring import mark_safe
-
+    
 class CRNInline(admin.TabularInline):
     model = CRN
     min_num = 1
@@ -20,6 +22,10 @@ class CRNInline(admin.TabularInline):
 class PlaceInline(admin.TabularInline):
     model = Place
     min_num = 1
+
+    formfield_overrides = {
+        models.PointField: {"widget": GooglePointFieldWidget}
+    }
 
 class MenuInline(admin.StackedInline):
     model = Menu
@@ -46,7 +52,7 @@ class MenuInline(admin.StackedInline):
          'current_stock', 'max_stock', 'status']}),
     ]
     
-class StoreAdmin(ImportExportMixin, admin.ModelAdmin):
+class StoreAdmin(ImportExportMixin, admin.GeoModelAdmin):
     readonly_fields = ('store_id', 'logo_preview')
 
     list_editable = ('status', )
@@ -59,7 +65,8 @@ class StoreAdmin(ImportExportMixin, admin.ModelAdmin):
     ]
 
     def logo_preview(self, obj):
-        return mark_safe('<img src="{url}" width="{width}" height={height} />'.format(
+        return mark_safe(
+            '<img src="{url}" width="{width}" height={height} />'.format(
             url=obj.logo.url,
             width=58,
             height=58,
@@ -67,9 +74,18 @@ class StoreAdmin(ImportExportMixin, admin.ModelAdmin):
     )
 
     list_filter = (
-        ('status', ChoiceDropdownFilter), ('area', ChoiceDropdownFilter), ('type', ChoiceDropdownFilter)
+        ('status', ChoiceDropdownFilter), 
+        ('area', ChoiceDropdownFilter), 
+        ('type', ChoiceDropdownFilter)
     )
     
-    list_display = ('name', 'status', 'store_id', 'crn', 'type', 'area', 'place')
+    list_display = (
+        'name', 
+        'status', 
+        'store_id', 
+        'crn', 
+        'type', 
+        'area', 
+    )
 
     inlines = [PlaceInline, CRNInline, MenuInline]

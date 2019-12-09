@@ -25,8 +25,11 @@ from django_admin_listfilter_dropdown.filters import DropdownFilter, RelatedDrop
 from import_export.admin import ExportActionModelAdmin, ImportExportMixin, ImportMixin
 from import_export import resources
 
-from django.contrib.gis.geos import *
+from mapwidgets.widgets import GooglePointFieldWidget, GoogleStaticMapWidget
 
+from django.contrib.gis.geos import *
+from django.contrib.gis.measure import D
+from django.contrib.gis.db.models.functions import Distance
 
 EATPLUS_HOST_URL = 'http://eatple.com:8000'
 VALUE_NOT_APPLICABLE = 'N/A'
@@ -244,6 +247,12 @@ KAKAO_PARAM_PREV_BLOCK_ID = 'prev_block_id'
 KAKAO_PARAM_MENU_CATEGORY = 'menuCategory'
 KAKAO_PARAM_PICKUP_TIME = 'pickup_time'
 
+
+# Location
+
+LOCATION_DEFAULT_ADDR = '강남사거리'
+LOCATION_DEFAULT_LAT = 37.497907
+LOCATION_DEFAULT_LNG = 127.027635
 
 # Time Functions
 def dateNowByTimeZone():

@@ -1,27 +1,4 @@
-# Define
-from eatple_app.define import *
-
-# Models
-from eatple_app.models import *
-from django.db.models import Q
-
-from rest_framework.views import APIView
-from rest_framework.response import Response
-from rest_framework import status
-
-import slack 
-
-SLACK_CLIENT_ID = '808658240627.862280783904'
-SLACK_CLIENT_SECRET = 'cd6bb7935acaf9451c1bf326f21b80bd'
-
-SLACK_VERIFICATION_TOKEN = 'qM7JgIwtYjTnMZ6KP9KbNo5o'
-SLACK_BOT_USER_TOKEN = 'xoxb-808658240627-864289607191-jQUdG2eS12XZLNZ3Xz53gz8a'
-
-client = slack.WebClient(token=SLACK_BOT_USER_TOKEN)
-
-
-SLACK_COMMAND_DAILY_STATUS = 'ds'
-SLACK_COMMAND_TOTAL_STATUS = 'ts'
+from eatple_app.views_slack.slack_define import * 
 
 def eatple_total_status():
     res = client.chat_postMessage(

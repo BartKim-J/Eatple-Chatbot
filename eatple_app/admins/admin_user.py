@@ -5,8 +5,10 @@ from eatple_app.define import *
 from eatple_app.models import *
 
 # Django Library
-from django.contrib import admin
-from django import forms
+from django.contrib.gis import admin
+from django.contrib.gis import forms
+from django.contrib.gis.db import models
+
 from django.core import validators
 from django.utils.translation import ugettext_lazy as _
 from django.utils.safestring import mark_safe
@@ -16,6 +18,10 @@ class LocationInline(admin.TabularInline):
     min_num = 0
     
     readonly_field = ('lat', 'long', 'address')
+    
+    formfield_overrides = {
+        models.PointField: {"widget": GooglePointFieldWidget}
+    }
 
 class UserAdmin(ImportExportMixin, admin.ModelAdmin):
     readonly_fields = (
@@ -31,6 +37,8 @@ class UserAdmin(ImportExportMixin, admin.ModelAdmin):
         'flag_promotion'
     )
     
+    list_editable = ('email', )
+
     list_filter = (
         'create_date', 
         'gender',
@@ -44,7 +52,6 @@ class UserAdmin(ImportExportMixin, admin.ModelAdmin):
         'email', 
         'gender',
         'flag_promotion',
-        'location'
     )
     
     inlines = [LocationInline]

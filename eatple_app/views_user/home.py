@@ -46,8 +46,8 @@ def userLocationRegistration(user, locationData):
         user.location.long = locationData['longitude']
         user.location.address = locationData['address']
         user.location.point = Point(
-            float(locationData['latitude']), 
-            float(locationData['longitude']),
+            y=float(locationData['latitude']), 
+            x=float(locationData['longitude']),
         )
         user.location.save()
         
@@ -217,7 +217,7 @@ def kakaoView_Home(user):
             lat=37.497907,
             long=127.027635,
             address="강남 사거리",
-            point=Point(37.497907, 127.027635),
+            point=Point(y=37.497907, x=127.027635),
         )
         location.save()
 

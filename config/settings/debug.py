@@ -58,6 +58,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+
+    'mapwidgets',
 ]
 
 MIDDLEWARE = [
@@ -129,6 +131,28 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+
+MAP_WIDGETS = {
+    "GooglePointFieldWidget": (
+        ("zoom", 55),
+        ("mapCenterLocation", [37.49492000000000, 127.02739000000000]),
+    ),
+    
+    "GoogleStaticMapWidget": (
+        ("zoom", 18),
+        ("size", "480x480"),
+        ("scale", ""),
+        ("format", ""),
+        ("maptype", ""),
+        ("path", ""),
+        ("visible", ""),
+        ("style", ""),
+        ("language", ""),
+        ("region", "")
+    ),
+
+    "GOOGLE_MAP_API_KEY": "AIzaSyDRhnn4peSzEfKzQ_WjwDqDF9pzDiuVRhM"
+}
 
 # Internationalization
 # https://docs.djangoproject.com/en/2.2/topics/i18n/

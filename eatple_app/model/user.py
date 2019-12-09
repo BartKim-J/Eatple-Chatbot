@@ -25,19 +25,19 @@ class Location(models.Model):
     )
     
     lat = models.DecimalField(
-        default=37.497907,
+        default=LOCATION_DEFAULT_LAT,
         max_digits=18, 
         decimal_places=14
     )
 
     long = models.DecimalField(
-        default=127.027635,
+        default=LOCATION_DEFAULT_LNG,
         max_digits=18, 
         decimal_places=14
     )
     
     address = models.CharField(
-        default="강남사거리",
+        default=LOCATION_DEFAULT_ADDR,
         max_length=STRING_LENGTH,
         null=True,
     )
@@ -46,8 +46,18 @@ class Location(models.Model):
         null=True, 
         blank=True, 
         srid=4326, 
+        geography=False,
         verbose_name="Location"
     )
+    
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        if(self.lat <= 0 or self.long <= 0):
+            self.lat = LOCATION_DEFAULT_LAT
+            self.long = LOCATION_DEFAULT_LNG
+
+        self.point = Point(y=float(self.lat), x=float(self.long))
 
     def __str__(self):
         return '{}, {}'.format(self.lat, self.long)
