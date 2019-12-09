@@ -142,12 +142,12 @@ def kakaoView_EatplePass(kakaoPayload):
                 errorView('Invalid Case on order status check by now time.')
         
             kakaoForm.BasicCard_Push(
-                '주문번호: {}'.format(order.order_id), 
-                ' - 주문자: {}\n\n - 매장: {}\n - 주소: {}\n - 메뉴: {}\n\n - 결제 금액: {}원\n - 픽업 시간: {}\n\n - 주문 상태: {}'.format(
+                '{}'.format(order.menu.name), 
+                '주문번호: {}\n - 주문자: {}\n\n - 매장: {}\n - 주소: {}\n\n - 결제 금액: {}원\n\n - 픽업 시간: {}\n - 주문 상태: {}'.format(
+                    order.order_id,
                     str(order.ordersheet.user.phone_number)[9:13],
                     order.store.name,
                     order.store.addr,
-                    order.menu.name,
                     order.totalPrice,
                     dateByTimeZone(order.pickup_time).strftime('%p %-I시 %-M분 %-m월 %-d일').replace('AM', '오전').replace('PM', '오후'),
                     ORDER_STATUS[order.status][1]

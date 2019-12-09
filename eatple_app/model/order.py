@@ -415,7 +415,7 @@ class OrderManager():
             Q(order_date__gt=expireDate) &
             ~Q(store=None) &
             ~Q(menu=None)
-        )
+        )[:2]
     
         # Order Status Update
         for order in readyPayOrders:

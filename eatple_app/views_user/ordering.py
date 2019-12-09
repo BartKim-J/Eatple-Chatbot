@@ -144,14 +144,15 @@ def kakaoView_MenuListup(kakaoPayload):
 
     #@DEBUG 
     # area = STORE_AREA_A_3
-    
-    menuList = Menu.objects.filter(
+    ref_location = Point(1.232433, 1.2323232, srid=4326)
+    menuList = Menu.objects.annotate(
+        distance=Distance(F('store__place__point'), user.location.point) * 100 * 1000
+    ).filter(
         sellingTime=sellingTime, 
         store__type=STORE_TYPE_NORMAL,
         store__status=OC_OPEN,
-    ).annotate(
-        distance=Distance('store__place__point', user.location.point)
-    ).order_by('-distance')[:MENU_LIST_LENGTH]
+        distance__lte=1000
+    ).order_by(F'distance')
 
     if menuList:
         kakaoForm = KakaoForm()
@@ -159,9 +160,9 @@ def kakaoView_MenuListup(kakaoPayload):
         # Menu Carousel Card Add
         for menu in menuList:
             imageUrl = '{}{}'.format(HOST_URL, menu.imgURL())
+                
+            distance = int(menu.distance)
             
-            distance = int(menu.store.place.point.distance(user.location.point) * 100 * 1000)
-
             thumbnail = {
                 'imageUrl': imageUrl,
                 'fixedRatio': 'true',
@@ -194,7 +195,7 @@ def kakaoView_MenuListup(kakaoPayload):
             
             kakaoForm.BasicCard_Push(
                 '{}'.format(menu.name), 
-                '{} - {}미터\n{}'.format(menu.store.name, distance, menu.description, ), 
+                '{} - 약 {} 미터\n{}'.format(menu.store.name, distance, menu.description, ), 
                 thumbnail, 
                 buttons
             )

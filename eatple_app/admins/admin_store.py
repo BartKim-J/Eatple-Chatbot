@@ -24,7 +24,7 @@ class PlaceInline(admin.TabularInline):
     min_num = 1
 
     formfield_overrides = {
-        models.PointField: {"widget": GooglePointFieldWidget}
+        models.PointField: {"widget": GoogleStaticMapWidget}
     }
 
 class MenuInline(admin.StackedInline):
@@ -85,7 +85,8 @@ class StoreAdmin(ImportExportMixin, admin.GeoModelAdmin):
         'store_id', 
         'crn', 
         'type', 
-        'area', 
+        'area',
+        'place', 
     )
 
     inlines = [PlaceInline, CRNInline, MenuInline]

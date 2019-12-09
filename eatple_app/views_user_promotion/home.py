@@ -119,7 +119,6 @@ def kakaoView_MenuListup(kakaoPayload):
     menuList = Menu.objects.filter(
         store__area=area,
         
-        sellingTime=sellingTime, 
         store__type=STORE_TYPE_EVENT,
         store__status=OC_OPEN,
         ).order_by('menu_id')[:MENU_LIST_LENGTH]

@@ -57,11 +57,15 @@ class Place(models.Model):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         
+        self.point = Point(0, 0)
+        super().save()
+        
         if(self.lat <= 0 or self.long <= 0):
             self.lat = LOCATION_DEFAULT_LAT
             self.long = LOCATION_DEFAULT_LNG
         
         self.point = Point(y=float(self.lat), x=float(self.long))
+        super().save()
         
     def __str__(self):
         return '{}, {}'.format(self.lat, self.long)

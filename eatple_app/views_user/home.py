@@ -137,6 +137,41 @@ def kakaoView_Home(user):
     orderManager.orderPaidCheck()
     orderManager.availableOrderStatusUpdate()
 
+    #@PROMOTION
+    try:
+        address = user.location.address
+    except User.location.RelatedObjectDoesNotExist:
+        location = Location(
+            user=user,
+            lat=37.497907,
+            long=127.027635,
+            address="강남 사거리",
+            point=Point(y=37.497907, x=127.027635),
+        )
+        location.save()
+
+        user.location = location
+        user.save()
+        
+        address = user.location.address
+    
+    thumbnail = {
+        'imageUrl': 'https://maps.googleapis.com/maps/api/staticmap?center={lat},{long}&zoom={zoom}&size=800x400&key={apiKey}'.format(
+            zoom=18,
+            lat=user.location.lat,
+            long=user.location.long,
+            apiKey='AIzaSyDRhnn4peSzEfKzQ_WjwDqDF9pzDiuVRhM',
+        ),
+    }
+    
+    kakaoForm.BasicCard_Push(
+        '등록된 주소',
+        '{}'.format(address),
+        thumbnail,
+        []
+    )
+    kakaoForm.BasicCard_Add()
+    
     BTN_MAP = [
         {
             'action': 'block',
@@ -158,17 +193,6 @@ def kakaoView_Home(user):
         },
     ]
 
-    """
-        {
-            'action': 'block', 
-            'label': '위치변경',
-            'messageText': '로딩중..',    
-            'blockId': KAKAO_BLOCK_USER_EDIT_LOCATION,
-            'extra': {
-                KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_HOME
-            }
-        },
-    """
     QUICKREPLIES_MAP = [
         {
             'action': 'block',
@@ -181,7 +205,7 @@ def kakaoView_Home(user):
         },
         {
             'action': 'block', 
-            'label': '위치 확인',
+            'label': '위치 변경',
             'messageText': '로딩중..',    
             'blockId': KAKAO_BLOCK_USER_EDIT_LOCATION,
             'extra': {
@@ -198,7 +222,7 @@ def kakaoView_Home(user):
             }
         },
     ]
-
+    
     thumbnail = {
         'imageUrl': '',
         'fixedRatio': 'true',
@@ -206,33 +230,9 @@ def kakaoView_Home(user):
         'height': 800,
     }
 
+
     buttons = BTN_MAP
-
-    #@PROMOTION
-    try:
-        address = user.location.address
-    except User.location.RelatedObjectDoesNotExist:
-        location = Location(
-            user=user,
-            lat=37.497907,
-            long=127.027635,
-            address="강남 사거리",
-            point=Point(y=37.497907, x=127.027635),
-        )
-        location.save()
-
-        user.location = location
-        user.save()
-        
-        address = user.location.address
     
-    kakaoForm.BasicCard_Push(
-        '등록된 주소',
-        '{}'.format(address),
-        {},
-        []
-    )
-    kakaoForm.BasicCard_Add()
     kakaoForm.BasicCard_Push(
         '잇플 홈 화면입니다.',
         '아래 명령어 중에 골라주세요!',

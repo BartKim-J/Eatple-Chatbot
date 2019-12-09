@@ -43,20 +43,23 @@ INSTALLED_APPS = [
 
     # 'suit',
     # 'eatple_app.apps.SuitConfig',
-
+    
     'import_export',
     'phonenumber_field',
-
+    
     'django_admin_listfilter_dropdown',
 
     'django.contrib.gis',
-
+    'rest_framework',
+    
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+
+    'mapwidgets',
 ]
 
 MIDDLEWARE = [
@@ -79,7 +82,7 @@ TEMPLATES = [
         'OPTIONS': {
             'context_processors': [
                 'django.template.context_processors.debug',
-                'django.template.context_processors.request',  # Make sure you have this line
+                'django.template.context_processors.request', # Make sure you have this line
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
             ],
@@ -129,6 +132,28 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 
+MAP_WIDGETS = {
+    "GooglePointFieldWidget": (
+        ("zoom", 55),
+        ("mapCenterLocation", [37.49492000000000, 127.02739000000000]),
+    ),
+    
+    "GoogleStaticMapWidget": (
+        ("zoom", 18),
+        ("size", "480x480"),
+        ("scale", ""),
+        ("format", ""),
+        ("maptype", ""),
+        ("path", ""),
+        ("visible", ""),
+        ("style", ""),
+        ("language", ""),
+        ("region", "")
+    ),
+
+    "GOOGLE_MAP_API_KEY": "AIzaSyDRhnn4peSzEfKzQ_WjwDqDF9pzDiuVRhM"
+}
+
 # Internationalization
 # https://docs.djangoproject.com/en/2.2/topics/i18n/
 LANGUAGES = [
@@ -161,3 +186,4 @@ STATIC_ROOT = os.path.join(ROOT_DIR, 'static')
 #
 #CSRF_COOKIE_SECURE = True
 #SESSION_COOKIE_SECURE = False
+

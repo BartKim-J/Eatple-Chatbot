@@ -20,7 +20,7 @@ class LocationInline(admin.TabularInline):
     readonly_field = ('lat', 'long', 'address')
     
     formfield_overrides = {
-        models.PointField: {"widget": GooglePointFieldWidget}
+        models.PointField: {"widget": GoogleStaticMapWidget}
     }
 
 class UserAdmin(ImportExportMixin, admin.ModelAdmin):
@@ -37,8 +37,6 @@ class UserAdmin(ImportExportMixin, admin.ModelAdmin):
         'flag_promotion'
     )
     
-    list_editable = ('email', )
-
     list_filter = (
         'create_date', 
         'gender',

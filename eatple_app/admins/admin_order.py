@@ -25,6 +25,7 @@ class OrderResource(resources.ModelResource):
             'store__store_id',
             'menu__name',
             'menu__menu_id',
+            'ordersheet__user__phone_number',
         )
 
 
@@ -33,6 +34,9 @@ class OrderAdmin(ImportExportMixin, admin.ModelAdmin):
 
     def user(self, obj):
         return obj.ordersheet.user
+
+    def phone_number(self, obj):
+        return obj.ordersheet.user.phone_number
 
     readonly_fields = (
         'ordersheet', 
@@ -54,5 +58,7 @@ class OrderAdmin(ImportExportMixin, admin.ModelAdmin):
         ('payment_status', ChoiceDropdownFilter),
     )
     
-    list_display = ('user', 'order_id', 'store', 'menu', 'type',
+
+    
+    list_display = ('user','phone_number', 'order_id', 'menu', 'type',
                     'payment_status', 'status', 'order_date')
