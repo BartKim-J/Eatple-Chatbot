@@ -22,21 +22,26 @@ from eatple_app.views import *
 # STATIC CONFIG
 MENU_LIST_LENGTH = 10
 
-DISCOUNT_FOR_DEBUG = 5900
-#DISCOUNT_FOR_DEBUG = None
+#DISCOUNT_FOR_DEBUG = 5900
+DISCOUNT_FOR_DEBUG = None
 
+# # # # # # # # # # # # # # # # # # # # # # # # #
+#
+# Static View
+#
+# # # # # # # # # # # # # # # # # # # # # # # # #
 # @PROMOTION
 def eventLock():
     kakaoForm = KakaoForm()
-    
-    kakaoForm.BasicCard_Push('프로모션 코드를 대화창에 입력해주세요.', 
-                            '일반 메뉴의 경우 12월 10일부터 주문하실 수 있어요. 지금은 프로모션 메뉴만 이용해주세요', 
-                            {}, 
-                            []
-                        )
-    
+
+    kakaoForm.BasicCard_Push('프로모션 코드를 대화창에 입력해주세요.',
+                             '일반 메뉴의 경우 12월 10일부터 주문하실 수 있어요. 지금은 프로모션 메뉴만 이용해주세요',
+                             {},
+                             []
+                             )
+
     kakaoForm.BasicCard_Add()
-    
+
     QUICKREPLIES_MAP = [
         {
             'action': 'block',
@@ -49,15 +54,10 @@ def eventLock():
         },
     ]
 
-    kakaoForm.QuickReplies_AddWithMap(QUICKREPLIES_MAP)       
-    
+    kakaoForm.QuickReplies_AddWithMap(QUICKREPLIES_MAP)
+
     return JsonResponse(kakaoForm.GetForm())
 
-# # # # # # # # # # # # # # # # # # # # # # # # #
-#
-# Static View
-#
-# # # # # # # # # # # # # # # # # # # # # # # # #
 def sellingTimeCheck():
     currentDate = dateNowByTimeZone()
     currentDateWithoutTime = currentDate.replace(hour=0, minute=0, second=0, microsecond=0)
@@ -139,7 +139,7 @@ def kakaoView_MenuListup(kakaoPayload):
         status=OC_OPEN,
         store__status=OC_OPEN,
         
-        distance__lte=1000
+        distance__lte=700
     ).order_by(F'distance')
 
     kakaoForm = KakaoForm()
@@ -160,7 +160,7 @@ def kakaoView_MenuListup(kakaoPayload):
             imageUrl = '{}{}'.format(HOST_URL, menu.imgURL())
                 
             distance = menu.distance
-            walkTime = round((distance / 100) * 1.5)
+            walkTime = round((distance / 100) * 1.9)
             
             if(walkTime <= 3):
                 walkTime = 3

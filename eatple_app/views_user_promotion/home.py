@@ -174,7 +174,7 @@ def kakaoView_MenuListup(kakaoPayload):
     else:
         kakaoForm = KakaoForm()
 
-        kakaoForm.SimpleText_Add('판매중인 메뉴가 없어요...')
+        kakaoForm.SimpleText_Add('이미 종료된 프로모션 입니다.')
 
     QUICKREPLIES_MAP = [
         {
