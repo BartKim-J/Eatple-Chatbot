@@ -22,42 +22,14 @@ from eatple_app.views import *
 # STATIC CONFIG
 MENU_LIST_LENGTH = 10
 
-DISCOUNT_FOR_DEBUG = 5900
-#DISCOUNT_FOR_DEBUG = None
+#DISCOUNT_FOR_DEBUG = 5900
+DISCOUNT_FOR_DEBUG = None
 
 # # # # # # # # # # # # # # # # # # # # # # # # #
 #
 # Static View
 #
 # # # # # # # # # # # # # # # # # # # # # # # # #
-# @PROMOTION
-def eventLock():
-    kakaoForm = KakaoForm()
-    
-    kakaoForm.BasicCard_Push('프로모션 코드를 대화창에 입력해주세요.', 
-                            '일반 메뉴의 경우 12월 10일부터 주문하실 수 있어요. 지금은 프로모션 메뉴만 이용해주세요', 
-                            {}, 
-                            []
-                        )
-    
-    kakaoForm.BasicCard_Add()
-    
-    QUICKREPLIES_MAP = [
-        {
-            'action': 'block',
-            'label': '홈으로 돌아가기',
-            'messageText': '로딩중..',
-            'blockId': KAKAO_BLOCK_USER_HOME,
-            'extra': {
-                KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_GET_MENU
-            }
-        },
-    ]
-
-    kakaoForm.QuickReplies_AddWithMap(QUICKREPLIES_MAP)       
-    
-    return JsonResponse(kakaoForm.GetForm())
-    
 def sellingTimeCheck():
     currentDate = dateNowByTimeZone()
     currentDateWithoutTime = currentDate.replace(hour=0, minute=0, second=0, microsecond=0)
@@ -65,10 +37,6 @@ def sellingTimeCheck():
     # Time QA DEBUG
     # currentDate = currentDate.replace(hour=16, minute=31, second=0, microsecond=0)
     # currentDateWithoutTime = currentDate.replace(hour=0, minute=0, second=0, microsecond=0)
-
-    #@PROMOTION
-    currentDate = currentDate.replace(hour=10, minute=0, second=0, microsecond=0)
-    currentDateWithoutTime = currentDate.replace(hour=0, minute=0, second=0, microsecond=0)
     
     # Prev Lunch Order Time 16:30 ~ 10:30
     prevlunchOrderTimeStart = currentDateWithoutTime + datetime.timedelta(hours=16, minutes=30, days=-1)
@@ -108,8 +76,6 @@ def kakaoView_MenuListup(kakaoPayload):
     eatplePassStatus = eatplePassValidation(user)
     if(eatplePassStatus != None):
         return eatplePassStatus
-    
-    sellingTime = sellingTimeCheck()
 
     # Order Log Record
     orderRecordSheet = OrderRecordSheet()
@@ -133,22 +99,13 @@ def kakaoView_MenuListup(kakaoPayload):
         order.totalPrice = discountPrice
         order.save()
 
-    if (sellingTime == None):
-        return errorView('Get Invalid Selling Time', '잘못된 주문 시간입니다.')
-    elif sellingTime == SELLING_TIME_DINNER:
-        '''
-            @NOTE Dinner Time Close In Alpha 
-        '''
-        
-        return errorView('Get Invalid Selling Time', '오늘 점심은 이미 마감되었어요.\n내일 점심을 기대해주세요.')
+    # currentSellingTime = sellingTimeCheck()
+    currentSellingTime = SELLING_TIME_LUNCH
 
-    #@DEBUG 
-    # area = STORE_AREA_A_3
-    ref_location = Point(1.232433, 1.2323232, srid=4326)
     menuList = Menu.objects.annotate(
         distance=Distance(F('store__place__point'), user.location.point) * 100 * 1000
     ).filter(
-        sellingTime=sellingTime, 
+        sellingTime=currentSellingTime, 
         store__type=STORE_TYPE_NORMAL,
         
         status=OC_OPEN,
@@ -206,7 +163,10 @@ def kakaoView_MenuListup(kakaoPayload):
                 thumbnail, 
                 buttons
             )
-            
+        
+        
+        kakaoForm.SimpleText_Add('모든 {} 메뉴는 6000원 입니다.'.format(dict(SELLING_TIME_CATEGORY)[SELLING_TIME_LUNCH]))
+
         kakaoForm.BasicCard_Add()
     
     else:
@@ -237,7 +197,7 @@ def kakaoView_PickupTime(kakaoPayload):
         return errorView('Invalid Block Access', '정상적이지 않은 경로거나, 오류가 발생했습니다.\n다시 주문해주세요!')
 
     # @PROMOTION
-    return eventLock()
+    # return eventLock()
 
     # User Validation
     user = userValidation(kakaoPayload)
@@ -267,9 +227,18 @@ def kakaoView_PickupTime(kakaoPayload):
     if(store == None or menu == None):
         return errorView('Invalid Store Paratmer', '정상적이지 않은 경로거나, 오류가 발생했습니다.\n다시 주문해주세요!')
 
-
     currentSellingTime = sellingTimeCheck()
     
+    if (currentSellingTime == None):
+        return errorView('Get Invalid Selling Time', '잘못된 주문 시간입니다.')
+    elif currentSellingTime == SELLING_TIME_DINNER:
+        '''
+            @NOTE Dinner Time Close In Alpha 
+        '''
+        
+        return errorView('Get Invalid Selling Time', '오늘 점심은 이미 마감되었어요.\n내일 점심을 기대해주세요.')
+
+
     # Order Record
     try:
         orderRecordSheet = OrderRecordSheet.objects.latest('update_date')

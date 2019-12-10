@@ -41,6 +41,8 @@ class UserAdmin(ImportExportMixin, admin.ModelAdmin):
         'flag_promotion'
     )
     
+    search_fields = ['nickname', 'app_user_id']
+    
     list_filter = (
         'create_date', 
         'gender',
