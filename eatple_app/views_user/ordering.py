@@ -22,8 +22,36 @@ from eatple_app.views import *
 # STATIC CONFIG
 MENU_LIST_LENGTH = 10
 
-#DISCOUNT_FOR_DEBUG = 5900
-DISCOUNT_FOR_DEBUG = None
+DISCOUNT_FOR_DEBUG = 5900
+#DISCOUNT_FOR_DEBUG = None
+
+# @PROMOTION
+def eventLock():
+    kakaoForm = KakaoForm()
+    
+    kakaoForm.BasicCard_Push('프로모션 코드를 대화창에 입력해주세요.', 
+                            '일반 메뉴의 경우 12월 10일부터 주문하실 수 있어요. 지금은 프로모션 메뉴만 이용해주세요', 
+                            {}, 
+                            []
+                        )
+    
+    kakaoForm.BasicCard_Add()
+    
+    QUICKREPLIES_MAP = [
+        {
+            'action': 'block',
+            'label': '홈으로 돌아가기',
+            'messageText': '로딩중..',
+            'blockId': KAKAO_BLOCK_USER_HOME,
+            'extra': {
+                KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_GET_MENU
+            }
+        },
+    ]
+
+    kakaoForm.QuickReplies_AddWithMap(QUICKREPLIES_MAP)       
+    
+    return JsonResponse(kakaoForm.GetForm())
 
 # # # # # # # # # # # # # # # # # # # # # # # # #
 #
@@ -114,9 +142,19 @@ def kakaoView_MenuListup(kakaoPayload):
         distance__lte=1000
     ).order_by(F'distance')
 
-    if menuList:
-        kakaoForm = KakaoForm()
+    kakaoForm = KakaoForm()
 
+    #@PROMOTION
+    kakaoForm.BasicCard_Push('# 프로모션에 참가하실 분들은 발급된 코드를 대화창에 입력해주세요.', 
+                            '일반 메뉴는 6000원에 구매하실수 있습니다.',
+                            {}, 
+                            []
+                        )
+    
+    kakaoForm.BasicCard_Add()
+    
+    if menuList:
+    
         # Menu Carousel Card Add
         for menu in menuList:
             imageUrl = '{}{}'.format(HOST_URL, menu.imgURL())
@@ -124,8 +162,8 @@ def kakaoView_MenuListup(kakaoPayload):
             distance = menu.distance
             walkTime = round((distance / 100) * 1.5)
             
-            if(walkTime <= 4):
-                walkTime = 4
+            if(walkTime <= 3):
+                walkTime = 3
             
             thumbnail = {
                 'imageUrl': imageUrl,
@@ -163,9 +201,6 @@ def kakaoView_MenuListup(kakaoPayload):
                 thumbnail, 
                 buttons
             )
-        
-        
-        kakaoForm.SimpleText_Add('모든 {} 메뉴는 6000원 입니다.'.format(dict(SELLING_TIME_CATEGORY)[SELLING_TIME_LUNCH]))
 
         kakaoForm.BasicCard_Add()
     
@@ -196,8 +231,8 @@ def kakaoView_PickupTime(kakaoPayload):
     if(prev_block_id != KAKAO_BLOCK_USER_GET_MENU and prev_block_id != KAKAO_BLOCK_USER_SET_ORDER_SHEET):
         return errorView('Invalid Block Access', '정상적이지 않은 경로거나, 오류가 발생했습니다.\n다시 주문해주세요!')
 
-    # @PROMOTION
-    # return eventLock()
+    # @DEBUG
+    #return eventLock()
 
     # User Validation
     user = userValidation(kakaoPayload)
@@ -226,6 +261,8 @@ def kakaoView_PickupTime(kakaoPayload):
     
     if(store == None or menu == None):
         return errorView('Invalid Store Paratmer', '정상적이지 않은 경로거나, 오류가 발생했습니다.\n다시 주문해주세요!')
+
+
 
     currentSellingTime = sellingTimeCheck()
     

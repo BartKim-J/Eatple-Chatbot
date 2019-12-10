@@ -153,9 +153,14 @@ def orderUpdate(order):
         if(order.status == ORDER_STATUS_MENU_CHOCIED):
             order.status = ORDER_STATUS_ORDER_CONFIRM_WAIT
             order.save()
-            
+
             #@SLACK LOGGER
-            SlackLogPayOrder(order)
+            #@PROMOTION            
+            if(order.type == ORDER_TYPE_PROMOTION):
+                SlackLogPayPromotionOrder(order)
+                
+            elif(order.type == ORDER_TYPE_NORMAL):
+                SlackLogPaydOrder(order)
             
         #@PROMOTION
         if(order.type == ORDER_TYPE_PROMOTION):
@@ -182,10 +187,10 @@ def orderUpdate(order):
         hour=0, minute=0, second=0, microsecond=0)
 
     # Time QA DEBUG
-    # orderDate = dateByTimeZone(order.order_date)
-    # orderDateWithoutTime = orderDate.replace(hour=0, minute=0, second=0, microsecond=0)
+    #orderDate = dateByTimeZone(order.order_date)
+    #orderDateWithoutTime = orderDate.replace(hour=0, minute=0, second=0, microsecond=0)
     
-    #currentDate = currentDate.replace(day=10, hour=10, minute=20, second=0, microsecond=0)
+    #currentDate = currentDate.replace(day=11, hour=14, minute=00, second=0, microsecond=0)
     #currentDateWithoutTime = currentDate.replace(hour=0, minute=0, second=0, microsecond=0)
     #print(currentDate)
     
@@ -198,7 +203,7 @@ def orderUpdate(order):
     PICKUP_DAY = dateByTimeZone(order.pickup_time).replace(hour=0, minute=0, second=0, microsecond=0)
     PICKUP_YESTER_DAY = PICKUP_DAY + datetime.timedelta(days=-1)
     
-    # Prev Lunch Order Edit Time 16:30 ~ 10:25(~ 10:30)
+    # Prev Lunch Order Edit Time 16:30 ~ 시:25(~ 10:30)
     prevlunchOrderEditTimeStart = currentDateWithoutTime + datetime.timedelta(hours=16, minutes=30, days=-1)
     prevlunchOrderEditTimeEnd = currentDateWithoutTime + datetime.timedelta(hours=10, minutes=25)
     prevlunchOrderTimeEnd = currentDateWithoutTime + datetime.timedelta(hours=10, minutes=30)
@@ -225,13 +230,13 @@ def orderUpdate(order):
     if (SELLING_TIME_LUNCH == menu.sellingTime) and \
         ((PICKUP_YESTER_DAY <= orderDateWithoutTime) and (TODAY <= PICKUP_DAY)):
         # Pickup Prepare Time 10:30  ~ 11:30
-        if(prevlunchOrderTimeEnd <= currentDate) and (currentDate < lunchOrderPickupTimeStart) and \
+        if(prevlunchOrderTimeEnd <= currentDate) and (currentDate <= lunchOrderPickupTimeStart) and \
            (TODAY == PICKUP_DAY):
             print("픽업 대기중 - A")
             order.status = ORDER_STATUS_PICKUP_PREPARE
             order.save()
         # PickupTime Waiting Time 11:31 ~ 13:59
-        elif(lunchOrderPickupTimeStart < currentDate) and (currentDate < lunchOrderPickupTimeEnd) and \
+        elif(lunchOrderPickupTimeStart < currentDate) and (currentDate <= lunchOrderPickupTimeEnd) and \
             (TODAY == PICKUP_DAY):
             # Over Order Pickup Time
             if(currentDate >= order.pickup_time + datetime.timedelta(minutes=-15)):
