@@ -38,7 +38,6 @@ class OrderAdmin(ImportExportMixin, admin.ModelAdmin):
     def phone_number(self, obj):
         return obj.ordersheet.user.phone_number
 
-    """
     readonly_fields = (
         'ordersheet', 
         'order_id', 
@@ -51,16 +50,15 @@ class OrderAdmin(ImportExportMixin, admin.ModelAdmin):
         'pickup_time',
         'type',
     )
-    """
 
     list_filter = (
         'order_date', 
-        'store', 
-        'menu',
+        ('store',  RelatedDropdownFilter),
+        ('menu', RelatedDropdownFilter),
         ('payment_status', ChoiceDropdownFilter),
+        ('status', ChoiceDropdownFilter),
     )
     
 
-    
-    list_display = ('user','phone_number', 'order_id', 'menu', 'type',
+    list_display = ('user', 'order_id',  'store', 'menu', 'type',
                     'payment_status', 'status', 'order_date')

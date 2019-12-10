@@ -17,7 +17,11 @@ class LocationInline(admin.TabularInline):
     model = Location
     min_num = 0
     
-    readonly_field = ('lat', 'long', 'address')
+    readonly_field = (
+        'lat', 
+        'long', 
+        'address'
+    )
     
     formfield_overrides = {
         models.PointField: {"widget": GoogleStaticMapWidget}

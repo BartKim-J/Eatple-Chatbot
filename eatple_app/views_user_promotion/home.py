@@ -120,8 +120,10 @@ def kakaoView_MenuListup(kakaoPayload):
         store__area=area,
         
         store__type=STORE_TYPE_EVENT,
+        
+        status=OC_OPEN,
         store__status=OC_OPEN,
-        ).order_by('menu_id')[:MENU_LIST_LENGTH]
+        ).order_by('store__store_id')[:MENU_LIST_LENGTH]
 
     if menuList:
         kakaoForm = KakaoForm()

@@ -150,7 +150,10 @@ def kakaoView_MenuListup(kakaoPayload):
     ).filter(
         sellingTime=sellingTime, 
         store__type=STORE_TYPE_NORMAL,
+        
+        status=OC_OPEN,
         store__status=OC_OPEN,
+        
         distance__lte=1000
     ).order_by(F'distance')
 

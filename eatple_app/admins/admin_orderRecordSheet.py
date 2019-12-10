@@ -16,13 +16,34 @@ class OrderRecordInline(admin.TabularInline):
     extra = 0
     min_num = 0
 
-    readonly_fields = ('status', 'record_date', )
+    readonly_fields = (
+        'status', 
+        'record_date', 
+    )
 
 
 class OrderRecordSheetAdmin(ImportExportMixin, admin.ModelAdmin):
-    readonly_fields = ('user', 'menu', 'status', 'created_date', 'update_date')
+    readonly_fields = (
+        'user', 
+        'menu', 
+        'status', 
+        'created_date', 
+        'update_date'
+    )
 
-    list_filter = ('update_date', 'created_date')
-    list_display = ('status', 'user', 'created_date', 'update_date')
+    list_filter = (
+        'status', 
+        ('menu', RelatedDropdownFilter),
+        'update_date', 
+        'created_date'
+    )
+    
+    list_display = (
+        'user', 
+        'status', 
+        'menu', 
+        'created_date', 
+        'update_date'
+    )
 
     inlines = [OrderRecordInline]
