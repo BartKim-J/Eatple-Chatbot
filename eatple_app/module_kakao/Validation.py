@@ -94,7 +94,11 @@ def userValidation(kakaoPayload):
 
 def userLocationValidation(user):
     try:
-        location = Location.objects.get(user=user)
+        try:
+            location = Location.objects.get(user=user)
+        except AttributeError:
+            location = Location.objects.filter(user=user)[:1]
+            
         return location
     except Location.DoesNotExist:
         return None

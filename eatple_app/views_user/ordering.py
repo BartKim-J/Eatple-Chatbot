@@ -167,6 +167,9 @@ def kakaoView_MenuListup(kakaoPayload):
             distance = menu.distance
             walkTime = round((distance / 100) * 1.5)
             
+            if(walkTime <= 4):
+                walkTime = 4
+            
             thumbnail = {
                 'imageUrl': imageUrl,
                 'fixedRatio': 'true',

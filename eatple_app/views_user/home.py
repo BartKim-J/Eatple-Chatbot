@@ -26,16 +26,55 @@ def isLocationParam(kakaoPayload):
 
         
 def userSignUp(userProfile):
+    
+    nickname = userProfile['nickname']
+    phone_number = userProfile['phone_number']
+    email = userProfile['email']
+    birthyear = userProfile['birthyear']
+    birthday = userProfile['birthday']
+    gender = userProfile['gender']
+    ci = userProfile['ci']
+    ci_ci_authenticated_at = userProfile['ci_authenticated_at']
+    app_user_id = userProfile['app_user_id']
+    
+    if(nickname == None):
+        nickname = "N/A"
+
+    if(phone_number == None):
+        phone_number = "N/A"
+
+    if(email == None):
+        email = "N/A"
+        
+    if(birthyear == None):
+        birthyear = "N/A"
+        
+    if(birthday == None):
+        birthday = "N/A"
+        
+    if(gender == None):
+        gender = "N/A"
+        
+    if(ci == None):
+        ci = "N/A"
+
+    if(ci_ci_authenticated_at == None):
+        ci_ci_authenticated_at = "N/A"
+        
+    if(app_user_id == None):
+        app_user_id = "N/A"
+        
+    
     user = User.signUp(
-        nickname=userProfile['nickname'],
-        phone_number=userProfile['phone_number'],
-        email=userProfile['email'],
-        birthyear=userProfile['birthyear'],
-        birthday=userProfile['birthday'],
-        gender=userProfile['gender'],
-        ci=userProfile['ci'],
-        ci_authenticated_at=userProfile['ci_authenticated_at'],
-        app_user_id=userProfile['app_user_id'],
+        nickname=nickname,
+        phone_number=phone_number,
+        email=email,
+        birthyear=birthyear,
+        birthday=birthday,
+        gender=gender,
+        ci=ci,
+        ci_authenticated_at=ci_ci_authenticated_at,
+        app_user_id=app_user_id,
     )
 
     return user

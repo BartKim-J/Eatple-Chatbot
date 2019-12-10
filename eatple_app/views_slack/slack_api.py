@@ -14,6 +14,7 @@ def eatple_total_status():
             orderCount=Order.objects.all().filter(
                 Q(status=ORDER_STATUS_PICKUP_WAIT) |
                 Q(status=ORDER_STATUS_PICKUP_PREPARE) |
+                Q(status=ORDER_STATUS_PICKUP_COMPLETED) |
                 Q(status=ORDER_STATUS_ORDER_CONFIRM_WAIT) |
                 Q(status=ORDER_STATUS_ORDER_CONFIRMED)
             ).count()

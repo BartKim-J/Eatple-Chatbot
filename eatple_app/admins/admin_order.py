@@ -35,22 +35,25 @@ class OrderAdmin(ImportExportMixin, admin.ModelAdmin):
     def user(self, obj):
         return obj.ordersheet.user
 
+    def nickname(self, obj):
+        return obj.ordersheet.user.nickname
+
     def phone_number(self, obj):
         return obj.ordersheet.user.phone_number
 
+
+
+    search_fields = ['ordersheet__user__nickname', 'ordersheet__user__app_user_id']
+
+    
     readonly_fields = (
         'ordersheet', 
         'order_id', 
-        'payment_status',  
         'totalPrice', 
-        'menu', 
-        'count', 
-        'store',
         'order_date', 
         'pickup_time',
-        'type',
     )
-
+    
     list_filter = (
         'order_date', 
         ('store',  RelatedDropdownFilter),
