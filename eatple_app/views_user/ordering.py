@@ -164,7 +164,8 @@ def kakaoView_MenuListup(kakaoPayload):
         for menu in menuList:
             imageUrl = '{}{}'.format(HOST_URL, menu.imgURL())
                 
-            distance = int(menu.distance)
+            distance = menu.distance
+            walkTime = round((distance / 100) * 1.5)
             
             thumbnail = {
                 'imageUrl': imageUrl,
@@ -198,7 +199,7 @@ def kakaoView_MenuListup(kakaoPayload):
             
             kakaoForm.BasicCard_Push(
                 '{}'.format(menu.name), 
-                '{} - 약 {} 미터\n{}'.format(menu.store.name, distance, menu.description, ), 
+                '{} - 약 도보 {} 분\n{}'.format(menu.store.name, walkTime, menu.description, ), 
                 thumbnail, 
                 buttons
             )
