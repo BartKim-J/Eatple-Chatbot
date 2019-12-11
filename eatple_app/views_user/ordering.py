@@ -100,11 +100,6 @@ def kakaoView_MenuListup(kakaoPayload):
     if (user == None):
         return errorView('Invalid Block Access', '정상적이지 않은 경로거나, 잘못된 계정입니다.')
 
-    # User's Eatple Pass Validation
-    eatplePassStatus = eatplePassValidation(user)
-    if(eatplePassStatus != None):
-        return eatplePassStatus
-
     # Order Log Record
     orderRecordSheet = OrderRecordSheet()
     orderRecordSheet.user = user
