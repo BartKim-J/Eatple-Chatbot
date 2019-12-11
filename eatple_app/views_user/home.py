@@ -126,6 +126,12 @@ def kakaoView_SignUp():
 
     buttons = BTN_MAP
 
+    kakaoForm.BasicCard_Push(
+        '아직 잇플 서비스에 연동되지 않은 카카오 계정입니다.',
+        '잇플 서비스에 연동하러 가볼까요?',
+        thumbnail,
+        buttons
+    )
     kakaoForm.BasicCard_Add()
 
     return JsonResponse(kakaoForm.GetForm())

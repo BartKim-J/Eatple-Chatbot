@@ -44,10 +44,25 @@ def kakaoView_UseEatplePass(kakaoPayload):
     if(order == None or user == None):
         return errorView('Invalid Paratmer', '정상적이지 않은 주문번호이거나\n진행 중 오류가 발생했습니다.')
 
+    order.orderStatusUpdate()
+    
+    kakaoForm = KakaoForm()
+    
+    QUICKREPLIES_MAP = [
+        {
+            'action': 'block',
+            'label': '홈으로 돌아가기',
+            'messageText': '로딩중..',
+            'blockId': KAKAO_BLOCK_USER_HOME,
+            'extra': {
+                KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_ORDER_DETAILS
+            }
+        },
+    ]
+
+
     if(order.status == ORDER_STATUS_PICKUP_WAIT):
         order = order.orderUsed()
-
-        kakaoForm = KakaoForm()
 
         thumbnail = {
             'imageUrl': ''
@@ -67,41 +82,27 @@ def kakaoView_UseEatplePass(kakaoPayload):
             thumbnail, buttons
         )
         kakaoForm.BasicCard_Add()
-        
-        QUICKREPLIES_MAP = [
-            {
-                'action': 'block',
-                'label': '홈으로 돌아가기',
-                'messageText': '로딩중..',
-                'blockId': KAKAO_BLOCK_USER_HOME,
-                'extra': {
-                    KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_ORDER_DETAILS
-                }
-            },
-        ]
 
         kakaoForm.QuickReplies_AddWithMap(QUICKREPLIES_MAP)
-    else:
-        kakaoForm = KakaoForm()
-    
+    elif(order.status == ORDER_STATUS_PICKUP_COMPLETED):
+        
         kakaoForm.BasicCard_Push(
             ' - 주의! -', 
             '이미 사용된 잇플패스입니다. 다시 주문을 정확히 확인해주세요.', 
             {}, []
         )
         kakaoForm.BasicCard_Add()
-        
-        QUICKREPLIES_MAP = [
-            {
-                'action': 'block',
-                'label': '홈으로 돌아가기',
-                'messageText': '로딩중..',
-                'blockId': KAKAO_BLOCK_USER_HOME,
-                'extra': {
-                    KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_ORDER_DETAILS
-                }
-            },
-        ]
+
+        kakaoForm.QuickReplies_AddWithMap(QUICKREPLIES_MAP)
+    else:
+        kakaoForm.BasicCard_Push(
+            '사용 가능한 픽업 시간이 아닙니다!', 
+            '잇플패스의 픽업 시간을 확인해주세요!', 
+            {}, []
+        )
+        kakaoForm.BasicCard_Add()
+
+        kakaoForm.QuickReplies_AddWithMap(QUICKREPLIES_MAP)
     
     return JsonResponse(kakaoForm.GetForm())   
 
@@ -114,7 +115,9 @@ def kakaoView_ConfirmUseEatplePass(kakaoPayload):
     order = orderValidation(kakaoPayload)
     if(order == None or user == None):
         return errorView('Invalid Paratmer', '정상적이지 않은 주문번호이거나\n진행 중 오류가 발생했습니다.')
-        
+
+    order.orderStatusUpdate()
+    
     kakaoForm = KakaoForm()
    
     QUICKREPLIES_MAP = [

@@ -63,7 +63,7 @@ def promotionOrderUpdate(order):
         hour=0, minute=0, second=0, microsecond=0)
 
     # Time QA DEBUG
-    # currentDate = currentDate.replace(day=11, hour=15, minute=56, second=0, microsecond=0)
+    # currentDate = currentDate.replace(day=17, hour=12, minute=0, second=0, microsecond=0)
     # currentDateWithoutTime = currentDate.replace(hour=0, minute=0, second=0, microsecond=0)
     # print(currentDate)
     
@@ -119,8 +119,7 @@ def promotionOrderUpdate(order):
 
     return order
   
-def orderUpdate(order):
-            
+def orderUpdate(order):         
     if(order.menu == None or order.store == None):
         order.payment_status = IAMPORT_ORDER_STATUS_NOT_PUSHED
         order.save()
