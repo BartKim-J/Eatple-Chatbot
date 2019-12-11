@@ -626,17 +626,27 @@ def kakaoView_EatplePassIssuance(kakaoPayload):
         dataActionExtra[KAKAO_PARAM_PREV_BLOCK_ID] = KAKAO_BLOCK_USER_SET_ORDER_SHEET
 
         kakaoForm = KakaoForm()
-        
+
         thumbnail = {
-             'imageUrl': '{}{}'.format(HOST_URL, '/media/STORE_DB/images/default/eatplePassImg.png'),
-             }
+            'imageUrl': '{}{}'.format(HOST_URL, '/media/STORE_DB/images/default/eatplePassImg.png'),
+        }
 
         kakaoMapUrl = 'https://map.kakao.com/link/map/{},{}'.format(
             order.store.name,
             order.store.place
-            )
+        )
 
         buttons = [
+            {
+                'action': 'block',
+                'label': '사용하기',
+                'messageText': '로딩중..',
+                'blockId': KAKAO_BLOCK_USER_GET_USE_EATPLE_PASS_CONFIRM,
+                'extra': {
+                    KAKAO_PARAM_ORDER_ID: order.order_id,
+                    KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_EATPLE_PASS
+                }
+            },
             {
                 'action': 'webLink',
                 'label': '위치보기',
@@ -659,7 +669,8 @@ def kakaoView_EatplePassIssuance(kakaoPayload):
             thumbnail,
             buttons
         )
-        
+        kakaoForm.BasicCard_Add()
+
         QUICKREPLIES_MAP = [
             {
                 'action': 'block',
@@ -671,7 +682,7 @@ def kakaoView_EatplePassIssuance(kakaoPayload):
                 }
             },
         ]
-        
+
         kakaoForm.QuickReplies_AddWithMap(QUICKREPLIES_MAP)
 
         return JsonResponse(kakaoForm.GetForm())
