@@ -15,16 +15,16 @@ class OrderResource(resources.ModelResource):
     class Meta:
         model = Order
         fields = (
-            #'order_id',
-            #'order_date',
-            #'totalPrice',
-            #'type'
-            #'payment_status',
-            #'status',
-            #'store__name',
-            #'store__store_id',
-            #'menu__name',
-            #'menu__menu_id',
+            'order_id',
+            'order_date',
+            'totalPrice',
+            'type'
+            'payment_status',
+            'status',
+            'store__name',
+            'store__store_id',
+            'menu__name',
+            'menu__menu_id',
             'ordersheet__user__phone_number',
         )
 

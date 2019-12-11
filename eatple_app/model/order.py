@@ -63,9 +63,9 @@ def promotionOrderUpdate(order):
         hour=0, minute=0, second=0, microsecond=0)
 
     # Time QA DEBUG
-    # currentDate = currentDate.replace(day=17, hour=12, minute=0, second=0, microsecond=0)
-    # currentDateWithoutTime = currentDate.replace(hour=0, minute=0, second=0, microsecond=0)
-    # print(currentDate)
+    #currentDate = currentDate.replace(day=17, hour=12, minute=0, second=0, microsecond=0)
+    #currentDateWithoutTime = currentDate.replace(hour=0, minute=0, second=0, microsecond=0)
+    #print(currentDate)
     
     promotion_month = 12
     promotion_day = int(order.menu.name[0:2])
@@ -412,7 +412,6 @@ class Order(models.Model):
     # Methods
     def __str__(self):
         return '{}'.format(self.order_id)
-
 class OrderManager():
     def __init__(self, user):
         self.orderList = Order.objects.all()
