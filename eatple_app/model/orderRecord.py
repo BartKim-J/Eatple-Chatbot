@@ -79,7 +79,7 @@ class OrderRecordSheet(models.Model):
         latest_date = dateByTimeZone(self.update_date)
         current_date = dateNowByTimeZone()
 
-        if (latest_date + datetime.timedelta(minutes=10) < current_date):
+        if (latest_date + datetime.timedelta(minutes=30) < current_date):
             timeOut = True
             
         return timeOut

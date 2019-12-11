@@ -20,7 +20,7 @@ from eatple_app.views_system.debugger import *
 from eatple_app.views import *
 
 # STATIC CONFIG
-MENU_LIST_LENGTH = 10
+MENU_LIST_LENGTH = 20
 
 #DISCOUNT_FOR_DEBUG = 5900
 DISCOUNT_FOR_DEBUG = None
@@ -133,8 +133,6 @@ def kakaoView_MenuListup(kakaoPayload):
         
         status=OC_OPEN,
         store__status=OC_OPEN,
-        
-        distance__lte=700
     ).order_by(F'distance')
 
     kakaoForm = KakaoForm()
@@ -155,10 +153,15 @@ def kakaoView_MenuListup(kakaoPayload):
             imageUrl = '{}{}'.format(HOST_URL, menu.imgURL())
                 
             distance = menu.distance
-            walkTime = round((distance / 100) * 1.9)
+            walkTime = round((distance / 100) * 2.1)
             
             if(walkTime <= 3):
                 walkTime = 3
+            
+            if(distance <= 1000):
+                walkTime = '약 도보 {} 분'.format(walkTime)
+            else:
+                walkTime = '1 Km 이상'
             
             thumbnail = {
                 'imageUrl': imageUrl,
@@ -192,7 +195,7 @@ def kakaoView_MenuListup(kakaoPayload):
             
             kakaoForm.BasicCard_Push(
                 '{}'.format(menu.name), 
-                '{} - 약 도보 {} 분\n{}'.format(menu.store.name, walkTime, menu.description, ), 
+                '{} - {}\n{}'.format(menu.store.name, walkTime, menu.description, ), 
                 thumbnail, 
                 buttons
             )
