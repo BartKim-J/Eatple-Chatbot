@@ -86,6 +86,16 @@ def kakaoView_EatplePass(kakaoPayload):
 
             buttons = [
                 {
+                    'action': 'block', 
+                    'label': '사용하기',  
+                    'messageText': '로딩중..',
+                    'blockId': KAKAO_BLOCK_USER_GET_USE_EATPLE_PASS_CONFIRM,
+                    'extra': {
+                        KAKAO_PARAM_ORDER_ID: order.order_id,
+                        KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_EATPLE_PASS
+                    }
+                },
+                {
                     'action': 'webLink', 
                     'label': '위치보기',
                     'webLinkUrl': kakaoMapUrl
@@ -95,7 +105,7 @@ def kakaoView_EatplePass(kakaoPayload):
             # CAN EDIT COUPONS
             if (order.status == ORDER_STATUS_ORDER_CONFIRM_WAIT or
                 order.status == ORDER_STATUS_ORDER_CONFIRMED):
-                buttons.append(
+                ORDER_LIST_QUICKREPLIES_MAP.append(
                     {
                         'action': 'block', 
                         'label': '주문취소',  
@@ -121,21 +131,6 @@ def kakaoView_EatplePass(kakaoPayload):
                             }
                         }
                     )
-
-            # CAN'T EDIT COUPONS
-            elif (order.status == ORDER_STATUS_PICKUP_WAIT):
-                buttons.append(
-                    {
-                        'action': 'block', 
-                        'label': '사용하기',  
-                        'messageText': '로딩중..',
-                        'blockId': KAKAO_BLOCK_USER_GET_USE_EATPLE_PASS_CONFIRM,
-                        'extra': {
-                            KAKAO_PARAM_ORDER_ID: order.order_id,
-                            KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_EATPLE_PASS
-                        }
-                    }
-                )
             elif (order.status == ORDER_STATUS_PICKUP_PREPARE):
                 pass
             else:

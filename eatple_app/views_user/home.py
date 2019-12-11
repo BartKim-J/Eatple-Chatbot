@@ -126,12 +126,6 @@ def kakaoView_SignUp():
 
     buttons = BTN_MAP
 
-    kakaoForm.BasicCard_Push(
-        '아직 잇플에 연동되지 않은 \n카카오 계정입니다.',
-        '함께 연동하러 가볼까요?',
-        thumbnail,
-        buttons
-    )
     kakaoForm.BasicCard_Add()
 
     return JsonResponse(kakaoForm.GetForm())
@@ -223,7 +217,7 @@ def kakaoView_Home(user):
         },
         {
             'action': 'block',
-            'label': '잇플패스 확인',
+            'label': '잇플패스 조회',
             'messageText': '로딩중..',
             'blockId': KAKAO_BLOCK_USER_EATPLE_PASS,
             'extra': {

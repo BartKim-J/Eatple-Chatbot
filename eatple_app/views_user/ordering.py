@@ -117,7 +117,7 @@ def kakaoView_MenuListup(kakaoPayload):
             user=user,
             menu=None,
             store=None,
-            pickup_time="00:00",
+            pickup_time='00:00',
             totalPrice=0,
             count=1,
             type=ORDER_TYPE_NORMAL
@@ -274,7 +274,6 @@ def kakaoView_PickupTime(kakaoPayload):
         '''
             @NOTE Dinner Time Close In Alpha 
         '''
-        
         kakaoForm.BasicCard_Push(
             '오늘 점심은 이미 마감되었어요.',
             '내일 점심은 오늘 16:30부터 내일 10:30까지 주문하실 수 있어요.',
@@ -632,28 +631,39 @@ def kakaoView_EatplePassIssuance(kakaoPayload):
         dataActionExtra[KAKAO_PARAM_PREV_BLOCK_ID] = KAKAO_BLOCK_USER_SET_ORDER_SHEET
 
         kakaoForm = KakaoForm()
-
-        thumbnail = {'imageUrl': ''}
+        
+        thumbnail = {
+             'imageUrl': '{}{}'.format(HOST_URL, '/media/STORE_DB/images/default/eatplePassImg.png'),
+             }
 
         kakaoMapUrl = 'https://map.kakao.com/link/map/{},{}'.format(
-            store.name, menu.store.place)
+            order.store.name,
+            order.store.place
+            )
 
-        buttons = []
+        buttons = [
+            {
+                'action': 'webLink',
+                'label': '위치보기',
+                'webLinkUrl': kakaoMapUrl
+            },
+        ]
 
         kakaoForm.BasicCard_Push(
-            '잇플패스가 발급되었습니다.',
-            '주문번호: {}\n- - - - - - - - - - - - - - - - -\n - 주문자: {}\n\n - 매장: {}\n - 주소: {}\n - 메뉴: {}\n\n - 결제 금액: {}원\n\n - 픽업 시간: {}\n- - - - - - - - - - - - - - - - -'.format(
+            '{}'.format(order.menu.name),
+            '주문번호: {}\n - 주문자: {}\n\n - 매장: {}\n - 주소: {}\n\n - 결제 금액: {}원\n\n - 픽업 시간: {}\n - 주문 상태: {}'.format(
                 order.order_id,
                 str(order.ordersheet.user.phone_number)[9:13],
                 order.store.name,
                 order.store.addr,
-                order.menu.name,
                 order.totalPrice,
-                dateByTimeZone(order.pickup_time).strftime('%H:%M'),
+                dateByTimeZone(order.pickup_time).strftime(
+                    '%p %-I시 %-M분 %-m월 %-d일').replace('AM', '오전').replace('PM', '오후'),
+                ORDER_STATUS[order.status][1]
             ),
-            thumbnail, buttons
+            thumbnail,
+            buttons
         )
-        kakaoForm.BasicCard_Add()
         
         QUICKREPLIES_MAP = [
             {
