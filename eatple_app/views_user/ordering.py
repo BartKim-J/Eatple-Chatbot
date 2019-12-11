@@ -264,6 +264,8 @@ def kakaoView_PickupTime(kakaoPayload):
 
 
 
+    kakaoForm = KakaoForm()
+
     currentSellingTime = sellingTimeCheck()
     
     if (currentSellingTime == None):
@@ -273,7 +275,29 @@ def kakaoView_PickupTime(kakaoPayload):
             @NOTE Dinner Time Close In Alpha 
         '''
         
-        return errorView('Get Invalid Selling Time', '오늘 점심은 이미 마감되었어요.\n내일 점심을 기대해주세요.')
+        kakaoForm.BasicCard_Push(
+            '오늘 점심은 이미 마감되었어요.',
+            '내일 점심은 오늘 16:30부터 내일 10:30까지 주문하실 수 있어요.',
+            {},
+            []
+        )
+        kakaoForm.BasicCard_Add()
+
+        QUICKREPLIES_MAP = [
+            {
+                'action': 'block',
+                'label': '홈으로 돌아가기',
+                'messageText': '로딩중..',
+                'blockId': KAKAO_BLOCK_USER_HOME,
+                'extra': {
+                    KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_GET_MENU
+                }
+            },
+        ]
+
+        kakaoForm.QuickReplies_AddWithMap(QUICKREPLIES_MAP)  
+        
+        return JsonResponse(kakaoForm.GetForm())
 
 
     # Order Record
@@ -289,7 +313,6 @@ def kakaoView_PickupTime(kakaoPayload):
     orderRecordSheet.menu = menu
     orderRecordSheet.recordUpdate(ORDER_RECORD_SET_PICKUP_TIEM)
 
-    kakaoForm = KakaoForm()
     
     kakaoForm.BasicCard_Push('픽업시간을 설정해주세요.', 
                              '{} - {}'.format(menu.store.name, menu.name), 

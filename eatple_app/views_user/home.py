@@ -173,7 +173,7 @@ def kakaoView_Home(user):
     kakaoForm = KakaoForm()
 
     orderManager = UserOrderManager(user)
-    orderManager.orderPaidCheck()
+    orderManager.orderPanddingCleanUp()
     orderManager.availableOrderStatusUpdate()
 
     #@PROMOTION

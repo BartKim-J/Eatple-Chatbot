@@ -66,7 +66,7 @@ def kakaoView_EatplePass(kakaoPayload):
     ]
 
     orderManager = UserOrderManager(user)
-    orderManager.orderPaidCheck()
+    orderManager.orderPanddingCleanUp()
     
     availableEatplePass = orderManager.availableOrderStatusUpdate()
     

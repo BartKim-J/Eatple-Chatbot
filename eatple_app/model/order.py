@@ -28,8 +28,9 @@ def iamportOrderValidation(order):
         print(http_error.code)
         print(http_error.reason)
 
-        order.payment_status = IAMPORT_ORDER_STATUS_NOT_PUSHED            
-        order.save()
+        if(order.payment_status != IAMPORT_ORDER_STATUS_FAILED):
+            order.payment_status = IAMPORT_ORDER_STATUS_NOT_PUSHED            
+            order.save()
         
         return order
 
@@ -426,6 +427,26 @@ class OrderManager():
 
         return self.getAvailableOrders()
 
+    def orderPanddingCleanUp(self):
+        currentDate = dateNowByTimeZone()
+        expireDate = currentDate + datetime.timedelta(hours=-12)
+
+        readyPayOrders = Order.objects.filter(
+            Q(payment_status=IAMPORT_ORDER_STATUS_NOT_PUSHED) &
+            Q(order_date__gt=expireDate) &
+            ~Q(store=None) &
+            ~Q(menu=None)
+        ).order_by('order_date')
+    
+        # Order Status Update
+        for order in readyPayOrders:
+            orderUpdate(order)
+            if(order.payment_status != IAMPORT_ORDER_STATUS_PAID):
+                order.payment_status = IAMPORT_ORDER_STATUS_FAILED
+                order.status = ORDER_STATUS_MENU_CHOCIED
+                order.save()
+                
+
     def orderPaidCheck(self):
         currentDate = dateNowByTimeZone()
         expireDate = currentDate + datetime.timedelta(hours=-12)
@@ -435,7 +456,7 @@ class OrderManager():
             Q(order_date__gt=expireDate) &
             ~Q(store=None) &
             ~Q(menu=None)
-        ).order_by('order_date')[:2]
+        ).order_by('order_date')
     
         # Order Status Update
         for order in readyPayOrders:
