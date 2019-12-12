@@ -138,8 +138,8 @@ def kakaoView_MenuListup(kakaoPayload):
     kakaoForm = KakaoForm()
 
     #@PROMOTION
-    kakaoForm.BasicCard_Push('# 프로모션에 참가하실 분들은 발급된 코드를 대화창에 입력해주세요.', 
-                            '일반 메뉴는 6000원에 구매하실수 있습니다.',
+    kakaoForm.BasicCard_Push('※ 모든 메뉴가 6000원 ※', 
+                            '프로모션에 참가하실 분들은 발급된 코드를 대화창에 입력해주세요.',
                             {}, 
                             []
                         )
@@ -161,7 +161,7 @@ def kakaoView_MenuListup(kakaoPayload):
             if(distance <= 1000):
                 walkTime = '약 도보 {} 분'.format(walkTime)
             else:
-                walkTime = '1 Km 이상'
+                walkTime = '1 ㎞ 이상'
             
             thumbnail = {
                 'imageUrl': imageUrl,
@@ -429,7 +429,7 @@ def kakaoView_OrderPayment(kakaoPayload):
     buttons = [
         {
             'action': 'webLink',
-            'label': '결제하러 가기',
+            'label': '결제하러 가기   ➔',
             'messageText': '로딩중..',
             'extra': dataActionExtra,
 
@@ -535,7 +535,7 @@ def kakaoView_OrderPaymentCheck(kakaoPayload):
         BTN_MAP = [
             {
                 'action': 'webLink',
-                'label': '결제하러 가기',
+                'label': '결제하러 가기   ➔',
                 'messageText': '로딩중..',
                 'extra': dataActionExtra,
 

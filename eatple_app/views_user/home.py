@@ -214,7 +214,7 @@ def kakaoView_Home(user):
     BTN_MAP = [
         {
             'action': 'block',
-            'label': '메뉴보기',
+            'label': '주문하기',
             'messageText': '로딩중..',
             'blockId': KAKAO_BLOCK_USER_GET_MENU,
             'extra': {
@@ -253,9 +253,9 @@ def kakaoView_Home(user):
         },
         {
             'action': 'block',
-            'label': '사용 메뉴얼',
+            'label': '잇플 소개',
             'messageText': '로딩중..',
-            'blockId': KAKAO_BLOCK_USER_MANUAL,
+            'blockId': KAKAO_BLOCK_USER_INTRO,
             'extra': {
                 KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_HOME
             }
@@ -273,10 +273,22 @@ def kakaoView_Home(user):
     buttons = BTN_MAP
     
     kakaoForm.BasicCard_Push(
-        '잇플 홈 화면입니다.',
+        '{}님 안녕하세요.'.format(str(user.phone_number)[9:13]),
         '아래 명령어 중에 골라주세요!',
         thumbnail,
         buttons
+    )
+    kakaoForm.BasicCard_Push(
+        '❗ 공지사항',
+        '지금은 \'프로모션\' 기간입니다.\n각 지점별로 배부된 고유 코드를 입력하여 100원에 잇플을 즐겨보세요!',
+        {},
+        []
+    )
+    kakaoForm.BasicCard_Push(
+        '⌛ 업데이트',
+        '하나와 외환은행 결제가 가능해졌습니다.',
+        {},
+        []
     )
     kakaoForm.BasicCard_Add()
 

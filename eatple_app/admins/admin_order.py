@@ -41,7 +41,7 @@ class OrderAdmin(ImportExportMixin, admin.ModelAdmin):
     def phone_number(self, obj):
         return obj.ordersheet.user.phone_number
 
-    search_fields = ['ordersheet__user__nickname', 'ordersheet__user__app_user_id']
+    search_fields = ['order_id', 'ordersheet__user__nickname', 'ordersheet__user__app_user_id']
 
     readonly_fields = (
         'ordersheet', 
