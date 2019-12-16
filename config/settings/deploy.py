@@ -51,6 +51,7 @@ INSTALLED_APPS = [
 
     'django.contrib.gis',
     'rest_framework',
+    'rangefilter',
     
     'django.contrib.admin',
     'django.contrib.auth',
