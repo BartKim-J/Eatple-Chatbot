@@ -40,3 +40,8 @@ from eatple_app.views_kakao.channel import POST_KAKAO_ChannelLog
 
 # Slack
 from eatple_app.views_slack.slack_api import Events
+
+
+# Rest Framework
+
+from eatple_app.rest_api.order import OrderValidation

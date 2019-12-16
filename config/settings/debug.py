@@ -31,7 +31,8 @@ SECRET_KEY = '8b%m$==a68uz-y#zl&hb^rb$oyl3ejy5=8c!5**l5x#lou1(i$'
 DEBUG = True
 
 ALLOWED_HOSTS = [
-    'eatple.com'
+    'eatple.com',
+    'localhost'
 ]
 
 # Application definition
@@ -184,7 +185,7 @@ STATICFILES_DIRS = [
 STATIC_ROOT = os.path.join(ROOT_DIR, 'static')
 
 # COOKIES
-#
 #CSRF_COOKIE_SECURE = True
 #SESSION_COOKIE_SECURE = False
+
 
