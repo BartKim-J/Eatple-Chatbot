@@ -87,6 +87,33 @@ def sellingTimeCheck():
     else:
         return None
 
+def weekendTimeCheck():
+    currentDate = dateNowByTimeZone()
+    currentDateWithoutTime = currentDate.replace(hour=0, minute=0, second=0, microsecond=0)
+
+    # Time QA DEBUG
+    # currentDate = currentDate.replace(day=13, hour=9, minute=28, second=0, microsecond=0)
+    # currentDateWithoutTime = currentDate.replace(hour=0, minute=0, second=0, microsecond=0)
+
+    closedDateStart = currentDateWithoutTime + datetime.timedelta(hours=10, minutes=30)
+    closedDateEnd = currentDateWithoutTime + datetime.timedelta(hours=16, minutes=30)
+    
+    if(currentDate.strftime('%A') == 'Friday'):
+        if(currentDate >= closedDateStart):
+            return True
+        else:
+            return False
+    elif(currentDate.strftime('%A') == 'Saturday'):
+        return True
+    elif(currentDate.strftime('%A') == 'Sunday'):
+        if(currentDate <= closedDateEnd):
+            return True
+        else:
+            return False
+    else:
+        return False
+    
+    
 def kakaoView_MenuListup(kakaoPayload):
     # Block Validation
     prev_block_id = prevBlockValidation(kakaoPayload)
@@ -122,90 +149,100 @@ def kakaoView_MenuListup(kakaoPayload):
         order.totalPrice = discountPrice
         order.save()
 
+    kakaoForm = KakaoForm()
+
     # currentSellingTime = sellingTimeCheck()
     currentSellingTime = SELLING_TIME_LUNCH
 
-    menuList = Menu.objects.annotate(
-        distance=Distance(F('store__place__point'), user.location.point) * 100 * 1000
-    ).filter(
-        sellingTime=currentSellingTime, 
-        store__type=STORE_TYPE_NORMAL,
+    isClosedDay = weekendTimeCheck()
+    if(isClosedDay):
+        kakaoForm.BasicCard_Push('※ 안내사항 ※', 
+                                 '잇플 알파 서비스 기간에는 주말 주문을 받지 않고 있습니다.',
+                                {}, 
+                                []
+                            )
         
-        status=OC_OPEN,
-        store__status=OC_OPEN,
-    ).order_by(F'distance')
-
-    kakaoForm = KakaoForm()
-
-    #@PROMOTION
-    kakaoForm.BasicCard_Push('※ 모든 메뉴가 6000원 ※', 
-                            '프로모션에 참가하실 분들은 발급된 코드를 대화창에 입력해주세요.',
-                            {}, 
-                            []
-                        )
-    
-    kakaoForm.BasicCard_Add()
-    
-    if menuList:
-    
-        # Menu Carousel Card Add
-        for menu in menuList:
-            imageUrl = '{}{}'.format(HOST_URL, menu.imgURL())
-                
-            distance = menu.distance
-            walkTime = round((distance / 100) * 2.1)
-            
-            if(walkTime <= 3):
-                walkTime = 3
-            
-            if(distance <= 1000):
-                walkTime = '약 도보 {} 분'.format(walkTime)
-            else:
-                walkTime = '1 ㎞ 이상'
-            
-            thumbnail = {
-                'imageUrl': imageUrl,
-                'fixedRatio': 'true',
-                'width': 800,
-                'height': 800,
-            }
-
-            kakaoMapUrl = 'https://map.kakao.com/link/map/{},{}'.format(
-                menu.store.name, menu.store.place)
-
-            buttons = [
-                {
-                    'action': 'block',
-                    'label': '주문하기',
-                    'messageText': '로딩중..',
-                    'blockId': KAKAO_BLOCK_USER_SET_PICKUP_TIME,
-                    'extra': {
-                        KAKAO_PARAM_STORE_ID: menu.store.store_id,
-                        KAKAO_PARAM_MENU_ID: menu.menu_id,
-                        KAKAO_PARAM_ORDER_ID: order.order_id,
-                        KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_GET_MENU
-                    }
-                },
-                {
-                    'action': 'webLink',
-                    'label': '위치보기',
-                    'webLinkUrl': kakaoMapUrl
-                },
-            ]
-            
-            kakaoForm.BasicCard_Push(
-                '{}'.format(menu.name), 
-                '{} - {}\n{}'.format(menu.store.name, walkTime, menu.description, ), 
-                thumbnail, 
-                buttons
-            )
-
         kakaoForm.BasicCard_Add()
-    
     else:
-        kakaoForm = KakaoForm()
+        menuList = Menu.objects.annotate(
+            distance=Distance(F('store__place__point'), user.location.point) * 100 * 1000
+        ).filter(
+            sellingTime=currentSellingTime, 
+            store__type=STORE_TYPE_NORMAL,
+            
+            status=OC_OPEN,
+            store__status=OC_OPEN,
+        ).order_by(F'distance')
 
-        kakaoForm.SimpleText_Add('판매중인 메뉴가 없어요...')
+
+        #@PROMOTION
+        kakaoForm.BasicCard_Push('※ 모든 메뉴가 6000원 ※', 
+                                '프로모션에 참가하실 분들은 발급된 코드를 대화창에 입력해주세요.',
+                                {}, 
+                                []
+                            )
+        
+        kakaoForm.BasicCard_Add()
+        
+        if menuList:
+            # Menu Carousel Card Add
+            for menu in menuList:
+                imageUrl = '{}{}'.format(HOST_URL, menu.imgURL())
+                    
+                distance = menu.distance
+                walkTime = round((distance / 100) * 2.1)
+                
+                if(walkTime <= 3):
+                    walkTime = 3
+                
+                if(distance <= 1000):
+                    walkTime = '약 도보 {} 분'.format(walkTime)
+                else:
+                    walkTime = '1 ㎞ 이상'
+                
+                thumbnail = {
+                    'imageUrl': imageUrl,
+                    'fixedRatio': 'true',
+                    'width': 800,
+                    'height': 800,
+                }
+
+                kakaoMapUrl = 'https://map.kakao.com/link/map/{},{}'.format(
+                    menu.store.name, menu.store.place)
+
+                buttons = [
+                    {
+                        'action': 'block',
+                        'label': '주문하기',
+                        'messageText': '로딩중..',
+                        'blockId': KAKAO_BLOCK_USER_SET_PICKUP_TIME,
+                        'extra': {
+                            KAKAO_PARAM_STORE_ID: menu.store.store_id,
+                            KAKAO_PARAM_MENU_ID: menu.menu_id,
+                            KAKAO_PARAM_ORDER_ID: order.order_id,
+                            KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_GET_MENU
+                        }
+                    },
+                    {
+                        'action': 'webLink',
+                        'label': '위치보기',
+                        'webLinkUrl': kakaoMapUrl
+                    },
+                ]
+                
+                kakaoForm.BasicCard_Push(
+                    '{}'.format(menu.name), 
+                    '{} - {}\n{}'.format(menu.store.name, walkTime, menu.description, ), 
+                    thumbnail, 
+                    buttons
+                )
+
+            kakaoForm.BasicCard_Add()
+        
+        else:
+            kakaoForm = KakaoForm()
+
+            kakaoForm.SimpleText_Add('판매중인 메뉴가 없어요...')
 
     QUICKREPLIES_MAP = [
         {

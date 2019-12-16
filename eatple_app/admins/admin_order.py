@@ -12,6 +12,13 @@ from django.utils.translation import ugettext_lazy as _
 from django.utils.safestring import mark_safe
 
 class OrderResource(resources.ModelResource):
+    
+    def store_name(self,obj):
+        return obj.store.name
+    
+    def menu_name(self, obj):
+        return obj.menu.name
+    
     class Meta:
         model = Order
         fields = (
@@ -21,8 +28,10 @@ class OrderResource(resources.ModelResource):
             'type'
             'payment_status',
             'status',
+            'store_name',
             'store__name',
             'store__store_id',
+            'menu_name',
             'menu__name',
             'menu__menu_id',
             'ordersheet__user__phone_number',
@@ -40,7 +49,7 @@ class OrderAdmin(ImportExportMixin, admin.ModelAdmin):
 
     def phone_number(self, obj):
         return obj.ordersheet.user.phone_number
-
+    
     search_fields = ['order_id', 'ordersheet__user__nickname', 'ordersheet__user__app_user_id']
 
     readonly_fields = (
@@ -52,7 +61,7 @@ class OrderAdmin(ImportExportMixin, admin.ModelAdmin):
     )
     
     list_filter = (
-        'order_date', 
+        ('order_date', DateRangeFilter), 
         ('store',  RelatedDropdownFilter),
         ('menu', RelatedDropdownFilter),
         ('payment_status', ChoiceDropdownFilter),

@@ -214,7 +214,7 @@ def kakaoView_Home(user):
     BTN_MAP = [
         {
             'action': 'block',
-            'label': '주문하기',
+            'label': '주문하러 가기',
             'messageText': '로딩중..',
             'blockId': KAKAO_BLOCK_USER_GET_MENU,
             'extra': {
