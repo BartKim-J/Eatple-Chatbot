@@ -330,7 +330,7 @@ def kakaoView_OrderPayment(kakaoPayload):
 
     kakaoForm.BasicCard_Push(
         ' ※ 안내사항 ※',
-        '메뉴 선택은 픽업 시점에 가능합니다. 특정메뉴가 조기소진될 시 메뉴 선택이 불가할 수 있습니다.\n\nNH는 현재 결제가 불가능합니다. 양해부탁드립니다.',
+        '메뉴 선택은 픽업 시점에 가능합니다. 특정메뉴가 조기소진될 시 메뉴 선택이 불가할 수 있습니다.',
         {}, []
     )
     kakaoForm.BasicCard_Add()

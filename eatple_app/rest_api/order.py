@@ -32,17 +32,13 @@ def eatplePassValidation(user):
     lunchPurchaed = orderManager.getAvailableLunchOrderPurchased().exists()
     dinnerPurchaced = orderManager.getAvailableDinnerOrderPurchased().exists()    
     
-
     if (lunchPurchaed and dinnerPurchaced):
-
         return False
                 
     elif (lunchPurchaed):
-
         return False
     
     elif (dinnerPurchaced):
-
         return False
         
 
@@ -61,7 +57,7 @@ def orderValidation(order_id):
         return order
     except Order.DoesNotExist:
         return None
-
+    
 class OrderValidation(viewsets.ModelViewSet):    
     queryset = Order.objects.all()
     serializer_class = OrderSerializer
@@ -74,23 +70,16 @@ class OrderValidation(viewsets.ModelViewSet):
         buyer_tel = self.request.query_params.get('buyer_tel')
         buyer_email = self.request.query_params.get('buyer_email')
         merchant_uid = self.request.query_params.get('merchant_uid')
-        
-        print(storeName, menuName, menuPrice, buyer_name, buyer_tel, buyer_email, merchant_uid)
-        
+
         user = userValidation(buyer_name)
         ret = eatplePassValidation(user)
         
-        if(ret == True):
+        if(ret == False):
             return None;
         
-        orderManager = UserOrderManager(user)
-        orderManager.orderPaidCheck()
+        order = self.queryset.filter(order_id=merchant_uid)[:1]
         
-        order = orderValidation(merchant_uid)
-        
-        self.queryset.filter()
-        
-        retQueryset = self.queryset
+        retQueryset = order
         
         return retQueryset
         
