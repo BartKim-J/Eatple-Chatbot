@@ -144,7 +144,7 @@ def kakaoView_EatplePass(kakaoPayload):
                     order.store.name,
                     order.store.addr,
                     order.totalPrice,
-                    dateByTimeZone(order.pickup_time).strftime('%p %-I시 %-M분 %-m월 %-d일').replace('AM', '오전').replace('PM', '오후'),
+                    dateByTimeZone(order.pickup_time).strftime('%-m월 %-d일 %p %-I시 %-M분').replace('AM', '오전').replace('PM', '오후'),
                     ORDER_STATUS[order.status][1]
                 ), 
                 thumbnail, 
@@ -214,7 +214,7 @@ def kakaoView_OrderDetails(kakaoPayload):
                     order.store.name,
                     order.menu.name,
                     order.totalPrice,
-                    dateByTimeZone(order.pickup_time).strftime('%p %-I시 %-M분 %-m월 %-d일').replace('AM','오전').replace('PM','오후') ,
+                    dateByTimeZone(order.pickup_time).strftime('%-m월 %-d일 %p %-I시 %-M분').replace('AM','오전').replace('PM','오후') ,
                     ORDER_STATUS[order.status][1]
                 ),
                 thumbnail, buttons
