@@ -88,7 +88,16 @@ def kakaoView_UseEatplePass(kakaoPayload):
         
         kakaoForm.BasicCard_Push(
             ' - 주의! -', 
-            '이미 사용된 잇플패스입니다. 다시 주문을 정확히 확인해주세요.', 
+            '이미 사용된 잇플패스입니다. 다시 주문을 확인해주세요.', 
+            {}, []
+        )
+        kakaoForm.BasicCard_Add()
+
+        kakaoForm.QuickReplies_AddWithMap(QUICKREPLIES_MAP)
+    elif(order.status == ORDER_STATUS_ORDER_EXPIRED):
+        kakaoForm.BasicCard_Push(
+            ' - 주의! -',
+            '이미 만료된 잇플패스입니다. 다시 주문을 확인해주세요.',
             {}, []
         )
         kakaoForm.BasicCard_Add()

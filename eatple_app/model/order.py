@@ -171,6 +171,9 @@ def orderUpdate(order):
     if(order.payment_status != IAMPORT_ORDER_STATUS_PAID):
         return order
 
+    if(order.status == ORDER_STATUS_PICKUP_COMPLETED or order.status == ORDER_STATUS_ORDER_EXPIRED):
+        return order
+        
     #@PROMOTION
     if(order.type == ORDER_TYPE_PROMOTION):
         return promotionOrderUpdate(order)
@@ -190,9 +193,9 @@ def orderUpdate(order):
     #orderDate = dateByTimeZone(order.order_date)
     #orderDateWithoutTime = orderDate.replace(hour=0, minute=0, second=0, microsecond=0)
     
-    #currentDate = currentDate.replace(day=11, hour=14, minute=00, second=0, microsecond=0)
-    #currentDateWithoutTime = currentDate.replace(hour=0, minute=0, second=0, microsecond=0)
-    #print(currentDate)
+    currentDate = currentDate.replace(day=18, hour=12, minute=00, second=0, microsecond=0)
+    currentDateWithoutTime = currentDate.replace(hour=0, minute=0, second=0, microsecond=0)
+    print(currentDate)
     
     YESTERDAY = currentDateWithoutTime + \
         datetime.timedelta(days=-1)  # Yesterday start

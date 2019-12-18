@@ -24,7 +24,7 @@ class LocationInline(admin.TabularInline):
     )
     
     formfield_overrides = {
-        models.PointField: {"widget": GoogleStaticMapWidget}
+        models.PointField: {"widget": GooglePointFieldWidget}
     }
 
 class UserAdmin(ImportExportMixin, admin.ModelAdmin):

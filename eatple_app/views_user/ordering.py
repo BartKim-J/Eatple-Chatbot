@@ -192,9 +192,6 @@ def kakaoView_MenuListup(kakaoPayload):
                 distance = menu.distance
                 walkTime = round((distance / 100) * 2.1)
                 
-                if(walkTime <= 3):
-                    walkTime = 3
-                
                 if(distance <= 1000):
                     walkTime = '약 도보 {} 분'.format(walkTime)
                 else:

@@ -24,7 +24,7 @@ class PlaceInline(admin.TabularInline):
     min_num = 1
 
     formfield_overrides = {
-        models.PointField: {"widget": GoogleStaticMapWidget}
+        models.PointField: {"widget": GooglePointFieldWidget}
     }
 
 class MenuInline(admin.StackedInline):
