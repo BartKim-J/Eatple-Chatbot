@@ -54,6 +54,8 @@ INSTALLED_APPS = [
     'rest_framework',
     'rangefilter',
     
+    'corsheaders',
+    
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -65,6 +67,7 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -188,4 +191,12 @@ STATIC_ROOT = os.path.join(ROOT_DIR, 'static')
 #CSRF_COOKIE_SECURE = True
 #SESSION_COOKIE_SECURE = False
 
-
+# CORS
+CORS_ORIGIN_ALLOW_ALL = False
+CORS_ORIGIN_WHITELIST = [
+    'http://eatple.com',
+    'http://eatple.com:8000',
+    'http://eatple.com:8001',
+    'http://localhost:3000',
+    'http://localhost:5000',
+]

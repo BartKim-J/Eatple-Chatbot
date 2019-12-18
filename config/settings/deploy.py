@@ -31,7 +31,8 @@ SECRET_KEY = '8b%m$==a68uz-y#zl&hb^rb$oyl3ejy5=8c!5**l5x#lou1(i$'
 DEBUG = True
 
 ALLOWED_HOSTS = [
-    'eatple.com'
+    'eatple.com',
+    'localhost'
 ]
 
 # Application definition
@@ -43,16 +44,18 @@ INSTALLED_APPS = [
 
     # 'suit',
     # 'eatple_app.apps.SuitConfig',
-    
+
     'import_export',
     'phonenumber_field',
-    
+
     'django_admin_listfilter_dropdown',
 
     'django.contrib.gis',
     'rest_framework',
     'rangefilter',
-    
+
+    'corsheaders',
+
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -64,6 +67,7 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -83,7 +87,7 @@ TEMPLATES = [
         'OPTIONS': {
             'context_processors': [
                 'django.template.context_processors.debug',
-                'django.template.context_processors.request', # Make sure you have this line
+                'django.template.context_processors.request',  # Make sure you have this line
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
             ],
@@ -138,7 +142,7 @@ MAP_WIDGETS = {
         ("zoom", 55),
         ("mapCenterLocation", [37.49492000000000, 127.02739000000000]),
     ),
-    
+
     "GoogleStaticMapWidget": (
         ("zoom", 18),
         ("size", "480x480"),
@@ -184,7 +188,15 @@ STATICFILES_DIRS = [
 STATIC_ROOT = os.path.join(ROOT_DIR, 'static')
 
 # COOKIES
-#
 #CSRF_COOKIE_SECURE = True
 #SESSION_COOKIE_SECURE = False
 
+# CORS
+CORS_ORIGIN_ALLOW_ALL = False
+CORS_ORIGIN_WHITELIST = [
+    'http://eatple.com',
+    'http://eatple.com:8000',
+    'http://eatple.com:8001',
+    'http://localhost:3000',
+    'http://localhost:5000',
+]

@@ -286,7 +286,7 @@ def kakaoView_Home(user):
     )
     kakaoForm.BasicCard_Push(
         '⌛ 업데이트',
-        '하나와 외환은행 결제가 가능해졌습니다.',
+        ' 12/18\n하나카드, 외환카드, 농협카드 결제가 추가되었습니다.',
         {},
         []
     )

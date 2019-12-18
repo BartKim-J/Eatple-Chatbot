@@ -26,23 +26,23 @@ from eatple_app.models import Order
 def eatplePassValidation(user):
     orderManager = UserOrderManager(user)
     orderManager.orderPaidCheck()
-    
-    orderManager.availableOrderStatusUpdate();
+
+    orderManager.availableOrderStatusUpdate()
 
     lunchPurchaed = orderManager.getAvailableLunchOrderPurchased().exists()
-    dinnerPurchaced = orderManager.getAvailableDinnerOrderPurchased().exists()    
-    
+    dinnerPurchaced = orderManager.getAvailableDinnerOrderPurchased().exists()
+
     if (lunchPurchaed and dinnerPurchaced):
         return False
-                
+
     elif (lunchPurchaed):
         return False
-    
+
     elif (dinnerPurchaced):
         return False
-        
 
     return True
+
 
 def userValidation(user_id):
     try:
@@ -50,36 +50,62 @@ def userValidation(user_id):
         return user
     except User.DoesNotExist:
         return None
-    
+
+
 def orderValidation(order_id):
     try:
         order = Order.objects.get(order_id=order_id)
         return order
     except Order.DoesNotExist:
         return None
-    
-class OrderValidation(viewsets.ModelViewSet):    
+
+class OrderValidation(viewsets.ModelViewSet):
     queryset = Order.objects.all()
     serializer_class = OrderSerializer
-    
-    def get_queryset(self):
-        storeName = self.request.query_params.get('storeName')
-        menuName= self.request.query_params.get('menuName')
-        menuPrice = self.request.query_params.get('menuPrice')
-        buyer_name = self.request.query_params.get('buyer_name')
-        buyer_tel = self.request.query_params.get('buyer_tel')
-        buyer_email = self.request.query_params.get('buyer_email')
-        merchant_uid = self.request.query_params.get('merchant_uid')
 
+    def list(self, request, *args, **kwargs):
+        buyer_name = request.query_params.get('buyer_name')
+        merchant_uid = request.query_params.get('merchant_uid')
+
+        response = {
+            'order_id': merchant_uid,
+            'user_id': buyer_name
+        }
+        
+        # Account Check
         user = userValidation(buyer_name)
-        ret = eatplePassValidation(user)
+        if(user == False):
+            response['error_code'] = 201
+            response['error_msg']  = '가입되지 않은 사용자입니다. 잇플로 돌아가 다시 가입해주세요!'
+            return Response(response)
         
-        if(ret == False):
-            return None;
+        eatplePassStatus = eatplePassValidation(user)
+
+        if(eatplePassStatus == False):
+            response['error_code'] = 201
+            response['error_msg']  = '이미 잇플패스를 발급하셨습니다.'
+            return Response(response)
         
-        order = self.queryset.filter(order_id=merchant_uid)[:1]
+        # Order Check    
+        order = self.queryset.get(order_id=merchant_uid)
         
-        retQueryset = order
+        if(order.payment_status == IAMPORT_ORDER_STATUS_PAID):
+            response['error_code'] = 201
+            response['error_msg']  = '이미 결제가 완료된 주문번호 입니다.'
+            return Response(response)
         
-        return retQueryset
+        elif(order.payment_status == IAMPORT_ORDER_STATUS_CANCELLED):
+            response['error_code'] = 201
+            response['error_msg'] = '이미 환불이 완료된 주문번호 입니다.'
+            return Response(response)
+        
+        # Store Check
+        if(order.store.status != OC_OPEN or order.menu.status != OC_OPEN):
+            response['error_code'] = 201
+            response['error_msg'] = '현재 주문 가능시간이 아닙니다. 상점 메뉴를 새로고침한 다음 사용해주세요.'
+            return Response(response)
+        
+        response['error_code'] = 200
+        response['error_msg'] = '정상적인 주문입니다. 결제로 넘어갑니다.'
+        return Response(response)
         

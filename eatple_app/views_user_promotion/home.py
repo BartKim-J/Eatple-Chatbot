@@ -30,33 +30,35 @@ DISCOUNT_FOR_PROMOTION = 5900
 #
 # # # # # # # # # # # # # # # # # # # # # # # # #
 
+
 def areaValidation(kakaoPayload):
     try:
         area = kakaoPayload.dataActionParams['area']['origin']
-        
+
         if(area.count('강남')):
-            area_id = 'A' # A = 강남
+            area_id = 'A'  # A = 강남
         elif(area.count('역삼')):
             area_id = 'B'
         else:
             area_id = 'A'
-            
+
         area_code = area[2:3]
-        
+
         return '{id}{code}'.format(id=area_id, code=area_code)
-    
+
     except (TypeError, AttributeError, KeyError):
         return None
+
 
 def PromotionEatplePassValidation(user):
     orderManager = UserOrderManager(user)
     orderManager.orderPaidCheck()
-    
-    orderManager.availableOrderStatusUpdate();
+
+    orderManager.availableOrderStatusUpdate()
 
     lunchPurchaed = orderManager.getAvailableLunchOrderPurchased().exists()
-    dinnerPurchaced = orderManager.getAvailableDinnerOrderPurchased().exists()    
-    
+    dinnerPurchaced = orderManager.getAvailableDinnerOrderPurchased().exists()
+
     kakaoForm = KakaoForm()
 
     kakaoForm.QuickReplies_AddWithMap(DEFAULT_QUICKREPLIES_MAP)
@@ -66,7 +68,7 @@ def PromotionEatplePassValidation(user):
             '아직 사용하지 않은 잇플패스가 있어요.\n발급된 잇플패스를 먼저 사용해주세요.'
         )
         return JsonResponse(kakaoForm.GetForm())
-     
+
     if ((lunchPurchaed or dinnerPurchaced) or user.flag_promotion):
         kakaoForm.SimpleText_Add(
             '이미 프로모션에 참여해주셨습니다.\n프로모션은 한 번만 참여 가능합니다.'
@@ -74,13 +76,14 @@ def PromotionEatplePassValidation(user):
         return JsonResponse(kakaoForm.GetForm())
 
     return None
-    
+
 # # # # # # # # # # # # # # # # # # # # # # # # #
 #
 # Static View
 #
 # # # # # # # # # # # # # # # # # # # # # # # # #
-   
+
+
 def kakaoView_MenuListup(kakaoPayload):
      # User Validation
     user = userValidation(kakaoPayload)
@@ -95,7 +98,7 @@ def kakaoView_MenuListup(kakaoPayload):
     area = areaValidation(kakaoPayload)
     if(area == None):
         return errorView('Invalid Area Code', '정상적이지 않은 경로거나, 오류가 발생했습니다.\n다시 주문해주세요!')
-    
+
     # Order Log Record
     orderRecordSheet = OrderRecordSheet()
     orderRecordSheet.user = user
@@ -118,12 +121,12 @@ def kakaoView_MenuListup(kakaoPayload):
 
     menuList = Menu.objects.filter(
         store__area=area,
-        
+
         store__type=STORE_TYPE_EVENT,
-        
+
         status=OC_OPEN,
         store__status=OC_OPEN,
-        ).order_by('store__store_id')[:MENU_LIST_LENGTH]
+    ).order_by('store__store_id')[:MENU_LIST_LENGTH]
 
     if menuList:
         kakaoForm = KakaoForm()
@@ -131,7 +134,7 @@ def kakaoView_MenuListup(kakaoPayload):
         # Menu Carousel Card Add
         for menu in menuList:
             imageUrl = '{}{}'.format(HOST_URL, menu.imgURL())
-            
+
             thumbnail = {
                 'imageUrl': imageUrl,
                 'fixedRatio': 'true',
@@ -163,14 +166,14 @@ def kakaoView_MenuListup(kakaoPayload):
             ]
 
             kakaoForm.BasicCard_Push(
-                '{}'.format(menu.name), 
-                '{}'.format(menu.description), 
-                thumbnail, 
+                '{}'.format(menu.name),
+                '{}'.format(menu.description),
+                thumbnail,
                 buttons
             )
-            
+
         kakaoForm.BasicCard_Add()
-    
+
     else:
         kakaoForm = KakaoForm()
 
@@ -188,9 +191,10 @@ def kakaoView_MenuListup(kakaoPayload):
         },
     ]
 
-    kakaoForm.QuickReplies_AddWithMap(QUICKREPLIES_MAP)       
+    kakaoForm.QuickReplies_AddWithMap(QUICKREPLIES_MAP)
 
     return JsonResponse(kakaoForm.GetForm())
+
 
 def kakaoView_OrderPayment(kakaoPayload):
     # Block Validation
@@ -217,7 +221,7 @@ def kakaoView_OrderPayment(kakaoPayload):
         pickup_time = '14:00'
     else:
         pickup_time = None
-    
+
     if(store == None or menu == None or pickup_time == None):
         return errorView('Invalid Store Paratmer', '정상적이지 않은 경로거나, 오류가 발생했습니다.\n다시 주문해주세요!')
 
@@ -234,16 +238,16 @@ def kakaoView_OrderPayment(kakaoPayload):
         order.user = user
         order.menu = menu
         order.store = store
-        
+
         pickup_time = [x.strip() for x in pickup_time.split(':')]
         currentTime = dateByTimeZone(timezone.now())
         datetime_pickup_time = currentTime.replace(
-                                    day=int(menu.name[0:2]),
-                                    hour=int(pickup_time[0]), 
-                                    minute=int(pickup_time[1]),
-                                    second=0,
-                                    microsecond=0
-                                )
+            day=int(menu.name[0:2]),
+            hour=int(pickup_time[0]),
+            minute=int(pickup_time[1]),
+            second=0,
+            microsecond=0
+        )
 
         order.pickup_time = datetime_pickup_time
         order.totalPrice = discountPrice
@@ -334,7 +338,7 @@ def kakaoView_OrderPayment(kakaoPayload):
         {}, []
     )
     kakaoForm.BasicCard_Add()
-    
+
     kakaoForm.BasicCard_Push(
         '결제가 완료되었다면 아래 잇플패스 발급하기 버튼을 눌러주세요.', '', {}, buttons
     )
@@ -353,6 +357,7 @@ def kakaoView_OrderPayment(kakaoPayload):
 
     return JsonResponse(kakaoForm.GetForm())
 
+
 def kakaoView_OrderPaymentCheck(kakaoPayload):
     # Block Validation
     prev_block_id = prevBlockValidation(kakaoPayload)
@@ -367,10 +372,10 @@ def kakaoView_OrderPaymentCheck(kakaoPayload):
     store = storeValidation(kakaoPayload)
     menu = menuValidation(kakaoPayload)
     order = orderValidation(kakaoPayload)
-        
+
     if(order.store != store or order.menu != menu):
         return kakaoView_OrderPayment(kakaoPayload)
-    
+
     if(store == None or menu == None or order == None):
         return errorView('Invalid Store Paratmer', '정상적이지 않은 경로거나, 오류가 발생했습니다.\n다시 주문해주세요!')
 
@@ -449,6 +454,7 @@ def kakaoView_OrderPaymentCheck(kakaoPayload):
 
         return JsonResponse(kakaoForm.GetForm())
 
+
 def kakaoView_EatplePassIssuance(kakaoPayload):
     try:
         # Block Validation
@@ -489,21 +495,20 @@ def kakaoView_EatplePassIssuance(kakaoPayload):
         dataActionExtra[KAKAO_PARAM_PREV_BLOCK_ID] = KAKAO_BLOCK_USER_PROMOTION
 
         kakaoForm = KakaoForm()
-        
+
         thumbnail = {
-             'imageUrl': '{}{}'.format(HOST_URL, '/media/STORE_DB/images/default/eatplePassImg.png'),
-             }
+            'imageUrl': '{}{}'.format(HOST_URL, '/media/STORE_DB/images/default/eatplePassImg.png'),
+        }
 
         kakaoMapUrl = 'https://map.kakao.com/link/map/{},{}'.format(
             order.store.name,
             order.store.place
-            )
-
+        )
 
         buttons = [
             {
-                'action': 'block', 
-                'label': '사용하기',  
+                'action': 'block',
+                'label': '사용하기',
                 'messageText': '로딩중..',
                 'blockId': KAKAO_BLOCK_USER_GET_USE_EATPLE_PASS_CONFIRM,
                 'extra': {
@@ -512,12 +517,11 @@ def kakaoView_EatplePassIssuance(kakaoPayload):
                 }
             },
             {
-                'action': 'webLink', 
+                'action': 'webLink',
                 'label': '위치보기',
                 'webLinkUrl': kakaoMapUrl
             },
         ]
-
 
         kakaoForm.BasicCard_Push(
             '{}'.format(order.menu.name),
@@ -535,7 +539,7 @@ def kakaoView_EatplePassIssuance(kakaoPayload):
             buttons
         )
         kakaoForm.BasicCard_Add()
-        
+
         QUICKREPLIES_MAP = [
             {
                 'action': 'block',
@@ -547,13 +551,14 @@ def kakaoView_EatplePassIssuance(kakaoPayload):
                 }
             },
         ]
-        
+
         kakaoForm.QuickReplies_AddWithMap(QUICKREPLIES_MAP)
 
         return JsonResponse(kakaoForm.GetForm())
 
     except (RuntimeError, TypeError, NameError, KeyError) as ex:
         return errorView('{}'.format(ex))
+
 
 def kakaoView_TimeOut(blockId):
     kakaoForm = KakaoForm()
@@ -588,9 +593,8 @@ def kakaoView_TimeOut(blockId):
 def GET_ProMotionHome(request):
     EatplusSkillLog('GET_ProMotionHome')
 
-
     kakaoPayload = KakaoPayLoad(request)
-    
+
     user = userValidation(kakaoPayload)
     if (user == None):
         return GET_UserHome(request)
@@ -599,18 +603,16 @@ def GET_ProMotionHome(request):
     menu = menuValidation(kakaoPayload)
     order = orderValidation(kakaoPayload)
 
-    #GET MENU
+    # GET MENU
     if(store == None and menu == None and order == None):
         return kakaoView_MenuListup(kakaoPayload)
-    
-    #ORDER SHEET & CHECK
+
+    # ORDER SHEET & CHECK
     elif(store != None and menu != None):
         if(order.store == None or order.menu == None):
             return kakaoView_OrderPayment(kakaoPayload)
         elif(order != None):
             return kakaoView_OrderPaymentCheck(kakaoPayload)
-        
+
     else:
         return kakaoView_MenuListup(kakaoPayload)
-    
-
