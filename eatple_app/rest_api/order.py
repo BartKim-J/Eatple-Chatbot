@@ -85,10 +85,17 @@ class OrderValidation(viewsets.ModelViewSet):
             response['error_code'] = 201
             response['error_msg']  = '이미 잇플패스를 발급하셨습니다.'
             return Response(response)
-        
-        # Order Check    
-        order = self.queryset.get(order_id=merchant_uid)
-        
+
+        try:
+            order = Order.objects.get(order_id=merchant_uid)            
+        except Order.DoesNotExist:
+            order = None
+
+        if(order == None):
+            response['error_code'] = 201
+            response['error_msg']  = '잘못된 주문번호입니다. 홈으로가서 다시 메뉴를 선택해주세요.'
+            return Response(response)            
+
         if(order.payment_status == IAMPORT_ORDER_STATUS_PAID):
             response['error_code'] = 201
             response['error_msg']  = '이미 결제가 완료된 주문번호 입니다.'

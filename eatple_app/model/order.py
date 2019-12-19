@@ -193,9 +193,9 @@ def orderUpdate(order):
     #orderDate = dateByTimeZone(order.order_date)
     #orderDateWithoutTime = orderDate.replace(hour=0, minute=0, second=0, microsecond=0)
     
-    currentDate = currentDate.replace(day=18, hour=12, minute=00, second=0, microsecond=0)
-    currentDateWithoutTime = currentDate.replace(hour=0, minute=0, second=0, microsecond=0)
-    print(currentDate)
+    #currentDate = currentDate.replace(day=18, hour=12, minute=00, second=0, microsecond=0)
+    #currentDateWithoutTime = currentDate.replace(hour=0, minute=0, second=0, microsecond=0)
+    #print(currentDate)
     
     YESTERDAY = currentDateWithoutTime + \
         datetime.timedelta(days=-1)  # Yesterday start
@@ -272,8 +272,8 @@ def orderUpdate(order):
 
             # Invalid Time Range is Dinner Order Time ( prev phase lunch order ~ dinner order ~ next phase lunch order )
             else:
-                print("주문 만료 - C")
-                order.status = ORDER_STATUS_ORDER_EXPIRED
+                print("픽업 완료 - A")
+                order.status = ORDER_STATUS_PICKUP_COMPLETED
                 order.save()
 
     # Dinner Order
@@ -287,11 +287,11 @@ def orderUpdate(order):
         elif(dinnerOrderPickupTimeStart <= currentDate) and (currentDate <= dinnerOrderPickupTimeEnd):
             # Over Order Pickup Time
             if(currentDate >= orderPickupTime):
-                print("주문 완료 - A")
+                print("픽업 대기중 - A")
                 order.status = ORDER_STATUS_PICKUP_WAIT
                 order.save()
             else:
-                print("픽업 준비중 - B")
+                print("픽업 준비중 - A")
                 order.status = ORDER_STATUS_PICKUP_PREPARE
                 order.save()
         else:
@@ -299,23 +299,23 @@ def orderUpdate(order):
             if(dinnerOrderEditTimeStart < currentDate) and (currentDate < dinnerOrderTimeEnd):
 
                 if orderDate <= dinnerOrderEditTimeEnd:
-                    print("주문 완료 - B")
+                    print("주문 완료 - A")
                     order.status = ORDER_STATUS_ORDER_CONFIRMED
                     order.save()
 
                 else:
-                    print("픽업 준비중 - C")
+                    print("픽업 준비중 - B")
                     order.status = ORDER_STATUS_PICKUP_PREPARE
                     order.save()
             # Invalid Time Range is Lunch Order Time ( prev phase lunch order ~ dinner order ~ next phase lunch order )
             else:
-                print("주문 만료 - C")
-                order.status = ORDER_STATUS_ORDER_EXPIRED
+                print("픽업 완료 - A")
+                order.status = ORDER_STATUS_PICKUP_COMPLETED
                 order.save()
 
     # Invalid Order Selling Time
     else:
-        print("주문 만료 - F")
+        print("주문 만료 - A")
         order.status = ORDER_STATUS_ORDER_EXPIRED
         order.save()
 
