@@ -223,7 +223,7 @@ def kakaoView_Home(user):
         },
         {
             'action': 'block',
-            'label': '잇플패스 조회',
+            'label': '잇플패스 확인',
             'messageText': '로딩중..',
             'blockId': KAKAO_BLOCK_USER_EATPLE_PASS,
             'extra': {
@@ -273,20 +273,14 @@ def kakaoView_Home(user):
     buttons = BTN_MAP
     
     kakaoForm.BasicCard_Push(
-        '{}님 안녕하세요.'.format(str(user.phone_number)[9:13]),
+        '안녕하세요!! {}님'.format(user.nickname),
         '아래 명령어 중에 골라주세요!',
         thumbnail,
         buttons
     )
     kakaoForm.BasicCard_Push(
-        '❗ 공지사항',
-        '지금은 \'프로모션\' 기간입니다.\n각 지점별로 배부된 고유 코드를 입력하여 100원에 잇플을 즐겨보세요!',
-        {},
-        []
-    )
-    kakaoForm.BasicCard_Push(
-        '⌛ 업데이트',
-        ' 12/18\n하나카드, 외환카드, 농협카드 결제가 추가되었습니다.',
+        '최신 업데이트',
+        '모든 카드로 결제가 가능합니다\n\n - 2019년 12월 20일',
         {},
         []
     )

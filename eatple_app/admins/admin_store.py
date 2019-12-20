@@ -47,7 +47,7 @@ class MenuInline(admin.StackedInline):
         (None,                  {'fields': ['menu_id']}),
         (None,                  {'fields': ['name']}),
         (None,                  {'fields': [
-         'sellingTime', 'pickupTime','tag', 'description', 'image','image_preview', 'price', 'discount']}),
+         'selling_time', 'pickup_time','tag', 'description', 'image','image_preview', 'price', 'discount']}),
         (None,                  {'fields': [
          'current_stock', 'max_stock', 'status']}),
     ]

@@ -102,11 +102,11 @@ def kakaoView_OrderDetails(kakaoPayload):
             refOrder = availableOrders[0]
             totalCount = availableOrders.count()
             
-            pickupTimes = refOrder.menu.pickupTime.all()
+            pickupTimes = refOrder.menu.pickup_time.all()
             
             header = {
                 'title': '총 {sellingTime} 주문량은 {count}개 입니다.'.format(
-                    sellingTime=dict(SELLING_TIME_CATEGORY)[refOrder.menu.sellingTime], 
+                    sellingTime=dict(SELLING_TIME_CATEGORY)[refOrder.menu.selling_time], 
                     count=totalCount
                 ),
                 'imageUrl': '{}{}'.format(HOST_URL, '/media/STORE_DB/images/default/partnerOrderSheet.png'),
@@ -116,15 +116,15 @@ def kakaoView_OrderDetails(kakaoPayload):
             imageUrl = '{}{}'.format(HOST_URL, refOrder.menu.imgURL())
 
             for pickupTime in pickupTimes:
-                pickup_time = refOrder.pickupTimeToDateTime(str(pickupTime.time))
+                refPickupTime = refOrder.pickupTimeToDateTime(str(pickupTime.time))
                 
-                orderByPickupTime = availableOrders.filter(pickup_time=pickup_time)
+                orderByPickupTime = availableOrders.filter(pickup_time=refPickupTime)
                 orderCount = orderByPickupTime.count()
                 
                 if(orderCount > 0):
                     kakaoForm.ListCard_Push(
                         '{pickupTime} - [ {count}개 ]'.format(
-                            pickupTime=pickup_time.strftime('%p %I시 %M분').replace('AM','오전').replace('PM','오후'),
+                            pickupTime=refPickupTime.strftime('%p %I시 %M분').replace('AM','오전').replace('PM','오후'),
                             count=orderCount
                         ),
                         '{menu}'.format(menu=refOrder.menu.name),

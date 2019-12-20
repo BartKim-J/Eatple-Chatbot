@@ -96,7 +96,9 @@ class OrderValidation(viewsets.ModelViewSet):
             response['error_code'] = 203
             response['error_msg']  = '잘못된 주문번호입니다. 홈으로가서 다시 메뉴를 선택해주세요.'
             return Response(response)            
-
+        else:
+            order.orderStatusUpdate()
+            
         if(order.payment_status == IAMPORT_ORDER_STATUS_PAID):
             response['error_code'] = 204
             response['error_msg']  = '이미 결제가 완료된 주문번호 입니다.'
@@ -118,7 +120,7 @@ class OrderValidation(viewsets.ModelViewSet):
         currentSellingTime = sellingTimeCheck()
         isClosedDay = weekendTimeCheck()
         
-        if(currentSellingTime != order.menu.sellingTime or isClosedDay == True):
+        if(currentSellingTime != order.menu.selling_time or isClosedDay == True):
             response['error_code'] = 206
             response['error_msg'] = '현재 주문 가능시간이 아닙니다. 상점 메뉴를 새로고침한 다음 사용해주세요.'
             return Response(response)

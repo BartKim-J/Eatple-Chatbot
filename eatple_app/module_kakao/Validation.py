@@ -42,8 +42,8 @@ def sellingTimeCheck():
         hour=0, minute=0, second=0, microsecond=0)
 
     # Time QA DEBUG
-    # currentDate = currentDate.replace(hour=16, minute=31, second=0, microsecond=0)
-    # currentDateWithoutTime = currentDate.replace(hour=0, minute=0, second=0, microsecond=0)
+    #currentDate = currentDate.replace(hour=9, minute=31, second=0, microsecond=0)
+    #currentDateWithoutTime = currentDate.replace(hour=0, minute=0, second=0, microsecond=0)
 
     # Prev Lunch Order Time 16:30 ~ 10:30
     prevlunchOrderTimeStart = currentDateWithoutTime + \
@@ -78,8 +78,8 @@ def weekendTimeCheck():
         hour=0, minute=0, second=0, microsecond=0)
 
     # Time QA DEBUG
-    # currentDate = currentDate.replace(day=13, hour=9, minute=28, second=0, microsecond=0)
-    # currentDateWithoutTime = currentDate.replace(hour=0, minute=0, second=0, microsecond=0)
+    #currentDate = currentDate.replace(day=19, hour=9, minute=28, second=0, microsecond=0)
+    #currentDateWithoutTime = currentDate.replace(hour=0, minute=0, second=0, microsecond=0)
 
     closedDateStart = currentDateWithoutTime + \
         datetime.timedelta(hours=10, minutes=30)

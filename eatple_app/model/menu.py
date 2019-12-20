@@ -37,7 +37,7 @@ class PickupTime(models.Model):
     class Meta:
         ordering = ['time']
 
-    sellingTime = models.CharField(
+    selling_time = models.CharField(
         max_length=WORD_LENGTH,
         choices=SELLING_TIME_CATEGORY,
         default=SELLING_TIME_LUNCH,
@@ -47,7 +47,7 @@ class PickupTime(models.Model):
     time = models.TimeField(default=timezone.now)
     
     def __str__(self):
-        return '{} - {}'.format(self.time.strftime("%H시 %M분"), dict(SELLING_TIME_CATEGORY)[self.sellingTime])
+        return '{} - {}'.format(self.time.strftime("%H시 %M분"), dict(SELLING_TIME_CATEGORY)[self.selling_time])
         
 class MenuInfo(models.Model):
     store = models.ForeignKey(
@@ -78,7 +78,7 @@ class MenuSetting(models.Model):
         help_text='메뉴 이미지*'
     )
 
-    sellingTime = models.CharField(
+    selling_time = models.CharField(
         max_length=WORD_LENGTH,
         choices=SELLING_TIME_CATEGORY,
         default=SELLING_TIME_LUNCH,
@@ -86,7 +86,7 @@ class MenuSetting(models.Model):
     )
 
 
-    pickupTime = models.ManyToManyField(
+    pickup_time = models.ManyToManyField(
         'PickupTime'
     )
 

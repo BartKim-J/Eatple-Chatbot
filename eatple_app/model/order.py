@@ -230,7 +230,7 @@ def orderUpdate(order):
     dinnerOrderPickupTimeEnd = currentDateWithoutTime + datetime.timedelta(hours=21, minutes=0)
 
     # Lunch Order
-    if (SELLING_TIME_LUNCH == menu.sellingTime) and \
+    if (SELLING_TIME_LUNCH == menu.selling_time) and \
         ((PICKUP_YESTER_DAY <= orderDateWithoutTime) and (TODAY <= PICKUP_DAY)):
         # Pickup Prepare Time 10:30  ~ 11:30
         if(prevlunchOrderTimeEnd <= currentDate) and (currentDate <= lunchOrderPickupTimeStart) and \
@@ -277,7 +277,7 @@ def orderUpdate(order):
                 order.save()
 
     # Dinner Order
-    elif (SELLING_TIME_DINNER == menu.sellingTime) and (orderDateWithoutTime == TODAY):
+    elif (SELLING_TIME_DINNER == menu.selling_time) and (orderDateWithoutTime == TODAY):
         # Meal Pre-
         if(dinnerOrderTimeEnd <= currentDate) and (currentDate <= dinnerOrderPickupTimeStart):
             print("픽업 준비중 - A")
@@ -486,7 +486,7 @@ class OrderManager():
     def getAvailableLunchOrderPurchased(self):
         availableOrders = self.getAvailableOrders()
         lunchOrders = availableOrders.filter(
-            menu__sellingTime=SELLING_TIME_LUNCH
+            menu__selling_time=SELLING_TIME_LUNCH
         )
 
         return lunchOrders
@@ -494,7 +494,7 @@ class OrderManager():
     def getAvailableDinnerOrderPurchased(self):
         availableOrders = self.getAvailableOrders()
         dinnerOrders = availableOrders.filter(
-            menu__sellingTime=SELLING_TIME_DINNER
+            menu__selling_time=SELLING_TIME_DINNER
         )
         
         return dinnerOrders

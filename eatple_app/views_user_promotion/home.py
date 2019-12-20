@@ -325,7 +325,7 @@ def kakaoView_OrderPayment(kakaoPayload):
     buttons = [
         {
             'action': 'block',
-            'label': '잇플패스 발급',
+            'label': '잇플패스 확인',
             'messageText': '로딩중..',
             'blockId': KAKAO_BLOCK_USER_PROMOTION,
             'extra': dataActionExtra,
@@ -340,7 +340,7 @@ def kakaoView_OrderPayment(kakaoPayload):
     kakaoForm.BasicCard_Add()
 
     kakaoForm.BasicCard_Push(
-        '결제가 완료되었다면 아래 잇플패스 발급하기 버튼을 눌러주세요.', '', {}, buttons
+        '결제가 완료되었다면 아래 \'잇플패스 확인\' 버튼을 눌러주세요.', '', {}, buttons
     )
     kakaoForm.BasicCard_Add()
 
@@ -422,7 +422,7 @@ def kakaoView_OrderPaymentCheck(kakaoPayload):
             },
             {
                 'action': 'block',
-                'label': '잇플패스 발급',
+                'label': '잇플패스 확인',
                 'messageText': '로딩중..',
                 'blockId': KAKAO_BLOCK_USER_PROMOTION,
                 'extra': dataActionExtra,
@@ -525,8 +525,9 @@ def kakaoView_EatplePassIssuance(kakaoPayload):
 
         kakaoForm.BasicCard_Push(
             '{}'.format(order.menu.name),
-            '주문번호: {}\n - 주문자: {}\n\n - 매장: {}\n - 주소: {}\n\n - 결제 금액: {}원\n\n - 픽업 시간: {}\n - 주문 상태: {}'.format(
+            '주문번호: {}\n - 주문자: {}({})\n\n - 매장: {}\n - 주소: {}\n\n - 결제 금액: {}원\n\n - 픽업 시간: {}\n - 주문 상태: {}'.format(
                 order.order_id,
+                order.ordersheet.user.nickname,
                 str(order.ordersheet.user.phone_number)[9:13],
                 order.store.name,
                 order.store.addr,

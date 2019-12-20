@@ -74,7 +74,8 @@ def kakaoView_UseEatplePass(kakaoPayload):
 
         kakaoForm.BasicCard_Push(
             '잇플패스가 사용되었습니다.',
-            '\n - 주문자: {}\n\n - 매장: {} \n - 메뉴: {}'.format(
+            '\n - 주문자: {}({})\n\n - 매장: {} \n - 메뉴: {}'.format(
+                order.ordersheet.user.nickname,
                 str(order.ordersheet.user.phone_number)[9:13],
                 order.store.name,
                 order.menu.name,
@@ -270,7 +271,8 @@ def kakaoView_OrderCancel(kakaoPayload):
 
         kakaoForm.BasicCard_Push(
             '주문이 취소되었습니다.',
-            ' - 주문자: {}\n\n - 매장: {} \n - 메뉴: {}\n\n - 결제 금액: {}원\n - 픽업 시간: {}\n\n - 주문 상태: {}'.format(
+            ' - 주문자: {}({})\n\n - 매장: {} \n - 메뉴: {}\n\n - 결제 금액: {}원\n - 픽업 시간: {}\n\n - 주문 상태: {}'.format(
+                order.ordersheet.user.nickname,
                 str(order.ordersheet.user.phone_number)[9:13],
                 order.store.name,
                 order.menu.name,
@@ -321,7 +323,7 @@ def kakaoView_EditPickupTime(kakaoPayload):
     menu = order.menu
     store = order.store
 
-    currentSellingTime = order.menu.sellingTime
+    currentSellingTime = order.menu.selling_time
 
     kakaoForm = KakaoForm()
 
@@ -331,7 +333,7 @@ def kakaoView_EditPickupTime(kakaoPayload):
 
     PICKUP_TIME_QUICKREPLIES_MAP = []
 
-    pickupTimes = menu.pickupTime.all()
+    pickupTimes = menu.pickup_time.all()
 
     order = orderValidation(kakaoPayload)
 
@@ -386,7 +388,8 @@ def kakaoView_ConfirmEditPickupTime(kakaoPayload):
 
     kakaoForm.BasicCard_Push(
         '픽업타임이 변경되었습니다.',
-        ' - 주문자: {}\n\n - 매장: {} \n - 메뉴: {}\n\n - 결제 금액: {}원\n - 픽업 시간: {}\n\n - 주문 상태: {}'.format(
+        ' - 주문자: {}({})\n\n - 매장: {} \n - 메뉴: {}\n\n - 결제 금액: {}원\n - 픽업 시간: {}\n\n - 주문 상태: {}'.format(
+            order.ordersheet.user.nickname,
             str(order.ordersheet.user.phone_number)[9:13],
             order.store.name,
             order.menu.name,
