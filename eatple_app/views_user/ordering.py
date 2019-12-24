@@ -289,7 +289,7 @@ def kakaoView_PickupTime(kakaoPayload):
 
         kakaoForm.QuickReplies_Add(
             'block',
-            pickupTime.time.strftime('%H:%M'),
+            "{}".format(pickupTime.time.strftime('%p %-I시 %-M분').replace('AM', '오전').replace('PM', '오후')),
             '로딩중..',
             KAKAO_BLOCK_USER_SET_ORDER_SHEET,
             dataActionExtra

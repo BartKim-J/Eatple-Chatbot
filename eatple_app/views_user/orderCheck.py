@@ -32,7 +32,7 @@ DEFAULT_QUICKREPLIES_MAP = [
 
 
 # STATIC EP_define
-ORDER_LIST_LENGTH = 10
+ORDER_LIST_LENGTH = 4
 
 # # # # # # # # # # # # # # # # # # # # # # # # #
 #
@@ -206,19 +206,17 @@ def kakaoView_OrderDetails(kakaoPayload):
 
         for order in unavailableOrders:
             thumbnail = {
-                'imageUrl': ''
+                'imageUrl': '{}{}'.format(HOST_URL, order.menu.imgURL()),
+                'fixedRatio': 'true',
+                'width': 800,
+                'height': 800,
             }
 
             buttons = []
 
             kakaoForm.BasicCard_Push(
-                '주문번호: {}'.format(order.order_id),
-                ' - 주문자: {}({})\n\n - 매장: {} \n - 메뉴: {}\n\n - 결제 금액: {}원\n - 픽업 시간: {}\n\n - 주문 상태: {}'.format(
-                    order.ordersheet.user.nickname,
-                    str(order.ordersheet.user.phone_number)[9:13],
-                    order.store.name,
-                    order.menu.name,
-                    order.totalPrice,
+                '{}'.format(order.menu.name),
+                '픽업 시간: {}\n주문 상태: {}'.format(
                     dateByTimeZone(order.pickup_time).strftime(
                         '%-m월 %-d일 %p %-I시 %-M분').replace('AM', '오전').replace('PM', '오후'),
                     ORDER_STATUS[order.status][1]

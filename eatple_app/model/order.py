@@ -153,7 +153,7 @@ def orderUpdate(order):
         if(order.status == ORDER_STATUS_MENU_CHOCIED):
             order.status = ORDER_STATUS_ORDER_CONFIRM_WAIT
             order.save()
-
+            
             #@SLACK LOGGER
             #@PROMOTION            
             if(order.type == ORDER_TYPE_PROMOTION):
@@ -166,6 +166,7 @@ def orderUpdate(order):
         if(order.type == ORDER_TYPE_PROMOTION):
             order.ordersheet.user.applyPromotion()
             
+        order.payment_date = dateNowByTimeZone()
         print('주문 결제됨')
         
     if(order.payment_status != IAMPORT_ORDER_STATUS_PAID):
@@ -375,6 +376,7 @@ class Order(models.Model):
     
     update_date = models.DateTimeField(auto_now=True)
     order_date = models.DateTimeField(default=timezone.now)
+    payment_date  = models.DateTimeField(default=timezone.now)
 
     def save(self, *args, **kwargs):
         super().save()

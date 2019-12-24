@@ -24,6 +24,7 @@ class OrderResource(resources.ModelResource):
         fields = (
             'order_id',
             'order_date',
+            'payment_date',
             'totalPrice',
             'type'
             'payment_status',
@@ -57,17 +58,20 @@ class OrderAdmin(ImportExportMixin, admin.ModelAdmin):
         'order_id', 
         'totalPrice', 
         'order_date', 
+        'payment_date',
         'pickup_time',
     )
     
     list_filter = (
         ('order_date', DateRangeFilter), 
+        ('payment_date', DateRangeFilter),
         ('store',  RelatedDropdownFilter),
         ('menu', RelatedDropdownFilter),
         ('payment_status', ChoiceDropdownFilter),
         ('status', ChoiceDropdownFilter),
+        ('type', ChoiceDropdownFilter),
     )
     
 
     list_display = ('user', 'order_id',  'store', 'menu', 'type',
-                    'payment_status', 'status', 'order_date')
+                    'payment_status', 'status', 'payment_date')

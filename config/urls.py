@@ -17,12 +17,15 @@ from django.contrib import admin
 from django.urls import path, include
 
 from rest_framework import routers
+from rest_framework_swagger.views import get_swagger_view
 
 from django.conf import settings
 from django.conf.urls.static import static
 from django.conf.urls import url
 
 from eatple_app import views
+
+schema_view = get_swagger_view(title="Eatple Rest API")
 
 # Urls
 urlpatterns = [
@@ -94,6 +97,10 @@ urlpatterns += [
     path('api/', include(router.urls)),
 ]
 
+
+urlpatterns += [
+    path('api/doc', schema_view),
+]
 
 # Media Link Url
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

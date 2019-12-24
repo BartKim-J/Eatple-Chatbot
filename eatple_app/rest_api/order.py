@@ -17,6 +17,7 @@ from eatple_app.module_kakao.Validation import *
 # View-System
 from eatple_app.views_system.debugger import *
 
+from rest_framework import status
 from rest_framework import viewsets
 from rest_framework import permissions
 
@@ -59,7 +60,7 @@ def orderValidation(order_id):
         return order
     except Order.DoesNotExist:
         return None
-
+    
 class OrderValidation(viewsets.ModelViewSet):
     queryset = Order.objects.all()
     serializer_class = OrderSerializer
@@ -72,6 +73,9 @@ class OrderValidation(viewsets.ModelViewSet):
             'order_id': merchant_uid,
             'user_id': buyer_name
         }
+        
+        if(buyer_name == None or merchant_uid == None):
+            return Response(status=status.HTTP_400_BAD_REQUEST);
         
         # Account Check
         user = userValidation(buyer_name)

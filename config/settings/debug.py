@@ -38,31 +38,29 @@ ALLOWED_HOSTS = [
 # Application definition
 
 INSTALLED_APPS = [
-
-    # local-app
-    'eatple_app',
-
     # 'suit',
     # 'eatple_app.apps.SuitConfig',
-    
-    'import_export',
-    'phonenumber_field',
-    
-    'django_admin_listfilter_dropdown',
-
     'django.contrib.gis',
-    'rest_framework',
-    'rangefilter',
-    
-    'corsheaders',
-    
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django_admin_listfilter_dropdown',
 
+    'import_export',
+    'phonenumber_field',
+    
+    'rest_framework',
+    'rest_framework_swagger',
+
+    # local-app
+    'eatple_app',
+    
+    'corsheaders',
+
+    'rangefilter',
     'mapwidgets',
 ]
 
@@ -176,6 +174,10 @@ USE_L10N = True
 
 USE_TZ = True
 
+# Rest framework
+REST_FRAMEWORK = { 
+    'DEFAULT_SCHEMA_CLASS': 'rest_framework.schemas.coreapi.AutoSchema' 
+}
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/2.2/howto/static-files/
