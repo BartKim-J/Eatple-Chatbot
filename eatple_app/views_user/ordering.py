@@ -215,10 +215,12 @@ def kakaoView_PickupTime(kakaoPayload):
         },
     ]
 
+    isVacationDay = vacationTimeCheck()
     isClosedDay = weekendTimeCheck()
-    if(isClosedDay):
+ 
+    if(isClosedDay or isVacationDay):
         kakaoForm.BasicCard_Push('※ 안내사항 ※',
-                                 '잇플 알파 서비스 기간에는\n\'주중 점심\'만 주문 가능합니다.',
+                                 '\'주말 및 공휴일\'에는 영업을 하지 않습니다.',
                                  {},
                                  []
                                  )

@@ -100,6 +100,25 @@ def weekendTimeCheck():
             return False
     else:
         return False
+    
+def vacationTimeCheck():
+    currentDate = dateNowByTimeZone()
+    currentDateWithoutTime = currentDate.replace(
+        hour=0, minute=0, second=0, microsecond=0)
+
+    # Time QA DEBUG
+    #currentDate = currentDate.replace(day=24, hour=9, minute=28, second=0, microsecond=0)
+    #currentDateWithoutTime = currentDate.replace(hour=0, minute=0, second=0, microsecond=0)
+    #print(currentDate)
+    
+    closedDateStart = currentDate.replace(day=24, hour=0, minute=0, second=0, microsecond=0)
+    closedDateEnd = currentDate.replace(day=24, hour=23, minute=59, second=59, microsecond=0)
+
+    if(closedDateStart <= currentDate and currentDate <= closedDateEnd):
+        return True
+    else:
+        return False
+    
 
 def eatplePassValidation(user):
     orderManager = UserOrderManager(user)
