@@ -80,10 +80,13 @@ def userSignUp(userProfile):
     return user
 
 def userLocationRegistration(user, locationData):
+
     try:
         user.location.lat = locationData['latitude']
         user.location.long = locationData['longitude']
         user.location.address = locationData['address']
+        # @TODO will update kakao location api
+        # user.location.address = locationData['road_address']['address_name']
         user.location.point = Point(
             y=float(locationData['latitude']), 
             x=float(locationData['longitude']),

@@ -180,6 +180,10 @@ def kakaoView_PickupTime(kakaoPayload):
         return errorView('Invalid Block Access', '정상적이지 않은 경로거나, 잘못된 계정입니다.')
 
     order = orderValidation(kakaoPayload)
+    
+    if(order == None):
+        return errorView('Invalid Block Access', '정상적이지 않은 경로거나, 오류가 발생했습니다.\n홈으로 돌아가 다시 주문해주세요!')
+    
     if(order.menu != None or order.store != None):
         orderManager = UserOrderManager(user)
         orderManager.orderPaidCheck()
