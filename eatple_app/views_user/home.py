@@ -298,7 +298,13 @@ def kakaoView_Home(user):
                 'webLinkUrl': kakaoMapUrl
             },
         ]
-        address = order.store.addr
+        
+        kakaoForm.BasicCard_Push(
+            '{}'.format(order.store.name),
+            '{}'.format(order.store.addr),
+            thumbnail,
+            buttons
+        )
     else:
         thumbnail = {
             'imageUrl': 'https://maps.googleapis.com/maps/api/staticmap?center={lat},{long}&zoom={zoom}&size=800x800&key={apiKey}'.format(
@@ -323,12 +329,12 @@ def kakaoView_Home(user):
             },
         ]
 
-    kakaoForm.BasicCard_Push(
-        '등록된 주소',
-        '{}'.format(address),
-        thumbnail,
-        buttons
-    )
+        kakaoForm.BasicCard_Push(
+            '등록된 주소',
+            '{}'.format(address),
+            thumbnail,
+            buttons
+        )
     kakaoForm.BasicCard_Add()
 
     kakaoForm.QuickReplies_AddWithMap(QUICKREPLIES_MAP)
