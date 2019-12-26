@@ -194,7 +194,7 @@ def orderUpdate(order):
     #orderDate = dateByTimeZone(order.order_date)
     #orderDateWithoutTime = orderDate.replace(hour=0, minute=0, second=0, microsecond=0)
     
-    #currentDate = currentDate.replace(day=18, hour=12, minute=00, second=0, microsecond=0)
+    #currentDate = currentDate.replace(day=24, hour=12, minute=00, second=0, microsecond=0)
     #currentDateWithoutTime = currentDate.replace(hour=0, minute=0, second=0, microsecond=0)
     #print(currentDate)
     

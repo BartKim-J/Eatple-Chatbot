@@ -59,7 +59,6 @@ class OrderAdmin(ImportExportMixin, admin.ModelAdmin):
         'totalPrice', 
         'order_date', 
         'payment_date',
-        'pickup_time',
     )
     
     list_filter = (

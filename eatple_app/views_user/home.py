@@ -113,7 +113,7 @@ def kakaoView_SignUp():
 
     kakaoForm = KakaoForm()
 
-    BTN_MAP = [
+    buttons = [
         {
             'action': 'block',
             'label': '연동하러 가기',
@@ -126,8 +126,6 @@ def kakaoView_SignUp():
     ]
 
     thumbnail = {'imageUrl': ''}
-
-    buttons = BTN_MAP
 
     kakaoForm.BasicCard_Push(
         '아직 잇플 서비스에 연동되지 않은 카카오 계정입니다.',
@@ -144,7 +142,7 @@ def kakaoView_LocationRegistration():
 
     kakaoForm = KakaoForm()
 
-    BTN_MAP = [
+    buttons = [
         {
             'action': 'block',
             'label': '등록하러 가기',
@@ -157,8 +155,6 @@ def kakaoView_LocationRegistration():
     ]
 
     thumbnail = {'imageUrl': ''}
-
-    buttons = BTN_MAP
 
     kakaoForm.BasicCard_Push(
         '보다 정확한 메뉴를 불러오기 위해 사용자의 위치 정보가 필요해요!',
@@ -178,7 +174,13 @@ def kakaoView_Home(user):
     orderManager = UserOrderManager(user)
     orderManager.orderPanddingCleanUp()
     orderManager.availableOrderStatusUpdate()
-
+    
+    orderList = orderManager.getAvailableOrders()
+    orderCount = orderList.count()
+    order = orderList.first()
+    
+    isOrderEnable = (orderCount != 0)
+    
     #@PROMOTION
     try:
         address = user.location.address
@@ -197,24 +199,7 @@ def kakaoView_Home(user):
         
         address = user.location.address
     
-    thumbnail = {
-        'imageUrl': 'https://maps.googleapis.com/maps/api/staticmap?center={lat},{long}&zoom={zoom}&size=800x400&key={apiKey}'.format(
-            zoom=18,
-            lat=user.location.lat,
-            long=user.location.long,
-            apiKey='AIzaSyDRhnn4peSzEfKzQ_WjwDqDF9pzDiuVRhM',
-        ),
-    }
-    
-    kakaoForm.BasicCard_Push(
-        '등록된 주소',
-        '{}'.format(address),
-        thumbnail,
-        []
-    )
-    kakaoForm.BasicCard_Add()
-    
-    BTN_MAP = [
+    buttons = [
         {
             'action': 'block',
             'label': '주문하러 가기',
@@ -226,14 +211,25 @@ def kakaoView_Home(user):
         },
         {
             'action': 'block',
+            'label': '사용 메뉴얼',
+            'messageText': '로딩중..',
+            'blockId': KAKAO_BLOCK_USER_MANUAL,
+            'extra': {
+                KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_HOME
+            }
+        },
+    ]
+
+    if(isOrderEnable):
+        buttons[0] = {
+            'action': 'block',
             'label': '잇플패스 확인',
             'messageText': '로딩중..',
             'blockId': KAKAO_BLOCK_USER_EATPLE_PASS,
             'extra': {
                 KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_HOME
             }
-        },
-    ]
+        }
 
     QUICKREPLIES_MAP = [
         {
@@ -241,15 +237,6 @@ def kakaoView_Home(user):
             'label': '최근 주문내역',
             'messageText': '로딩중..',
             'blockId': KAKAO_BLOCK_USER_ORDER_DETAILS,
-            'extra': {
-                KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_HOME
-            }
-        },
-        {
-            'action': 'block', 
-            'label': '위치 변경',
-            'messageText': '로딩중..',    
-            'blockId': KAKAO_BLOCK_USER_EDIT_LOCATION,
             'extra': {
                 KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_HOME
             }
@@ -264,28 +251,83 @@ def kakaoView_Home(user):
             }
         },
     ]
-    
+
     thumbnail = {
-        'imageUrl': '',
+        'imageUrl': '{}{}'.format(HOST_URL, '/media/STORE_DB/images/default/homeHead.png'),
         'fixedRatio': 'true',
         'width': 800,
         'height': 800,
     }
 
-
-    buttons = BTN_MAP
-    
+    if(isOrderEnable):
+        thumbnail['imageUrl'] = '{}{}'.format(HOST_URL, order.menu.imgURL())
+        description = '픽업은 {} 입니다'.format(
+            dateByTimeZone(order.pickup_time).strftime(
+                '%-m월 %-d일 %p %-I시 %-M분').replace('AM', '오전').replace('PM', '오후'),
+        )
+    else: 
+        description = ''
+        
     kakaoForm.BasicCard_Push(
         '안녕하세요!! {}님'.format(user.nickname),
-        '아래 명령어 중에 골라주세요!',
+        '{}'.format(description),
         thumbnail,
         buttons
     )
+    
+    if(isOrderEnable):
+        kakaoMapUrl = 'https://map.kakao.com/link/map/{},{}'.format(
+            order.store.name,
+            order.store.place
+        )
+        thumbnail = {
+            'imageUrl': 'https://maps.googleapis.com/maps/api/staticmap?center={lat},{long}&zoom={zoom}&size=800x800&key={apiKey}'.format(
+                zoom=18,
+                lat=order.store.place.lat,
+                long=order.store.place.long,
+                apiKey='AIzaSyDRhnn4peSzEfKzQ_WjwDqDF9pzDiuVRhM',
+            ),
+            'fixedRatio': 'true',
+            'width': 800,
+            'height': 800,
+        }
+        buttons = [
+            {
+                'action': 'webLink',
+                'label': '위치보기',
+                'webLinkUrl': kakaoMapUrl
+            },
+        ]
+        address = order.store.addr
+    else:
+        thumbnail = {
+            'imageUrl': 'https://maps.googleapis.com/maps/api/staticmap?center={lat},{long}&zoom={zoom}&size=800x800&key={apiKey}'.format(
+                zoom=18,
+                lat=user.location.lat,
+                long=user.location.long,
+                apiKey='AIzaSyDRhnn4peSzEfKzQ_WjwDqDF9pzDiuVRhM',
+            ),
+            'fixedRatio': 'true',
+            'width': 800,
+            'height': 800,
+        }        
+        buttons = [
+            {
+                'action': 'block',
+                'label': '현 위치 변경',
+                'messageText': '로딩중..',
+                'blockId': KAKAO_BLOCK_USER_EDIT_LOCATION,
+                'extra': {
+                    KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_HOME
+                }
+            },
+        ]
+
     kakaoForm.BasicCard_Push(
-        '최신 업데이트',
-        '모든 카드로 결제가 가능합니다\n\n - 2019년 12월 20일',
-        {},
-        []
+        '등록된 주소',
+        '{}'.format(address),
+        thumbnail,
+        buttons
     )
     kakaoForm.BasicCard_Add()
 
