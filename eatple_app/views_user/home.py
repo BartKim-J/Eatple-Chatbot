@@ -266,7 +266,7 @@ def kakaoView_Home(user):
                 '%-m월 %-d일 %p %-I시 %-M분').replace('AM', '오전').replace('PM', '오후'),
         )
     else: 
-        description = ''
+        description = '\'주문하러 가기\'를 눌러 잇플 메뉴를 주문해주세요!'
         
     kakaoForm.BasicCard_Push(
         '안녕하세요!! {}님'.format(user.nickname),
@@ -281,7 +281,7 @@ def kakaoView_Home(user):
             order.store.place
         )
         thumbnail = {
-            'imageUrl': 'https://maps.googleapis.com/maps/api/staticmap?center={lat},{long}&zoom={zoom}&size=800x800&key={apiKey}'.format(
+            'imageUrl': 'https://maps.googleapis.com/maps/api/staticmap?center={lat},{long}&maptype=mobile&zoom={zoom}&markers=size:mid|{lat},{long}&size=800x800&key={apiKey}'.format(
                 zoom=18,
                 lat=order.store.place.lat,
                 long=order.store.place.long,
@@ -307,7 +307,7 @@ def kakaoView_Home(user):
         )
     else:
         thumbnail = {
-            'imageUrl': 'https://maps.googleapis.com/maps/api/staticmap?center={lat},{long}&zoom={zoom}&size=800x800&key={apiKey}'.format(
+            'imageUrl': 'https://maps.googleapis.com/maps/api/staticmap?center={lat},{long}&maptype=mobile&zoom={zoom}&markers=size:mid|{lat},{long}&size=800x800&key={apiKey}'.format(
                 zoom=18,
                 lat=user.location.lat,
                 long=user.location.long,
