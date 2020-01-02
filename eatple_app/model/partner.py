@@ -50,6 +50,13 @@ class Partner(KakaoUser, models.Model):
         null=True
     )
 
+    type = models.CharField(
+        max_length=WORD_LENGTH, 
+        default=PARTNER_TYPE_NORMAL,
+        choices=PARTNER_TYPE,
+        help_text='파트너 유형*', 
+    )
+
     create_date = models.DateTimeField(auto_now=True)
 
     @classmethod

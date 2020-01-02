@@ -156,6 +156,22 @@ STORE_TYPE = [
     (STORE_TYPE_EVENT, '이벤트'),
 ]
 
+# USER_TYPE
+USER_TYPE_NORMAL = 'normal'
+USER_TYPE_EATPLE = 'eatple'
+USER_TYPE = [
+    (USER_TYPE_NORMAL, '일반'),
+    (USER_TYPE_EATPLE, '잇플'),
+]
+
+# PARTNER_TYPE
+PARTNER_TYPE_NORMAL = 'normal'
+PARTNER_TYPE_ADMIN = 'admin'
+PARTNER_TYPE = [
+    (PARTNER_TYPE_NORMAL, '일반'),
+    (PARTNER_TYPE_ADMIN, '점주'),
+]
+
 # AREA_CODE
 STORE_AREA_A_1 = 'A1'
 STORE_AREA_A_2 = 'A2'

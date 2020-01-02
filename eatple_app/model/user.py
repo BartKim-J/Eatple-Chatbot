@@ -105,6 +105,13 @@ class User(KakaoUser, models.Model):
         ordering = ['-app_user_id']
     
     create_date = models.DateTimeField(auto_now_add=True)
+    
+    type = models.CharField(
+        max_length=WORD_LENGTH, 
+        default=USER_TYPE_NORMAL,
+        choices=USER_TYPE,
+        help_text='유저 유형*', 
+    )
 
     @classmethod
     def signUp(cls, *args, **kwargs):
@@ -112,7 +119,6 @@ class User(KakaoUser, models.Model):
         registedUser.save()
 
         return registedUser
-
 
     #@PROTMOTION
     def applyPromotion(self):

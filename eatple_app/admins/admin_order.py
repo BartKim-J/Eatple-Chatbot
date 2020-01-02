@@ -12,7 +12,6 @@ from django.utils.translation import ugettext_lazy as _
 from django.utils.safestring import mark_safe
 
 class OrderResource(resources.ModelResource):
-    
     def store_name(self,obj):
         return obj.store.name
     
@@ -45,6 +44,9 @@ class OrderAdmin(ImportExportMixin, admin.ModelAdmin):
     def user(self, obj):
         return obj.ordersheet.user
 
+    def user_type(self, obj):
+        return obj.ordersheet.user.type
+
     def nickname(self, obj):
         return obj.ordersheet.user.nickname
 
@@ -69,6 +71,7 @@ class OrderAdmin(ImportExportMixin, admin.ModelAdmin):
         ('payment_status', ChoiceDropdownFilter),
         ('status', ChoiceDropdownFilter),
         ('type', ChoiceDropdownFilter),
+        ('ordersheet__user__type', ChoiceDropdownFilter),
     )
     
 
