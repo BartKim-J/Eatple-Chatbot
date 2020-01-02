@@ -119,7 +119,7 @@ class User(KakaoUser, models.Model):
         registedUser.save()
 
         return registedUser
-
+        
     #@PROTMOTION
     def applyPromotion(self):
         self.flag_promotion = True;

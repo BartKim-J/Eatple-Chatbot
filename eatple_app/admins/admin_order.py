@@ -40,7 +40,8 @@ class OrderResource(resources.ModelResource):
 
 class OrderAdmin(ImportExportMixin, admin.ModelAdmin):
     resource_class = OrderResource
-
+    list_per_page = 250
+    
     def user(self, obj):
         return obj.ordersheet.user
 

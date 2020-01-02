@@ -15,7 +15,6 @@ from django.utils.safestring import mark_safe
 
 
 class UserResource(resources.ModelResource):
-    
     class Meta:
         model = User
         fields = (
@@ -42,6 +41,11 @@ class LocationInline(admin.TabularInline):
 class UserAdmin(ImportExportMixin, admin.ModelAdmin):
     resource_class = UserResource
 
+    list_per_page = 250
+
+    def address(self, obj):
+        return obj.location.address
+    
     readonly_fields = (
         'app_user_id',
         'nickname',
@@ -71,6 +75,7 @@ class UserAdmin(ImportExportMixin, admin.ModelAdmin):
         'email',
         'gender',
         'flag_promotion',
+        'address',
     )
 
     inlines = [LocationInline]
