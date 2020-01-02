@@ -13,14 +13,54 @@ from django.core import validators
 from django.utils.translation import ugettext_lazy as _
 from django.utils.safestring import mark_safe
 
+from django.contrib.admin import SimpleListFilter
+
+class UserServiceLocationFilter(SimpleListFilter):
+    title = '지역'
+    parameter_name = 'service area'
+
+    def lookups(self, request, model_admin):
+        return [
+            ('all', '전체 지역'),
+            ('service', '서비스 지역'),
+        ] 
+
+    def queryset(self, request, queryset):
+        distance = 500
+        ref_gangnam = Point(y=37.497907, x=127.027635, srid=4326)
+        ref_yeoksam = Point(y=37.500787, x=127.036919, srid=4326)
+
+        if self.value() == 'all':
+            return queryset
+        
+        if self.value() == 'service':
+            queryset = queryset.annotate(
+                distance_gangnam=Distance(F('location__point'), ref_gangnam) * 100 * 1000,
+                distance_yeoksam=Distance(F('location__point'), ref_yeoksam) * 100 * 1000,
+            ).filter(
+                (Q(distance_gangnam__lte=distance) &
+                Q(distance_gangnam__gt=0)) |
+                Q(distance_yeoksam__lte=distance)
+            )
+            
+            print(queryset[0])
+            print(queryset[0].distance_gangnam, queryset[0].distance_yeoksam)
+            
+            return queryset
+        
 
 class UserResource(resources.ModelResource):
+    
+    def latlng(self,obj):
+        return "{}, {}".format(obj.location.lat, obj.location.long)
     class Meta:
         model = User
         fields = (
-            'app_user_id',
             'nickname',
             'location__address',
+            'location__lat',
+            'location__long',
+            'latlng'
         )
 
 class LocationInline(admin.TabularInline):
@@ -41,7 +81,7 @@ class LocationInline(admin.TabularInline):
 class UserAdmin(ImportExportMixin, admin.ModelAdmin):
     resource_class = UserResource
 
-    list_per_page = 250
+    list_per_page = 50
 
     def address(self, obj):
         return obj.location.address
@@ -62,6 +102,7 @@ class UserAdmin(ImportExportMixin, admin.ModelAdmin):
     search_fields = ['nickname', 'app_user_id', 'phone_number', 'location__address']
 
     list_filter = (
+        UserServiceLocationFilter,
         'create_date',
         'gender',
         'flag_promotion',
