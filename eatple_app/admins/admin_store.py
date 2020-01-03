@@ -36,16 +36,21 @@ class MenuInline(admin.StackedInline):
     readonly_fields = ('menu_id', "image_preview")
 
     def image_preview(self, obj):
+        class Meta:
+            verbose_name = "픽업 시간"
+            verbose_name_plural = "픽업 시간"
+            
         return mark_safe('<img src="{url}" width="{width}" height={height} />'.format(
             url=obj.image.url,
             width=obj.image.width * 0.4,
             height=obj.image.height * 0.4,
         )
     )
-        
+    image_preview.short_description = "이미지 미리보기"
+    
     fieldsets = [
         (None,                  {'fields': ['menu_id']}),
-        (None,                  {'fields': ['name']}),
+        ('메뉴 정보',                  {'fields': ['name']}),
         (None,                  {'fields': [
          'selling_time', 'pickup_time','tag', 'description', 'image','image_preview', 'price', 'discount']}),
         (None,                  {'fields': [
@@ -59,9 +64,9 @@ class StoreAdmin(ImportExportMixin, admin.GeoModelAdmin):
 
     fieldsets = [
         (None,                   {'fields': ['store_id']}),
-        ('Information',          {'fields': ['name', 'addr', 'owner' ,'phone_number']}),
-        ('Setting',              {'fields': ['category', 'description', 'logo', 'logo_preview']}),
-        ('Status',               {'fields': ['status', 'type', 'area']}),
+        ('기본 정보',            {'fields': ['name', 'addr', 'owner' ,'phone_number']}),
+        ('설정',                 {'fields': ['category', 'description', 'logo', 'logo_preview']}),
+        ('상태',                 {'fields': ['status', 'type', 'area']}),
     ]
 
     def logo_preview(self, obj):
@@ -72,7 +77,8 @@ class StoreAdmin(ImportExportMixin, admin.GeoModelAdmin):
             height=58,
         )
     )
-
+    logo_preview.short_description = "이미지 미리보기"
+    
     list_filter = (
         ('status', ChoiceDropdownFilter), 
         ('area', ChoiceDropdownFilter), 
@@ -86,7 +92,6 @@ class StoreAdmin(ImportExportMixin, admin.GeoModelAdmin):
         'crn', 
         'type', 
         'area',
-        'place', 
     )
 
     inlines = [PlaceInline, CRNInline, MenuInline]

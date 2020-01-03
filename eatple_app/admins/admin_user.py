@@ -23,17 +23,20 @@ class UserServiceLocationFilter(SimpleListFilter):
         return [
             ('all', '전체 지역'),
             ('service', '서비스 지역'),
+            ('fastfive_gangnam_1', '패파 강남 1호점'),
+            ('fastfive_gangnam_2', '패파 강남 2호점'),
+            ('fastfive_gangnam_3', '패파 강남 3호점'),
         ] 
 
     def queryset(self, request, queryset):
-        distance = 500
-        ref_gangnam = Point(y=37.497907, x=127.027635, srid=4326)
-        ref_yeoksam = Point(y=37.500787, x=127.036919, srid=4326)
-
         if self.value() == 'all':
             return queryset
         
         if self.value() == 'service':
+            distance = 500
+            ref_gangnam = Point(y=37.497907, x=127.027635, srid=4326)
+            ref_yeoksam = Point(y=37.500787, x=127.036919, srid=4326)
+            
             queryset = queryset.annotate(
                 distance_gangnam=Distance(F('location__point'), ref_gangnam) * 100 * 1000,
                 distance_yeoksam=Distance(F('location__point'), ref_yeoksam) * 100 * 1000,
@@ -42,13 +45,44 @@ class UserServiceLocationFilter(SimpleListFilter):
                 Q(distance_gangnam__gt=0)) |
                 Q(distance_yeoksam__lte=distance)
             )
+            return queryset
+
+        if self.value() == 'fastfive_gangnam_1':
+            distance = 50
+            ref_location = Point(y=37.496949, x=127.028679, srid=4326)
             
-            print(queryset[0])
-            print(queryset[0].distance_gangnam, queryset[0].distance_yeoksam)
+            queryset = queryset.annotate(
+                distance=Distance(
+                    F('location__point'), ref_location) * 100 * 1000,
+            ).filter(
+                Q(distance__lte=distance)
+            )
+            return queryset
+
+        if self.value() == 'fastfive_gangnam_2':
+            distance = 50
+            ref_location = Point(y=37.495536, x=127.029352, srid=4326)
             
+            queryset = queryset.annotate(
+                distance=Distance(
+                    F('location__point'), ref_location) * 100 * 1000,
+            ).filter(
+                Q(distance__lte=distance)
+            )
             return queryset
         
+        if self.value() == 'fastfive_gangnam_3':
+            distance = 50
+            ref_location = Point(y=37.496608, x=127.025092, srid=4326)
 
+            queryset = queryset.annotate(
+                distance=Distance(
+                    F('location__point'), ref_location) * 100 * 1000,
+            ).filter(
+                Q(distance__lte=distance)
+            )
+            return queryset
+        
 class UserResource(resources.ModelResource):
     
     def latlng(self,obj):

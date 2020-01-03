@@ -42,6 +42,9 @@ class KakaoUser(models.Model):
         abstract = True
 class Partner(KakaoUser, models.Model):
     class Meta:
+        verbose_name = "유저 - 파트너"
+        verbose_name_plural = "유저 - 파트너"
+        
         ordering = ['-store__name']
     
     store = models.ForeignKey(

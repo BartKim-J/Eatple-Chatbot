@@ -35,6 +35,9 @@ class OrderRecord(models.Model):
 
 class OrderRecordSheet(models.Model):
     class Meta:
+        verbose_name = "주문 레코드 시트"
+        verbose_name_plural = "주문 레코드 시트"
+        
         ordering = ['-update_date']
 
     user = models.ForeignKey(

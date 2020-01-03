@@ -39,7 +39,7 @@ def menu_directory_path(instance, filename):
 
 def logo_directory_path(instance, filename):
     path = 'STORE_DB/images/{storename}/{number}{filename}'.format(
-        storename=instance.store.name,
+        storename=instance.name,
         menuname=instance.name,
         filename=set_filename_format(instance, filename, 'logoImg'),
         number=dateNowByTimeZone().strftime('%f'),
@@ -59,6 +59,9 @@ def default_directory_path(instance, filename):
 class DefaultImage(models.Model):
     # Metadata
     class Meta:
+        verbose_name = "디폴트 이미지"
+        verbose_name_plural = "디폴트 이미지"
+        
         ordering = ['-name']
 
     name = models.CharField(

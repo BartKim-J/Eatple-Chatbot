@@ -324,59 +324,87 @@ def orderUpdate(order):
 
 class Order(models.Model):
     class Meta:
+        verbose_name = "주문 내역"
+        verbose_name_plural = "주문 내역"
+        
         ordering = ['-order_date']
 
     order_id = models.CharField(
         max_length=MANAGEMENT_CODE_LENGTH,
         blank=True,
-        null=True
+        null=True,
+        verbose_name="주문 번호"
     )
 
     ordersheet = models.ForeignKey(
         'OrderSheet',
         on_delete=models.CASCADE,
-        null=True
+        null=True,
+        verbose_name="주문시트 번호"
     )
 
     store = models.ForeignKey(
         'Store',
         on_delete=models.CASCADE,
-        null=True
+        null=True,
+        verbose_name="상점"
     )
 
     menu = models.ForeignKey(
         'Menu',
         on_delete=models.CASCADE,
-        null=True
+        null=True,
+        verbose_name="메뉴"
     )
 
-    totalPrice = models.IntegerField(default=0)
+    totalPrice = models.IntegerField(
+        default=0,
+        verbose_name="총 금액"
+    )
 
-    count = models.IntegerField(default=1)
+    count = models.IntegerField(
+        default=1,
+        verbose_name="주문 개수"    
+    )
 
-    pickup_time = models.DateTimeField(default=timezone.now)
+    pickup_time = models.DateTimeField(
+        default=timezone.now,
+        verbose_name="픽업 시간"
+    )
 
     payment_status = models.CharField(
         max_length=10,
         choices=IAMPORT_ORDER_STATUS,
-        default=IAMPORT_ORDER_STATUS_NOT_PUSHED
+        default=IAMPORT_ORDER_STATUS_NOT_PUSHED,
+        verbose_name="결제 상태"
     )
 
     status = models.IntegerField(
         choices=ORDER_STATUS,
         default=ORDER_STATUS_MENU_CHOCIED,
+        verbose_name="주문 상태"
     )
 
     type = models.CharField(
         max_length=WORD_LENGTH, 
         default=ORDER_TYPE_NORMAL,
         choices=ORDER_TYPE,
-        help_text='가게 유형*', 
+        verbose_name="주문 타입" 
     )
     
-    update_date = models.DateTimeField(auto_now=True)
-    order_date = models.DateTimeField(default=timezone.now)
-    payment_date  = models.DateTimeField(default=timezone.now)
+    update_date = models.DateTimeField(
+        auto_now=True,
+        verbose_name="마지막 수정일"    
+    )
+    
+    order_date = models.DateTimeField(
+        default=timezone.now,
+        verbose_name="주문 시간"
+    )
+    payment_date  = models.DateTimeField(
+        default=timezone.now,
+        verbose_name="결제 완료 시간"
+    )
 
     def save(self, *args, **kwargs):
         super().save()
@@ -417,6 +445,7 @@ class Order(models.Model):
     # Methods
     def __str__(self):
         return '{}'.format(self.order_id)
+    
 class OrderManager():
     def __init__(self, user):
         self.orderList = Order.objects.all()
@@ -511,6 +540,9 @@ class PartnerOrderManager(OrderManager):
 
 class OrderSheet(models.Model):
     class Meta:
+        verbose_name = "주문 내역 시트"
+        verbose_name_plural = "주문 내역 시트"
+        
         ordering = ['-create_date']
 
     user = models.ForeignKey(

@@ -42,13 +42,13 @@ class OrderAdmin(ImportExportMixin, admin.ModelAdmin):
     resource_class = OrderResource
     list_per_page = 250
     
-    def user(self, obj):
+    def owner_id(self, obj):
         return obj.ordersheet.user
 
     def user_type(self, obj):
         return obj.ordersheet.user.type
 
-    def nickname(self, obj):
+    def owner(self, obj):
         return obj.ordersheet.user.nickname
 
     def phone_number(self, obj):
@@ -76,5 +76,5 @@ class OrderAdmin(ImportExportMixin, admin.ModelAdmin):
     )
     
 
-    list_display = ('user', 'order_id',  'store', 'menu', 'type',
+    list_display = ('owner', 'owner_id', 'order_id', 'store', 'menu', 'type',
                     'payment_status', 'status', 'payment_date')

@@ -280,8 +280,9 @@ def kakaoView_Home(user):
             order.store.name,
             order.store.place
         )
+        
         thumbnail = {
-            'imageUrl': 'https://maps.googleapis.com/maps/api/staticmap?center={lat},{long}&maptype=mobile&zoom={zoom}&markers=size:mid|{lat},{long}&size=800x800&key={apiKey}'.format(
+            'imageUrl': 'https://maps.googleapis.com/maps/api/staticmap?center={lat},{long}&maptype=mobile&zoom={zoom}&markers=size:mid%7C{lat},{long}&size=800x800&key={apiKey}'.format(
                 zoom=18,
                 lat=order.store.place.lat,
                 long=order.store.place.long,
@@ -305,36 +306,37 @@ def kakaoView_Home(user):
             thumbnail,
             buttons
         )
-    else:
-        thumbnail = {
-            'imageUrl': 'https://maps.googleapis.com/maps/api/staticmap?center={lat},{long}&maptype=mobile&zoom={zoom}&markers=size:mid|{lat},{long}&size=800x800&key={apiKey}'.format(
-                zoom=18,
-                lat=user.location.lat,
-                long=user.location.long,
-                apiKey='AIzaSyDRhnn4peSzEfKzQ_WjwDqDF9pzDiuVRhM',
-            ),
-            'fixedRatio': 'true',
-            'width': 800,
-            'height': 800,
-        }        
-        buttons = [
-            {
-                'action': 'block',
-                'label': '현 위치 변경',
-                'messageText': '로딩중..',
-                'blockId': KAKAO_BLOCK_USER_EDIT_LOCATION,
-                'extra': {
-                    KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_HOME
-                }
-            },
-        ]
 
-        kakaoForm.BasicCard_Push(
-            '등록된 주소',
-            '{}'.format(address),
-            thumbnail,
-            buttons
-        )
+    thumbnail = {
+        'imageUrl': 'https://maps.googleapis.com/maps/api/staticmap?center={lat},{long}&maptype=mobile&zoom={zoom}&markers=size:mid%7C{lat},{long}&size=800x800&key={apiKey}'.format(
+            zoom=18,
+            lat=user.location.lat,
+            long=user.location.long,
+            apiKey='AIzaSyDRhnn4peSzEfKzQ_WjwDqDF9pzDiuVRhM',
+        ),
+        'fixedRatio': 'true',
+        'width': 800,
+        'height': 800,
+    }        
+    buttons = [
+        {
+            'action': 'block',
+            'label': '현 위치 변경',
+            'messageText': '로딩중..',
+            'blockId': KAKAO_BLOCK_USER_EDIT_LOCATION,
+            'extra': {
+                KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_HOME
+            }
+        },
+    ]
+
+    kakaoForm.BasicCard_Push(
+        '등록된 주소',
+        '{}'.format(address),
+        thumbnail,
+        buttons
+    )
+    
     kakaoForm.BasicCard_Add()
 
     kakaoForm.QuickReplies_AddWithMap(QUICKREPLIES_MAP)

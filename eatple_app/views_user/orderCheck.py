@@ -176,15 +176,6 @@ def kakaoView_OrderDetails(kakaoPayload):
             'blockId': KAKAO_BLOCK_USER_HOME,
             'extra': {}
         },
-        {
-            'action': 'block',
-            'label': '주문하러 가기',
-            'messageText': '로딩중..',
-            'blockId': KAKAO_BLOCK_USER_GET_MENU,
-            'extra': {
-                KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_ORDER_DETAILS
-            }
-        },
     ]
 
     orderManager = UserOrderManager(user)

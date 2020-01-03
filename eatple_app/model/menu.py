@@ -22,12 +22,14 @@ DEFAULT_MENU_IMAGE_PATH = 'STORE_DB/images/default/menuImg.png'
 class Tag(models.Model):
     # Metadata
     class Meta:
-        # abstract = True
+        verbose_name = "태그"
+        verbose_name_plural = "태그"
+        
         ordering = ['-name']
 
     name = models.CharField(
         max_length=WORD_LENGTH, 
-        help_text='검색 태그*'
+        verbose_name = "검색 태그"
     )
 
     def __str__(self):
@@ -35,6 +37,9 @@ class Tag(models.Model):
 
 class PickupTime(models.Model):
     class Meta:
+        verbose_name = "픽업 시간"
+        verbose_name_plural = "픽업 시간"
+        
         ordering = ['time']
 
     selling_time = models.CharField(
@@ -44,60 +49,77 @@ class PickupTime(models.Model):
         help_text='판매 시간*'
     )
 
-    time = models.TimeField(default=timezone.now)
+    time = models.TimeField(
+        default=timezone.now,
+        verbose_name="픽업 시간"
+    )
     
     def __str__(self):
         return '{} - {}'.format(self.time.strftime("%H시 %M분"), dict(SELLING_TIME_CATEGORY)[self.selling_time])
         
 class MenuInfo(models.Model):
     store = models.ForeignKey(
-        'Store', on_delete=models.CASCADE, null=True)
+        'Store', 
+        on_delete=models.CASCADE, 
+        null=True,
+        verbose_name = "상점"
+    )
 
     menu_id = models.CharField(
         default='N/A',
         max_length=WORD_LENGTH, 
         unique=True,
-        help_text='메뉴 고유 번호',
-        )
+        verbose_name = "메뉴 고유 번호"
+    )
 
-    name = models.CharField(max_length=WORD_LENGTH, help_text='Menu Name')
+    name = models.CharField(
+        max_length=WORD_LENGTH, 
+        verbose_name = "메뉴명"
+    )
 
     class Meta:
         abstract = True
 
 
 class MenuSetting(models.Model):
-    description = models.TextField(help_text='Description', blank=True)
+    description = models.TextField(
+        blank=True,
+        verbose_name = "메뉴 설명"
+    )
 
-    tag = models.ManyToManyField('Tag')
+    tag = models.ManyToManyField(
+        'Tag',
+        verbose_name = "검색 태그"
+    )
 
     image = models.ImageField(
         default=DEFAULT_MENU_IMAGE_PATH,
         upload_to=menu_directory_path, 
         storage=OverwriteStorage(),
-        help_text='메뉴 이미지*'
+        verbose_name = "메뉴 이미지"
     )
 
     selling_time = models.CharField(
         max_length=WORD_LENGTH,
         choices=SELLING_TIME_CATEGORY,
         default=SELLING_TIME_LUNCH,
-        help_text='판매 시간*'
+        verbose_name = "판매 시간대"
     )
 
 
     pickup_time = models.ManyToManyField(
-        'PickupTime'
+        'PickupTime',
+        verbose_name = "픽업 시간"
     )
 
     price = models.IntegerField(
         default=6000, 
-        help_text='가격*'
+        verbose_name = "가격"
     )
     
     discount = models.IntegerField(
         default=0, 
-        help_text='가게 할인*'
+        verbose_name = "할인율"
     )
 
     class Meta:
@@ -107,19 +129,19 @@ class MenuSetting(models.Model):
 class MenuStatus(models.Model):
     current_stock = models.IntegerField(
         default=0, 
-        help_text='재고*'
+        verbose_name = "현재 재고"
     )
     
     max_stock = models.IntegerField(
         default=50, 
-        help_text='일일 재고*'
+        verbose_name = "일일 재고"
     )
 
     status = models.CharField(
         max_length=WORD_LENGTH, 
         default=OC_OPEN, 
         choices=OC_STATUS, 
-        help_text='메뉴 판매여부*'
+        verbose_name = "메뉴 판매 여부"
     )
 
     class Meta:

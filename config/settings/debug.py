@@ -31,6 +31,7 @@ SECRET_KEY = '8b%m$==a68uz-y#zl&hb^rb$oyl3ejy5=8c!5**l5x#lou1(i$'
 DEBUG = True
 
 ALLOWED_HOSTS = [
+    'www.eatple.com',
     'eatple.com',
     'localhost'
 ]
@@ -196,6 +197,9 @@ STATIC_ROOT = os.path.join(ROOT_DIR, 'static')
 # CORS
 CORS_ORIGIN_ALLOW_ALL = False
 CORS_ORIGIN_WHITELIST = [
+    'http://www.eatple.com',
+    'http://www.eatple.com:8000',
+    'http://www.eatple.com:8001',
     'http://eatple.com',
     'http://eatple.com:8000',
     'http://eatple.com:8001',

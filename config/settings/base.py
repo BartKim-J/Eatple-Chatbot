@@ -31,38 +31,42 @@ SECRET_KEY = '8b%m$==a68uz-y#zl&hb^rb$oyl3ejy5=8c!5**l5x#lou1(i$'
 DEBUG = True
 
 ALLOWED_HOSTS = [
-    'eatple.com'
+    'www.eatple.com',
+    'eatple.com',
+    'localhost'
 ]
 
 # Application definition
 
 INSTALLED_APPS = [
-
-    # local-app
-    'eatple_app',
-
     # 'suit',
     # 'eatple_app.apps.SuitConfig',
-    
-    'import_export',
-    'phonenumber_field',
-    
-    'django_admin_listfilter_dropdown',
-
     'django.contrib.gis',
-    'rest_framework',
-    
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django_admin_listfilter_dropdown',
 
+    'import_export',
+    'phonenumber_field',
+    
+    'rest_framework',
+    'rest_framework_swagger',
+
+    # local-app
+    'eatple_app',
+    
+    'corsheaders',
+
+    'rangefilter',
     'mapwidgets',
 ]
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -171,6 +175,10 @@ USE_L10N = True
 
 USE_TZ = True
 
+# Rest framework
+REST_FRAMEWORK = { 
+    'DEFAULT_SCHEMA_CLASS': 'rest_framework.schemas.coreapi.AutoSchema' 
+}
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/2.2/howto/static-files/
@@ -183,7 +191,18 @@ STATICFILES_DIRS = [
 STATIC_ROOT = os.path.join(ROOT_DIR, 'static')
 
 # COOKIES
-#
 #CSRF_COOKIE_SECURE = True
 #SESSION_COOKIE_SECURE = False
 
+# CORS
+CORS_ORIGIN_ALLOW_ALL = False
+CORS_ORIGIN_WHITELIST = [
+    'http://www.eatple.com',
+    'http://www.eatple.com:8000',
+    'http://www.eatple.com:8001',
+    'http://eatple.com',
+    'http://eatple.com:8000',
+    'http://eatple.com:8001',
+    'http://localhost:3000',
+    'http://localhost:5000',
+]
