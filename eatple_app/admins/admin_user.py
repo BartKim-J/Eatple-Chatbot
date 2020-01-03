@@ -119,6 +119,7 @@ class UserAdmin(ImportExportMixin, admin.ModelAdmin):
 
     def address(self, obj):
         return obj.location.address
+    address.short_description = "주소"
     
     readonly_fields = (
         'app_user_id',

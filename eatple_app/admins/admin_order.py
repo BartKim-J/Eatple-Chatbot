@@ -42,14 +42,17 @@ class OrderAdmin(ImportExportMixin, admin.ModelAdmin):
     resource_class = OrderResource
     list_per_page = 250
     
+    
+    def owner(self, obj):
+            return obj.ordersheet.user.nickname
+    owner.short_description = "사용자"
+    
     def owner_id(self, obj):
         return obj.ordersheet.user
+    owner_id.short_description = "사용자 고유번호"
 
     def user_type(self, obj):
         return obj.ordersheet.user.type
-
-    def owner(self, obj):
-        return obj.ordersheet.user.nickname
 
     def phone_number(self, obj):
         return obj.ordersheet.user.phone_number

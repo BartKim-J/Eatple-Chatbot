@@ -17,29 +17,37 @@ from eatple_app.model.utils import logo_directory_path
 
 
 class Location(models.Model):
+    class Meta:
+        verbose_name = "위치"
+        verbose_name_plural = "위치"
+        
     user = models.OneToOneField(
         'User', 
         on_delete=models.CASCADE, 
         unique=True, 
-        null=True
+        null=True,
+        verbose_name = "사용자"
     )
     
     lat = models.DecimalField(
         default=LOCATION_DEFAULT_LAT,
         max_digits=18, 
-        decimal_places=14
+        decimal_places=14,
+        verbose_name = "위도"
     )
 
     long = models.DecimalField(
         default=LOCATION_DEFAULT_LNG,
         max_digits=18, 
-        decimal_places=14
+        decimal_places=14,
+        verbose_name = "경도"
     )
     
     address = models.CharField(
         default=LOCATION_DEFAULT_ADDR,
         max_length=STRING_LENGTH,
         null=True,
+        verbose_name = "주소"
     )
     
     point = models.PointField(
@@ -47,7 +55,7 @@ class Location(models.Model):
         blank=True, 
         srid=4326, 
         geography=False,
-        verbose_name="Location"
+        verbose_name = "위치"
     )
     
     def __init__(self, *args, **kwargs):
@@ -70,32 +78,60 @@ class Location(models.Model):
         return '{}, {}'.format(self.lat, self.long)
 
 class KakaoUser(models.Model):
-    app_user_id = models.IntegerField(default=0)
+    app_user_id = models.IntegerField(
+        default=0,
+        verbose_name = "카카오 고유 번호"
+    )
     
     nickname = models.CharField(
-        max_length=WORD_LENGTH, null=True)
+        max_length=WORD_LENGTH, 
+        null=True,
+        verbose_name = "카카오 닉네임"
+    )
     
     phone_number = PhoneNumberField(
-        max_length=WORD_LENGTH, null=True)
+        max_length=WORD_LENGTH, 
+        null=True,
+        verbose_name = "전화번호"
+    )
 
     email = models.CharField(
-        max_length=WORD_LENGTH, null=True)
+        max_length=WORD_LENGTH, 
+        null=True,
+        verbose_name = "이메일"
+    )
 
     birthyear = models.CharField(
-        max_length=WORD_LENGTH, null=True)
+        max_length=WORD_LENGTH, 
+        null=True,
+        verbose_name = "생일년도"
+    )
     birthday = models.CharField(
-        max_length=WORD_LENGTH, null=True)
+        max_length=WORD_LENGTH, 
+        null=True,
+        verbose_name = "생일날짜"
+    )
     
     gender = models.CharField(
-        max_length=WORD_LENGTH, null=True)
+        max_length=WORD_LENGTH, 
+        null=True,
+        verbose_name = "성별"
+    )
     
     ci = models.CharField(
-        max_length=STRING_LENGTH, null=True)
+        max_length=STRING_LENGTH, 
+        null=True
+    )
     ci_authenticated_at = models.CharField(
-        max_length=STRING_LENGTH, null=True )
+        max_length=STRING_LENGTH, 
+        null=True 
+    )
     
     #@PROTMOTINO
-    flag_promotion = models.BooleanField(default=False)
+    flag_promotion = models.BooleanField(
+        default=False,
+        verbose_name = "프로모션 참가여부"
+    )
     
     class Meta:
         abstract = True
@@ -106,13 +142,16 @@ class User(KakaoUser, models.Model):
         verbose_name_plural = "유저 - 사용자"
         ordering = ['-app_user_id']
     
-    create_date = models.DateTimeField(auto_now_add=True)
+    create_date = models.DateTimeField(
+        auto_now_add=True,
+        verbose_name = "가입일자"
+    )
     
     type = models.CharField(
         max_length=WORD_LENGTH, 
         default=USER_TYPE_NORMAL,
         choices=USER_TYPE,
-        help_text='유저 유형*', 
+        verbose_name = "계정 유형"
     )
 
     @classmethod

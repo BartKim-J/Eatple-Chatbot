@@ -14,29 +14,54 @@ from eatple_app.define import *
 
 
 class KakaoUser(models.Model):
-    app_user_id = models.IntegerField(default=0)
+    app_user_id = models.IntegerField(
+        default=0,
+        verbose_name = "카카오 고유 번호"
+    )
     
     nickname = models.CharField(
-        max_length=WORD_LENGTH, null=True)
+        max_length=WORD_LENGTH, 
+        null=True,
+        verbose_name = "카카오 닉네임"
+    )
     
     phone_number = PhoneNumberField(
-        max_length=WORD_LENGTH, null=True)
+        max_length=WORD_LENGTH, 
+        null=True,
+        verbose_name = "전화번호"
+    )
 
     email = models.CharField(
-        max_length=WORD_LENGTH, null=True)
+        max_length=WORD_LENGTH, 
+        null=True,
+        verbose_name = "이메일"
+    )
 
     birthyear = models.CharField(
-        max_length=WORD_LENGTH, null=True)
+        max_length=WORD_LENGTH, 
+        null=True,
+        verbose_name = "생일년도"
+    )
     birthday = models.CharField(
-        max_length=WORD_LENGTH, null=True)
+        max_length=WORD_LENGTH, 
+        null=True,
+        verbose_name = "생일날짜"
+    )
     
     gender = models.CharField(
-        max_length=WORD_LENGTH, null=True)
+        max_length=WORD_LENGTH, 
+        null=True,
+        verbose_name = "성별"
+    )
     
     ci = models.CharField(
-        max_length=STRING_LENGTH, null=True)
+        max_length=STRING_LENGTH, 
+        null=True
+    )
     ci_authenticated_at = models.CharField(
-        max_length=STRING_LENGTH, null=True )
+        max_length=STRING_LENGTH, 
+        null=True 
+    )
     
     class Meta:
         abstract = True
@@ -50,14 +75,15 @@ class Partner(KakaoUser, models.Model):
     store = models.ForeignKey(
         'Store', 
         on_delete=models.CASCADE, 
-        null=True
+        null=True,
+        verbose_name = "상점"
     )
 
     type = models.CharField(
         max_length=WORD_LENGTH, 
         default=PARTNER_TYPE_NORMAL,
         choices=PARTNER_TYPE,
-        help_text='파트너 유형*', 
+        verbose_name = "제휴 유형"
     )
 
     create_date = models.DateTimeField(auto_now=True)
