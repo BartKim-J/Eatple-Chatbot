@@ -34,7 +34,6 @@ from django.contrib.gis.db.models.functions import Distance
 
 from django.db.models import F
 
-EATPLUS_HOST_URL = 'https://www.eatple.com:8000'
 VALUE_NOT_APPLICABLE = 'N/A'
 
 # Eatplus App Global Defines
@@ -44,7 +43,7 @@ STRING_256 = 255
 USE_TZ = settings.USE_TZ
 TIME_ZONE = settings.TIME_ZONE
 
-HOST_URL = EATPLUS_HOST_URL
+HOST_URL = 'https://www.eatple.com:8000'
 
 NOT_APPLICABLE = VALUE_NOT_APPLICABLE
 

@@ -299,7 +299,7 @@ def kakaoView_OrderPayment(kakaoPayload):
             'messageText': '로딩중..',
             'extra': dataActionExtra,
 
-            'webLinkUrl': 'http://eatple.com/payment?merchant_uid={merchant_uid}&storeName={storeName}&menuName={menuName}&menuPrice={menuPrice}&buyer_name={buyer_name}&buyer_tel={buyer_tel}&buyer_email={buyer_email}'.format(
+            'webLinkUrl': 'https://www.eatple.com/payment?merchant_uid={merchant_uid}&storeName={storeName}&menuName={menuName}&menuPrice={menuPrice}&buyer_name={buyer_name}&buyer_tel={buyer_tel}&buyer_email={buyer_email}'.format(
                 merchant_uid=order.order_id,
                 storeName=store.name,
                 menuName=menu.name,
@@ -410,7 +410,7 @@ def kakaoView_OrderPaymentCheck(kakaoPayload):
                 'messageText': '로딩중..',
                 'extra': dataActionExtra,
 
-                'webLinkUrl': 'http://eatple.com/payment?merchant_uid={merchant_uid}&storeName={storeName}&menuName={menuName}&menuPrice={menuPrice}&buyer_name={buyer_name}&buyer_tel={buyer_tel}&buyer_email={buyer_email}'.format(
+                'webLinkUrl': 'https://www.eatple.com/payment?merchant_uid={merchant_uid}&storeName={storeName}&menuName={menuName}&menuPrice={menuPrice}&buyer_name={buyer_name}&buyer_tel={buyer_tel}&buyer_email={buyer_email}'.format(
                     merchant_uid=order.order_id,
                     storeName=store.name,
                     menuName=menu.name,

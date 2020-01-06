@@ -197,12 +197,12 @@ STATIC_ROOT = os.path.join(ROOT_DIR, 'static')
 # CORS
 CORS_ORIGIN_ALLOW_ALL = False
 CORS_ORIGIN_WHITELIST = [
-    'http://www.eatple.com',
-    'http://www.eatple.com:8000',
-    'http://www.eatple.com:8001',
-    'http://eatple.com',
-    'http://eatple.com:8000',
-    'http://eatple.com:8001',
+    'https://www.eatple.com',
+    'https://www.eatple.com:8000',
+    'https://www.eatple.com:8001',
+    'https://eatple.com',
+    'https://eatple.com:8000',
+    'https://eatple.com:8001',
     'http://localhost:3000',
     'http://localhost:5000',
 ]

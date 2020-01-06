@@ -93,8 +93,6 @@ def kakaoView_MenuListup(kakaoPayload):
     if menuList:
         # Menu Carousel Card Add
         for menu in menuList:
-            imageUrl = '{}{}'.format(HOST_URL, menu.imgURL())
-
             distance = menu.distance
             walkTime = round((distance / 100) * 2.1)
 
@@ -104,7 +102,7 @@ def kakaoView_MenuListup(kakaoPayload):
                 walkTime = '1 ㎞ 이상'
 
             thumbnail = {
-                'imageUrl': imageUrl,
+                'imageUrl': '{}{}'.format(HOST_URL, menu.imgURL()),
                 'fixedRatio': 'true',
                 'width': 800,
                 'height': 800,
@@ -390,7 +388,7 @@ def kakaoView_OrderPayment(kakaoPayload):
             'messageText': '로딩중..',
             'extra': dataActionExtra,
 
-            'webLinkUrl': 'http://eatple.com/payment?merchant_uid={merchant_uid}&storeName={storeName}&menuName={menuName}&menuPrice={menuPrice}&buyer_name={buyer_name}&buyer_tel={buyer_tel}&buyer_email={buyer_email}'.format(
+            'webLinkUrl': 'https://www.eatple.com/payment?merchant_uid={merchant_uid}&storeName={storeName}&menuName={menuName}&menuPrice={menuPrice}&buyer_name={buyer_name}&buyer_tel={buyer_tel}&buyer_email={buyer_email}'.format(
                 merchant_uid=order.order_id,
                 storeName=store.name,
                 menuName=menu.name,
@@ -498,7 +496,7 @@ def kakaoView_OrderPaymentCheck(kakaoPayload):
                 'messageText': '로딩중..',
                 'extra': dataActionExtra,
 
-                'webLinkUrl': 'http://eatple.com/payment?merchant_uid={merchant_uid}&storeName={storeName}&menuName={menuName}&menuPrice={menuPrice}&buyer_name={buyer_name}&buyer_tel={buyer_tel}&buyer_email={buyer_email}'.format(
+                'webLinkUrl': 'https://www.eatple.com/payment?merchant_uid={merchant_uid}&storeName={storeName}&menuName={menuName}&menuPrice={menuPrice}&buyer_name={buyer_name}&buyer_tel={buyer_tel}&buyer_email={buyer_email}'.format(
                     merchant_uid=order.order_id,
                     storeName=store.name,
                     menuName=menu.name,
