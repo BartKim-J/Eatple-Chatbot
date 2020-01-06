@@ -49,7 +49,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django_admin_listfilter_dropdown',
-
+    
     'import_export',
     'phonenumber_field',
 
@@ -57,7 +57,7 @@ INSTALLED_APPS = [
     'rest_framework_swagger',
 
     # local-app
-    'eatple_app',
+    'eatple_app.apps.EatpleChatbotAppConfig',
 
     'corsheaders',
 

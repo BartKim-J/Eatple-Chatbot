@@ -57,7 +57,7 @@ INSTALLED_APPS = [
     'rest_framework_swagger',
 
     # local-app
-    'eatple_app',
+    'eatple_app.apps.EatpleChatbotAppConfig',
     
     'corsheaders',
 

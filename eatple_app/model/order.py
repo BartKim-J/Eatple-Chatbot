@@ -478,6 +478,12 @@ class OrderManager():
                 order.status = ORDER_STATUS_MENU_CHOCIED
                 order.save()
                 
+        invalidOrder = Order.objects.filter(
+            Q(payment_status=IAMPORT_ORDER_STATUS_NOT_PUSHED) &
+            Q(store=None) &
+            Q(menu=None)
+        )
+        invalidOrder.delete()
 
     def orderPaidCheck(self):
         currentDate = dateNowByTimeZone()

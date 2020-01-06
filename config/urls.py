@@ -27,6 +27,10 @@ from eatple_app import views
 
 schema_view = get_swagger_view(title="Eatple Rest API")
 
+admin.site.site_header = "이것이 바로 \"잇플 관리자 툴\""
+admin.site.site_title = "잘샘김"
+admin.site.index_title = "먹어 풀"
+
 # Urls
 urlpatterns = [
     # Admin

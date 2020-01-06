@@ -7,5 +7,7 @@ from suit.apps import DjangoSuitConfig
 class SuitConfig(DjangoSuitConfig):
     layout = 'horizontal'
     
-class EatplusChatbotAppConfig(AppConfig):
+class EatpleChatbotAppConfig(AppConfig):
     name = 'eatple_app'
+    
+    verbose_name = '잇플 DB'
