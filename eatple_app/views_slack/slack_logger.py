@@ -6,6 +6,26 @@ from eatple_app.models import *
 
 from eatple_app.views_slack.slack_define import * 
 
+def SlackLogFollow(nickname):
+    res = client.chat_postMessage(
+        channel=SLACK_CHANNEL_EATPLE_LOG,
+        text="{name}님이 잇플 채널을 팔로우햇쥐:mouse:".format(
+            name=nickname
+        )
+    )
+    
+    return res
+
+def SlackLogUnfollow(nickname):
+    res = client.chat_postMessage(
+        channel=SLACK_CHANNEL_EATPLE_LOG,
+        text="{name}님이 잇플 채널을 언...팔로우햇..쥐:mouse:".format(
+            name=nickname
+        )
+    )
+    
+    return res
+
 def SlackLogSignUp(user):    
     res = client.chat_postMessage(
         channel=SLACK_CHANNEL_EATPLE_LOG,

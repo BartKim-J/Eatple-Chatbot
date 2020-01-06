@@ -80,7 +80,6 @@ urlpatterns += [
 
 # Urls - KAKAO API
 urlpatterns += [
-    path('kakao/auth/leave', views.POST_KAKAO_Leave),
     path('kakao/channel/log', views.POST_KAKAO_ChannelLog)
 ]
 
