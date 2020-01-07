@@ -165,8 +165,7 @@ def orderUpdate(order):
         #@PROMOTION
         if(order.type == ORDER_TYPE_PROMOTION):
             order.ordersheet.user.applyPromotion()
-            
-        order.payment_date = dateNowByTimeZone()
+
         print('주문 결제됨')
         
     if(order.payment_status != IAMPORT_ORDER_STATUS_PAID):
@@ -477,13 +476,6 @@ class OrderManager():
                 order.payment_status = IAMPORT_ORDER_STATUS_FAILED
                 order.status = ORDER_STATUS_MENU_CHOCIED
                 order.save()
-                
-        invalidOrder = Order.objects.filter(
-            Q(payment_status=IAMPORT_ORDER_STATUS_NOT_PUSHED) &
-            Q(store=None) &
-            Q(menu=None)
-        )
-        invalidOrder.delete()
 
     def orderPaidCheck(self):
         currentDate = dateNowByTimeZone()

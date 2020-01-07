@@ -86,11 +86,6 @@ class OrderValidation(viewsets.ModelViewSet):
         
         eatplePassStatus = eatplePassValidation(user)
 
-        if(eatplePassStatus == False):
-            response['error_code'] = 202
-            response['error_msg']  = '이미 잇플패스를 발급하셨습니다.'
-            return Response(response)
-
         try:
             order = Order.objects.get(order_id=merchant_uid)            
         except Order.DoesNotExist:
@@ -102,6 +97,10 @@ class OrderValidation(viewsets.ModelViewSet):
             return Response(response)            
         else:
             order.orderStatusUpdate()
+            
+            if(order.payment_status == IAMPORT_ORDER_STATUS_PAID):
+                order.payment_date = dateNowByTimeZone()
+                order.save()
             
         if(order.payment_status == IAMPORT_ORDER_STATUS_PAID):
             response['error_code'] = 204
@@ -119,8 +118,13 @@ class OrderValidation(viewsets.ModelViewSet):
             response['error_msg'] = '현재 주문 가능시간이 아닙니다. 상점 메뉴를 새로고침한 다음 사용해주세요.'
             return Response(response)
         
-        # Time Check
+        # Eatple Pass Check
+        if(eatplePassStatus == False):
+            response['error_code'] = 202
+            response['error_msg']  = '이미 잇플패스를 발급하셨습니다.'
+            return Response(response)        
         
+        # Time Check
         currentSellingTime = sellingTimeCheck()
         isClosedDay = weekendTimeCheck()
         
