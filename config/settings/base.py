@@ -191,8 +191,9 @@ STATICFILES_DIRS = [
 STATIC_ROOT = os.path.join(ROOT_DIR, 'static')
 
 # COOKIES
-#CSRF_COOKIE_SECURE = True
-#SESSION_COOKIE_SECURE = False
+#SECURE_SSL_REDIRECT = True
+CSRF_COOKIE_SECURE = True
+SESSION_COOKIE_SECURE = True
 
 # CORS
 CORS_ORIGIN_ALLOW_ALL = False
@@ -200,6 +201,8 @@ CORS_ORIGIN_WHITELIST = [
     'https://www.eatple.com',
     'https://www.eatple.com:8000',
     'https://www.eatple.com:8001',
+    'http://www.eatple.com:8080',
+    'http://www.eatple.com:8081',
     'https://eatple.com',
     'https://eatple.com:8000',
     'https://eatple.com:8001',

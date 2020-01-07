@@ -31,6 +31,7 @@ SECRET_KEY = '8b%m$==a68uz-y#zl&hb^rb$oyl3ejy5=8c!5**l5x#lou1(i$'
 DEBUG = True
 
 ALLOWED_HOSTS = [
+    'skill.eatple.com',
     'www.eatple.com',
     'eatple.com',
     'localhost'
@@ -49,7 +50,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django_admin_listfilter_dropdown',
-    
+
     'import_export',
     'phonenumber_field',
 
@@ -191,15 +192,19 @@ STATICFILES_DIRS = [
 STATIC_ROOT = os.path.join(ROOT_DIR, 'static')
 
 # COOKIES
-#CSRF_COOKIE_SECURE = True
-#SESSION_COOKIE_SECURE = False
+#SECURE_SSL_REDIRECT = True
+CSRF_COOKIE_SECURE = True
+SESSION_COOKIE_SECURE = True
 
 # CORS
 CORS_ORIGIN_ALLOW_ALL = False
 CORS_ORIGIN_WHITELIST = [
+    'http://ec2-54-65-75-156.ap-northeast-1.compute.amazonaws.com',
     'https://www.eatple.com',
     'https://www.eatple.com:8000',
     'https://www.eatple.com:8001',
+    'http://www.eatple.com:8080',
+    'http://www.eatple.com:8081',
     'https://eatple.com',
     'https://eatple.com:8000',
     'https://eatple.com:8001',

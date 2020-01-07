@@ -266,7 +266,7 @@ def kakaoView_Home(user):
                 '%-m월 %-d일 %p %-I시 %-M분').replace('AM', '오전').replace('PM', '오후'),
         )
     else: 
-        description = '\'주문하러 가기\'를 눌러 잇플 메뉴를 주문해주세요!'
+        description = '\'주변 맛집에서 갓 만든 도시락, 잇플\' 입니다.'
         
     kakaoForm.BasicCard_Push(
         '안녕하세요!! {}님'.format(user.nickname),
