@@ -1,0 +1,22 @@
+[0;1;32m●[0m uWSGI.service - uWSGI Emperor service
+   Loaded: loaded (/etc/systemd/system/uWSGI.service; enabled; vendor preset: enabled)
+   Active: [0;1;32mactive (running)[0m since Tue 2020-01-07 08:48:06 UTC; 5min ago
+ Main PID: 10524 (uwsgi)
+   Status: "The Emperor is governing 1 vassals"
+    Tasks: 4 (limit: 4915)
+   CGroup: /system.slice/uWSGI.service
+           ├─10524 /home/ubuntu/.pyenv/versions/deploy_eatple/bin/uwsgi --uid ubuntu --gid ubuntu --master --emperor /etc/uwsgi/vassals
+           ├─10525 /home/ubuntu/.pyenv/versions/deploy_eatple/bin/uwsgi --uid ubuntu --gid ubuntu --master --emperor /etc/uwsgi/vassals
+           ├─10526 /home/ubuntu/.pyenv/versions/deploy_eatple/bin/uwsgi --ini eatple_deploy.ini
+           └─10606 /home/ubuntu/.pyenv/versions/deploy_eatple/bin/uwsgi --ini eatple_deploy.ini
+
+Jan 07 08:48:06 eatple uwsgi[10524]: [uWSGI] getting INI configuration from eatple_deploy.ini
+Jan 07 08:48:06 eatple uwsgi[10524]: *** Python threads support is disabled. You can enable it with --enable-threads ***
+Jan 07 08:48:06 eatple uwsgi[10524]: Python main interpreter initialized at 0x55905bdc38b0
+Jan 07 08:48:06 eatple uwsgi[10524]: your mercy for graceful operations on workers is 60 seconds
+Jan 07 08:48:06 eatple uwsgi[10524]: *** Operational MODE: no-workers ***
+Jan 07 08:48:06 eatple uwsgi[10524]: spawned uWSGI master process (pid: 10524)
+Jan 07 08:48:06 eatple systemd[1]: Started uWSGI Emperor service.
+Jan 07 08:48:07 eatple uwsgi[10524]: Tue Jan  7 08:48:07 2020 - [emperor] vassal eatple_deploy.ini has been spawned
+Jan 07 08:48:07 eatple uwsgi[10524]: Tue Jan  7 08:48:07 2020 - [emperor] vassal eatple_deploy.ini is ready to accept requests
+Jan 07 08:49:59 eatple systemd[1]: [0;1;39m[0;1;31m[0;1;39m/etc/systemd/system/uWSGI.service:7: Unknown lvalue 'ExecPre' in section 'Service'[0m
