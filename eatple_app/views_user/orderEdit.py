@@ -339,9 +339,9 @@ def kakaoView_EditPickupTime(kakaoPayload):
         },
     ]
     
-    if(order.status == ORDER_STATUS_ORDER_CANCELED):
+    if(order.payment_status == IAMPORT_ORDER_STATUS_CANCELLED):
         kakaoForm.BasicCard_Push(
-            '이 잇플패스는 이미 취소된 잇플패스입니다.',
+            '이 잇플 패스는 이미 취소된 잇플 패스입니다.',
             '다시 주문을 확인해주세요.',
             {}, 
             []

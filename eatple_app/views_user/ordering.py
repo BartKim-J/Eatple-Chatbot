@@ -489,7 +489,34 @@ def kakaoView_OrderPaymentCheck(kakaoPayload):
 
     if(order.store != store or order.menu != menu):
         return kakaoView_OrderPayment(kakaoPayload)
+    
+    if(order.payment_status == IAMPORT_ORDER_STATUS_CANCELLED):
+        kakaoForm = KakaoForm()
 
+        QUICKREPLIES_MAP = [
+            {
+                'action': 'block',
+                'label': '홈으로 돌아가기',
+                'messageText': '로딩중..',
+                'blockId': KAKAO_BLOCK_USER_HOME,
+                'extra': {
+                    KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_EDIT_PICKUP_TIME
+                }
+            },
+        ]
+        
+        kakaoForm.BasicCard_Push(
+            '이 잇플 패스는 이미 취소된 잇플 패스입니다.',
+            '다시 주문을 확인해주세요.',
+            {}, 
+            []
+        )
+        kakaoForm.BasicCard_Add()
+
+        kakaoForm.QuickReplies_AddWithMap(QUICKREPLIES_MAP)
+
+        return JsonResponse(kakaoForm.GetForm())
+        
     if(store == None or menu == None or order == None):
         return errorView('Invalid Store Paratmer', '정상적이지 않은 경로거나, 오류가 발생했습니다.\n다시 주문해주세요!')
 
@@ -620,7 +647,7 @@ def kakaoView_EatplePassIssuance(kakaoPayload):
         dataActionExtra[KAKAO_PARAM_PREV_BLOCK_ID] = KAKAO_BLOCK_USER_SET_ORDER_SHEET
 
         kakaoForm = KakaoForm()
-
+            
         thumbnail = {
             'imageUrl': '{}{}'.format(HOST_URL, '/media/STORE_DB/images/default/eatplePassImg.png'),
         }
