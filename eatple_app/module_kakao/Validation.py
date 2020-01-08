@@ -19,6 +19,8 @@ from eatple_app.views_system.debugger import *
 
 from eatple_app.views import *
 
+VALIDATION_DEBUG_MODE = False
+
 DEFAULT_QUICKREPLIES_MAP = [
     {
         'action': 'block',
@@ -36,6 +38,13 @@ DEFAULT_QUICKREPLIES_MAP = [
     },
 ]
 
+
+def isB2BUser(user):
+    if(user.type == USER_TYPE_B2B and user.company != None):
+        return True
+    else:
+        return False
+    
 def sellingTimeCheck():
     currentDate = dateNowByTimeZone()
     currentDateWithoutTime = currentDate.replace(
@@ -46,7 +55,8 @@ def sellingTimeCheck():
     #currentDateWithoutTime = currentDate.replace(hour=0, minute=0, second=0, microsecond=0)
 
     # DEBUG
-    #return SELLING_TIME_LUNCH
+    if(VALIDATION_DEBUG_MODE):
+        return SELLING_TIME_LUNCH
 
     # Prev Lunch Order Time 16:30 ~ 10:30
     prevlunchOrderTimeStart = currentDateWithoutTime + \
@@ -86,7 +96,8 @@ def weekendTimeCheck():
     #currentDateWithoutTime = currentDate.replace(hour=0, minute=0, second=0, microsecond=0)
 
     # DEBUG
-    #return False
+    if(VALIDATION_DEBUG_MODE):
+        return False
 
     closedDateStart = currentDateWithoutTime + \
         datetime.timedelta(hours=10, minutes=30)

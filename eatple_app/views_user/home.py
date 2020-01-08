@@ -199,37 +199,7 @@ def kakaoView_Home(user):
         
         address = user.location.address
     
-    buttons = [
-        {
-            'action': 'block',
-            'label': '주문하러 가기',
-            'messageText': '로딩중..',
-            'blockId': KAKAO_BLOCK_USER_GET_MENU,
-            'extra': {
-                KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_HOME
-            }
-        },
-        {
-            'action': 'block',
-            'label': '사용 메뉴얼',
-            'messageText': '로딩중..',
-            'blockId': KAKAO_BLOCK_USER_MANUAL,
-            'extra': {
-                KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_HOME
-            }
-        },
-    ]
 
-    if(isOrderEnable):
-        buttons[0] = {
-            'action': 'block',
-            'label': '잇플패스 확인',
-            'messageText': '로딩중..',
-            'blockId': KAKAO_BLOCK_USER_EATPLE_PASS,
-            'extra': {
-                KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_HOME
-            }
-        }
 
     QUICKREPLIES_MAP = [
         {
@@ -252,28 +222,87 @@ def kakaoView_Home(user):
         },
     ]
 
-    thumbnail = {
-        'imageUrl': '{}{}'.format(HOST_URL, '/media/STORE_DB/images/default/homeHead.png'),
-        'fixedRatio': 'true',
-        'width': 800,
-        'height': 800,
-    }
-
+    buttons = [
+        {
+            'action': 'block',
+            'label': '주문하러 가기',
+            'messageText': '로딩중..',
+            'blockId': KAKAO_BLOCK_USER_GET_MENU,
+            'extra': {
+                KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_HOME
+            }
+        },
+        {
+            'action': 'block',
+            'label': '사용 메뉴얼',
+            'messageText': '로딩중..',
+            'blockId': KAKAO_BLOCK_USER_MANUAL,
+            'extra': {
+                KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_HOME
+            }
+        },
+    ]
+    
     if(isOrderEnable):
-        thumbnail['imageUrl'] = '{}{}'.format(HOST_URL, order.menu.imgURL())
+        thumbnail = {
+            'imageUrl': '{}{}'.format(HOST_URL, order.menu.imgURL()),
+            'fixedRatio': 'true',
+            'width': 800,
+            'height': 800,
+        }
+            
+        buttons[0] = {
+            'action': 'block',
+            'label': '잇플패스 확인',
+            'messageText': '로딩중..',
+            'blockId': KAKAO_BLOCK_USER_EATPLE_PASS,
+            'extra': {
+                KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_HOME
+            }
+        }
+        
         description = '픽업은 {} 입니다'.format(
             dateByTimeZone(order.pickup_time).strftime(
                 '%-m월 %-d일 %p %-I시 %-M분').replace('AM', '오전').replace('PM', '오후'),
         )
-    else: 
-        description = '\'주변 맛집에서 갓 만든 도시락, 잇플\' 입니다.'
         
-    kakaoForm.BasicCard_Push(
-        '안녕하세요!! {}님'.format(user.nickname),
-        '{}'.format(description),
-        thumbnail,
-        buttons
-    )
+        kakaoForm.BasicCard_Push(
+            '안녕하세요!! {}님'.format(user.nickname),
+            '{}'.format(description),
+            thumbnail,
+            buttons
+        )
+    else: 
+        if(isB2BUser(user)):
+            thumbnail = {
+                'imageUrl': '{}{}'.format(HOST_URL, user.company.logoImgURL()),
+                'fixedRatio': 'true',
+                'width': 800,
+                'height': 800,
+            }
+            
+            kakaoForm.BasicCard_Push(
+                '안녕하세요!! {}님'.format(user.nickname),
+                '{} 사원 전용 카드입니다.'.format(user.company.name, user.nickname),
+                thumbnail,
+                buttons
+            )
+        else:
+            thumbnail = {
+                'imageUrl': '{}{}'.format(HOST_URL, '/media/STORE_DB/images/default/homeHead.png'),
+                'fixedRatio': 'true',
+                'width': 800,
+                'height': 800,
+            }
+            
+            description = '\'주변 맛집에서 갓 만든 도시락, 잇플\' 입니다.'
+                
+            kakaoForm.BasicCard_Push(
+                '안녕하세요!! {}님'.format(user.nickname),
+                '{}'.format(description),
+                thumbnail,
+                buttons
+            )
     
     if(isOrderEnable):
         kakaoMapUrl = 'https://map.kakao.com/link/map/{},{}'.format(
@@ -306,40 +335,41 @@ def kakaoView_Home(user):
             thumbnail,
             buttons
         )
+    else:
+        thumbnail = {
+            'imageUrl': 'https://maps.googleapis.com/maps/api/staticmap?center={lat},{long}&maptype=mobile&zoom={zoom}&markers=size:mid%7C{lat},{long}&size=800x800&key={apiKey}'.format(
+                zoom=18,
+                lat=user.location.lat,
+                long=user.location.long,
+                apiKey='AIzaSyDRhnn4peSzEfKzQ_WjwDqDF9pzDiuVRhM',
+            ),
+            'fixedRatio': 'true',
+            'width': 800,
+            'height': 800,
+        }
+        buttons = [
+            {
+                'action': 'block',
+                'label': '현 위치 변경',
+                'messageText': '로딩중..',
+                'blockId': KAKAO_BLOCK_USER_EDIT_LOCATION,
+                'extra': {
+                    KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_HOME
+                }
+            },
+        ]
 
-    thumbnail = {
-        'imageUrl': 'https://maps.googleapis.com/maps/api/staticmap?center={lat},{long}&maptype=mobile&zoom={zoom}&markers=size:mid%7C{lat},{long}&size=800x800&key={apiKey}'.format(
-            zoom=18,
-            lat=user.location.lat,
-            long=user.location.long,
-            apiKey='AIzaSyDRhnn4peSzEfKzQ_WjwDqDF9pzDiuVRhM',
-        ),
-        'fixedRatio': 'true',
-        'width': 800,
-        'height': 800,
-    }        
-    buttons = [
-        {
-            'action': 'block',
-            'label': '현 위치 변경',
-            'messageText': '로딩중..',
-            'blockId': KAKAO_BLOCK_USER_EDIT_LOCATION,
-            'extra': {
-                KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_HOME
-            }
-        },
-    ]
-
-    kakaoForm.BasicCard_Push(
-        '등록된 주소',
-        '{}'.format(address),
-        thumbnail,
-        buttons
-    )
+        kakaoForm.BasicCard_Push(
+            '등록된 주소',
+            '{}'.format(address),
+            thumbnail,
+            buttons
+        )
     
     kakaoForm.BasicCard_Add()
 
     kakaoForm.QuickReplies_AddWithMap(QUICKREPLIES_MAP)
+    
     return JsonResponse(kakaoForm.GetForm())
     
 @csrf_exempt

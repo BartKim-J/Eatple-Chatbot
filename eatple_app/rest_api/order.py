@@ -83,9 +83,7 @@ class OrderValidation(viewsets.ModelViewSet):
             response['error_code'] = 201
             response['error_msg']  = '가입되지 않은 사용자입니다. 잇플로 돌아가 다시 가입해주세요!'
             return Response(response)
-        
-        eatplePassStatus = eatplePassValidation(user)
-
+    
         try:
             order = Order.objects.get(order_id=merchant_uid)            
         except Order.DoesNotExist:
@@ -119,6 +117,8 @@ class OrderValidation(viewsets.ModelViewSet):
             return Response(response)
         
         # Eatple Pass Check
+        eatplePassStatus = eatplePassValidation(user)
+        
         if(eatplePassStatus == False):
             response['error_code'] = 202
             response['error_msg']  = '이미 잇플패스를 발급하셨습니다.'

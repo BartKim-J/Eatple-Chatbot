@@ -7,6 +7,8 @@ from eatple_app.models import *
 # Django Library
 from django.contrib import admin
 from django import forms
+from django.db import models
+from django.db.models import Q
 from django.core import validators
 from django.utils.translation import ugettext_lazy as _
 from django.utils.safestring import mark_safe
@@ -40,9 +42,12 @@ class OrderResource(resources.ModelResource):
 
 class OrderAdmin(ImportExportMixin, admin.ModelAdmin):
     resource_class = OrderResource
-    list_per_page = 250
-    
-    
+    list_per_page = 50
+
+    def get_queryset(self, request):
+        qs = super(OrderAdmin, self).get_queryset(request)
+        return qs.exclude(Q(store=None) & Q(menu=None))
+
     def owner(self, obj):
             return obj.ordersheet.user.nickname
     owner.short_description = "사용자"
@@ -79,5 +84,5 @@ class OrderAdmin(ImportExportMixin, admin.ModelAdmin):
     )
     
 
-    list_display = ('owner', 'owner_id', 'order_id', 'store', 'menu', 'type',
-                    'payment_status', 'status', 'payment_date')
+    list_display = ('order_id', 'owner', 'owner_id',  'store', 'menu', 'type',
+                    'payment_status', 'status', 'pickup_time', 'payment_date')

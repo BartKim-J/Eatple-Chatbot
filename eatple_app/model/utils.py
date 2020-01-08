@@ -40,7 +40,15 @@ def menu_directory_path(instance, filename):
 def logo_directory_path(instance, filename):
     path = 'STORE_DB/images/{storename}/{number}{filename}'.format(
         storename=instance.name,
-        menuname=instance.name,
+        filename=set_filename_format(instance, filename, 'logoImg'),
+        number=dateNowByTimeZone().strftime('%f'),
+    )
+
+    return path
+
+def b2b_logo_directory_path(instance, filename):
+    path = 'B2B_DB/images/{b2b_name}/{number}{filename}'.format(
+        b2b_name=instance.name,
         filename=set_filename_format(instance, filename, 'logoImg'),
         number=dateNowByTimeZone().strftime('%f'),
     )

@@ -81,12 +81,18 @@ def kakaoView_MenuListup(kakaoPayload):
         store__status=OC_OPEN,
     ).order_by(F'distance')
 
-    # @PROMOTION
-    kakaoForm.BasicCard_Push('※ 잇플의 모든 메뉴는 6000원입니다.',
-                                '',
-                                {},
-                                []
-                                )
+    if(isB2BUser(user)):
+        kakaoForm.BasicCard_Push('※ 하단 메뉴 중 픽업 하실 메뉴를 선택해주세요.',
+                                    '',
+                                    {},
+                                    []
+                                    )  
+    else:
+        kakaoForm.BasicCard_Push('※ 잇플의 모든 메뉴는 6000원입니다.',
+                                    '',
+                                    {},
+                                    []
+                                    )
 
     kakaoForm.BasicCard_Add()
 
@@ -381,48 +387,70 @@ def kakaoView_OrderPayment(kakaoPayload):
     kakaoMapUrl = 'https://map.kakao.com/link/map/{},{}'.format(
         store.name, menu.store.place)
 
-    buttons = [
-        {
-            'action': 'webLink',
-            'label': '결제하러 가기   ➔',
-            'messageText': '로딩중..',
-            'extra': dataActionExtra,
+    if(isB2BUser(user)):
+        buttons = [
+            {
+                'action': 'block',
+                'label': '잇플 패스 발급하기  ➔',
+                'messageText': '로딩중..',
+                'blockId': KAKAO_BLOCK_USER_SET_ORDER_SHEET,
+                'extra': dataActionExtra,
+            },
+        ]
 
-            'webLinkUrl': 'https://www.eatple.com/payment?merchant_uid={merchant_uid}&storeName={storeName}&menuName={menuName}&menuPrice={menuPrice}&buyer_name={buyer_name}&buyer_tel={buyer_tel}&buyer_email={buyer_email}'.format(
-                merchant_uid=order.order_id,
-                storeName=store.name,
-                menuName=menu.name,
-                menuPrice=order.totalPrice,
-                buyer_name=user.app_user_id,
-                buyer_tel=str(user.phone_number)[3:13],
-                buyer_email=user.email,
-            )
-        },
-    ]
+        kakaoForm.ComerceCard_Push(
+            '',
+            menu.price,
+            discount,
+            thumbnails,
+            profile,
+            buttons
+        )
 
-    kakaoForm.ComerceCard_Push(
-        '',
-        menu.price,
-        discount,
-        thumbnails,
-        profile,
-        buttons
-    )
+        kakaoForm.ComerceCard_Add() 
+    else:
+        buttons = [
+            {
+                'action': 'webLink',
+                'label': '결제하러 가기   ➔',
+                'messageText': '로딩중..',
+                'extra': dataActionExtra,
 
-    kakaoForm.ComerceCard_Add()
+                'webLinkUrl': 'https://www.eatple.com/payment?merchant_uid={merchant_uid}&storeName={storeName}&menuName={menuName}&menuPrice={menuPrice}&buyer_name={buyer_name}&buyer_tel={buyer_tel}&buyer_email={buyer_email}'.format(
+                    merchant_uid=order.order_id,
+                    storeName=store.name,
+                    menuName=menu.name,
+                    menuPrice=order.totalPrice,
+                    buyer_name=user.app_user_id,
+                    buyer_tel=str(user.phone_number)[3:13],
+                    buyer_email=user.email,
+                )
+            },
+        ]
 
-    buttons = [
-        {
-            'action': 'block',
-            'label': '잇플패스 확인',
-            'messageText': '로딩중..',
-            'blockId': KAKAO_BLOCK_USER_SET_ORDER_SHEET,
-            'extra': dataActionExtra,
-        },
-    ]
-    kakaoForm.BasicCard_Push(
-        '결제가 완료되었다면 아래 \'잇플패스 확인\' 버튼을 눌러주세요.', '', {}, buttons)
-    kakaoForm.BasicCard_Add()
+        kakaoForm.ComerceCard_Push(
+            '',
+            menu.price,
+            discount,
+            thumbnails,
+            profile,
+            buttons
+        )
+
+        kakaoForm.ComerceCard_Add()
+
+        buttons = [
+            {
+                'action': 'block',
+                'label': '잇플패스 확인',
+                'messageText': '로딩중..',
+                'blockId': KAKAO_BLOCK_USER_SET_ORDER_SHEET,
+                'extra': dataActionExtra,
+            },
+        ]
+        kakaoForm.BasicCard_Push(
+            '결제가 완료되었다면 아래 \'잇플패스 확인\' 버튼을 눌러주세요.', '', {}, buttons)
+        kakaoForm.BasicCard_Add()
 
     GET_PICKUP_TIME_QUICKREPLIES_MAP = [
         {
@@ -484,7 +512,12 @@ def kakaoView_OrderPaymentCheck(kakaoPayload):
 
     order.orderStatusUpdate()
 
-    if(order.payment_status == IAMPORT_ORDER_STATUS_PAID):
+    if(order.payment_status == IAMPORT_ORDER_STATUS_PAID or isB2BUser(user)):
+        # B2B User Pass
+        if(isB2BUser(user)):
+            order.payment_status = IAMPORT_ORDER_STATUS_PAID
+            order.save()
+        
         return kakaoView_EatplePassIssuance(kakaoPayload)
     else:
         kakaoForm = KakaoForm()
@@ -617,7 +650,7 @@ def kakaoView_EatplePassIssuance(kakaoPayload):
 
         kakaoForm.BasicCard_Push(
             '{}'.format(order.menu.name),
-            '주문번호: {}({})\n - 주문자: {}\n\n - 매장: {}\n - 주소: {}\n\n - 결제 금액: {}원\n\n - 픽업 시간: {}\n - 주문 상태: {}'.format(
+            '주문번호: {}({})\n - 주문자: {}\n\n - 매장: {}\n - 주소: {}\n\n - 결제 금액: {}원\n\n - 픽업 시간: {}'.format(
                 order.ordersheet.user.nickname,
                 order.order_id,
                 str(order.ordersheet.user.phone_number)[9:13],
@@ -626,7 +659,6 @@ def kakaoView_EatplePassIssuance(kakaoPayload):
                 order.totalPrice,
                 dateByTimeZone(order.pickup_time).strftime(
                     '%-m월 %-d일 %p %-I시 %-M분').replace('AM', '오전').replace('PM', '오후'),
-                ORDER_STATUS[order.status][1]
             ),
             thumbnail,
             buttons

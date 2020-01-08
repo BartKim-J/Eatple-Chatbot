@@ -1,5 +1,7 @@
 from eatple_app.model.utils import DefaultImage
 
+from eatple_app.model.company import Company, CompanyPlace, CompanyCRN
+
 from eatple_app.model.store import Store, CRN, Place
 from eatple_app.model.store import Category
 

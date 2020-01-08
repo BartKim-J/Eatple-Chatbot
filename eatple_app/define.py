@@ -157,10 +157,10 @@ STORE_TYPE = [
 
 # USER_TYPE
 USER_TYPE_NORMAL = 'normal'
-USER_TYPE_EATPLE = 'eatple'
+USER_TYPE_B2B = 'b2b'
 USER_TYPE = [
     (USER_TYPE_NORMAL, '일반'),
-    (USER_TYPE_EATPLE, '잇플'),
+    (USER_TYPE_B2B, 'B2B'),
 ]
 
 # PARTNER_TYPE

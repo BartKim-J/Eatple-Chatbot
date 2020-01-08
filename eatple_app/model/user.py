@@ -142,6 +142,14 @@ class User(KakaoUser, models.Model):
         verbose_name_plural = "유저 - 사용자"
         ordering = ['-app_user_id']
     
+    company = models.ForeignKey(
+        'Company', 
+        on_delete=models.CASCADE, 
+        null=True,
+        blank=True,
+        verbose_name = "소속 회사"
+    )
+
     create_date = models.DateTimeField(
         auto_now_add=True,
         verbose_name = "가입일자"

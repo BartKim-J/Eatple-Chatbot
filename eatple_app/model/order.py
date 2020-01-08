@@ -8,6 +8,9 @@ from django.db.models import Q
 from django_mysql.models import Model
 
 
+ORDER_TIMECHECK_DEBUG = False
+PROMOTION_ORDER_TIMECHECK_DEBUG = False
+
 def iamportOrderValidation(order):
     iamport = Iamport(imp_key=IAMPORT_API_KEY,
                       imp_secret=IAMPORT_API_SECRET_KEY)
@@ -63,9 +66,10 @@ def promotionOrderUpdate(order):
         hour=0, minute=0, second=0, microsecond=0)
 
     # Time QA DEBUG
-    #currentDate = currentDate.replace(day=17, hour=12, minute=0, second=0, microsecond=0)
-    #currentDateWithoutTime = currentDate.replace(hour=0, minute=0, second=0, microsecond=0)
-    #print(currentDate)
+    if(PROMOTION_ORDER_TIMECHECK_DEBUG):
+        currentDate = currentDate.replace(day=8, hour=10, minute=0, second=0, microsecond=0)
+        currentDateWithoutTime = currentDate.replace(hour=0, minute=0, second=0, microsecond=0)
+        print(currentDate)
     
     promotion_month = 12
     promotion_day = int(order.menu.name[0:2])
@@ -119,13 +123,20 @@ def promotionOrderUpdate(order):
 
     return order
   
-def orderUpdate(order):         
-    if(order.menu == None or order.store == None):
-        order.payment_status = IAMPORT_ORDER_STATUS_NOT_PUSHED
+def orderUpdate(order):                 
+    # B2B User Pass
+    if(order.ordersheet.user.type == USER_TYPE_B2B and order.ordersheet.user.company != None):
+        order.payment_status = order.payment_status
         order.save()
+    
+    #Normal User Pass
     else:
-        order = iamportOrderValidation(order)
-        
+        if(order.menu == None or order.store == None):
+            order.payment_status = IAMPORT_ORDER_STATUS_NOT_PUSHED
+            order.save()
+        else:
+            order = iamportOrderValidation(order)
+            
     #Payment State Update
     if(order.payment_status == IAMPORT_ORDER_STATUS_CANCELLED):
         #@PROMOTION
@@ -190,12 +201,13 @@ def orderUpdate(order):
         hour=0, minute=0, second=0, microsecond=0)
 
     # Time QA DEBUG
-    #orderDate = dateByTimeZone(order.order_date)
-    #orderDateWithoutTime = orderDate.replace(hour=0, minute=0, second=0, microsecond=0)
+    if(ORDER_TIMECHECK_DEBUG):
+        #orderDate = dateByTimeZone(order.order_date)
+        #orderDateWithoutTime = orderDate.replace(hour=0, minute=0, second=0, microsecond=0)
     
-    #currentDate = currentDate.replace(day=24, hour=12, minute=00, second=0, microsecond=0)
-    #currentDateWithoutTime = currentDate.replace(hour=0, minute=0, second=0, microsecond=0)
-    #print(currentDate)
+        currentDate = currentDate.replace(day=8, hour=10, minute=00, second=0, microsecond=0)
+        currentDateWithoutTime = currentDate.replace(hour=0, minute=0, second=0, microsecond=0)
+        print(currentDate)
     
     YESTERDAY = currentDateWithoutTime + \
         datetime.timedelta(days=-1)  # Yesterday start
@@ -431,9 +443,15 @@ class Order(models.Model):
     def orderCancel(self):
         
         #@SLACK LOGGER
-        SlackLogCancelOrder(self)
+        #SlackLogCancelOrder(self)
 
-        return iamportOrderCancel(self)
+        # B2B User Pass
+        if(self.ordersheet.user.type == USER_TYPE_B2B and self.ordersheet.user.company != None):
+            self.payment_status = IAMPORT_ORDER_STATUS_CANCELLED
+            self.save()
+            return True
+        else:
+            return iamportOrderCancel(self)
 
     def orderUsed(self):
         self.status = ORDER_STATUS_PICKUP_COMPLETED
