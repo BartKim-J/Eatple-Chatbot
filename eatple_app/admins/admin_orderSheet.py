@@ -27,7 +27,7 @@ class OrderInline(ImportExportMixin, admin.TabularInline):
 
 
 class OrderSheetAdmin(ImportExportMixin, admin.ModelAdmin):
-    readonly_fields = ('management_code', 'user', 'create_date', 'update_date')
+    readonly_fields = ('management_code', 'create_date', 'update_date')
 
     list_filter = ('create_date', 'user')
     list_display = ('management_code', 'user', 'create_date', 'update_date')

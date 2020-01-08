@@ -65,11 +65,6 @@ class OrderAdmin(ImportExportMixin, admin.ModelAdmin):
     search_fields = ['order_id', 'ordersheet__user__nickname', 'ordersheet__user__app_user_id']
 
     readonly_fields = (
-        'ordersheet', 
-        'order_id', 
-        'totalPrice', 
-        'order_date', 
-        'payment_date',
     )
     
     list_filter = (

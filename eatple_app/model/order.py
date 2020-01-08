@@ -443,7 +443,7 @@ class Order(models.Model):
     def orderCancel(self):
         
         #@SLACK LOGGER
-        #SlackLogCancelOrder(self)
+        SlackLogCancelOrder(self)
 
         # B2B User Pass
         if(self.ordersheet.user.type == USER_TYPE_B2B and self.ordersheet.user.company != None):

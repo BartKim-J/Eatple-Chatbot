@@ -139,10 +139,12 @@ OC_STATUS = [
 ORDER_TYPE_NORMAL = 'normal'
 ORDER_TYPE_EVENT = 'event'
 ORDER_TYPE_PROMOTION = 'promotion'
+ORDER_TYPE_B2B = 'B2B'
 ORDER_TYPE = [
     (ORDER_TYPE_NORMAL, '일반'),
     (ORDER_TYPE_EVENT, '이벤트'),
     (ORDER_TYPE_PROMOTION, '프로모션'),
+    (ORDER_TYPE_B2B, 'B2B'),
 ]
 
 

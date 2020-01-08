@@ -140,7 +140,7 @@ class User(KakaoUser, models.Model):
     class Meta:
         verbose_name = "유저 - 사용자"
         verbose_name_plural = "유저 - 사용자"
-        ordering = ['-app_user_id']
+        ordering = ['nickname']
     
     company = models.ForeignKey(
         'Company', 
@@ -180,4 +180,4 @@ class User(KakaoUser, models.Model):
         
     # Methods
     def __str__(self):
-        return '{}'.format(self.app_user_id)
+        return '{}'.format(self.nickname)
