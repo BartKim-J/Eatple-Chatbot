@@ -60,6 +60,13 @@ def kakaoView_MenuListup(kakaoPayload):
             count=1,
             type=ORDER_TYPE_NORMAL
         )
+        
+        if(isB2BUser(user)):
+            order.type = ORDER_TYPE_B2B
+        else: 
+            order.type = ORDER_TYPE_NORMAL
+            
+        order.save()
     else:
         order.pickup_time = order.pickupTimeToDateTime(pickup_time)
         order.totalPrice = discountPrice
@@ -222,23 +229,7 @@ def kakaoView_PickupTime(kakaoPayload):
             }
         },
     ]
-
-    isVacationDay = vacationTimeCheck()
-    isClosedDay = weekendTimeCheck()
- 
-    if(isClosedDay or isVacationDay):
-        kakaoForm.BasicCard_Push('※ 안내사항 ※',
-                                 '잇플 알파에서는 \'주말 및 공휴일\' 영업을 하지 않고있습니다. 정식 출시를 기대해주세요!',
-                                 {},
-                                 []
-                                 )
-
-        kakaoForm.BasicCard_Add()
-
-        kakaoForm.QuickReplies_AddWithMap(QUICKREPLIES_MAP)
-
-        return JsonResponse(kakaoForm.GetForm())
-
+    
     currentSellingTime = sellingTimeCheck()
     if (currentSellingTime == None):
         return errorView('Get Invalid Selling Time', '잘못된 주문 시간입니다.')
@@ -257,6 +248,23 @@ def kakaoView_PickupTime(kakaoPayload):
         kakaoForm.QuickReplies_AddWithMap(QUICKREPLIES_MAP)
 
         return JsonResponse(kakaoForm.GetForm())
+
+    isVacationDay = vacationTimeCheck()
+    isClosedDay = weekendTimeCheck()
+ 
+    if(isClosedDay or isVacationDay):
+        kakaoForm.BasicCard_Push('※ 안내사항 ※',
+                                 '잇플 알파에서는 \'주말 및 공휴일\' 영업을 하지 않고있습니다. 정식 출시를 기대해주세요!',
+                                 {},
+                                 []
+                                 )
+
+        kakaoForm.BasicCard_Add()
+
+        kakaoForm.QuickReplies_AddWithMap(QUICKREPLIES_MAP)
+
+        return JsonResponse(kakaoForm.GetForm())
+
 
     # Order Record
     try:
@@ -347,8 +355,12 @@ def kakaoView_OrderPayment(kakaoPayload):
         order.pickup_time = order.pickupTimeToDateTime(pickup_time)
         order.totalPrice = discountPrice
         order.count = 1
-        order.type = ORDER_TYPE_NORMAL
         order.save()
+        
+        if(isB2BUser(user)):
+            order.type = ORDER_TYPE_B2B
+        else: 
+            order.type = ORDER_TYPE_NORMAL
 
     # Order Record
     try:

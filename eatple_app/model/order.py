@@ -170,7 +170,7 @@ def orderUpdate(order):
             if(order.type == ORDER_TYPE_PROMOTION):
                 SlackLogPayPromotionOrder(order)
                 
-            elif(order.type == ORDER_TYPE_NORMAL):
+            elif(order.type == ORDER_TYPE_NORMAL or order.type == ORDER_TYPE_B2B):
                 SlackLogPaydOrder(order)
             
         #@PROMOTION
