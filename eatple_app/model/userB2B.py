@@ -14,7 +14,7 @@ from django import forms
 from eatple_app.model.utils import OverwriteStorage
 from eatple_app.model.utils import logo_directory_path
 
-class userB2B(KakaoUser, models.Model):
+class UserB2B(models.Model):
     class Meta:
         verbose_name = "B2B 사용자 리스트"
         verbose_name_plural = "B2B 사용자 리스트"
@@ -50,4 +50,4 @@ class userB2B(KakaoUser, models.Model):
         
     # Methods
     def __str__(self):
-        return '{}'.format(self.nickname)
+        return '{}'.format(self.name)

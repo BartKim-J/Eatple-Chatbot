@@ -13,6 +13,7 @@ from import_export import resources
 
 from eatple_app.admins.admin_company import CompanyAdmin
 from eatple_app.admins.admin_user import UserAdmin
+from eatple_app.admins.admin_userB2B import UserB2BAdmin
 from eatple_app.admins.admin_partner import PartnerAdmin
 from eatple_app.admins.admin_store import StoreAdmin
 from eatple_app.admins.admin_order import OrderAdmin
@@ -42,6 +43,8 @@ admin.site.register(Company, CompanyAdmin)
 admin.site.register(Order, OrderAdmin)
 
 admin.site.register(User, UserAdmin)
+
+admin.site.register(UserB2B, UserB2BAdmin)
 
 admin.site.register(Partner, PartnerAdmin)
 

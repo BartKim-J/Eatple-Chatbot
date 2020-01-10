@@ -14,4 +14,6 @@ from eatple_app.model.order import PartnerOrderManager, UserOrderManager
 
 from eatple_app.model.user import User, Location
 
+from eatple_app.model.userB2B import UserB2B
+
 from eatple_app.model.partner import Partner
