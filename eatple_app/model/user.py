@@ -140,6 +140,7 @@ class User(KakaoUser, models.Model):
     class Meta:
         verbose_name = "유저 - 사용자"
         verbose_name_plural = "유저 - 사용자"
+        
         ordering = ['nickname']
     
     company = models.ForeignKey(

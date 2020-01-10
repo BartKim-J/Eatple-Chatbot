@@ -160,9 +160,11 @@ STORE_TYPE = [
 # USER_TYPE
 USER_TYPE_NORMAL = 'normal'
 USER_TYPE_B2B = 'b2b'
+USER_TYPE_ADMIN = 'admin'
 USER_TYPE = [
     (USER_TYPE_NORMAL, '일반'),
     (USER_TYPE_B2B, 'B2B'),
+    (USER_TYPE_ADMIN, '관리자'),
 ]
 
 # PARTNER_TYPE

@@ -46,6 +46,7 @@ class OrderAdmin(ImportExportMixin, admin.ModelAdmin):
 
     def get_queryset(self, request):
         qs = super(OrderAdmin, self).get_queryset(request)
+        
         return qs.exclude(Q(store=None) & Q(menu=None))
 
     def owner(self, obj):
@@ -53,7 +54,7 @@ class OrderAdmin(ImportExportMixin, admin.ModelAdmin):
     owner.short_description = "사용자"
     
     def owner_id(self, obj):
-        return obj.ordersheet.user
+        return obj.ordersheet.user.app_user_id
     owner_id.short_description = "사용자 고유번호"
 
     def user_type(self, obj):
