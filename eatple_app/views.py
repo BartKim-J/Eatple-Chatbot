@@ -43,4 +43,4 @@ from eatple_app.views_slack.slack_api import Events
 
 # Rest Framework
 
-from eatple_app.rest_api.order import OrderValidation
+from eatple_app.rest_api.validation import OrderValidation

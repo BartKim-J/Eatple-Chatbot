@@ -10,9 +10,9 @@ from eatple_app.models import *
 from eatple_app.define import *
 
 # Modules
-from eatple_app.module_kakao.ReponseForm import *
-from eatple_app.module_kakao.RequestForm import *
-from eatple_app.module_kakao.Validation import *
+from eatple_app.module_kakao.reponseForm import *
+from eatple_app.module_kakao.requestForm import *
+from eatple_app.module_kakao.validation import *
 
 # View-System
 from eatple_app.views_system.debugger import *
@@ -22,7 +22,8 @@ from eatple_app.views import *
 # STATIC CONFIG
 MENU_LIST_LENGTH = 20
 
-#DISCOUNT_FOR_DEBUG = 5900
+ORDER_DEBUG_MODE = True
+
 DISCOUNT_FOR_DEBUG = None
 
 # # # # # # # # # # # # # # # # # # # # # # # # #
@@ -72,8 +73,6 @@ def kakaoView_MenuListup(kakaoPayload):
         order.totalPrice = discountPrice
         order.save()
 
-    kakaoForm = KakaoForm()
-
     #@PROMOTION
     # currentSellingTime = sellingTimeCheck()
     currentSellingTime = SELLING_TIME_LUNCH
@@ -89,22 +88,24 @@ def kakaoView_MenuListup(kakaoPayload):
         store__status=OC_OPEN,
     ).order_by(F'distance')
 
-    if(isB2BUser(user)):
-        kakaoForm.BasicCard_Push('※ 하단 메뉴 중 픽업 하실 메뉴를 선택해주세요.',
-                                    '',
-                                    {},
-                                    []
-                                    )  
-    else:
-        kakaoForm.BasicCard_Push('※ 잇플의 모든 메뉴는 6000원입니다.',
-                                    '',
-                                    {},
-                                    []
-                                    )
-
-    kakaoForm.BasicCard_Add()
-
     if menuList:
+        kakaoForm = KakaoForm()
+
+        if(isB2BUser(user)):
+            kakaoForm.BasicCard_Push('※ 하단 메뉴 중 픽업 하실 메뉴를 선택해주세요.',
+                                        '',
+                                        {},
+                                        []
+                                        )  
+        else:
+            kakaoForm.BasicCard_Push('※ 잇플의 모든 메뉴는 6000원입니다.',
+                                        '',
+                                        {},
+                                        []
+                                        )
+
+        kakaoForm.BasicCard_Add()
+        
         # Menu Carousel Card Add
         for menu in menuList:
             distance = menu.distance

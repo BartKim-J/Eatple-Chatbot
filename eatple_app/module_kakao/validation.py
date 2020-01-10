@@ -10,8 +10,8 @@ from eatple_app.models import *
 from eatple_app.define import *
 
 # Modules
-from eatple_app.module_kakao.ReponseForm import *
-from eatple_app.module_kakao.RequestForm import *
+from eatple_app.module_kakao.reponseForm import *
+from eatple_app.module_kakao.requestForm import *
 
 # View-System
 from eatple_app.views_system.debugger import *
