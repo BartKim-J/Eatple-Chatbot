@@ -187,10 +187,10 @@ def kakaoView_Home(user):
     except User.location.RelatedObjectDoesNotExist:
         location = Location(
             user=user,
-            lat=37.497907,
-            long=127.027635,
-            address="강남 사거리",
-            point=Point(y=37.497907, x=127.027635),
+            lat=LOCATION_DEFAULT_LAT,
+            long=LOCATION_DEFAULT_LNG,
+            address=LOCATION_DEFAULT_ADDR,
+            point=Point(y=LOCATION_DEFAULT_LAT, x=LOCATION_DEFAULT_LNG),
         )
         location.save()
 

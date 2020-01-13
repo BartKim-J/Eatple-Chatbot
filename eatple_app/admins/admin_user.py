@@ -118,7 +118,11 @@ class UserAdmin(ImportExportMixin, admin.ModelAdmin):
     list_per_page = 50
 
     def address(self, obj):
-        return obj.location.address
+        if(obj.location.address == LOCATION_DEFAULT_ADDR or obj.location.address == None):
+            return "위치 미등록"
+        else:
+            return obj.location.address
+        
     address.short_description = "주소"
     
     readonly_fields = (
@@ -137,8 +141,8 @@ class UserAdmin(ImportExportMixin, admin.ModelAdmin):
     search_fields = ['nickname', 'app_user_id', 'phone_number', 'location__address']
 
     list_filter = (
+        ('create_date', DateRangeFilter),
         UserServiceLocationFilter,
-        'create_date',
         'gender',
         'flag_promotion',
         'type',

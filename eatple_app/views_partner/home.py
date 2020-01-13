@@ -17,6 +17,7 @@ from eatple_app.module_kakao.validation import *
 # View-System
 from eatple_app.views_system.debugger import *
 
+
 def partnerSignUp(partnerProfile):
     partner = Partner.signUp(
         nickname=partnerProfile['nickname'],
@@ -31,6 +32,7 @@ def partnerSignUp(partnerProfile):
     )
 
     return partner
+
 
 def kakaoView_SignUp():
     EatplusSkillLog('Sign Up')
@@ -48,7 +50,7 @@ def kakaoView_SignUp():
             }
         },
     ]
-    
+
     QUICKREPLIES_MAP = []
 
     thumbnail = {'imageUrl': ''}
@@ -57,15 +59,16 @@ def kakaoView_SignUp():
 
     kakaoForm.BasicCard_Push(
         '아직 잇플에 연동되지 않은 파트너 카카오 계정입니다.',
-        '함께 연동하러 가볼까요?', 
-        thumbnail, 
+        '함께 연동하러 가볼까요?',
+        thumbnail,
         buttons
     )
     kakaoForm.BasicCard_Add()
-    
+
     kakaoForm.QuickReplies_AddWithMap(QUICKREPLIES_MAP)
 
     return JsonResponse(kakaoForm.GetForm())
+
 
 def kakaoView_StoreRegistration():
     EatplusSkillLog('Store Registration')
@@ -83,7 +86,7 @@ def kakaoView_StoreRegistration():
             }
         },
     ]
-    
+
     QUICKREPLIES_MAP = []
 
     thumbnail = {'imageUrl': ''}
@@ -92,25 +95,26 @@ def kakaoView_StoreRegistration():
 
     kakaoForm.BasicCard_Push(
         '파트너 계정에 가게 등록 절차가 남아있습니다!',
-        '등록해보러 가볼까요?', 
-        thumbnail, 
+        '등록해보러 가볼까요?',
+        thumbnail,
         buttons
     )
     kakaoForm.BasicCard_Add()
-    
+
     kakaoForm.QuickReplies_AddWithMap(QUICKREPLIES_MAP)
 
     return JsonResponse(kakaoForm.GetForm())
+
 
 def kakaoView_Home(partner):
     EatplusSkillLog('Home')
 
     kakaoForm = KakaoForm()
-  
+
     BTN_MAP = [
         {
             'action': 'block',
-            'label': '주문보기',
+            'label': '주문 확인하기',
             'messageText': '로딩중..',
             'blockId': KAKAO_BLOCK_PARTNER_GET_ORDER_DETAILS,
             'extra': {
@@ -127,12 +131,12 @@ def kakaoView_Home(partner):
             }
         },
     ]
-    
+
     QUICKREPLIES_MAP = [
         {
-            'action': 'block', 
+            'action': 'block',
             'label': '사용 메뉴얼',
-            'messageText': '로딩중..',    
+            'messageText': '로딩중..',
             'blockId': KAKAO_BLOCK_PARTNER_MANUAL,
             'extra': {
                 KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_PARTNER_HOME
@@ -141,25 +145,26 @@ def kakaoView_Home(partner):
     ]
 
     thumbnail = {
-            'imageUrl': '',
-            'fixedRatio': 'true',
-            'width': 800,
-            'height': 800,
-        }
+        'imageUrl': '{}{}'.format(HOST_URL, partner.store.logoImgURL()),
+        'fixedRatio': 'true',
+        'width': 800,
+        'height': 800,
+    }
 
     buttons = BTN_MAP
 
     kakaoForm.BasicCard_Push(
-        '안녕하세요. {store}점주님!'.format(store=partner.store.name), 
-        '아래 명령어 중에 골라주세요!', 
-        thumbnail, 
+        '안녕하세요. {store}점주님!'.format(store=partner.store.name),
+        '아래 명령어 중에 골라주세요!',
+        thumbnail,
         buttons
     )
     kakaoForm.BasicCard_Add()
-    
+
     kakaoForm.QuickReplies_AddWithMap(QUICKREPLIES_MAP)
 
     return JsonResponse(kakaoForm.GetForm())
+
 
 @csrf_exempt
 def GET_PartnerHome(request):
@@ -188,11 +193,11 @@ def GET_PartnerHome(request):
                     try:
                         store = Store.objects.get(crn__CRN_id=CRN)
                         partner.storeRegistration(store)
-                        
+
                         return GET_PartnerHome(request)
                     except Store.DoesNotExist as ex:
                         return errorView('Get Invalid CRN', '잇플에 등록되지 않은 사업자 번호입니다.')
-                    
+
                     return kakaoView_StoreRegistration()
 
             except (RuntimeError, TypeError, NameError, KeyError):

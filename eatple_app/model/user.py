@@ -68,7 +68,7 @@ class Location(models.Model):
             if(self.lat <= 0 or self.long <= 0):
                 self.lat = LOCATION_DEFAULT_LAT
                 self.long = LOCATION_DEFAULT_LNG
-            
+                self.address = LOCATION_DEFAULT_ADDR
             self.point = Point(y=float(self.lat), x=float(self.long))
             super().save()
         else:

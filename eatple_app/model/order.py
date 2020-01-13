@@ -521,11 +521,17 @@ class OrderManager():
         return unavailableOrders
 
     def getAvailableOrders(self):
+        currentDate = dateNowByTimeZone()
+        expireDate = currentDate + datetime.timedelta(hours=-12)
+        
         availableOrders = self.orderList.filter(
-            Q(status=ORDER_STATUS_PICKUP_WAIT) |
-            Q(status=ORDER_STATUS_PICKUP_PREPARE) |
-            Q(status=ORDER_STATUS_ORDER_CONFIRM_WAIT) |
-            Q(status=ORDER_STATUS_ORDER_CONFIRMED)
+            (
+                Q(status=ORDER_STATUS_PICKUP_WAIT) |
+                Q(status=ORDER_STATUS_PICKUP_PREPARE) |
+                Q(status=ORDER_STATUS_ORDER_CONFIRM_WAIT) |
+                Q(status=ORDER_STATUS_ORDER_CONFIRMED)
+            ) &
+            Q(order_date__gt=expireDate)
         )
 
         return availableOrders

@@ -56,7 +56,7 @@ class KakaoUser(models.Model):
     
     ci = models.CharField(
         max_length=STRING_LENGTH, 
-        null=True
+        null=True,
     )
     ci_authenticated_at = models.CharField(
         max_length=STRING_LENGTH, 
@@ -86,7 +86,10 @@ class Partner(KakaoUser, models.Model):
         verbose_name = "제휴 유형"
     )
 
-    create_date = models.DateTimeField(auto_now=True)
+    create_date = models.DateTimeField(
+        auto_now=True,
+        verbose_name = "가입일자"
+    )
 
     @classmethod
     def signUp(cls, *args, **kwargs):

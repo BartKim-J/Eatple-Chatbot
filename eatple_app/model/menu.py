@@ -171,4 +171,4 @@ class Menu(MenuInfo, MenuStatus, MenuSetting):
             return DEFAULT_MENU_IMAGE_PATH
 
     def __str__(self):
-        return '{store} - {name}'.format(store=self.store.name, name=self.name)
+        return '{name}'.format(name=self.name)
