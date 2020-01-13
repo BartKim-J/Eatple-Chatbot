@@ -40,21 +40,22 @@ DEFAULT_QUICKREPLIES_MAP = [
 
 
 def isB2BUser(user):
-    if(user.type == USER_TYPE_B2B and user.company != None):
-        return True
-    else:
-        try:
-            B2BUser = UserB2B.objects.get(phone_number=user.phone_number)
-            
+    try:
+        B2BUser = UserB2B.objects.get(phone_number=user.phone_number)
+        
+        if(user.type != USER_TYPE_B2B or user.company == None):
             user.company = Company.objects.get(id=int(B2BUser.company.id))
             user.type = USER_TYPE_B2B
             user.save()
             
-            return True
-        except UserB2B.DoesNotExist:
-            return False
-
+        return True
+    except UserB2B.DoesNotExist:
+        user.company = None
+        user.type = USER_TYPE_NORMAL
+        user.save()
         return False
+
+    return False
     
 def sellingTimeCheck():
     currentDate = dateNowByTimeZone()

@@ -31,8 +31,8 @@ class HideAdmin(admin.ModelAdmin):
 admin.site.register(PickupTime, HideAdmin)
 admin.site.register(Category, HideAdmin)
 admin.site.register(Tag, HideAdmin)
-admin.site.register(OrderSheet, OrderSheetAdmin)
-admin.site.register(OrderRecordSheet, OrderRecordSheetAdmin)
+admin.site.register(OrderSheet, HideAdmin)
+admin.site.register(OrderRecordSheet, HideAdmin)
 
 admin.site.register(DefaultImage, DefaultImageAdmin)
 
