@@ -25,15 +25,14 @@ class PartnerAdmin(ImportExportMixin, admin.ModelAdmin):
     )
 
     list_filter = (
-        'create_date', 
-        'gender'
+        ('create_date', DateRangeFilter),
     )
     
     def crn(self, obj):
         if(obj.store != None):
             return obj.store.crn
         else:
-            return "* 상점 미등록"
+            return "상점 미등록"
     crn.short_description = "사업자 등록번호"
         
     list_display = (

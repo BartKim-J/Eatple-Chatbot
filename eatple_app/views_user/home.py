@@ -282,7 +282,7 @@ def kakaoView_Home(user):
             }
             
             kakaoForm.BasicCard_Push(
-                '{} 사원 전용 카드입니다.'.format(user.company.name, user.nickname),
+                '{} 홈 화면입니다.'.format(user.company.name, user.nickname),
                 '반갑습니다. {}님'.format(user.nickname),
                 thumbnail,
                 buttons

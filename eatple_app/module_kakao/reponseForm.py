@@ -64,10 +64,11 @@ class KakaoForm():
     def ComerceCard_Push(self, _description, _price, _discount,  _thumbnails, _profile, _buttons):
         self.items += {
             'description': _description,
+            'currency': 'won',
+            'discountType': 'amount',
             'price': _price,
             'discount': _discount,
-            'discountPrice': None,
-            'currency': 'won',
+            'discountPrice': _price - _discount,
             'thumbnails': _thumbnails,
             'profile': _profile,
             'buttons': _buttons

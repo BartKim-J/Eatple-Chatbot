@@ -8,7 +8,7 @@ from django.db.models import Q
 from django_mysql.models import Model
 
 
-ORDER_TIMECHECK_DEBUG = False
+ORDER_TIMECHECK_DEBUG = True
 PROMOTION_ORDER_TIMECHECK_DEBUG = False
 
 def iamportOrderValidation(order):
@@ -205,7 +205,7 @@ def orderUpdate(order):
         #orderDate = dateByTimeZone(order.order_date)
         #orderDateWithoutTime = orderDate.replace(hour=0, minute=0, second=0, microsecond=0)
     
-        currentDate = currentDate.replace(day=8, hour=10, minute=00, second=0, microsecond=0)
+        currentDate = currentDate.replace(day=14, hour=10, minute=00, second=0, microsecond=0)
         currentDateWithoutTime = currentDate.replace(hour=0, minute=0, second=0, microsecond=0)
         print(currentDate)
     

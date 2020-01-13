@@ -19,7 +19,7 @@ from eatple_app.views_system.debugger import *
 
 from eatple_app.views import *
 
-VALIDATION_DEBUG_MODE = False
+VALIDATION_DEBUG_MODE = True
 
 DEFAULT_QUICKREPLIES_MAP = [
     {
@@ -47,7 +47,10 @@ def isB2BUser(user):
             user.company = Company.objects.get(id=int(B2BUser.company.id))
             user.type = USER_TYPE_B2B
             user.save()
-            
+        
+        if(user.company.status != OC_OPEN):
+            return False
+        
         return True
     except UserB2B.DoesNotExist:
         user.company = None
@@ -181,21 +184,36 @@ def eatplePassValidation(user):
     kakaoForm.QuickReplies_AddWithMap(DEFAULT_QUICKREPLIES_MAP)
 
     if (lunchPurchaed and dinnerPurchaced):
-        kakaoForm.SimpleText_Add(
-            '아직 사용하지 않은 잇플패스가 있어요.\n발급된 잇플패스를 먼저 사용해주세요.'
+        kakaoForm.BasicCard_Push(
+            '아직 사용하지 않은 잇플패스가 있어요.',
+            '발급된 잇플패스를 먼저 사용해주세요.',
+            {}, 
+            []
         )
+        kakaoForm.BasicCard_Add()
+        
         return JsonResponse(kakaoForm.GetForm())
                 
     elif (lunchPurchaed):
-        kakaoForm.SimpleText_Add(
-            '아직 사용하지 않은 잇플패스가 있어요.\n발급된 잇플패스를 먼저 사용해주세요.'
+        kakaoForm.BasicCard_Push(
+            '아직 사용하지 않은 잇플패스가 있어요.',
+            '발급된 잇플패스를 먼저 사용해주세요.',
+            {}, 
+            []
         )
+        kakaoForm.BasicCard_Add()
+        
         return JsonResponse(kakaoForm.GetForm())
     
     elif (dinnerPurchaced):
-        kakaoForm.SimpleText_Add(
-            '아직 사용하지 않은 잇플패스가 있어요.\n발급된 잇플패스를 먼저 사용해주세요.'
+        kakaoForm.BasicCard_Push(
+            '아직 사용하지 않은 잇플패스가 있어요.',
+            '발급된 잇플패스를 먼저 사용해주세요.',
+            {}, 
+            []
         )
+        kakaoForm.BasicCard_Add()
+        
         return JsonResponse(kakaoForm.GetForm())
         
 

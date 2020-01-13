@@ -118,7 +118,9 @@ class UserAdmin(ImportExportMixin, admin.ModelAdmin):
     list_per_page = 50
 
     def address(self, obj):
-        if(obj.location.address == LOCATION_DEFAULT_ADDR or obj.location.address == None):
+        if(obj.location.address == LOCATION_DEFAULT_ADDR or 
+           (obj.location.lat == LOCATION_DEFAULT_LAT and obj.location.long == LOCATION_DEFAULT_LNG)
+        ):
             return "위치 미등록"
         else:
             return obj.location.address
