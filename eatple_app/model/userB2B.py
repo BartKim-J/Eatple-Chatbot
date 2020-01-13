@@ -36,11 +36,10 @@ class UserB2B(models.Model):
         verbose_name="이름"
     )
     
-    phone_number = models.CharField(
-        max_length=MANAGEMENT_CODE_LENGTH,
-        blank=True,
+    phone_number = PhoneNumberField(
+        max_length=WORD_LENGTH, 
         null=True,
-        verbose_name="전화번호"
+        verbose_name = "전화번호"
     )
 
     create_date = models.DateTimeField(

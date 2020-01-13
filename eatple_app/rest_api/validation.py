@@ -89,32 +89,37 @@ class OrderValidation(viewsets.ModelViewSet):
         except Order.DoesNotExist:
             order = None
 
-        if(order == None):
+        if(order == None or order.payment_status == IAMPORT_ORDER_STATUS_FAILED):
             response['error_code'] = 203
             response['error_msg']  = '잘못된 주문번호입니다. 홈으로가서 다시 메뉴를 선택해주세요.'
             return Response(response)            
+        elif(order.payment_status == IAMPORT_ORDER_STATUS_CANCELLED):
+            response['error_code'] = 205
+            response['error_msg'] = '이미 환불 처리된 주문번호입니다.'
+            return Response(response)
         else:
+            beforeOrderStatus = order.payment_status
             order.orderStatusUpdate()
             
-            if(order.payment_status == IAMPORT_ORDER_STATUS_PAID):
+            if(beforeOrderStatus != IAMPORT_ORDER_STATUS_PAID and
+               order.payment_status == IAMPORT_ORDER_STATUS_PAID):
                 order.payment_date = dateNowByTimeZone()
                 order.save()
             
-        if(order.payment_status == IAMPORT_ORDER_STATUS_PAID):
-            response['error_code'] = 204
-            response['error_msg']  = '이미 결제가 완료된 주문번호 입니다.'
-            return Response(response)
-        
-        elif(order.payment_status == IAMPORT_ORDER_STATUS_CANCELLED):
-            response['error_code'] = 205
-            response['error_msg'] = '이미 환불이 완료된 주문번호 입니다.'
-            return Response(response)
-        
-        # Store Check
-        if(order.store.status != OC_OPEN or order.menu.status != OC_OPEN):
-            response['error_code'] = 206
-            response['error_msg'] = '현재 주문 가능시간이 아닙니다. 상점 메뉴를 새로고침한 다음 사용해주세요.'
-            return Response(response)
+        orderManager = UserOrderManager(user)
+        eatplePass = orderManager.getAvailableOrders().first()
+
+        if(eatplePass != None):
+            if(order.payment_status == IAMPORT_ORDER_STATUS_PAID
+               and order.order_id == eatplePass.order_id):
+                if(beforeOrderStatus != IAMPORT_ORDER_STATUS_PAID):
+                    response['error_code'] = 204
+                    response['error_msg']  = '이미 결제가 완료된 주문번호 입니다.'
+                    return Response(response)
+                else:
+                    response['error_code'] = 100
+                    response['error_msg']  = '결제가 완료되었습니다.'
+                    return Response(response)
         
         # Eatple Pass Check
         eatplePassStatus = eatplePassValidation(user)
@@ -132,8 +137,13 @@ class OrderValidation(viewsets.ModelViewSet):
             response['error_code'] = 206
             response['error_msg'] = '현재 주문 가능시간이 아닙니다. 상점 메뉴를 새로고침한 다음 사용해주세요.'
             return Response(response)
-        
+
+        # Store Check
+        if(order.store.status != OC_OPEN or order.menu.status != OC_OPEN):
+            response['error_code'] = 206
+            response['error_msg'] = '현재 주문 가능시간이 아닙니다. 상점 메뉴를 새로고침한 다음 사용해주세요.'
+            return Response(response)
         
         response['error_code'] = 200
-        response['error_msg'] = '정상적인 주문입니다. 결제로 넘어갑니다.'
+        response['error_msg'] = '정상적인 주문입니다.'
         return Response(response)

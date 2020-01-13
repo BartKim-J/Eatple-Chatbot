@@ -174,7 +174,7 @@ def kakaoView_Home(user):
     orderManager = UserOrderManager(user)
     orderManager.orderPanddingCleanUp()
     orderManager.availableOrderStatusUpdate()
-    
+
     orderList = orderManager.getAvailableOrders()
     orderCount = orderList.count()
     order = orderList.first()
