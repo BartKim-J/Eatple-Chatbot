@@ -31,6 +31,11 @@ class UserB2BAdmin(ImportExportMixin, admin.ModelAdmin):
 
     search_fields = ['company', 'name', 'phone_number']
 
+    def phonenumber(self, obj):
+        return obj.phone_number.as_national
+    phonenumber.short_description = "전화번호"
+    
+
     list_filter = (
         ('company',)
     )
@@ -38,7 +43,7 @@ class UserB2BAdmin(ImportExportMixin, admin.ModelAdmin):
     list_display = (
         'company',
         'name',
-        'phone_number',
+        'phonenumber',
     )
 
     inlines = []

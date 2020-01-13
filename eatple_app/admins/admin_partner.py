@@ -34,9 +34,13 @@ class PartnerAdmin(ImportExportMixin, admin.ModelAdmin):
         else:
             return "상점 미등록"
     crn.short_description = "사업자 등록번호"
-        
+
+    def phonenumber(self, obj):
+        return obj.phone_number.as_national
+    phonenumber.short_description = "전화번호"
+    
     list_display = (
         'store', 
-        'phone_number', 
+        'phonenumber', 
         'crn',
     )

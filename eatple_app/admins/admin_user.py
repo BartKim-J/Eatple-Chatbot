@@ -124,13 +124,16 @@ class UserAdmin(ImportExportMixin, admin.ModelAdmin):
             return "위치 미등록"
         else:
             return obj.location.address
-        
     address.short_description = "주소"
+    
+    def phonenumber(self, obj):
+        return obj.phone_number.as_national
+    phonenumber.short_description = "전화번호"
     
     readonly_fields = (
         'app_user_id',
         'nickname',
-        'phone_number',
+        'phonenumber',
         'email',
         'birthyear',
         'birthday',
@@ -153,7 +156,7 @@ class UserAdmin(ImportExportMixin, admin.ModelAdmin):
     list_display = (
         'app_user_id',
         'nickname',
-        'phone_number',
+        'phonenumber',
         'email',
         'gender',
         'flag_promotion',

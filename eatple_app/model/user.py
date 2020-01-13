@@ -166,7 +166,6 @@ class User(KakaoUser, models.Model):
     @classmethod
     def signUp(cls, *args, **kwargs):
         registedUser = cls(*args, **kwargs)
-        registedUser.phone_number = registedUser.phone_number.as_national
         self.save()
             
         registedUser.save()
