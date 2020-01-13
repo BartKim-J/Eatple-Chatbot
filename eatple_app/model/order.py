@@ -8,7 +8,7 @@ from django.db.models import Q
 from django_mysql.models import Model
 
 
-ORDER_TIMECHECK_DEBUG = True
+ORDER_TIMECHECK_DEBUG = False
 PROMOTION_ORDER_TIMECHECK_DEBUG = False
 
 def iamportOrderValidation(order):

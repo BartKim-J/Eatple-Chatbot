@@ -68,7 +68,6 @@ class KakaoForm():
             'discountType': 'amount',
             'price': _price,
             'discount': _discount,
-            'discountPrice': _price - _discount,
             'thumbnails': _thumbnails,
             'profile': _profile,
             'buttons': _buttons
