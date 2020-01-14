@@ -63,9 +63,9 @@ def userSignUp(userProfile):
         
     if(app_user_id == None):
         app_user_id = "N/A"
-        
     
     user = User.signUp(
+        app_user_id=app_user_id,
         nickname=nickname,
         phone_number=phone_number,
         email=email,
@@ -74,7 +74,6 @@ def userSignUp(userProfile):
         gender=gender,
         ci=ci,
         ci_authenticated_at=ci_ci_authenticated_at,
-        app_user_id=app_user_id,
     )
 
     return user
@@ -383,13 +382,16 @@ def GET_UserHome(request):
         if(user == None):
             try:
                 otpURL = kakaoPayload.dataActionParams['user_profile']['origin']
-
+                
                 kakaoResponse = requests.get('{url}?rest_api_key={rest_api_key}'.format(
                     url=otpURL, rest_api_key=KAKAO_REST_API_KEY))
 
                 if(kakaoResponse.status_code == 200):
-                    user = userSignUp(kakaoResponse.json())
+                    print(kakaoResponse.json())
                     
+                    user = userSignUp(kakaoResponse.json())
+            
+                        
                     #@SLACK LOGGER
                     SlackLogSignUp(user)
                     

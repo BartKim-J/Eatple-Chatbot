@@ -165,9 +165,7 @@ class User(KakaoUser, models.Model):
 
     @classmethod
     def signUp(cls, *args, **kwargs):
-        registedUser = cls(*args, **kwargs)
-        self.save()
-            
+        registedUser = cls(*args, **kwargs)            
         registedUser.save()
 
         return registedUser

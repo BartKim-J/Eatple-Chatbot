@@ -22,7 +22,7 @@ from eatple_app.views import *
 # STATIC CONFIG
 MENU_LIST_LENGTH = 20
 
-ORDER_DEBUG_MODE = True
+ORDER_DEBUG_MODE = False
 
 # # # # # # # # # # # # # # # # # # # # # # # # #
 #
