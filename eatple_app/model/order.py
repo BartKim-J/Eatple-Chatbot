@@ -8,8 +8,8 @@ from django.db.models import Q
 from django_mysql.models import Model
 
 
-ORDER_TIMECHECK_DEBUG = False
-PROMOTION_ORDER_TIMECHECK_DEBUG = False
+ORDER_TIMECHECK_DEBUG_MODE = False
+PROMOTION_ORDER_TIMECHECK_DEBUG_MODE = False
 
 def iamportOrderValidation(order):
     iamport = Iamport(imp_key=IAMPORT_API_KEY,
@@ -66,7 +66,7 @@ def promotionOrderUpdate(order):
         hour=0, minute=0, second=0, microsecond=0)
 
     # Time QA DEBUG
-    if(PROMOTION_ORDER_TIMECHECK_DEBUG):
+    if(PROMOTION_ORDER_TIMECHECK_DEBUG_MODE):
         currentDate = currentDate.replace(day=8, hour=10, minute=0, second=0, microsecond=0)
         currentDateWithoutTime = currentDate.replace(hour=0, minute=0, second=0, microsecond=0)
         print(currentDate)
@@ -125,10 +125,13 @@ def promotionOrderUpdate(order):
   
 def orderUpdate(order):                 
     # B2B User Pass
-    if(order.ordersheet.user.type == USER_TYPE_B2B and order.ordersheet.user.company != None):
+    if(order.ordersheet.user.type == USER_TYPE_B2B and 
+       order.ordersheet.user.company != None and
+       order.ordersheet.user.company.status != OC_CLOSE
+       ):
         order.payment_status = order.payment_status
         order.save()
-    
+        
     #Normal User Pass
     else:
         if(order.menu == None or order.store == None):
@@ -201,11 +204,11 @@ def orderUpdate(order):
         hour=0, minute=0, second=0, microsecond=0)
 
     # Time QA DEBUG
-    if(ORDER_TIMECHECK_DEBUG):
+    if(ORDER_TIMECHECK_DEBUG_MODE):
         #orderDate = dateByTimeZone(order.order_date)
         #orderDateWithoutTime = orderDate.replace(hour=0, minute=0, second=0, microsecond=0)
     
-        currentDate = currentDate.replace(day=14, hour=10, minute=00, second=0, microsecond=0)
+        currentDate = currentDate.replace(day=14, hour=10, minute=40, second=0, microsecond=0)
         currentDateWithoutTime = currentDate.replace(hour=0, minute=0, second=0, microsecond=0)
         print(currentDate)
     
@@ -403,6 +406,13 @@ class Order(models.Model):
         verbose_name="주문 타입" 
     )
     
+    delegate = models.ForeignKey(
+        'User',
+        on_delete=models.CASCADE,
+        null=True,
+        verbose_name="위임자" 
+    )
+    
     update_date = models.DateTimeField(
         auto_now=True,
         verbose_name="마지막 수정일"    
@@ -446,7 +456,9 @@ class Order(models.Model):
         SlackLogCancelOrder(self)
 
         # B2B User Pass
-        if(self.ordersheet.user.type == USER_TYPE_B2B and self.ordersheet.user.company != None):
+        if(self.ordersheet.user.type == USER_TYPE_B2B and 
+           self.ordersheet.user.company != None and
+           self.ordersheet.user.company.status != OC_CLOSE):
             self.payment_status = IAMPORT_ORDER_STATUS_CANCELLED
             self.save()
             return True
@@ -455,8 +467,24 @@ class Order(models.Model):
 
     def orderUsed(self):
         self.status = ORDER_STATUS_PICKUP_COMPLETED
-        super().save()
+        self.save()
         
+        return self
+    
+    def orderDelegate(self, order):
+        if(self.delegate != None):
+            return None
+        
+        if(self.menu == order.menu and
+           self.store == order.store and
+           self.pickupTime == order.PickupTime):
+            
+           self.delegate = order.ordersheet.user
+           self.save()
+        return self
+    
+    def orderDelegateCancel(self):
+        self.delegate = None
         return self
     
     # Methods
@@ -570,17 +598,25 @@ class OrderSheet(models.Model):
     user = models.ForeignKey(
         'User',
         on_delete=models.CASCADE,
-        null=True
+        null=True,
+        verbose_name="소유자" 
     )
 
     management_code = models.CharField(
         max_length=MANAGEMENT_CODE_LENGTH,
         blank=True,
-        null=True
+        null=True,
+        verbose_name="주문시트 관리번호" 
     )
 
-    update_date = models.DateTimeField(auto_now=True)
-    create_date = models.DateTimeField(default=timezone.now)
+    update_date = models.DateTimeField(
+        auto_now=True,
+        verbose_name="마지막 수정일" 
+    )
+    create_date = models.DateTimeField(
+        default=timezone.now,
+        verbose_name="생성일자" 
+    )
 
     def __init__(self, *args, **kwargs):
         super(OrderSheet, self).__init__(*args, **kwargs)

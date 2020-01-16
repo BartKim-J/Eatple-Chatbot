@@ -135,7 +135,7 @@ OC_STATUS = [
     (OC_CLOSE, '닫힘'),
 ]
 
-# STORE_TYPE
+#  TYPE
 ORDER_TYPE_NORMAL = 'normal'
 ORDER_TYPE_EVENT = 'event'
 ORDER_TYPE_PROMOTION = 'promotion'
@@ -150,11 +150,13 @@ ORDER_TYPE = [
 
 # STORE_TYPE
 STORE_TYPE_NORMAL = 'normal'
+STORE_TYPE_B2B = 'B2B'
 STORE_TYPE_EVENT = 'event'
 STORE_TYPE_PROMOTION = 'promotion'
 STORE_TYPE = [
     (STORE_TYPE_NORMAL, '일반'),
     (STORE_TYPE_EVENT, '이벤트'),
+    (STORE_TYPE_B2B, 'B2B'),
 ]
 
 # USER_TYPE
@@ -184,6 +186,11 @@ STORE_AREA_A_4 = 'A4'
 STORE_AREA_B_1 = 'B1'
 STORE_AREA_B_2 = 'B2'
 
+STORE_AREA_C_1 = 'C1'
+STORE_AREA_C_2 = 'C2'
+STORE_AREA_C_3 = 'C3'
+STORE_AREA_C_4 = 'C4'
+
 STORE_AREA_Z_1 = 'Z1'
 
 STORE_AREA = [
@@ -194,6 +201,11 @@ STORE_AREA = [
 
     (STORE_AREA_B_1, '역삼 1호점'),
     (STORE_AREA_B_2, '역삼 2호점'),
+    
+    (STORE_AREA_C_1, '강남역'),
+    (STORE_AREA_C_2, '역삼역'),
+    (STORE_AREA_C_3, '삼성역'),
+    (STORE_AREA_C_4, '선릉역'),
 
     (STORE_AREA_Z_1, '기타 지역'),
 ]

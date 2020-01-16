@@ -71,27 +71,20 @@ class OrderValidation(viewsets.ModelViewSet):
 
         response = {
             'order_id': merchant_uid,
-            'user_id': buyer_name
         }
         
-        if(buyer_name == None or merchant_uid == None):
+        if(merchant_uid == None):
             return Response(status=status.HTTP_400_BAD_REQUEST);
-        
-        # Account Check
-        user = userValidation(buyer_name)
-        if(user == False):
-            response['error_code'] = 201
-            response['error_msg']  = '가입되지 않은 사용자입니다. 잇플로 돌아가 다시 가입해주세요!'
-            return Response(response)
-    
+             
+        # Order Check
         try:
-            order = Order.objects.get(order_id=merchant_uid)            
+            order = Order.objects.get(order_id=merchant_uid)
         except Order.DoesNotExist:
             order = None
 
         if(order == None or order.payment_status == IAMPORT_ORDER_STATUS_FAILED):
             response['error_code'] = 203
-            response['error_msg']  = '잘못된 주문번호입니다. 홈으로가서 다시 메뉴를 선택해주세요.'
+            response['error_msg']  = '잘못된 주문번호입니다. '
             return Response(response)            
         elif(order.payment_status == IAMPORT_ORDER_STATUS_CANCELLED):
             response['error_code'] = 205
@@ -105,7 +98,14 @@ class OrderValidation(viewsets.ModelViewSet):
                order.payment_status == IAMPORT_ORDER_STATUS_PAID):
                 order.payment_date = dateNowByTimeZone()
                 order.save()
-            
+
+        # Account Check
+        user = userValidation(order.ordersheet.user.app_user_id)
+        if(user == False):
+            response['error_code'] = 201
+            response['error_msg']  = '알수없는 사용자입니다.'
+            return Response(response)    
+
         orderManager = UserOrderManager(user)
         eatplePass = orderManager.getAvailableOrders().first()
 
@@ -113,12 +113,13 @@ class OrderValidation(viewsets.ModelViewSet):
             if(order.payment_status == IAMPORT_ORDER_STATUS_PAID
                and order.order_id == eatplePass.order_id):
                 if(beforeOrderStatus != IAMPORT_ORDER_STATUS_PAID):
-                    response['error_code'] = 204
-                    response['error_msg']  = '이미 결제가 완료된 주문번호 입니다.'
-                    return Response(response)
-                else:
                     response['error_code'] = 100
                     response['error_msg']  = '결제가 완료되었습니다.'
+                    return Response(response)
+                else:
+                    response['error_code'] = 204
+                    response['error_msg']  = '결제가 완료되었습니다.'
+                    #response['error_msg']  = '이미 결제가 완료된 주문번호 입니다.'
                     return Response(response)
         
         # Eatple Pass Check
@@ -135,15 +136,57 @@ class OrderValidation(viewsets.ModelViewSet):
         
         if(currentSellingTime != order.menu.selling_time or isClosedDay == True):
             response['error_code'] = 206
-            response['error_msg'] = '현재 주문 가능시간이 아닙니다. 상점 메뉴를 새로고침한 다음 사용해주세요.'
+            response['error_msg'] = '현재 주문 가능시간이 아닙니다.'
             return Response(response)
 
         # Store Check
         if(order.store.status != OC_OPEN or order.menu.status != OC_OPEN):
             response['error_code'] = 206
-            response['error_msg'] = '현재 주문 가능시간이 아닙니다. 상점 메뉴를 새로고침한 다음 사용해주세요.'
+            response['error_msg'] = '현재 주문 가능시간이 아닙니다.'
             return Response(response)
         
         response['error_code'] = 200
         response['error_msg'] = '정상적인 주문입니다.'
+        return Response(response)
+
+class OrderInformation(viewsets.ModelViewSet):
+    queryset = Order.objects.all()
+    serializer_class = OrderSerializer
+
+    def list(self, request, *args, **kwargs):
+        buyer_name = request.query_params.get('buyer_name')
+        merchant_uid = request.query_params.get('merchant_uid')
+
+        response = {
+            'order_id': merchant_uid,
+        }
+        
+        if(merchant_uid == None):
+            return Response(status=status.HTTP_400_BAD_REQUEST);
+             
+        # Order Check
+        try:
+            order = Order.objects.get(order_id=merchant_uid)
+        except Order.DoesNotExist:
+            order = None
+
+        if(order == None or order.payment_status == IAMPORT_ORDER_STATUS_FAILED):
+            response['error_code'] = 203
+            response['error_msg']  = '잘못된 주문번호입니다. 홈으로가서 다시 메뉴를 선택해주세요.'
+            return Response(response)     
+               
+        # Account Check
+        user = userValidation(order.ordersheet.user.app_user_id)
+        if(user == False):
+            response['error_code'] = 201
+            response['error_msg']  = '알수없는 사용자입니다. 앱으로 돌아가 다시 확인해주세요.'
+            return Response(response)
+        
+        response['store'] = order.store.name
+        response['menu'] = order.menu.name
+        response['amount'] = order.totalPrice
+        response['buyer_email'] = user.email
+        response['buyer_tel'] = user.phone_number.as_national
+        response['buyer_name'] = user.nickname
+
         return Response(response)

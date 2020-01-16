@@ -162,12 +162,11 @@ class StoreInfo(models.Model):
     )
 
     addr = models.CharField(
-        max_length=WORD_LENGTH,
+        max_length=STRING_LENGTH,
         verbose_name="주소"
     )
 
     phone_number = PhoneNumberField(
-        max_length=WORD_LENGTH, 
         null=True,
         blank=True,
         verbose_name="관리자 전화번호"
@@ -228,7 +227,8 @@ class StoreStatus(models.Model):
         choices=STORE_TYPE,
         verbose_name="유형"
     )
-    
+
+
     area = models.CharField(
         max_length=WORD_LENGTH, 
         default=STORE_AREA_A_3,

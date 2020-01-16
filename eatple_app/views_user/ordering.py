@@ -75,12 +75,17 @@ def kakaoView_MenuListup(kakaoPayload):
     # currentSellingTime = sellingTimeCheck()
     currentSellingTime = SELLING_TIME_LUNCH
 
+    if(isB2BUser(user)):
+        storeFilterType = STORE_TYPE_B2B
+    else:
+        storeFilterType = STORE_TYPE_NORMAL
+    
     menuList = Menu.objects.annotate(
         distance=Distance(F('store__place__point'),
                             user.location.point) * 100 * 1000
     ).filter(
         selling_time=currentSellingTime,
-        store__type=STORE_TYPE_NORMAL,
+        store__type=storeFilterType,
 
         status=OC_OPEN,
         store__status=OC_OPEN,
@@ -418,6 +423,12 @@ def kakaoView_OrderPayment(kakaoPayload):
 
         kakaoForm.ComerceCard_Add() 
     else:
+        
+        if(ORDER_DEBUG_MODE == True):
+            server_url = 'http://localhost:3000'
+        else:
+            server_url = 'https://www.eatple.com'
+            
         buttons = [
             {
                 'action': 'webLink',
@@ -425,7 +436,8 @@ def kakaoView_OrderPayment(kakaoPayload):
                 'messageText': '로딩중..',
                 'extra': dataActionExtra,
 
-                'webLinkUrl': 'https://www.eatple.com/payment?merchant_uid={merchant_uid}&storeName={storeName}&menuName={menuName}&menuPrice={menuPrice}&buyer_name={buyer_name}&buyer_tel={buyer_tel}&buyer_email={buyer_email}'.format(
+                'webLinkUrl': '{server_url}/payment?merchant_uid={merchant_uid}&storeName={storeName}&menuName={menuName}&menuPrice={menuPrice}&buyer_name={buyer_name}&buyer_tel={buyer_tel}&buyer_email={buyer_email}'.format(
+                    server_url=server_url,
                     merchant_uid=order.order_id,
                     storeName=store.name,
                     menuName=menu.name,
@@ -573,14 +585,8 @@ def kakaoView_OrderPaymentCheck(kakaoPayload):
                     'messageText': '로딩중..',
                     'extra': dataActionExtra,
 
-                    'webLinkUrl': 'https://www.eatple.com/payment?merchant_uid={merchant_uid}&storeName={storeName}&menuName={menuName}&menuPrice={menuPrice}&buyer_name={buyer_name}&buyer_tel={buyer_tel}&buyer_email={buyer_email}'.format(
+                    'webLinkUrl': 'https://www.eatple.com/payment?merchant_uid={merchant_uid}'.format(
                         merchant_uid=order.order_id,
-                        storeName=store.name,
-                        menuName=menu.name,
-                        menuPrice=order.totalPrice,
-                        buyer_name=user.app_user_id,
-                        buyer_tel=str(user.phone_number)[3:13],
-                        buyer_email=user.email,
                     )
                 },
                 {

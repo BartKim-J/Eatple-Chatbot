@@ -94,6 +94,7 @@ urlpatterns += [
 
 router = routers.DefaultRouter()
 router.register(r'order_validation', views.OrderValidation)
+router.register(r'order_information', views.OrderInformation)
 
 # Urls - REST API
 urlpatterns += [
