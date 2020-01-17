@@ -37,6 +37,7 @@ def iamportOrderValidation(order):
         
         return order
 
+    print(response['status'])
     order.payment_status = response['status']
     order.save()
     
@@ -448,6 +449,7 @@ class Order(models.Model):
         return datetime_pickup_time
 
     def orderStatusUpdate(self):
+    
         return orderUpdate(self)
 
     def orderCancel(self):
@@ -582,7 +584,10 @@ class OrderManager():
     
 class UserOrderManager(OrderManager):
     def __init__(self, user):
-        self.orderList = Order.objects.filter(ordersheet__user=user)
+        self.orderList = Order.objects.filter(
+            Q(ordersheet__user=user) |
+            Q(delegate=user)
+        )
         
 class PartnerOrderManager(OrderManager):
     def __init__(self, partner):

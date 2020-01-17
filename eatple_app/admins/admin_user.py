@@ -91,10 +91,7 @@ class UserResource(resources.ModelResource):
         model = User
         fields = (
             'nickname',
-            'location__address',
-            'location__lat',
-            'location__long',
-            'latlng'
+            'phone_number'
         )
 
 class LocationInline(admin.TabularInline):
