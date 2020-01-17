@@ -44,6 +44,7 @@ ALLOWED_HOSTS = [
 INSTALLED_APPS = [
     # 'suit',
     # 'eatple_app.apps.SuitConfig',
+
     'django.contrib.gis',
     'django.contrib.admin',
     'django.contrib.auth',
@@ -118,7 +119,6 @@ DATABASES = {
         }
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/2.2/ref/settings/#auth-password-validators

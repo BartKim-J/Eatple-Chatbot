@@ -37,6 +37,7 @@ def iamportOrderValidation(order):
         
         return order
 
+    
     print(response['status'])
     order.payment_status = response['status']
     order.save()
@@ -411,6 +412,7 @@ class Order(models.Model):
         'User',
         on_delete=models.CASCADE,
         null=True,
+        blank=True,
         verbose_name="위임자" 
     )
     

@@ -44,6 +44,7 @@ ALLOWED_HOSTS = [
 INSTALLED_APPS = [
     # 'suit',
     # 'eatple_app.apps.SuitConfig',
+    
     'django.contrib.gis',
     'django.contrib.admin',
     'django.contrib.auth',

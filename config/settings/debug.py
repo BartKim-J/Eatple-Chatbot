@@ -44,6 +44,7 @@ ALLOWED_HOSTS = [
 INSTALLED_APPS = [
     # 'suit',
     # 'eatple_app.apps.SuitConfig',
+    
     'django.contrib.gis',
     'django.contrib.admin',
     'django.contrib.auth',
@@ -106,7 +107,7 @@ WSGI_APPLICATION = 'config.wsgi.debug.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.contrib.gis.db.backends.mysql',
-        'NAME': 'eatple_DB_Test',
+        'NAME': 'eatple_DB',
         'USER': 'eatple',
         'PASSWORD': 'eatple0000',
         'HOST': 'localhost',
