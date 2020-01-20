@@ -109,20 +109,49 @@ def kakaoView_EatplePass(kakaoPayload):
                         }
                     }
                 )
-                # @PROMOTION
-                if(order.type != ORDER_TYPE_PROMOTION):
-                    buttons.append(
+                
+                if(order.delegate == None):
+                    ORDER_LIST_QUICKREPLIES_MAP.append(
                         {
                             'action': 'block',
-                            'label': '픽업시간 변경',
+                            'label': '부탁하기',
                             'messageText': '로딩중..',
-                            'blockId': KAKAO_BLOCK_USER_EDIT_PICKUP_TIME,
+                            'blockId': KAKAO_BLOCK_USER_ORDER_SHARING_START,
                             'extra': {
                                 KAKAO_PARAM_ORDER_ID: order.order_id,
                                 KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_EATPLE_PASS
                             }
                         }
                     )
+                    # @PROMOTION
+                    if(order.type != ORDER_TYPE_PROMOTION):
+                        buttons.append(
+                            {
+                                'action': 'block',
+                                'label': '픽업시간 변경',
+                                'messageText': '로딩중..',
+                                'blockId': KAKAO_BLOCK_USER_EDIT_PICKUP_TIME,
+                                'extra': {
+                                    KAKAO_PARAM_ORDER_ID: order.order_id,
+                                    KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_EATPLE_PASS
+                                }
+                            }
+                        )
+                else:
+                    ORDER_LIST_QUICKREPLIES_MAP.append(
+                        {
+                            'action': 'block',
+                            'label': '부탁하기 취소',
+                            'messageText': '로딩중..',
+                            'blockId': KAKAO_BLOCK_USER_ORDER_SHARING_CANCEL,
+                            'extra': {
+                                KAKAO_PARAM_ORDER_ID: order.order_id,
+                                KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_EATPLE_PASS
+                            }
+                        }
+                    )
+                                   
+
             elif (order.status == ORDER_STATUS_PICKUP_PREPARE):
                 pass
             else:

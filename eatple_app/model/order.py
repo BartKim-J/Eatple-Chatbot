@@ -8,7 +8,7 @@ from django.db.models import Q
 from django_mysql.models import Model
 
 
-ORDER_TIMECHECK_DEBUG_MODE = False
+ORDER_TIMECHECK_DEBUG_MODE = True
 PROMOTION_ORDER_TIMECHECK_DEBUG_MODE = False
 
 def iamportOrderValidation(order):
@@ -207,10 +207,11 @@ def orderUpdate(order):
 
     # Time QA DEBUG
     if(ORDER_TIMECHECK_DEBUG_MODE):
-        #orderDate = dateByTimeZone(order.order_date)
-        #orderDateWithoutTime = orderDate.replace(hour=0, minute=0, second=0, microsecond=0)
-    
-        currentDate = currentDate.replace(day=14, hour=10, minute=40, second=0, microsecond=0)
+        orderDate = currentDate.replace(day=20, hour=6, minute=0, second=0, microsecond=0)
+        orderDateWithoutTime = orderDate.replace(hour=0, minute=0, second=0, microsecond=0)
+        print(orderDate)
+        
+        currentDate = currentDate.replace(day=20, hour=8, minute=38, second=0, microsecond=0)
         currentDateWithoutTime = currentDate.replace(hour=0, minute=0, second=0, microsecond=0)
         print(currentDate)
     
@@ -223,6 +224,10 @@ def orderUpdate(order):
     PICKUP_DAY = dateByTimeZone(order.pickup_time).replace(hour=0, minute=0, second=0, microsecond=0)
     PICKUP_YESTER_DAY = PICKUP_DAY + datetime.timedelta(days=-1)
     
+    # Time QA DEBUG
+    if(ORDER_TIMECHECK_DEBUG_MODE):
+        PICKUP_DAY = TODAY
+
     # Prev Lunch Order Edit Time 16:30 ~ 시:25(~ 10:30)
     prevlunchOrderEditTimeStart = currentDateWithoutTime + datetime.timedelta(hours=16, minutes=30, days=-1)
     prevlunchOrderEditTimeEnd = currentDateWithoutTime + datetime.timedelta(hours=10, minutes=25)
@@ -245,7 +250,7 @@ def orderUpdate(order):
     # Dinner Order Pickup Time (16:30 ~)17:30 ~ 21:00
     dinnerOrderPickupTimeStart = currentDateWithoutTime + datetime.timedelta(hours=17, minutes=30)
     dinnerOrderPickupTimeEnd = currentDateWithoutTime + datetime.timedelta(hours=21, minutes=0)
-
+    
     # Lunch Order
     if (SELLING_TIME_LUNCH == menu.selling_time) and \
         ((PICKUP_YESTER_DAY <= orderDateWithoutTime) and (TODAY <= PICKUP_DAY)):
@@ -481,14 +486,17 @@ class Order(models.Model):
         
         if(self.menu == order.menu and
            self.store == order.store and
-           self.pickupTime == order.PickupTime):
+           self.pickup_time == order.pickup_time):
             
            self.delegate = order.ordersheet.user
            self.save()
+           
         return self
     
     def orderDelegateCancel(self):
         self.delegate = None
+        self.save()
+        
         return self
     
     # Methods

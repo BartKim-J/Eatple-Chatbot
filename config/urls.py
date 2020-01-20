@@ -64,6 +64,14 @@ urlpatterns += [
          views.GET_EditPickupTime),
     path('skill/user/orderEdit/set_confirm_edit_pickup_time',
          views.SET_ConfirmEditPickupTime),
+    
+    # Order Share 
+    path('skill/user/orderShare/get_delegate_user_register',
+         views.GET_DelegateUserRegister),
+    path('skill/user/orderShare/get_delegate_user_remove',
+         views.GET_DelegateUserRemove),
+    path('skill/user/orderShare/get_delegate_user',
+         views.GET_DelegateUser),
 ]
 
 # Urls - Events App

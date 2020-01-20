@@ -19,7 +19,7 @@ from eatple_app.views_system.debugger import *
 
 from eatple_app.views import *
 
-VALIDATION_DEBUG_MODE = False
+VALIDATION_DEBUG_MODE = True
 
 DEFAULT_QUICKREPLIES_MAP = [
     {
@@ -67,10 +67,10 @@ def sellingTimeCheck():
 
     # DEBUG
     if(VALIDATION_DEBUG_MODE):
-        #return SELLING_TIME_LUNCH
+        return SELLING_TIME_LUNCH
 
-        currentDate = currentDate.replace(hour=10, minute=35, second=0, microsecond=0)
-        currentDateWithoutTime = currentDate.replace(hour=0, minute=0, second=0, microsecond=0)
+        #currentDate = currentDate.replace(hour=10, minute=35, second=0, microsecond=0)
+        #currentDateWithoutTime = currentDate.replace(hour=0, minute=0, second=0, microsecond=0)
 
     # Prev Lunch Order Time 16:30 ~ 10:30
     prevlunchOrderTimeStart = currentDateWithoutTime + \
@@ -167,7 +167,6 @@ def vacationTimeCheck():
             return True
     
     return False
-    
 
 def eatplePassValidation(user):
     orderManager = UserOrderManager(user)

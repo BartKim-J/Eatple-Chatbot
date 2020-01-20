@@ -20,6 +20,12 @@ class OrderResource(resources.ModelResource):
     def menu_name(self, obj):
         return obj.menu.name
     
+    def b2b_name(self, obj):
+        if(obj.ordersheet.user.company != None):
+            return obj.ordersheet.user.company.name
+        else:
+            return '일반'
+    
     class Meta:
         model = Order
         fields = (
@@ -37,6 +43,7 @@ class OrderResource(resources.ModelResource):
             'menu__name',
             'menu__menu_id',
             'ordersheet__user__phone_number',
+            'b2b_name',
         )
 
 
@@ -63,6 +70,13 @@ class OrderAdmin(ImportExportMixin, admin.ModelAdmin):
     def phone_number(self, obj):
         return obj.ordersheet.user.phone_number
     
+    def b2b_name(self, obj):
+        if(obj.ordersheet.user.company != None and obj.type == ORDER_TYPE_B2B):
+            return obj.ordersheet.user.company.name
+        else:
+            return ''
+    b2b_name.short_description = "B2B"
+        
     search_fields = ['order_id', 'ordersheet__user__nickname', 'ordersheet__user__app_user_id']
 
     readonly_fields = (
@@ -80,5 +94,5 @@ class OrderAdmin(ImportExportMixin, admin.ModelAdmin):
     )
     
 
-    list_display = ('order_id', 'owner', 'owner_id',  'store', 'menu', 'type',
+    list_display = ('order_id', 'owner', 'owner_id',  'store', 'menu', 'type', 'b2b_name',
                     'payment_status', 'status', 'pickup_time', 'payment_date')

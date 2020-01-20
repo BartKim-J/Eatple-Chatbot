@@ -107,7 +107,7 @@ WSGI_APPLICATION = 'config.wsgi.debug.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.contrib.gis.db.backends.mysql',
-        'NAME': 'eatple_DB',
+        'NAME': 'eatple_DB_Test',
         'USER': 'eatple',
         'PASSWORD': 'eatple0000',
         'HOST': 'localhost',

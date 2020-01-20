@@ -152,6 +152,18 @@ def kakaoView_ConfirmUseEatplePass(kakaoPayload):
         },
     ]
 
+    if(order.delegate != None):
+        kakaoForm.BasicCard_Push(
+            '타인에게 부탁한 잇플패스는 사용이 불가능합니다.',
+            '사용하시고 싶다면 \'부탁하기 취소\'를 한 다음 사용해주세요!',
+            {}, []
+        )
+        kakaoForm.BasicCard_Add()
+
+        kakaoForm.QuickReplies_AddWithMap(QUICKREPLIES_MAP)
+        
+        return JsonResponse(kakaoForm.GetForm())
+    
     if(order.status == ORDER_STATUS_PICKUP_WAIT):
         thumbnail = {
             'fixedRatio': 'true'

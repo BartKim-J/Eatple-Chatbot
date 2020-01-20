@@ -18,10 +18,14 @@ from eatple_app.views_user.orderEdit import POST_UseEatplePass
 ## Order Cancel
 from eatple_app.views_user.orderEdit import POST_OrderCancel
 
+## Order Share
+from eatple_app.views_user.orderShare import GET_DelegateUserRegister
+from eatple_app.views_user.orderShare import GET_DelegateUserRemove
+from eatple_app.views_user.orderShare import GET_DelegateUser
+
 ## Edit Pickup Time
 from eatple_app.views_user.orderEdit import GET_EditPickupTime
 from eatple_app.views_user.orderEdit import SET_ConfirmEditPickupTime
-
 
 # User Promotion
 ## Home
@@ -34,14 +38,11 @@ from eatple_app.views_partner.home import GET_PartnerHome
 from eatple_app.views_partner.orderCheck import GET_ParnterOrderDetails
 
 # Kakao 
-
 from eatple_app.views_kakao.channel import POST_KAKAO_ChannelLog
 
 # Slack
 from eatple_app.views_slack.slack_api import Events
 
-
 # Rest Framework
-
 from eatple_app.rest_api.validation import OrderValidation
 from eatple_app.rest_api.validation import OrderInformation
