@@ -45,8 +45,11 @@ def kakaoView_UseEatplePass(kakaoPayload):
     if(order == None or user == None):
         return errorView('Invalid Paratmer', '정상적이지 않은 주문번호이거나\n진행 중 오류가 발생했습니다.')
 
-    order.orderStatusUpdate()
+    orderManager = UserOrderManager(user)
 
+    availableEatplePass = orderManager.availableOrderStatusUpdate()
+    delegatedEatplePass = availableEatplePass.filter(~Q(delegate=None))
+    
     kakaoForm = KakaoForm()
 
     QUICKREPLIES_MAP = [
@@ -63,7 +66,11 @@ def kakaoView_UseEatplePass(kakaoPayload):
 
     if(order.status == ORDER_STATUS_PICKUP_WAIT):
         order = order.orderUsed()
-
+        
+        if delegatedEatplePass:
+            for delegatedOrder in delegatedEatplePass:
+                delegatedOrder = order.orderUsed()
+                
         thumbnail = {
             'imageUrl': ''
         }
@@ -129,6 +136,13 @@ def kakaoView_ConfirmUseEatplePass(kakaoPayload):
 
     order.orderStatusUpdate()
 
+    orderManager = UserOrderManager(user)
+    orderManager.orderPanddingCleanUp()
+
+    availableEatplePass = orderManager.availableOrderStatusUpdate()
+    ownEatplePass = availableEatplePass.filter(Q(delegate=None))
+    delegatedEatplePass = availableEatplePass.filter(~Q(delegate=None))
+    
     kakaoForm = KakaoForm()
 
     QUICKREPLIES_MAP = [
@@ -164,6 +178,7 @@ def kakaoView_ConfirmUseEatplePass(kakaoPayload):
         
         return JsonResponse(kakaoForm.GetForm())
     
+    
     if(order.status == ORDER_STATUS_PICKUP_WAIT):
         thumbnail = {
             'fixedRatio': 'true'
@@ -190,13 +205,24 @@ def kakaoView_ConfirmUseEatplePass(kakaoPayload):
                 }
             },
         ]
-        kakaoForm.BasicCard_Push(
-            '잇플패스를 사용하시겠습니까?',
-            '',
-            thumbnail,
-            buttons
-        )
-        kakaoForm.BasicCard_Add()
+        
+        if delegatedEatplePass:
+            kakaoForm.BasicCard_Push(
+                '총 {}개의 잇플패스를 사용하시겠습니까?'.format(delegatedEatplePass.count() + ownEatplePass.count()),
+                '부탁받은 잇플패스를 포함하여 전부 사용하게됩니다.',
+                thumbnail,
+                buttons
+            )
+            kakaoForm.BasicCard_Add()
+        else:
+            kakaoForm.BasicCard_Push(
+                '잇플패스를 사용하시겠습니까?',
+                '사용한 이후에는 취소/환불이 불가능합니다.',
+                thumbnail,
+                buttons
+            )
+            kakaoForm.BasicCard_Add()
+            
     elif(order.status == ORDER_STATUS_PICKUP_COMPLETED):
 
         kakaoForm.BasicCard_Push(
@@ -266,6 +292,7 @@ def kakaoView_OrderCancel(kakaoPayload):
             return errorView('Invalid Paratmer', '정상적이지 않은 주문번호이거나\n환불 진행 중 오류가 발생했습니다.')
 
         # Cancelled EatplePass Update
+        order.orderDelegateCancel()
         order.orderStatusUpdate()
 
         kakaoForm = KakaoForm()
@@ -283,7 +310,7 @@ def kakaoView_OrderCancel(kakaoPayload):
 
         kakaoForm.BasicCard_Push(
             '주문이 취소되었습니다.',
-            ' - 주문자: {}({})\n\n - 매장: {} \n - 메뉴: {}\n\n - 결제 금액: {}원\n - 픽업 시간: {}\n\n - 주문 상태: {}'.format(
+            ' - 주문자: {}({})\n\n - 매장: {} \n - 메뉴: {}\n\n - 총 금액: {}원\n - 픽업 시간: {}\n\n - 주문 상태: {}'.format(
                 order.ordersheet.user.nickname,
                 str(order.ordersheet.user.phone_number)[9:13],
                 order.store.name,
@@ -364,9 +391,14 @@ def kakaoView_EditPickupTime(kakaoPayload):
 
         return JsonResponse(kakaoForm.GetForm())
 
-    kakaoForm.SimpleText_Add(
-        '변경할 픽업시간을 설정해주세요.'
+    kakaoForm.BasicCard_Push(
+        '변경할 픽업시간을 선택해주세요.',
+        ' - 현재 픽업시간 : {}'.format(
+            dateByTimeZone(order.pickup_time).strftime('%p %-I시 %-M분').replace('AM', '오전').replace('PM', '오후'),),
+        {},
+        []
     )
+    kakaoForm.BasicCard_Add()
 
     PICKUP_TIME_QUICKREPLIES_MAP = []
 
@@ -375,19 +407,26 @@ def kakaoView_EditPickupTime(kakaoPayload):
     order = orderValidation(kakaoPayload)
 
     for pickupTime in pickupTimes:
-        dataActionExtra = {
-            KAKAO_PARAM_ORDER_ID: order.order_id,
-            KAKAO_PARAM_PICKUP_TIME: pickupTime.time.strftime('%H:%M'),
-            KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_EDIT_PICKUP_TIME
-        }
+        if(
+            order.pickupTimeToDateTime(str(pickupTime.time)).strftime('%p %-I시 %-M분') == 
+            dateByTimeZone(order.pickup_time).strftime('%p %-I시 %-M분')
+           ):
+            pass
+        else:
+            dataActionExtra = {
+                KAKAO_PARAM_ORDER_ID: order.order_id,
+                KAKAO_PARAM_PICKUP_TIME: pickupTime.time.strftime('%H:%M'),
+                KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_EDIT_PICKUP_TIME
+            }
 
-        kakaoForm.QuickReplies_Add(
-            'block',
-            pickupTime.time.strftime('%H:%M'),
-            '로딩중..',
-            KAKAO_BLOCK_USER_EDIT_PICKUP_TIME_CONFIRM,
-            dataActionExtra
-        )
+            kakaoForm.QuickReplies_Add(
+                'block',
+                pickupTime.time.strftime(
+                    '%p %-I시 %-M분').replace('AM', '오전').replace('PM', '오후'),
+                '로딩중..',
+                KAKAO_BLOCK_USER_EDIT_PICKUP_TIME_CONFIRM,
+                dataActionExtra
+            )
 
     return JsonResponse(kakaoForm.GetForm())
 
@@ -409,7 +448,7 @@ def kakaoView_ConfirmEditPickupTime(kakaoPayload):
     if(order == None and pickupTimeValidation == None):
         return errorView('Invalid Paratmer', '정상적이지 않은 주문번호이거나\n진행 중 오류가 발생했습니다.')
 
-    beforePickupTime = order.pickup_time
+    beforePickupTime = dateByTimeZone(order.pickup_time)
     order.pickup_time = order.pickupTimeToDateTime(pickup_time)
     order.save()
 
@@ -449,15 +488,11 @@ def kakaoView_ConfirmEditPickupTime(kakaoPayload):
 
     kakaoForm.BasicCard_Push(
         '픽업타임이 변경되었습니다.',
-        ' - 주문자: {}({})\n\n - 매장: {} \n - 메뉴: {}\n\n - 결제 금액: {}원\n - 픽업 시간: {}\n\n - 주문 상태: {}'.format(
-            order.ordersheet.user.nickname,
-            str(order.ordersheet.user.phone_number)[9:13],
-            order.store.name,
-            order.menu.name,
-            order.totalPrice,
+        '{}  ➔  {}'.format(
+            beforePickupTime.strftime(
+                '%p %-I시 %-M분').replace('AM', '오전').replace('PM', '오후'),
             order.pickup_time.strftime(
-                '%-m월 %-d일 %p %-I시 %-M분').replace('AM', '오전').replace('PM', '오후'),
-            ORDER_STATUS[order.status][1]
+                '%p %-I시 %-M분').replace('AM', '오전').replace('PM', '오후'),
         ),
         thumbnail, buttons
     )

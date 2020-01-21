@@ -70,6 +70,8 @@ urlpatterns += [
          views.GET_DelegateUserRegister),
     path('skill/user/orderShare/get_delegate_user_remove',
          views.GET_DelegateUserRemove),
+    path('skill/user/orderShare/get_delegate_user_remove_all',
+         views.GET_DelegateUserRemoveAll),
     path('skill/user/orderShare/get_delegate_user',
          views.GET_DelegateUser),
 ]

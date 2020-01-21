@@ -525,7 +525,7 @@ def kakaoView_EatplePassIssuance(kakaoPayload):
 
         kakaoForm.BasicCard_Push(
             '{}'.format(order.menu.name),
-            '주문번호: {}\n - 주문자: {}({})\n\n - 매장: {}\n - 주소: {}\n\n - 결제 금액: {}원\n\n - 픽업 시간: {}\n - 주문 상태: {}'.format(
+            '주문번호: {}\n - 주문자: {}({})\n\n - 매장: {}\n - 주소: {}\n\n - 총 금액: {}원\n\n - 픽업 시간: {}\n - 주문 상태: {}'.format(
                 order.order_id,
                 order.ordersheet.user.nickname,
                 str(order.ordersheet.user.phone_number)[9:13],
