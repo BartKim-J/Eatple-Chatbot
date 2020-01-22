@@ -203,7 +203,7 @@ STORE_AREA = [
 
     (STORE_AREA_B_1, '역삼 1호점'),
     (STORE_AREA_B_2, '역삼 2호점'),
-    
+
     (STORE_AREA_C_1, '강남역'),
     (STORE_AREA_C_2, '역삼역'),
     (STORE_AREA_C_3, '삼성역'),
@@ -295,18 +295,34 @@ LOCATION_DEFAULT_ADDR = '강남 사거리'
 LOCATION_DEFAULT_LAT = 37.497907
 LOCATION_DEFAULT_LNG = 127.027635
 
+
+# DEBUG MODE FLAG
+ORDERING_DEBUG_MODE = False
+ORDER_TIME_CHECK_DEBUG_MODE = False
+VALIDATION_DEBUG_MODE = False
+
 # Time Functions
-
-
 def dateNowByTimeZone():
     '''
     Returns an aware or naive datetime, depending on settings.USE_TZ.
     '''
-    if settings.USE_TZ:
-        tz = pytz.timezone(settings.TIME_ZONE)
-        return tz.localize(datetime.datetime.now())
+    # Time QA DEBUG
+    if(ORDER_TIME_CHECK_DEBUG_MODE):
+        DEBUG_DAYS = 22
+        DEBUG_HOUR = 9
+        DEBUG_MIN = 55
+
+        if settings.USE_TZ:
+            tz = pytz.timezone(settings.TIME_ZONE)
+            return tz.localize(datetime.datetime.now()).replace(day=DEBUG_DAYS, hour=DEBUG_HOUR, minute=DEBUG_MIN, second=0, microsecond=0)
+        else:
+            return datetime.datetime.now().replace(day=DEBUG_DAYS, hour=DEBUG_HOUR, minute=DEBUG_MIN, second=0, microsecond=0)
     else:
-        return datetime.datetime.now()
+        if settings.USE_TZ:
+            tz = pytz.timezone(settings.TIME_ZONE)
+            return tz.localize(datetime.datetime.now())
+        else:
+            return datetime.datetime.now()
 
 
 def dateByTimeZone(UTC):

@@ -7,10 +7,6 @@ from django.db import models
 from django.db.models import Q
 from django_mysql.models import Model
 
-
-ORDER_TIMECHECK_DEBUG_MODE = True
-PROMOTION_ORDER_TIMECHECK_DEBUG_MODE = False
-
 def iamportOrderValidation(order):
     iamport = Iamport(imp_key=IAMPORT_API_KEY,
                       imp_secret=IAMPORT_API_SECRET_KEY)
@@ -66,12 +62,6 @@ def promotionOrderUpdate(order):
     currentDate = dateNowByTimeZone()
     currentDateWithoutTime = currentDate.replace(
         hour=0, minute=0, second=0, microsecond=0)
-
-    # Time QA DEBUG
-    if(PROMOTION_ORDER_TIMECHECK_DEBUG_MODE):
-        currentDate = currentDate.replace(day=8, hour=10, minute=0, second=0, microsecond=0)
-        currentDateWithoutTime = currentDate.replace(hour=0, minute=0, second=0, microsecond=0)
-        print(currentDate)
     
     promotion_month = 12
     promotion_day = int(order.menu.name[0:2])
@@ -197,23 +187,16 @@ def orderUpdate(order):
     #Ordering State Update    
     menu = order.menu
 
-    orderDate = dateByTimeZone(order.order_date)
+    if(ORDER_TIME_CHECK_DEBUG_MODE):
+        orderDate = dateNowByTimeZone()
+    else:
+        orderDate = dateByTimeZone(order.order_date)
     orderDateWithoutTime = orderDate.replace(
         hour=0, minute=0, second=0, microsecond=0)
 
     currentDate = dateNowByTimeZone()
     currentDateWithoutTime = currentDate.replace(
         hour=0, minute=0, second=0, microsecond=0)
-
-    # Time QA DEBUG
-    if(ORDER_TIMECHECK_DEBUG_MODE):
-        orderDate = currentDate.replace(day=22, hour=10, minute=0, second=0, microsecond=0)
-        orderDateWithoutTime = orderDate.replace(hour=0, minute=0, second=0, microsecond=0)
-        print(orderDate)
-        
-        currentDate = currentDate.replace(day=22, hour=13, minute=15, second=0, microsecond=0)
-        currentDateWithoutTime = currentDate.replace(hour=0, minute=0, second=0, microsecond=0)
-        print(currentDate)
     
     YESTERDAY = currentDateWithoutTime + \
         datetime.timedelta(days=-1)  # Yesterday start
@@ -223,10 +206,6 @@ def orderUpdate(order):
 
     PICKUP_DAY = dateByTimeZone(order.pickup_time).replace(hour=0, minute=0, second=0, microsecond=0)
     PICKUP_YESTER_DAY = PICKUP_DAY + datetime.timedelta(days=-1)
-    
-    # Time QA DEBUG
-    if(ORDER_TIMECHECK_DEBUG_MODE):
-        PICKUP_DAY = TODAY
 
     # Prev Lunch Order Edit Time 16:30 ~ 시:25(~ 10:30)
     prevlunchOrderEditTimeStart = currentDateWithoutTime + datetime.timedelta(hours=16, minutes=30, days=-1)
@@ -243,9 +222,9 @@ def orderUpdate(order):
     nextlunchOrderEditTimeEnd = currentDateWithoutTime + datetime.timedelta(hours=9, minutes=30, days=1)
     nextlunchOrderTimeEnd = currentDateWithoutTime + datetime.timedelta(hours=10, minutes=30, days=1)
 
-    # Lunch Order Pickup Time (10:30 ~)11:30 ~ 14:00
+    # Lunch Order Pickup Time (10:30 ~)11:30 ~ 15:00
     lunchOrderPickupTimeStart = currentDateWithoutTime + datetime.timedelta(hours=11, minutes=30)
-    lunchOrderPickupTimeEnd = currentDateWithoutTime + datetime.timedelta(hours=14, minutes=00)
+    lunchOrderPickupTimeEnd = currentDateWithoutTime + datetime.timedelta(hours=15, minutes=00)
 
     # Dinner Order Pickup Time (16:30 ~)17:30 ~ 21:00
     dinnerOrderPickupTimeStart = currentDateWithoutTime + datetime.timedelta(hours=17, minutes=30)
@@ -442,7 +421,7 @@ class Order(models.Model):
     def pickupTimeToDateTime(pickup_time):
         pickup_time = [x.strip() for x in pickup_time.split(':')]
 
-        currentTime = dateByTimeZone(timezone.now())
+        currentTime = dateNowByTimeZone()
         datetime_pickup_time = currentTime.replace(
                                     hour=int(pickup_time[0]), 
                                     minute=int(pickup_time[1]),

@@ -22,8 +22,6 @@ from eatple_app.views import *
 # STATIC CONFIG
 MENU_LIST_LENGTH = 20
 
-ORDER_DEBUG_MODE = False
-
 # # # # # # # # # # # # # # # # # # # # # # # # #
 #
 # Static View
@@ -425,7 +423,7 @@ def kakaoView_OrderPayment(kakaoPayload):
         kakaoForm.ComerceCard_Add() 
     else:
         
-        if(ORDER_DEBUG_MODE == True):
+        if(ORDERING_DEBUG_MODE):
             server_url = 'http://localhost:3000'
         else:
             server_url = 'https://www.eatple.com'

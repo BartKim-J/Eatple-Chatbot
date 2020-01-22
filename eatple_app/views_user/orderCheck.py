@@ -90,16 +90,6 @@ def kakaoView_EatplePass(kakaoPayload):
 
             if(order.delegate != None):
                 buttons = [
-                    {
-                        'action': 'block',
-                        'label': '부탁하기 취소',
-                        'messageText': '로딩중..',
-                        'blockId': KAKAO_BLOCK_USER_ORDER_SHARING_CANCEL,
-                        'extra': {
-                            KAKAO_PARAM_ORDER_ID: order.order_id,
-                            KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_EATPLE_PASS
-                        }
-                    }
                 ]
             else:
                 buttons = [
@@ -125,7 +115,6 @@ def kakaoView_EatplePass(kakaoPayload):
                 order.status == ORDER_STATUS_ORDER_CONFIRMED or
                 order.status == ORDER_STATUS_PICKUP_PREPARE):
                 
-                
                 if(order.delegate == None):
                     if(delegatedEatplePass.count() > 0):
                         ORDER_LIST_QUICKREPLIES_MAP.append(
@@ -141,6 +130,19 @@ def kakaoView_EatplePass(kakaoPayload):
                             }
                         )
                     else:
+                        buttons.append(
+                            {
+                                'action': 'block',
+                                'label': '부탁하기 취소',
+                                'messageText': '로딩중..',
+                                'blockId': KAKAO_BLOCK_USER_ORDER_SHARING_CANCEL,
+                                'extra': {
+                                    KAKAO_PARAM_ORDER_ID: order.order_id,
+                                    KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_EATPLE_PASS
+                                }
+                            }
+                        )
+                        
                         if(order.status == ORDER_STATUS_ORDER_CONFIRM_WAIT or
                            order.status == ORDER_STATUS_ORDER_CONFIRMED):
                             ORDER_LIST_QUICKREPLIES_MAP.append(

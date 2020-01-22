@@ -145,6 +145,7 @@ def kakaoView_GetDelegateUser(kakaoPayload):
     orderManager.orderPaidCheck()
 
     delegateUserOrder = orderManager.availableOrderStatusUpdate().first();
+    delegateUserOrder.orderStatusUpdate()
     
     kakaoForm = KakaoForm()
     
@@ -191,6 +192,14 @@ def kakaoView_GetDelegateUser(kakaoPayload):
                     }
                 },
             ]
+        )
+        kakaoForm.BasicCard_Add()
+    elif(delegateUserOrder.delegate != None):
+        kakaoForm.BasicCard_Push(
+            '다른사람에게 부탁하기를 한 사람에게는 부탁 할 수 없습니다.',
+            '상대방의 주문을 확인해주세요.',
+            {},
+            []
         )
         kakaoForm.BasicCard_Add()
     else:

@@ -444,6 +444,16 @@ def kakaoView_EditPickupTime(kakaoPayload):
                 dataActionExtra
             )
 
+    kakaoForm.QuickReplies_Add(
+        'block',
+        '돌아가기',
+        '로딩중..',
+        KAKAO_BLOCK_USER_EATPLE_PASS,
+        {
+            KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_EDIT_PICKUP_TIME_CONFIRM
+        }        
+    )
+
     return JsonResponse(kakaoForm.GetForm())
 
 

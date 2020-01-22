@@ -37,7 +37,7 @@ class OrderRecordSheet(models.Model):
     class Meta:
         verbose_name = "주문 레코드 시트"
         verbose_name_plural = "주문 레코드 시트"
-        
+
         ordering = ['-update_date']
 
     user = models.ForeignKey(
@@ -55,7 +55,7 @@ class OrderRecordSheet(models.Model):
     paid = models.BooleanField(default=False)
 
     status = models.BooleanField(default=False)
-    
+
     update_date = models.DateTimeField(auto_now=True)
     created_date = models.DateTimeField(auto_now_add=True)
 
@@ -79,14 +79,19 @@ class OrderRecordSheet(models.Model):
 
     def timeoutValidation(self):
         timeOut = False
-        latest_date = dateByTimeZone(self.update_date)
+
+        if(ORDER_TIME_CHECK_DEBUG_MODE):
+            latest_date = dateNowByTimeZone()
+        else:
+            latest_date = dateByTimeZone(self.update_date)
+
         current_date = dateNowByTimeZone()
 
         if (latest_date + datetime.timedelta(minutes=30) < current_date):
             timeOut = True
-            
+
         return timeOut
-    
+
     # Methods
     def __str__(self):
         return '{}'.format(self.user)
