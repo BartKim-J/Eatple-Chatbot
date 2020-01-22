@@ -691,9 +691,14 @@ def kakaoView_EatplePassIssuance(kakaoPayload):
                 }
             },
             {
-                'action': 'webLink',
-                'label': '위치보기',
-                'webLinkUrl': kakaoMapUrl
+                'action': 'block',
+                'label': '부탁하기',
+                'messageText': '로딩중..',
+                'blockId': KAKAO_BLOCK_USER_ORDER_SHARING_START,
+                'extra': {
+                    KAKAO_PARAM_ORDER_ID: order.order_id,
+                    KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_EATPLE_PASS
+                }
             },
             {
                 'action': 'block',
@@ -735,7 +740,13 @@ def kakaoView_EatplePassIssuance(kakaoPayload):
             '{}'.format(order.store.addr),
             '',
             {},
-            []
+            [
+                {
+                    'action': 'webLink',
+                    'label': '위치보기',
+                    'webLinkUrl': kakaoMapUrl
+                },
+            ]
         )
         kakaoForm.BasicCard_Add()
         
@@ -754,16 +765,6 @@ def kakaoView_EatplePassIssuance(kakaoPayload):
                 'label': '주문취소',
                 'messageText': '로딩중..',
                 'blockId': KAKAO_BLOCK_USER_POST_ORDER_CANCEL,
-                'extra': {
-                    KAKAO_PARAM_ORDER_ID: order.order_id,
-                    KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_EATPLE_PASS
-                }
-            },
-            {
-                'action': 'block',
-                'label': '부탁하기',
-                'messageText': '로딩중..',
-                'blockId': KAKAO_BLOCK_USER_ORDER_SHARING_START,
                 'extra': {
                     KAKAO_PARAM_ORDER_ID: order.order_id,
                     KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_EATPLE_PASS

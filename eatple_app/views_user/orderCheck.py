@@ -103,11 +103,6 @@ def kakaoView_EatplePass(kakaoPayload):
                             KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_EATPLE_PASS
                         }
                     },
-                    {
-                        'action': 'webLink',
-                        'label': '위치보기',
-                        'webLinkUrl': kakaoMapUrl
-                    },
                 ]
 
             # CAN EDIT COUPONS
@@ -133,9 +128,9 @@ def kakaoView_EatplePass(kakaoPayload):
                         buttons.append(
                             {
                                 'action': 'block',
-                                'label': '부탁하기 취소',
+                                'label': '부탁하기',
                                 'messageText': '로딩중..',
-                                'blockId': KAKAO_BLOCK_USER_ORDER_SHARING_CANCEL,
+                                'blockId': KAKAO_BLOCK_USER_ORDER_SHARING_START,
                                 'extra': {
                                     KAKAO_PARAM_ORDER_ID: order.order_id,
                                     KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_EATPLE_PASS
@@ -158,18 +153,7 @@ def kakaoView_EatplePass(kakaoPayload):
                                 }
                             )
                             
-                        ORDER_LIST_QUICKREPLIES_MAP.append(
-                            {
-                                'action': 'block',
-                                'label': '부탁하기',
-                                'messageText': '로딩중..',
-                                'blockId': KAKAO_BLOCK_USER_ORDER_SHARING_START,
-                                'extra': {
-                                    KAKAO_PARAM_ORDER_ID: order.order_id,
-                                    KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_EATPLE_PASS
-                                }
-                            }
-                        )
+
                     # @PROMOTION
                     if(order.type != ORDER_TYPE_PROMOTION):
                         if(delegatedEatplePass.count() == 0):
@@ -185,6 +169,19 @@ def kakaoView_EatplePass(kakaoPayload):
                                     }
                                 }
                             )
+                else:
+                    buttons.append(
+                        {
+                            'action': 'block',
+                            'label': '부탁하기 취소',
+                            'messageText': '로딩중..',
+                            'blockId': KAKAO_BLOCK_USER_ORDER_SHARING_CANCEL,
+                            'extra': {
+                                KAKAO_PARAM_ORDER_ID: order.order_id,
+                                KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_EATPLE_PASS
+                            }
+                        }
+                    )
             else:
                 errorView('Invalid Case on order status check by now time.')
 
@@ -245,7 +242,13 @@ def kakaoView_EatplePass(kakaoPayload):
             '{}'.format(order.store.addr),
             '',
             {},
-            []
+            [
+                {
+                    'action': 'webLink',
+                    'label': '위치보기',
+                    'webLinkUrl': kakaoMapUrl
+                }
+            ]
         )
         kakaoForm.BasicCard_Add()
         
