@@ -23,7 +23,9 @@ from phonenumber_field.modelfields import PhoneNumberField
 from django_admin_listfilter_dropdown.filters import DropdownFilter, RelatedDropdownFilter, ChoiceDropdownFilter
 
 from rangefilter.filter import DateRangeFilter, DateTimeRangeFilter
+
 from import_export.admin import ExportActionModelAdmin, ImportExportMixin, ImportMixin
+from import_export.fields import Field
 from import_export import resources
 
 from mapwidgets.widgets import GooglePointFieldWidget, GoogleStaticMapWidget

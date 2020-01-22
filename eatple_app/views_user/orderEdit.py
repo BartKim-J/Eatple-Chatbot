@@ -42,8 +42,10 @@ def kakaoView_UseEatplePass(kakaoPayload):
         return errorView('Invalid Block Access', '정상적이지 않은 경로거나, 잘못된 계정입니다.')
 
     order = orderValidation(kakaoPayload)
-    if(order == None or user == None):
+    if(order == None):
         return errorView('Invalid Paratmer', '정상적이지 않은 주문번호이거나\n진행 중 오류가 발생했습니다.')
+    else:
+        order.orderStatusUpdate()
 
     orderManager = UserOrderManager(user)
 
@@ -131,10 +133,10 @@ def kakaoView_ConfirmUseEatplePass(kakaoPayload):
         return errorView('Invalid Block Access', '정상적이지 않은 경로거나, 잘못된 계정입니다.')
 
     order = orderValidation(kakaoPayload)
-    if(order == None or user == None):
+    if(order == None):
         return errorView('Invalid Paratmer', '정상적이지 않은 주문번호이거나\n진행 중 오류가 발생했습니다.')
-
-    order.orderStatusUpdate()
+    else:
+        order.orderStatusUpdate()
 
     orderManager = UserOrderManager(user)
     orderManager.orderPanddingCleanUp()
@@ -259,15 +261,17 @@ def kakaoView_OrderCancel(kakaoPayload):
     order = orderValidation(kakaoPayload)
     if(order == None):
         return errorView('Invalid Paratmer', '정상적이지 않은 주문번호이거나\n진행 중 오류가 발생했습니다.')
+    else:
+        order.orderStatusUpdate()
 
-    ORDER_LIST_QUICKREPLIES_MAP = [
+    QUICKREPLIES_MAP = [
         {
             'action': 'block',
             'label': '새로고침',
             'messageText': '로딩중..',
-            'blockId': KAKAO_BLOCK_USER_ORDER_DETAILS,
+            'blockId': KAKAO_BLOCK_USER_EATPLE_PASS,
             'extra': {
-                KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_ORDER_DETAILS
+                KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_EATPLE_PASS
             }
         },
         {
@@ -276,14 +280,14 @@ def kakaoView_OrderCancel(kakaoPayload):
             'messageText': '로딩중..',
             'blockId': KAKAO_BLOCK_USER_HOME,
             'extra': {
-                KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_ORDER_DETAILS
+                KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_EATPLE_PASS
             }
         },
     ]
 
-    # EatplePass Status Update
-    order.orderStatusUpdate()
 
+    kakaoForm = KakaoForm()
+    
     if (order.status == ORDER_STATUS_ORDER_CONFIRM_WAIT or
             order.status == ORDER_STATUS_ORDER_CONFIRMED):
 
@@ -294,8 +298,6 @@ def kakaoView_OrderCancel(kakaoPayload):
         # Cancelled EatplePass Update
         order.orderDelegateCancel()
         order.orderStatusUpdate()
-
-        kakaoForm = KakaoForm()
 
         thumbnail = {
             'imageUrl': ''
@@ -324,24 +326,22 @@ def kakaoView_OrderCancel(kakaoPayload):
         )
         kakaoForm.BasicCard_Add()
 
-        QUICKREPLIES_MAP = [
-            {
-                'action': 'block',
-                'label': '홈으로 돌아가기',
-                'messageText': '로딩중..',
-                'blockId': KAKAO_BLOCK_USER_HOME,
-                'extra': {
-                    KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_EDIT_PICKUP_TIME
-                }
-            },
-        ]
-
         kakaoForm.QuickReplies_AddWithMap(QUICKREPLIES_MAP)
 
         return JsonResponse(kakaoForm.GetForm())
 
     else:
-        return errorView('Invalid Paratmer', '정상적이지 않은 주문번호이거나\n환불 진행 중 오류가 발생했습니다.')
+        kakaoForm.BasicCard_Push(
+            '현재는 주문을 취소 할 수 없는 시간입니다.',
+            '환불/취소 가능 시간 : 픽업 당일 오전 10시 30분까지',
+            {},
+            []
+        )
+        kakaoForm.BasicCard_Add()
+
+        kakaoForm.QuickReplies_AddWithMap(QUICKREPLIES_MAP)
+
+        return JsonResponse(kakaoForm.GetForm())
 
 
 def kakaoView_EditPickupTime(kakaoPayload):
@@ -358,7 +358,9 @@ def kakaoView_EditPickupTime(kakaoPayload):
     order = orderValidation(kakaoPayload)
     if(order == None):
         return errorView('Invalid Paratmer', '정상적이지 않은 주문번호이거나\n진행 중 오류가 발생했습니다.')
-
+    else:
+        order.orderStatusUpdate()
+        
     menu = order.menu
     store = order.store
 
@@ -382,6 +384,20 @@ def kakaoView_EditPickupTime(kakaoPayload):
         kakaoForm.BasicCard_Push(
             '이 잇플 패스는 이미 취소된 잇플 패스입니다.',
             '다시 주문을 확인해주세요.',
+            {}, 
+            []
+        )
+        kakaoForm.BasicCard_Add()
+
+        kakaoForm.QuickReplies_AddWithMap(QUICKREPLIES_MAP)
+
+        return JsonResponse(kakaoForm.GetForm())
+
+    if (order.status != ORDER_STATUS_ORDER_CONFIRM_WAIT and
+        order.status != ORDER_STATUS_ORDER_CONFIRMED):
+        kakaoForm.BasicCard_Push(
+            '현재는 픽업시간을 변경 할 수 없는 시간입니다.',
+            '변경 가능 시간 : 픽업 당일 오전 10시 30분까지',
             {}, 
             []
         )
@@ -443,10 +459,12 @@ def kakaoView_ConfirmEditPickupTime(kakaoPayload):
         return errorView('Invalid Block Access', '정상적이지 않은 경로거나, 잘못된 계정입니다.')
 
     order = orderValidation(kakaoPayload)
-    pickup_time = pickupTimeValidation(kakaoPayload)
-
     if(order == None and pickupTimeValidation == None):
         return errorView('Invalid Paratmer', '정상적이지 않은 주문번호이거나\n진행 중 오류가 발생했습니다.')
+    else:
+        order.orderStatusUpdate()
+    
+    pickup_time = pickupTimeValidation(kakaoPayload)
 
     beforePickupTime = dateByTimeZone(order.pickup_time)
     order.pickup_time = order.pickupTimeToDateTime(pickup_time)
@@ -471,6 +489,20 @@ def kakaoView_ConfirmEditPickupTime(kakaoPayload):
             '이 잇플패스는 이미 취소된 잇플패스입니다.',
             '다시 주문을 확인해주세요.',
             {}, []
+        )
+        kakaoForm.BasicCard_Add()
+
+        kakaoForm.QuickReplies_AddWithMap(QUICKREPLIES_MAP)
+
+        return JsonResponse(kakaoForm.GetForm())
+
+    if (order.status != ORDER_STATUS_ORDER_CONFIRM_WAIT and
+            order.status != ORDER_STATUS_ORDER_CONFIRMED):
+        kakaoForm.BasicCard_Push(
+            '현재는 픽업시간을 변경 할 수 없는 시간입니다.',
+            '변경 가능 시간 : 픽업 당일 오전 10시 30분까지',
+            {}, 
+            []
         )
         kakaoForm.BasicCard_Add()
 

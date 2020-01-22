@@ -14,37 +14,47 @@ from django.utils.translation import ugettext_lazy as _
 from django.utils.safestring import mark_safe
 
 class OrderResource(resources.ModelResource):
-    def store_name(self,obj):
-        return obj.store.name
-    
-    def menu_name(self, obj):
-        return obj.menu.name
-    
-    def b2b_name(self, obj):
+
+    def dehydrate_b2b_name(self, obj):
         if(obj.ordersheet.user.company != None):
             return obj.ordersheet.user.company.name
         else:
             return '일반'
     
+    def dehydrate_phone_number(self, obj):
+        if(obj.ordersheet.user.phone_number != None):
+            return obj.ordersheet.user.phone_number.as_national
+        else:
+            return ''
+
+    def dehydrate_type(self, obj):
+        return dict(ORDER_TYPE)[obj.type]
+    
+    def dehydrate_payment_status(self, obj):
+         return dict(IAMPORT_ORDER_STATUS)[obj.payment_status]
+
+    def dehydrate_order_date(self, obj):
+        return obj.order_date.strftime(
+                    '%Y년 %-m월 %-d일 %-H시 %-M분 %-S초')
+
+    def dehydrate_payment_date(self, obj):
+        return obj.payment_date.strftime(
+                    '%Y년 %-m월 %-d일 %-H시 %-M분 %-S초')
+
+    order_id = Field(attribute='order_id', column_name='주문번호')
+    store = Field(attribute='store__name', column_name='상점')
+    menu = Field(attribute='menu__name', column_name='메뉴')
+    type = Field(column_name='주문 타입')
+    b2b_name = Field(column_name='B2B')
+    payment_status = Field(column_name='결제 상태')
+    totalPrice = Field(attribute='totalPrice', column_name='총 결제금액')
+    phone_number = Field(column_name='전화번호')
+    order_date = Field(column_name='주문 시간')
+    payment_date = Field(column_name='결제 완료 시간')
+    
     class Meta:
         model = Order
-        fields = (
-            'order_id',
-            'order_date',
-            'payment_date',
-            'totalPrice',
-            'type'
-            'payment_status',
-            'status',
-            'store_name',
-            'store__name',
-            'store__store_id',
-            'menu_name',
-            'menu__name',
-            'menu__menu_id',
-            'ordersheet__user__phone_number',
-            'b2b_name',
-        )
+        exclude = ('id', 'ordersheet', 'count', 'status', 'delegate', 'update_date', 'pickup_time')
 
 
 class OrderAdmin(ImportExportMixin, admin.ModelAdmin):

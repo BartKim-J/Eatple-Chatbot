@@ -63,15 +63,37 @@ def kakaoView_DelegateUserRegister(kakaoPayload):
         return errorView('Invalid Block Access', '정상적이지 않은 경로거나, 잘못된 계정입니다.')
 
     order = orderValidation(kakaoPayload)
-
     if(order == None):
         return errorView('Invalid Block Access', '정상적이지 않은 경로거나, 오류가 발생했습니다.\n홈으로 돌아가 다시 주문해주세요!')        
-        
-
-    if (order.status != ORDER_STATUS_ORDER_CONFIRM_WAIT and order.status != ORDER_STATUS_ORDER_CONFIRMED):
-        return errorView('Invalid Block Access', '부탁하기 가능 시간대가 아닙니다.')        
+    else:
+        order.orderStatusUpdate()
         
     kakaoForm = KakaoForm()
+
+    QUICKREPLIES_MAP = [
+        {
+            'action': 'block',
+            'label': '홈으로 돌아가기',
+            'messageText': '로딩중..',
+            'blockId': KAKAO_BLOCK_USER_HOME,
+            'extra': {}
+        },
+    ]
+
+    if (order.status != ORDER_STATUS_ORDER_CONFIRM_WAIT and
+        order.status != ORDER_STATUS_ORDER_CONFIRMED and
+        order.status != ORDER_STATUS_PICKUP_PREPARE):
+        kakaoForm.BasicCard_Push(
+            '현재는 부탁하기가 불가능한 시간입니다.',
+            '부탁 가능 시간 : 픽업 시간 이전까지',
+            {},
+            []
+        )
+        kakaoForm.BasicCard_Add()
+ 
+        kakaoForm.QuickReplies_AddWithMap(QUICKREPLIES_MAP)
+
+        return JsonResponse(kakaoForm.GetForm())
 
     buttons = [
         {
@@ -110,19 +132,19 @@ def kakaoView_GetDelegateUser(kakaoPayload):
     order = orderValidation(kakaoPayload)
     if(order == None):
         return errorView('Invalid Block Access', '정상적이지 않은 경로거나, 잘못된 주문번호입니다.\n홈으로 돌아가 다시 주문해주세요!')
-        
+    else:
+        order.orderStatusUpdate()
+    
     kakaoParam_phone_number = kakaoPayload.dataActionParams['phone_number']['origin']
     
     phone_number = '+8210{}'.format(kakaoParam_phone_number)
     
     delegateUser = getDelegateUser(phone_number)
-    print(delegateUser)
     
     orderManager = UserOrderManager(delegateUser)
     orderManager.orderPaidCheck()
 
     delegateUserOrder = orderManager.availableOrderStatusUpdate().first();
-    print(delegateUserOrder)
     
     kakaoForm = KakaoForm()
     
@@ -135,6 +157,22 @@ def kakaoView_GetDelegateUser(kakaoPayload):
             'extra': {}
         },
     ]
+
+    if (order.status != ORDER_STATUS_ORDER_CONFIRM_WAIT and
+        order.status != ORDER_STATUS_ORDER_CONFIRMED and
+        order.status != ORDER_STATUS_PICKUP_PREPARE):
+        
+        kakaoForm.BasicCard_Push(
+            '현재는 부탁하기 취소가 불가능한 시간입니다.',
+            '부탁 가능 시간 : 픽업 시간 이전까지',
+            {},
+            []
+        )
+        kakaoForm.BasicCard_Add()
+ 
+        kakaoForm.QuickReplies_AddWithMap(QUICKREPLIES_MAP)
+
+        return JsonResponse(kakaoForm.GetForm())
 
     if(delegateUser == user):
         kakaoForm.BasicCard_Push(
@@ -231,8 +269,8 @@ def kakaoView_DelegateUserRemove(kakaoPayload):
     order = orderValidation(kakaoPayload)
     if(order == None):
         return errorView('Invalid Block Access', '정상적이지 않은 경로거나, 잘못된 주문번호입니다.\n홈으로 돌아가 다시 주문해주세요!')
-
-    order.orderDelegateCancel()
+    else:
+        order.orderStatusUpdate()
     
     kakaoForm = KakaoForm()
 
@@ -246,6 +284,34 @@ def kakaoView_DelegateUserRemove(kakaoPayload):
         },
     ]
     
+    QUICKREPLIES_MAP = [
+        {
+            'action': 'block',
+            'label': '홈으로 돌아가기',
+            'messageText': '로딩중..',
+            'blockId': KAKAO_BLOCK_USER_HOME,
+            'extra': {}
+        },
+    ]
+    
+    if (order.status != ORDER_STATUS_ORDER_CONFIRM_WAIT and
+        order.status != ORDER_STATUS_ORDER_CONFIRMED and
+            order.status != ORDER_STATUS_PICKUP_PREPARE):
+
+        kakaoForm.BasicCard_Push(
+            '현재는 부탁하기 취소가 불가능한 시간입니다.',
+            '부탁 가능 시간 : 픽업 시간 이전까지',
+            {},
+            []
+        )
+        kakaoForm.BasicCard_Add()
+
+        kakaoForm.QuickReplies_AddWithMap(QUICKREPLIES_MAP)
+
+        return JsonResponse(kakaoForm.GetForm())
+    else:
+        order.orderDelegateCancel()
+        
     if(order.delegate == None):
         kakaoForm.BasicCard_Push(
             '부탁하기를 취소 했습니다.',
@@ -291,7 +357,9 @@ def kakaoView_DelegateUserRemoveAll(kakaoPayload):
     order = orderValidation(kakaoPayload)
     if(order == None):
         return errorView('Invalid Block Access', '정상적이지 않은 경로거나, 잘못된 주문번호입니다.\n홈으로 돌아가 다시 주문해주세요!')
-
+    else:
+        order.orderStatusUpdate()
+    
     orderManager = UserOrderManager(user)
     orderManager.orderPanddingCleanUp()
 
@@ -320,6 +388,22 @@ def kakaoView_DelegateUserRemoveAll(kakaoPayload):
             'extra': {}
         },
     ]
+
+    if (order.status != ORDER_STATUS_ORDER_CONFIRM_WAIT and
+        order.status != ORDER_STATUS_ORDER_CONFIRMED and
+        order.status != ORDER_STATUS_PICKUP_PREPARE):
+        
+        kakaoForm.BasicCard_Push(
+            '현재는 부탁하기 취소가 불가능한 시간입니다.',
+            '부탁 가능 시간 : 픽업 시간 이전까지',
+            {},
+            []
+        )
+        kakaoForm.BasicCard_Add()
+ 
+        kakaoForm.QuickReplies_AddWithMap(QUICKREPLIES_MAP)
+
+        return JsonResponse(kakaoForm.GetForm())
 
     if delegatedEatplePass:
         for order in delegatedEatplePass:

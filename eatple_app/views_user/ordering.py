@@ -394,7 +394,8 @@ def kakaoView_OrderPayment(kakaoPayload):
     ]
 
     profile = {
-        'nickname': '{name} - [ 픽업 : {pickup_time} ]'.format(name=menu.name, pickup_time=pickup_time),
+        'nickname': '{name} - [ 픽업 : {pickup_time} ]'.format(name=order.menu.name, pickup_time=order.pickup_time.strftime(
+            '%p %-I시 %-M분').replace('AM', '오전').replace('PM', '오후'),),
         'imageUrl': '{}{}'.format(HOST_URL, store.logoImgURL()),
     }
 
@@ -696,16 +697,33 @@ def kakaoView_EatplePassIssuance(kakaoPayload):
                 'label': '위치보기',
                 'webLinkUrl': kakaoMapUrl
             },
+            {
+                'action': 'block',
+                'label': '픽업시간 변경',
+                'messageText': '로딩중..',
+                'blockId': KAKAO_BLOCK_USER_EDIT_PICKUP_TIME,
+                'extra': {
+                    KAKAO_PARAM_ORDER_ID: order.order_id,
+                    KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_EATPLE_PASS
+                }
+            }
         ]
 
         kakaoForm.BasicCard_Push(
+            '잇플패스 발급이 완료되었습니다.',
+            '',
+            {},
+            []
+        )
+        kakaoForm.BasicCard_Add()
+        
+        kakaoForm.BasicCard_Push(
             '{}'.format(order.menu.name),
-            '주문번호: {}({})\n - 주문자: {}\n\n - 매장: {}\n - 주소: {}\n\n - 총 금액: {}원\n\n - 픽업 시간: {}'.format(
+            '주문번호: {}({})\n - 주문자: {}\n\n - 매장: {}\n\n - 총 금액: {}원\n\n - 픽업 시간: {}'.format(
                 order.ordersheet.user.nickname,
                 order.order_id,
                 str(order.ordersheet.user.phone_number)[9:13],
                 order.store.name,
-                order.store.addr,
                 order.totalPrice,
                 dateByTimeZone(order.pickup_time).strftime(
                     '%-m월 %-d일 %p %-I시 %-M분').replace('AM', '오전').replace('PM', '오후'),
@@ -715,6 +733,14 @@ def kakaoView_EatplePassIssuance(kakaoPayload):
         )
         kakaoForm.BasicCard_Add()
 
+        kakaoForm.BasicCard_Push(
+            '{}'.format(order.store.addr),
+            '',
+            {},
+            []
+        )
+        kakaoForm.BasicCard_Add()
+        
         QUICKREPLIES_MAP = [
             {
                 'action': 'block',
@@ -725,6 +751,26 @@ def kakaoView_EatplePassIssuance(kakaoPayload):
                     KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_SET_ORDER_SHEET
                 }
             },
+            {
+                'action': 'block',
+                'label': '주문취소',
+                'messageText': '로딩중..',
+                'blockId': KAKAO_BLOCK_USER_POST_ORDER_CANCEL,
+                'extra': {
+                    KAKAO_PARAM_ORDER_ID: order.order_id,
+                    KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_EATPLE_PASS
+                }
+            },
+            {
+                'action': 'block',
+                'label': '부탁하기',
+                'messageText': '로딩중..',
+                'blockId': KAKAO_BLOCK_USER_ORDER_SHARING_START,
+                'extra': {
+                    KAKAO_PARAM_ORDER_ID: order.order_id,
+                    KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_EATPLE_PASS
+                }
+            }
         ]
 
         kakaoForm.QuickReplies_AddWithMap(QUICKREPLIES_MAP)

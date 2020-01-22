@@ -19,7 +19,7 @@ from eatple_app.views_system.debugger import *
 
 from eatple_app.views import *
 
-VALIDATION_DEBUG_MODE = False
+VALIDATION_DEBUG_MODE = True
 
 DEFAULT_QUICKREPLIES_MAP = [
     {
