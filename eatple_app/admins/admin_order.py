@@ -13,8 +13,9 @@ from django.core import validators
 from django.utils.translation import ugettext_lazy as _
 from django.utils.safestring import mark_safe
 
-class OrderResource(resources.ModelResource):
+from django.contrib.admin import SimpleListFilter
 
+class OrderResource(resources.ModelResource):
     def dehydrate_b2b_name(self, obj):
         if(obj.ordersheet.user.company != None):
             return obj.ordersheet.user.company.name
@@ -56,7 +57,6 @@ class OrderResource(resources.ModelResource):
         model = Order
         exclude = ('id', 'ordersheet', 'count', 'status', 'delegate', 'update_date', 'pickup_time')
 
-
 class OrderAdmin(ImportExportMixin, admin.ModelAdmin):
     resource_class = OrderResource
     list_per_page = 50
@@ -93,12 +93,11 @@ class OrderAdmin(ImportExportMixin, admin.ModelAdmin):
     )
     
     list_filter = (
-        ('order_date', DateRangeFilter), 
         ('payment_date', DateRangeFilter),
         ('store',  RelatedDropdownFilter),
-        ('menu', RelatedDropdownFilter),
         ('payment_status', ChoiceDropdownFilter),
         ('status', ChoiceDropdownFilter),
+        ('ordersheet__user__company', RelatedDropdownFilter),
         ('type', ChoiceDropdownFilter),
         ('ordersheet__user__type', ChoiceDropdownFilter),
     )

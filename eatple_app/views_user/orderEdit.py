@@ -71,7 +71,7 @@ def kakaoView_UseEatplePass(kakaoPayload):
         
         if delegatedEatplePass:
             for delegatedOrder in delegatedEatplePass:
-                delegatedOrder = order.orderUsed()
+                delegatedOrder = delegatedOrder.orderUsed()
                 
         thumbnail = {
             'imageUrl': ''
