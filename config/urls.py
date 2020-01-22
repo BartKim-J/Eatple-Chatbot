@@ -66,8 +66,6 @@ urlpatterns += [
          views.SET_ConfirmEditPickupTime),
     
     # Order Share 
-    path('skill/user/orderShare/get_delegate_user_register',
-         views.GET_DelegateUserRegister),
     path('skill/user/orderShare/get_delegate_user_remove',
          views.GET_DelegateUserRemove),
     path('skill/user/orderShare/get_delegate_user_remove_all',

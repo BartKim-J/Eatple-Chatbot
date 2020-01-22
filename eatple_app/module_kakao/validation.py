@@ -41,7 +41,7 @@ def isB2BUser(user):
     try:
         B2BUser = UserB2B.objects.get(phone_number=user.phone_number)
         
-        if(user.type != USER_TYPE_B2B or user.company == None):
+        if(user.type != USER_TYPE_B2B or user.company == None or (user.company != Company.objects.get(id=int(B2BUser.company.id)))):
             user.company = Company.objects.get(id=int(B2BUser.company.id))
             user.type = USER_TYPE_B2B
             user.save()
@@ -98,7 +98,6 @@ def sellingTimeCheck():
         return None
 
 def weekendTimeCheck():
-
     currentDate = dateNowByTimeZone()
     currentDateWithoutTime = currentDate.replace(
         hour=0, minute=0, second=0, microsecond=0)

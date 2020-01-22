@@ -19,7 +19,6 @@ from eatple_app.views_user.orderEdit import POST_UseEatplePass
 from eatple_app.views_user.orderEdit import POST_OrderCancel
 
 ## Order Share
-from eatple_app.views_user.orderShare import GET_DelegateUserRegister
 from eatple_app.views_user.orderShare import GET_DelegateUserRemove
 from eatple_app.views_user.orderShare import GET_DelegateUserRemoveAll
 from eatple_app.views_user.orderShare import GET_DelegateUser
