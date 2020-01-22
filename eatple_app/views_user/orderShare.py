@@ -109,6 +109,9 @@ def kakaoView_GetDelegateUser(kakaoPayload):
                 ]
             )
             kakaoForm.BasicCard_Add()
+            
+            kakaoForm.QuickReplies_AddWithMap(QUICKREPLIES_MAP)
+            
             return JsonResponse(kakaoForm.GetForm())
         
     delegateUser = getDelegateUser(phone_number)
