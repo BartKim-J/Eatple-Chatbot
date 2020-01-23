@@ -1,9 +1,3 @@
-# Define
-from eatple_app.define import *
-
-# Models
-from eatple_app.models import *
-
 from eatple_app.views_slack.slack_define import * 
 
 def eatple_total_status():

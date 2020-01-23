@@ -16,13 +16,25 @@ from django.utils.safestring import mark_safe
 from django.contrib.admin import SimpleListFilter
 
 class UserB2BResource(resources.ModelResource):
+    def dehydrate_company(self, obj):
+        if(obj.company != None):
+            return obj.company.name
+        else:
+            return '일반'
+
+    def dehydrate_phone_number(self, obj):
+        if(obj.phone_number != None):
+            return obj.phone_number.as_national
+        else:
+            return ''
+    
+    company = Field(column_name='소속 회사')
+    name = Field(attribute='name', column_name='이름')    
+    phone_number = Field(column_name='전화번호')
+
     class Meta:
         model = UserB2B
-        fields = (
-            'company',
-            'name',
-            'phone_number'
-        )
+        exclude = ('id', 'create_date',)
 
 class UserB2BAdmin(ImportExportMixin, admin.ModelAdmin):
     resource_class = UserB2BResource
@@ -37,7 +49,7 @@ class UserB2BAdmin(ImportExportMixin, admin.ModelAdmin):
     
 
     list_filter = (
-        ('company',)
+        ('company', RelatedDropdownFilter),
     )
 
     list_display = (

@@ -73,7 +73,7 @@ class MenuInfo(models.Model):
     )
 
     name = models.CharField(
-        max_length=WORD_LENGTH, 
+        max_length=STRING_LENGTH, 
         verbose_name = "메뉴명"
     )
 

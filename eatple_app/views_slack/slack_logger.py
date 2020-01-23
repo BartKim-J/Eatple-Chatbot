@@ -1,9 +1,3 @@
-# Define
-from eatple_app.define import *
-
-# Models
-from eatple_app.models import *
-
 from eatple_app.views_slack.slack_define import * 
 
 def SlackLogFollow(nickname):
@@ -36,35 +30,175 @@ def SlackLogSignUp(user):
     
     return res
 
-
-def SlackLogPayPromotionOrder(order):
-    res = client.chat_postMessage(
-        channel=SLACK_CHANNEL_EATPLE_LOG,
-        text="{name}님이 프로모션 잇플패스를 발급함, 마니머겅:blue_heart:".format(
-            name=order.ordersheet.user.nickname, 
-        )
-    )
-    
-    return res
-
 def SlackLogPaydOrder(order):
-    res = client.chat_postMessage(
-        channel=SLACK_CHANNEL_EATPLE_LOG,
-        text="{name}님이 무려 일반 잇플패스를 발급함, 마니머겅:heart:".format(
-            name=order.ordersheet.user.nickname, 
+    if(settings.SETTING_ID == 'DEPLOY'):
+        SERVER_PORT = 8000
+        DEV_LOG=''
+    else:
+        SERVER_PORT = 8001
+        DEV_LOG='개발 서버에서 '
+        
+        
+    if(order.type == ORDER_TYPE_NORMAL):
+        res = client.chat_postMessage(
+            channel=SLACK_CHANNEL_EATPLE_LOG,
+            blocks=[
+                {
+                    "type": "divider"
+                },
+                {
+                    "type": "section",
+                    "text": {
+                        "type": "mrkdwn",
+                        "text": "*{dev}{name}님이 B2B 일반 잇플패스를 발급함* :heart:\n```\n{menu} - 픽업시간 {pickup_time}\n > <https://www.eatple.com:{port}/admin/eatple_app/order/{order_id}/change|주문 자세히 보기>\n```".format(
+                            dev=DEV_LOG,
+                            name=order.ordersheet.user.nickname,
+                            menu=order.menu,
+                            pickup_time=order.pickup_time.strftime(
+                                '%-m월 %-d일 %p %-I시 %-M분').replace('AM', '오전').replace('PM', '오후'),
+                            port=SERVER_PORT,
+                            order_id=order.id,
+                        )
+                    },
+                    "accessory": {
+                        "type": "image",
+                        "image_url": '{}{}'.format(HOST_URL, order.menu.imgURL()),
+                        "alt_text": "menu"
+                    }
+                },
+                {
+                    "type": "divider"
+                },
+                {
+                    "type": "section",
+                    "text": {
+                        "type": "mrkdwn",
+                        "text": "*<https://www.eatple.com:8000/admin/eatple_app/order/{}/change|주문 자세히 보기>*".format(order.id)
+                    }
+                },
+            ]
         )
-    )
+        return res
     
-    return res
+    elif(order.type == ORDER_TYPE_B2B):
+        res = client.chat_postMessage(
+            channel=SLACK_CHANNEL_EATPLE_LOG,
+            blocks= [
+                {
+                    "type": "divider"
+                },
+                {
+                    "type": "section",
+                    "text": {
+                        "type": "mrkdwn",
+                        "text": "*{dev}{name}님이 B2B 잇플패스를 발급함* :briefcase:\n```\n{menu} : 픽업시간 {pickup_time}\n > <https://www.eatple.com:{port}/admin/eatple_app/order/{order_id}/change|주문 자세히 보기>\n```".format(
+                            dev=DEV_LOG,
+                            name=order.ordersheet.user.nickname,
+                            menu=order.menu,
+                            pickup_time=order.pickup_time.strftime(
+                                '%-m월 %-d일 %p %-I시 %-M분').replace('AM', '오전').replace('PM', '오후'),
+                            port=SERVER_PORT,
+                            order_id=order.id,
+                        )
+                    },
+                    "accessory": {
+                        "type": "image",
+                        "image_url": '{}{}'.format(HOST_URL, order.menu.imgURL()),
+                        "alt_text": "menu"
+                    }
+                },
+                {
+                    "type": "divider"
+                },
+            ]
+        )
+        return res 
     
+    elif(order.type == ORDER_TYPE_PROMOTION):
+        res = client.chat_postMessage(
+            channel=SLACK_CHANNEL_EATPLE_LOG,
+            blocks=[
+                {
+                    "type": "divider"
+                },
+                {
+                    "type": "section",
+                    "text": {
+                        "type": "mrkdwn",
+                        "text": "*{dev}{name}님이 프로모션 잇플패스를 발급함* :blue_heart:\n```\n{menu} - 픽업시간 {pickup_time}\n > <https://www.eatple.com:{port}/admin/eatple_app/order/{order_id}/change|주문 자세히 보기>\n```".format(
+                            dev=DEV_LOG,
+                            name=order.ordersheet.user.nickname,
+                            menu=order.menu,
+                            pickup_time=order.pickup_time.strftime(
+                                '%-m월 %-d일 %p %-I시 %-M분').replace('AM', '오전').replace('PM', '오후'),
+                            port=SERVER_PORT,
+                            order_id=order.id,
+                        )
+                    },
+                    "accessory": {
+                        "type": "image",
+                        "image_url": '{}{}'.format(HOST_URL, order.menu.imgURL()),
+                        "alt_text": "menu"
+                    }
+                },
+                {
+                    "type": "divider"
+                },
+                {
+                    "type": "section",
+                    "text": {
+                        "type": "mrkdwn",
+                        "text": "*<https://www.eatple.com:8000/admin/eatple_app/order/{}/change|주문 자세히 보기>*".format(order.id)
+                    }
+                },
+            ]
+        )
+        return res
+    
+    else:
+        res = client.chat_postMessage(
+            channel=SLACK_CHANNEL_EATPLE_LOG,
+            text="{name}님이 이상한 주문을 함"
+        )
+        return res
 
 def SlackLogCancelOrder(order):
+    if(settings.SETTING_ID == 'DEPLOY'):
+        SERVER_PORT = 8000
+        DEV_LOG=''
+    else:
+        SERVER_PORT = 8001
+        DEV_LOG='개발 서버에서 '
+        
     res = client.chat_postMessage(
         channel=SLACK_CHANNEL_EATPLE_LOG,
-        text="{name}님이 잇플을 취소함, 에라이:bart:".format(
-            name=order.ordersheet.user.nickname, 
-            menu=order.menu.name
-        )
+        blocks=[
+            {
+                "type": "divider"
+            },
+            {
+                "type": "section",
+                "text": {
+                    "type": "mrkdwn",
+                    "text": "*{dev}{name}님이 잇플패스를 취소함* :thinking_face:\n```\n{menu} - 픽업시간 {pickup_time}\n > <https://www.eatple.com:{port}/admin/eatple_app/order/{order_id}/change|주문 자세히 보기>\n```".format(
+                        dev=DEV_LOG,
+                        name=order.ordersheet.user.nickname,
+                        menu=order.menu,
+                        pickup_time=order.pickup_time.strftime(
+                            '%-m월 %-d일 %p %-I시 %-M분').replace('AM', '오전').replace('PM', '오후'),
+                        port=SERVER_PORT,
+                        order_id=order.id,
+                    )
+                },
+                "accessory": {
+                    "type": "image",
+                    "image_url": '{}{}'.format(HOST_URL, order.menu.imgURL()),
+                    "alt_text": "menu"
+                }
+            },
+            {
+                "type": "divider"
+            },
+        ]
     )
-    
     return res

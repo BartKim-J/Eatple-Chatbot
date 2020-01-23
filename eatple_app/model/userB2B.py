@@ -19,7 +19,7 @@ class UserB2B(models.Model):
         verbose_name = "B2B 사용자 리스트"
         verbose_name_plural = "B2B 사용자 리스트"
         
-        ordering = ['name']
+        ordering = ['company__name']
     
     company = models.ForeignKey(
         'Company', 

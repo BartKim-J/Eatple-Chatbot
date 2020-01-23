@@ -1,10 +1,25 @@
+# Models
+from eatple_app.models import *
+
+# Define
+from eatple_app.define import *
 from django.db.models import Q
+from django.conf import settings
 
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 
 import slack 
+
+HOST_URL = 'https://www.eatple.com:8000'
+
+#  TYPE
+ORDER_TYPE_NORMAL = 'normal'
+ORDER_TYPE_EVENT = 'event'
+ORDER_TYPE_PROMOTION = 'promotion'
+ORDER_TYPE_B2B = 'B2B'
+
 
 SLACK_CLIENT_ID = '808658240627.862280783904'
 SLACK_CLIENT_SECRET = 'cd6bb7935acaf9451c1bf326f21b80bd'

@@ -128,7 +128,7 @@ def kakaoView_EatplePass(kakaoPayload):
                         buttons.append(
                             {
                                 'action': 'block',
-                                'label': '부탁하기',
+                                'label': '픽업 부탁하기',
                                 'messageText': '로딩중..',
                                 'blockId': KAKAO_BLOCK_USER_ORDER_SHARING_START,
                                 'extra': {
