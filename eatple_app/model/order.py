@@ -217,9 +217,9 @@ def orderUpdate(order):
     nextlunchOrderEditTimeEnd = currentDateWithoutTime + datetime.timedelta(hours=9, minutes=30, days=1)
     nextlunchOrderTimeEnd = currentDateWithoutTime + datetime.timedelta(hours=10, minutes=30, days=1)
 
-    # Lunch Order Pickup Time (10:30 ~)11:30 ~ 15:00
+    # Lunch Order Pickup Time (10:30 ~)11:30 ~ 14:00
     lunchOrderPickupTimeStart = currentDateWithoutTime + datetime.timedelta(hours=11, minutes=30)
-    lunchOrderPickupTimeEnd = currentDateWithoutTime + datetime.timedelta(hours=15, minutes=00)
+    lunchOrderPickupTimeEnd = currentDateWithoutTime + datetime.timedelta(hours=14, minutes=00)
 
     # Dinner Order Pickup Time (16:30 ~)17:30 ~ 21:00
     dinnerOrderPickupTimeStart = currentDateWithoutTime + datetime.timedelta(hours=17, minutes=30)

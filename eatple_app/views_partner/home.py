@@ -123,7 +123,7 @@ def kakaoView_Home(partner):
         },
         {
             'action': 'block',
-            'label': '정산조회',
+            'label': ' 정산일정 조회',
             'messageText': '로딩중..',
             'blockId': KAKAO_BLOCK_PARTNER_CALCULATE,
             'extra': {
