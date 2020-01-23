@@ -12,8 +12,6 @@ from rest_framework import status
 
 import slack 
 
-HOST_URL = 'https://www.eatple.com:8000'
-
 #  TYPE
 ORDER_TYPE_NORMAL = 'normal'
 ORDER_TYPE_EVENT = 'event'

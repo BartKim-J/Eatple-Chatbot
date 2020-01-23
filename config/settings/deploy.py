@@ -122,6 +122,7 @@ DATABASES = {
     }
 }
 
+
 # Password validation
 # https://docs.djangoproject.com/en/2.2/ref/settings/#auth-password-validators
 
@@ -197,13 +198,12 @@ STATIC_ROOT = os.path.join(ROOT_DIR, 'static')
 
 # COOKIES
 #SECURE_SSL_REDIRECT = True
-CSRF_COOKIE_SECURE = True
-SESSION_COOKIE_SECURE = True
+#CSRF_COOKIE_SECURE = True
+#SESSION_COOKIE_SECURE = True
 
 # CORS
 CORS_ORIGIN_ALLOW_ALL = False
 CORS_ORIGIN_WHITELIST = [
-    'http://ec2-54-65-75-156.ap-northeast-1.compute.amazonaws.com',
     'https://www.eatple.com',
     'https://www.eatple.com:8000',
     'https://www.eatple.com:8001',

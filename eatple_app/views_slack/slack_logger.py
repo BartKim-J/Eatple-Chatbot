@@ -37,7 +37,8 @@ def SlackLogPaydOrder(order):
     else:
         SERVER_PORT = 8001
         DEV_LOG='개발 서버에서 '
-        
+
+    HOST_URL='https://www.eatple.com:{}'.format(SERVER_PORT)
         
     if(order.type == ORDER_TYPE_NORMAL):
         res = client.chat_postMessage(
@@ -60,21 +61,14 @@ def SlackLogPaydOrder(order):
                             order_id=order.id,
                         )
                     },
-                    "accessory": {
-                        "type": "image",
-                        "image_url": '{}{}'.format(HOST_URL, order.menu.imgURL()),
-                        "alt_text": "menu"
-                    }
+                    #"accessory": {
+                    #    "type": "image",
+                    #    "image_url": '{}{}'.format(HOST_URL, order.menu.imgURL()),
+                    #    "alt_text": "menu"
+                    #}
                 },
                 {
                     "type": "divider"
-                },
-                {
-                    "type": "section",
-                    "text": {
-                        "type": "mrkdwn",
-                        "text": "*<https://www.eatple.com:8000/admin/eatple_app/order/{}/change|주문 자세히 보기>*".format(order.id)
-                    }
                 },
             ]
         )
@@ -101,11 +95,11 @@ def SlackLogPaydOrder(order):
                             order_id=order.id,
                         )
                     },
-                    "accessory": {
-                        "type": "image",
-                        "image_url": '{}{}'.format(HOST_URL, order.menu.imgURL()),
-                        "alt_text": "menu"
-                    }
+                    #"accessory": {
+                    #    "type": "image",
+                    #    "image_url": '{}{}'.format(HOST_URL, order.menu.imgURL()),
+                    #    "alt_text": "menu"
+                    #}
                 },
                 {
                     "type": "divider"
@@ -125,7 +119,7 @@ def SlackLogPaydOrder(order):
                     "type": "section",
                     "text": {
                         "type": "mrkdwn",
-                        "text": "*{dev}{name}님이 프로모션 잇플패스를 발급함* :blue_heart:\n```\n{menu} - 픽업시간 {pickup_time}\n > <https://www.eatple.com:{port}/admin/eatple_app/order/{order_id}/change|주문 자세히 보기>\n```".format(
+                        "text": "*{dev}{name}님이 프로모션 잇플패스를 발급함* :blue_heart:\n```\n{menu} : 픽업시간 {pickup_time}\n > <https://www.eatple.com:{port}/admin/eatple_app/order/{order_id}/change|주문 자세히 보기>\n```".format(
                             dev=DEV_LOG,
                             name=order.ordersheet.user.nickname,
                             menu=order.menu,
@@ -135,21 +129,14 @@ def SlackLogPaydOrder(order):
                             order_id=order.id,
                         )
                     },
-                    "accessory": {
-                        "type": "image",
-                        "image_url": '{}{}'.format(HOST_URL, order.menu.imgURL()),
-                        "alt_text": "menu"
-                    }
-                },
+                    #"accessory": {
+                    #    "type": "image",
+                    #    "image_url": '{}{}'.format(HOST_URL, order.menu.imgURL()),
+                    #    "alt_text": "menu"
+                    #}
+                }.
                 {
                     "type": "divider"
-                },
-                {
-                    "type": "section",
-                    "text": {
-                        "type": "mrkdwn",
-                        "text": "*<https://www.eatple.com:8000/admin/eatple_app/order/{}/change|주문 자세히 보기>*".format(order.id)
-                    }
                 },
             ]
         )
@@ -169,6 +156,8 @@ def SlackLogCancelOrder(order):
     else:
         SERVER_PORT = 8001
         DEV_LOG='개발 서버에서 '
+        
+    HOST_URL='https://www.eatple.com:{}'.format(SERVER_PORT)
         
     res = client.chat_postMessage(
         channel=SLACK_CHANNEL_EATPLE_LOG,
@@ -190,11 +179,11 @@ def SlackLogCancelOrder(order):
                         order_id=order.id,
                     )
                 },
-                "accessory": {
-                    "type": "image",
-                    "image_url": '{}{}'.format(HOST_URL, order.menu.imgURL()),
-                    "alt_text": "menu"
-                }
+                #"accessory": {
+                #    "type": "image",
+                #    "image_url": '{}{}'.format(HOST_URL, order.menu.imgURL()),
+                #    "alt_text": "menu"
+                #}
             },
             {
                 "type": "divider"
