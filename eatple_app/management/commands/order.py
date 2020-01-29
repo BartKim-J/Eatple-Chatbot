@@ -20,7 +20,7 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         try:
             currentDate = dateNowByTimeZone()
-            expireDate = currentDate + datetime.timedelta(hours=-18)
+            expireDate = currentDate + datetime.timedelta(hours=-20)
             
             orderList = Order.objects.filter(
                 Q(order_date__gt=expireDate) &
@@ -28,9 +28,17 @@ class Command(BaseCommand):
                 ~Q(menu=None)
             ).order_by('order_date')
             
-        except Order.DoesNotExist:
-            raise CommandError('Order does not exist' % poll_id)
+            menuList = Menu.objects.filter(
+                status=OC_OPEN,
+                store__status=OC_OPEN,
+            )
+        except (Order.DoesNotExist, Menu.DoesNotExist):
+            raise CommandError('Order or Menu does not exist' % poll_id)
         
+        
+        for menu in menuList:
+            menu.getCurrentStock()
+            
         for order in orderList:
             Order.orderStatusUpdate(order)
 

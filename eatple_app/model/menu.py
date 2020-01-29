@@ -168,7 +168,7 @@ class Menu(MenuInfo, MenuStatus, MenuSetting):
 
     def getCurrentStock(self):
         currentDate = dateNowByTimeZone()
-        expireDate = currentDate + datetime.timedelta(hours=-18)
+        expireDate = currentDate + datetime.timedelta(hours=-20)
 
         availableOrders = Order.objects.filter(menu=self).filter(
             (
@@ -180,6 +180,7 @@ class Menu(MenuInfo, MenuStatus, MenuSetting):
             Q(order_date__gt=expireDate)
         )
 
+        print(availableOrders)
         self.current_stock = availableOrders.count()
         self.save()
         

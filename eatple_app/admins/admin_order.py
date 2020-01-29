@@ -66,6 +66,12 @@ class OrderAdmin(ImportExportMixin, admin.ModelAdmin):
         
         return qs.exclude(Q(store=None) & Q(menu=None))
 
+    def make_enable(self, request, queryset):
+        updated_count = queryset.update(status=ORDER_STATUS_ORDER_CONFIRMED,payment_status= IAMPORT_ORDER_STATUS_PAID) #queryset.update
+        self.message_user(request, '{}건의 주문을 Enable 상태로 변경'.format(updated_count)) #django message framework 활용
+        
+    make_enable.short_description = '지정 주문을 Enable 상태로 변경'
+    
     def owner(self, obj):
             return obj.ordersheet.user.nickname
     owner.short_description = "사용자"
@@ -103,6 +109,7 @@ class OrderAdmin(ImportExportMixin, admin.ModelAdmin):
         ('ordersheet__user__type', ChoiceDropdownFilter),
     )
     
+    actions = ['make_enable']
 
     list_display = ('order_id', 'owner', 'owner_id',  'store', 'menu', 'type', 'b2b_name',
                     'payment_status', 'status', 'pickup_time', 'payment_date')

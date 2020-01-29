@@ -86,7 +86,7 @@ def SlackLogPaydOrder(order):
                     "type": "section",
                     "text": {
                         "type": "mrkdwn",
-                        "text": "*{dev}{name}님이 B2B 잇플패스를 발급함* :briefcase:\n```\n주문번호 [ {order_id} ]\n{menu} - 픽업시간 {pickup_time}\n > <https://www.eatple.com:{port}/admin/eatple_app/order/{order_index}/change|주문 자세히 보기>\n```".format(
+                        "text": "*{dev}{name}님이 B2B 잇플패스를 발급함* :briefcase:\n```\n주문번호 [ {order_id} ]\n{menu} - 픽업시간 {pickup_time}\n > <https://www.eatple.com:{port}/admin/eatple_app/order/{order_id}/change|주문 자세히 보기>\n```".format(
                             order_id=order.order_id,
                             dev=DEV_LOG,
                             name=order.ordersheet.user.nickname,
@@ -121,7 +121,7 @@ def SlackLogPaydOrder(order):
                     "type": "section",
                     "text": {
                         "type": "mrkdwn",
-                        "text": "*{dev}{name}님이 프로모션 잇플패스를 발급함* :blue_heart:\n```\n주문번호 [ {order_id} ]\n{menu} - 픽업시간 {pickup_time}\n > <https://www.eatple.com:{port}/admin/eatple_app/order/{order_index}/change|주문 자세히 보기>\n```".format(
+                        "text": "*{dev}{name}님이 프로모션 잇플패스를 발급함* :blue_heart:\n```\n주문번호 [ {order_id} ]\n{menu} - 픽업시간 {pickup_time}\n > <https://www.eatple.com:{port}/admin/eatple_app/order/{order_id}/change|주문 자세히 보기>\n```".format(
                             order_id=order.order_id,
                             dev=DEV_LOG,
                             name=order.ordersheet.user.nickname,
@@ -172,7 +172,7 @@ def SlackLogCancelOrder(order):
                 "type": "section",
                 "text": {
                     "type": "mrkdwn",
-                    "text": "*{dev}{name}님이 잇플패스를 취소함* :thinking_face:\n```\n주문번호 [ {order_id} ]\n{menu} - 픽업시간 {pickup_time}\n > <https://www.eatple.com:{port}/admin/eatple_app/order/{order_index}/change|주문 자세히 보기>\n```".format(
+                    "text": "*{dev}{name}님이 잇플패스를 취소함* :thinking_face:\n```\n주문번호 [ {order_id} ]\n{menu} - 픽업시간 {pickup_time}\n > <https://www.eatple.com:{port}/admin/eatple_app/order/{order_id}/change|주문 자세히 보기>\n```".format(
                             order_id=order.order_id,
                             dev=DEV_LOG,
                             name=order.ordersheet.user.nickname,
