@@ -79,6 +79,19 @@ class StoreAdmin(ImportExportMixin, admin.GeoModelAdmin):
     )
     logo_preview.short_description = "이미지 미리보기"
     
+    
+    def menu_current_stock(self, obj):
+        return Menu.objects.filter(store=obj).first().current_stock
+    menu_current_stock.short_description = "주문량"
+    
+    def menu_max_stock(self, obj):
+        return Menu.objects.filter(store=obj).first().max_stock
+    menu_max_stock.short_description = "일일 재고"
+    
+    def menu_name(self, obj):
+        return Menu.objects.filter(store=obj).first().name
+    menu_name.short_description = "메뉴명"
+    
     list_filter = (
         ('status', ChoiceDropdownFilter), 
         ('area', ChoiceDropdownFilter), 
@@ -102,6 +115,9 @@ class StoreAdmin(ImportExportMixin, admin.GeoModelAdmin):
         'type', 
         'area',
         'status_flag',
+        'menu_name',
+        'menu_current_stock',
+        'menu_max_stock',
     )
 
     def store_open(self, request, queryset):

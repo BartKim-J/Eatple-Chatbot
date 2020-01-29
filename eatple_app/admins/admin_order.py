@@ -94,6 +94,7 @@ class OrderAdmin(ImportExportMixin, admin.ModelAdmin):
     
     list_filter = (
         ('payment_date', DateRangeFilter),
+        ('pickup_time', DateRangeFilter),
         ('store',  RelatedDropdownFilter),
         ('payment_status', ChoiceDropdownFilter),
         ('status', ChoiceDropdownFilter),

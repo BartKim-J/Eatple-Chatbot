@@ -492,7 +492,7 @@ class OrderManager():
 
     def orderPanddingCleanUp(self):
         currentDate = dateNowByTimeZone()
-        expireDate = currentDate + datetime.timedelta(hours=-12)
+        expireDate = currentDate + datetime.timedelta(hours=-18)
 
         readyPayOrders = Order.objects.filter(
             Q(payment_status=IAMPORT_ORDER_STATUS_NOT_PUSHED) &
@@ -511,7 +511,7 @@ class OrderManager():
 
     def orderPaidCheck(self):
         currentDate = dateNowByTimeZone()
-        expireDate = currentDate + datetime.timedelta(hours=-12)
+        expireDate = currentDate + datetime.timedelta(hours=-18)
         
         readyPayOrders = Order.objects.filter(
             Q(payment_status=IAMPORT_ORDER_STATUS_NOT_PUSHED) &
@@ -536,7 +536,7 @@ class OrderManager():
 
     def getAvailableOrders(self):
         currentDate = dateNowByTimeZone()
-        expireDate = currentDate + datetime.timedelta(hours=-12)
+        expireDate = currentDate + datetime.timedelta(hours=-18)
         
         availableOrders = self.orderList.filter(
             (

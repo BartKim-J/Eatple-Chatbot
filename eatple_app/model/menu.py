@@ -13,6 +13,8 @@ from django import forms
 from eatple_app.model.utils import OverwriteStorage
 from eatple_app.model.utils import menu_directory_path
 
+# Models
+from eatple_app.model.order import OrderSheet, Order
 
 # Define
 from eatple_app.define import *
@@ -163,6 +165,26 @@ class Menu(MenuInfo, MenuStatus, MenuSetting):
                 self.id = 1
 
         self.menu_id = '{id:04X}'.format(id=self.id)
+
+    def getCurrentStock(self):
+        currentDate = dateNowByTimeZone()
+        expireDate = currentDate + datetime.timedelta(hours=-18)
+
+        availableOrders = Order.objects.filter(menu=self).filter(
+            (
+                Q(status=ORDER_STATUS_PICKUP_WAIT) |
+                Q(status=ORDER_STATUS_PICKUP_PREPARE) |
+                Q(status=ORDER_STATUS_ORDER_CONFIRM_WAIT) |
+                Q(status=ORDER_STATUS_ORDER_CONFIRMED)
+            ) &
+            Q(order_date__gt=expireDate)
+        )
+
+        self.current_stock = availableOrders.count()
+        self.save()
+        
+        return availableOrders
+
 
     def imgURL(self):
         try:

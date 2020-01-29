@@ -41,7 +41,7 @@ class UserB2BAdmin(ImportExportMixin, admin.ModelAdmin):
 
     list_per_page = 50
 
-    search_fields = ['company', 'name', 'phone_number']
+    search_fields = ['company__name', 'name', 'phone_number']
 
     def phonenumber(self, obj):
         return obj.phone_number.as_national

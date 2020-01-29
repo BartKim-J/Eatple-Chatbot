@@ -18,6 +18,7 @@ ORDER_TYPE_EVENT = 'event'
 ORDER_TYPE_PROMOTION = 'promotion'
 ORDER_TYPE_B2B = 'B2B'
 
+# SLACK DEFINE 
 SLACK_CLIENT_ID = '808658240627.862280783904'
 SLACK_CLIENT_SECRET = 'cd6bb7935acaf9451c1bf326f21b80bd'
 
@@ -30,3 +31,15 @@ SLACK_COMMAND_DAILY_STATUS = 'ds'
 SLACK_COMMAND_TOTAL_STATUS = 'ts'
 
 client = slack.WebClient(token=SLACK_BOT_USER_TOKEN)
+
+def dateByTimeZone(UTC):
+    try:
+        tz = pytz.timezone(settings.TIME_ZONE)
+        return tz.localize(UTC)
+    except ValueError as ex:
+        timeDiffrence = datetime.timedelta(hours=9)
+        KST = datetime.timezone(timeDiffrence)
+
+        localeTime = UTC.replace(tzinfo=KST) + timeDiffrence
+
+        return localeTime  # TO Korea

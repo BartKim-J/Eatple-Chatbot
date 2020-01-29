@@ -127,36 +127,60 @@ def kakaoView_MenuListup(kakaoPayload):
             kakaoMapUrl = 'https://map.kakao.com/link/map/{},{}'.format(
                 menu.store.name, menu.store.place)
 
-            buttons = [
-                {
-                    'action': 'block',
-                    'label': '주문하기',
-                    'messageText': '로딩중..',
-                    'blockId': KAKAO_BLOCK_USER_SET_PICKUP_TIME,
-                    'extra': {
-                        KAKAO_PARAM_STORE_ID: menu.store.store_id,
-                        KAKAO_PARAM_MENU_ID: menu.menu_id,
-                        KAKAO_PARAM_ORDER_ID: order.order_id,
-                        KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_GET_MENU
-                    }
-                },
-                {
-                    'action': 'webLink',
-                    'label': '위치보기',
-                    'webLinkUrl': kakaoMapUrl
-                },
-            ]
+            currentStock = menu.getCurrentStock()
+            
+            if(menu.max_stock > menu.current_stock):
+                buttons = [
+                    {
+                        'action': 'block',
+                        'label': '주문하기',
+                        'messageText': '로딩중..',
+                        'blockId': KAKAO_BLOCK_USER_SET_PICKUP_TIME,
+                        'extra': {
+                            KAKAO_PARAM_STORE_ID: menu.store.store_id,
+                            KAKAO_PARAM_MENU_ID: menu.menu_id,
+                            KAKAO_PARAM_ORDER_ID: order.order_id,
+                            KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_GET_MENU
+                        }
+                    },
+                    {
+                        'action': 'webLink',
+                        'label': '위치보기',
+                        'webLinkUrl': kakaoMapUrl
+                    },
+                ]
 
-            kakaoForm.BasicCard_Push(
-                '{}'.format(menu.name),
-                '{} - {}\n{}'.format(
-                    menu.store.name,
-                    walkTime, 
-                    menu.description, 
-                ),
-                thumbnail,
-                buttons
-            )
+                kakaoForm.BasicCard_Push(
+                    '{}'.format(menu.name),
+                    '{} - {}\n{}'.format(
+                        menu.store.name,
+                        walkTime, 
+                        menu.description, 
+                    ),
+                    thumbnail,
+                    buttons
+                )
+                
+            else: # selling out
+                buttons = [
+                    {
+                        'action': 'webLink',
+                        'label': '위치보기',
+                        'webLinkUrl': kakaoMapUrl
+                    },
+                ]
+
+                kakaoForm.BasicCard_Push(
+                    '{} - 메뉴가 매진됬어요!'.format(menu.name),
+                    '{} - {}\n{}'.format(
+                        menu.store.name,
+                        walkTime, 
+                        menu.description, 
+                    ),
+                    thumbnail,
+                    buttons
+                )
+
 
         kakaoForm.BasicCard_Add()
 
@@ -218,7 +242,7 @@ def kakaoView_PickupTime(kakaoPayload):
 
     if(store == None or menu == None):
         return errorView('Invalid Store Paratmer', '정상적이지 않은 경로거나, 오류가 발생했습니다.\n다시 주문해주세요!')
-
+    
     kakaoForm = KakaoForm()
 
     QUICKREPLIES_MAP = [
@@ -232,6 +256,22 @@ def kakaoView_PickupTime(kakaoPayload):
             }
         },
     ]
+    
+    currentStock = menu.getCurrentStock()
+
+    if(menu.max_stock <= menu.current_stock):
+        
+        kakaoForm.BasicCard_Push(
+            '이 메뉴는 이미 매진됬습니다.',
+            '아쉽지만 다른 메뉴를 주문해주세요!',
+            {},
+            []
+        )
+        kakaoForm.BasicCard_Add()
+
+        kakaoForm.QuickReplies_AddWithMap(QUICKREPLIES_MAP)
+        
+        return JsonResponse(kakaoForm.GetForm())
     
     if(user.type != USER_TYPE_ADMIN):
         currentSellingTime = sellingTimeCheck()
@@ -380,6 +420,34 @@ def kakaoView_OrderPayment(kakaoPayload):
     dataActionExtra[KAKAO_PARAM_PREV_BLOCK_ID] = KAKAO_BLOCK_USER_SET_ORDER_SHEET
 
     kakaoForm = KakaoForm()
+
+    QUICKREPLIES_MAP = [
+        {
+            'action': 'block',
+            'label': '홈으로 돌아가기',
+            'messageText': '로딩중..',
+            'blockId': KAKAO_BLOCK_USER_HOME,
+            'extra': {
+                KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_GET_MENU
+            }
+        },
+    ]
+    
+    currentStock = order.menu.getCurrentStock()
+
+    if(order.menu.max_stock <= order.menu.current_stock):
+        
+        kakaoForm.BasicCard_Push(
+            '이 메뉴는 이미 매진됬습니다.',
+            '아쉽지만 다른 메뉴를 주문해주세요!',
+            {},
+            []
+        )
+        kakaoForm.BasicCard_Add()
+
+        kakaoForm.QuickReplies_AddWithMap(QUICKREPLIES_MAP)
+        
+        return JsonResponse(kakaoForm.GetForm())
 
     # Menu Carousel Card Add
     thumbnails = [
