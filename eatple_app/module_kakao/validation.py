@@ -76,11 +76,11 @@ def sellingTimeCheck():
     prevlunchOrderTimeEnd = currentDateWithoutTime + \
         datetime.timedelta(hours=10, minutes=30)
 
-    # Dinner Order Time 10:30 ~ 16:30
+    # Dinner Order Time 10:31 ~ 16:29
     dinnerOrderTimeStart = currentDateWithoutTime + \
-        datetime.timedelta(hours=10, minutes=30)
+        datetime.timedelta(hours=10, minutes=31)
     dinnerOrderTimeEnd = currentDateWithoutTime + \
-        datetime.timedelta(hours=16, minutes=30)
+        datetime.timedelta(hours=16, minutes=29)
 
     # Next Lunch Order Time 16:30 ~ 10:30
     nextlunchOrderTimeStart = currentDateWithoutTime + \
@@ -90,9 +90,9 @@ def sellingTimeCheck():
 
     if(dinnerOrderTimeStart <= currentDate) and (currentDate <= dinnerOrderTimeEnd):
         return SELLING_TIME_DINNER
-    elif(prevlunchOrderTimeStart < currentDate) and (currentDate < prevlunchOrderTimeEnd):
+    elif(prevlunchOrderTimeStart <= currentDate) and (currentDate <= prevlunchOrderTimeEnd):
         return SELLING_TIME_LUNCH
-    elif(nextlunchOrderTimeStart < currentDate) and (currentDate < nextlunchOrderTimeEnd):
+    elif(nextlunchOrderTimeStart <= currentDate) and (currentDate <= nextlunchOrderTimeEnd):
         return SELLING_TIME_LUNCH
     else:
         return None

@@ -15,6 +15,23 @@ from django.utils.safestring import mark_safe
 
 from django.contrib.admin import SimpleListFilter
 
+class OrderShareFlagFilter(SimpleListFilter):
+    title = '부탁하기'
+    parameter_name = '부탁하기 플래그'
+
+    def lookups(self, request, model_admin):
+        return [
+            ('on', '사용자'),
+            ('off', '위임자 또는 미사용자'),
+        ] 
+
+    def queryset(self, request, queryset):
+        if self.value() == 'on':
+            return queryset.filter(~Q(delegate=None))
+
+        if self.value() == 'off':
+            return queryset.filter(Q(delegate=None))
+        
 class OrderResource(resources.ModelResource):
     def dehydrate_b2b_name(self, obj):
         if(obj.ordersheet.user.company != None):
@@ -86,6 +103,16 @@ class OrderAdmin(ImportExportMixin, admin.ModelAdmin):
     def phone_number(self, obj):
         return obj.ordersheet.user.phone_number
     
+    def delegate_flag(self, obj):
+        if(obj.delegate != None):
+            return True
+        else:
+            return False
+        
+        return False
+    delegate_flag.short_description = "부탁하기"
+    delegate_flag.boolean = True
+    
     def b2b_name(self, obj):
         if(obj.ordersheet.user.company != None and obj.type == ORDER_TYPE_B2B):
             return obj.ordersheet.user.company.name
@@ -107,9 +134,10 @@ class OrderAdmin(ImportExportMixin, admin.ModelAdmin):
         ('ordersheet__user__company', RelatedDropdownFilter),
         ('type', ChoiceDropdownFilter),
         ('ordersheet__user__type', ChoiceDropdownFilter),
+        OrderShareFlagFilter,
     )
     
     actions = ['make_enable']
 
     list_display = ('order_id', 'owner', 'owner_id',  'store', 'menu', 'type', 'b2b_name',
-                    'payment_status', 'status', 'pickup_time', 'payment_date')
+                    'payment_status', 'status', 'delegate_flag', 'pickup_time', 'payment_date')

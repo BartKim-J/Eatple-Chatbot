@@ -25,8 +25,9 @@ def set_filename_format(instance, filename, toFilename):
         extension='.png',
     )
 
-
 def menu_directory_path(instance, filename):
+    print(dateNowByTimeZone())
+    print(dateNowByTimeZone().strftime("%f"))
     path = 'STORE_DB/images/{storename}/{menuname}/{number}{filename}'.format(
         storename=instance.store.name,
         menuname=instance.name,
@@ -35,6 +36,18 @@ def menu_directory_path(instance, filename):
     )
 
     return path
+
+def menu_soldout_directory_path(instance, filename):
+    path = 'STORE_DB/images/{storename}/{menuname}/{number}{filename}'.format(
+        storename=instance.store.name,
+        menuname=instance.name,
+        filename=set_filename_format(instance, filename, 'menuSoldOutImg'),
+        number=dateNowByTimeZone().strftime("%f"),
+    )
+
+    return path
+
+
 
 
 def logo_directory_path(instance, filename):

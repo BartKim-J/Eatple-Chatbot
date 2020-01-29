@@ -95,7 +95,7 @@ def kakaoView_EatplePass(kakaoPayload):
                 buttons = [
                     {
                         'action': 'block',
-                        'label': '사용하기',
+                        'label': '사용하기(사장님 전용)',
                         'messageText': '로딩중..',
                         'blockId': KAKAO_BLOCK_USER_GET_USE_EATPLE_PASS_CONFIRM,
                         'extra': {

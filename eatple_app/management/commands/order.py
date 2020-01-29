@@ -20,10 +20,12 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         try:
             currentDate = dateNowByTimeZone()
-            expireDate = currentDate + datetime.timedelta(hours=-20)
+            expireDate = currentDate + datetime.timedelta(hours=-24)
+            
+            print(expireDate)
             
             orderList = Order.objects.filter(
-                Q(order_date__gt=expireDate) &
+                Q(payment_date__gt=expireDate) &
                 ~Q(store=None) &
                 ~Q(menu=None)
             ).order_by('order_date')

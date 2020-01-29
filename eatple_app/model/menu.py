@@ -11,7 +11,7 @@ from django import forms
 
 # Utils
 from eatple_app.model.utils import OverwriteStorage
-from eatple_app.model.utils import menu_directory_path
+from eatple_app.model.utils import menu_directory_path, menu_soldout_directory_path
 
 # Models
 from eatple_app.model.order import OrderSheet, Order
@@ -101,6 +101,13 @@ class MenuSetting(models.Model):
         verbose_name = "메뉴 이미지"
     )
 
+    soldout_image = models.ImageField(
+        default=DEFAULT_MENU_IMAGE_PATH,
+        upload_to=menu_soldout_directory_path, 
+        storage=OverwriteStorage(),
+        verbose_name = "메뉴 이미지(매진)"
+    )
+
     selling_time = models.CharField(
         max_length=WORD_LENGTH,
         choices=SELLING_TIME_CATEGORY,
@@ -153,7 +160,7 @@ class MenuStatus(models.Model):
 class Menu(MenuInfo, MenuStatus, MenuSetting):
     # Metadata
     class Meta:
-        ordering = ['menu_id']
+        ordering = ['status','menu_id']
 
     def __init__(self, *args, **kwargs):
         super(Menu, self).__init__(*args, **kwargs)
@@ -168,16 +175,18 @@ class Menu(MenuInfo, MenuStatus, MenuSetting):
 
     def getCurrentStock(self):
         currentDate = dateNowByTimeZone()
-        expireDate = currentDate + datetime.timedelta(hours=-20)
+        expireDate = currentDate + datetime.timedelta(hours=-24)
 
         availableOrders = Order.objects.filter(menu=self).filter(
             (
                 Q(status=ORDER_STATUS_PICKUP_WAIT) |
                 Q(status=ORDER_STATUS_PICKUP_PREPARE) |
                 Q(status=ORDER_STATUS_ORDER_CONFIRM_WAIT) |
-                Q(status=ORDER_STATUS_ORDER_CONFIRMED)
+                Q(status=ORDER_STATUS_ORDER_CONFIRMED) |
+                Q(status=ORDER_STATUS_PICKUP_COMPLETED)
             ) &
-            Q(order_date__gt=expireDate)
+            Q(payment_date__gt=expireDate) &
+            Q(pickup_time__gt=currentDate)
         )
 
         print(availableOrders)
@@ -192,6 +201,12 @@ class Menu(MenuInfo, MenuStatus, MenuSetting):
             return self.image.url
         except ValueError:
             return DEFAULT_MENU_IMAGE_PATH
-
+        
+    def soldOutImgURL(self):
+        try:
+            return self.soldout_image.url
+        except ValueError:
+            return DEFAULT_MENU_IMAGE_PATH
+        
     def __str__(self):
         return '{name}'.format(name=self.name)

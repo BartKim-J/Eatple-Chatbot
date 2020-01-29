@@ -55,8 +55,8 @@ def iamportOrderCancel(order, description='주문취소'):
 
 #@PROMOTION 
 def promotionOrderUpdate(order):
-    orderDate = dateByTimeZone(order.order_date)
-    orderDateWithoutTime = orderDate.replace(
+    paymentDate = dateByTimeZone(order.payment_date)
+    paymentDateWithoutTime = paymentDate.replace(
         hour=0, minute=0, second=0, microsecond=0)
 
     currentDate = dateNowByTimeZone()
@@ -183,10 +183,10 @@ def orderUpdate(order):
     menu = order.menu
 
     if(ORDER_TIME_CHECK_DEBUG_MODE):
-        orderDate = dateNowByTimeZone()
+        paymentDate = dateNowByTimeZone()
     else:
-        orderDate = dateByTimeZone(order.order_date)
-    orderDateWithoutTime = orderDate.replace(
+        paymentDate = dateByTimeZone(order.payment_date)
+    paymentDateWithoutTime = paymentDate.replace(
         hour=0, minute=0, second=0, microsecond=0)
 
     currentDate = dateNowByTimeZone()
@@ -227,7 +227,7 @@ def orderUpdate(order):
     
     # Lunch Order
     if (SELLING_TIME_LUNCH == menu.selling_time) and \
-        ((PICKUP_YESTER_DAY <= orderDateWithoutTime) and (TODAY <= PICKUP_DAY)):
+        ((PICKUP_YESTER_DAY <= paymentDateWithoutTime) and (TODAY <= PICKUP_DAY)):
         # Pickup Prepare Time 10:30  ~ 11:30
         if(prevlunchOrderTimeEnd <= currentDate) and (currentDate <= lunchOrderPickupTimeStart) and \
            (TODAY == PICKUP_DAY):
@@ -261,7 +261,7 @@ def orderUpdate(order):
 
             # next phase Lunch order
             elif (nextlunchOrderEditTimeStart <= currentDate) and (currentDate <= nextlunchOrderEditTimeEnd) and \
-                 (orderDate >= nextlunchOrderEditTimeStart):
+                 (paymentDate >= nextlunchOrderEditTimeStart):
                 print("주문 완료 - B")
                 order.status = ORDER_STATUS_ORDER_CONFIRMED
                 order.save()
@@ -273,7 +273,7 @@ def orderUpdate(order):
                 order.save()
 
     # Dinner Order
-    elif (SELLING_TIME_DINNER == menu.selling_time) and (orderDateWithoutTime == TODAY):
+    elif (SELLING_TIME_DINNER == menu.selling_time) and (paymentDateWithoutTime == TODAY):
         # Meal Pre-
         if(dinnerOrderTimeEnd <= currentDate) and (currentDate <= dinnerOrderPickupTimeStart):
             print("픽업 준비중 - A")
@@ -294,7 +294,7 @@ def orderUpdate(order):
             # Today Order
             if(dinnerOrderEditTimeStart < currentDate) and (currentDate < dinnerOrderTimeEnd):
 
-                if orderDate <= dinnerOrderEditTimeEnd:
+                if paymentDate <= dinnerOrderEditTimeEnd:
                     print("주문 완료 - A")
                     order.status = ORDER_STATUS_ORDER_CONFIRMED
                     order.save()
@@ -492,11 +492,11 @@ class OrderManager():
 
     def orderPanddingCleanUp(self):
         currentDate = dateNowByTimeZone()
-        expireDate = currentDate + datetime.timedelta(hours=-20)
+        expireDate = currentDate + datetime.timedelta(hours=-24)
 
         readyPayOrders = Order.objects.filter(
             Q(payment_status=IAMPORT_ORDER_STATUS_NOT_PUSHED) &
-            Q(order_date__gt=expireDate) &
+            Q(payment_date__gt=expireDate) &
             ~Q(store=None) &
             ~Q(menu=None)
         ).order_by('order_date')
@@ -511,11 +511,11 @@ class OrderManager():
 
     def orderPaidCheck(self):
         currentDate = dateNowByTimeZone()
-        expireDate = currentDate + datetime.timedelta(hours=-20)
+        expireDate = currentDate + datetime.timedelta(hours=-24)
         
         readyPayOrders = Order.objects.filter(
             Q(payment_status=IAMPORT_ORDER_STATUS_NOT_PUSHED) &
-            Q(order_date__gt=expireDate) &
+            Q(payment_date__gt=expireDate) &
             ~Q(store=None) &
             ~Q(menu=None)
         ).order_by('order_date')
@@ -536,7 +536,7 @@ class OrderManager():
 
     def getAvailableOrders(self):
         currentDate = dateNowByTimeZone()
-        expireDate = currentDate + datetime.timedelta(hours=-20)
+        expireDate = currentDate + datetime.timedelta(hours=-24)
         
         availableOrders = self.orderList.filter(
             (
@@ -545,7 +545,7 @@ class OrderManager():
                 Q(status=ORDER_STATUS_ORDER_CONFIRM_WAIT) |
                 Q(status=ORDER_STATUS_ORDER_CONFIRMED)
             ) &
-            Q(order_date__gt=expireDate)
+            Q(payment_date__gt=expireDate)
         )
 
         return availableOrders

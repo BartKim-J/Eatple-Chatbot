@@ -296,10 +296,19 @@ LOCATION_DEFAULT_LNG = 127.027635
 
 
 # DEBUG MODE FLAG
-ORDERING_DEBUG_MODE = False
-ORDER_TIME_CHECK_DEBUG_MODE = False
-VALIDATION_DEBUG_MODE = False
-
+if(settings.SETTING_ID == 'DEPLOY'):
+    ORDERING_DEBUG_MODE = False
+    ORDER_TIME_CHECK_DEBUG_MODE = False
+    VALIDATION_DEBUG_MODE = False
+elif(settings.SETTING_ID == 'DEBUG'):
+    ORDERING_DEBUG_MODE = False
+    ORDER_TIME_CHECK_DEBUG_MODE = False
+    VALIDATION_DEBUG_MODE = False
+else:
+    ORDERING_DEBUG_MODE = False
+    ORDER_TIME_CHECK_DEBUG_MODE = False
+    VALIDATION_DEBUG_MODE = False
+    
 # Time Functions
 def dateNowByTimeZone():
     '''
@@ -307,15 +316,15 @@ def dateNowByTimeZone():
     '''
     # Time QA DEBUG
     if(ORDER_TIME_CHECK_DEBUG_MODE):
-        DEBUG_DAYS = 23
-        DEBUG_HOUR = 9
-        DEBUG_MIN = 55
+        DEBUG_DAYS = 29
+        DEBUG_HOUR = 16
+        DEBUG_MIN = 25
 
         if settings.USE_TZ:
             tz = pytz.timezone(settings.TIME_ZONE)
-            return tz.localize(datetime.datetime.now()).replace(day=DEBUG_DAYS, hour=DEBUG_HOUR, minute=DEBUG_MIN, second=0, microsecond=0)
+            return tz.localize(datetime.datetime.now()).replace(day=DEBUG_DAYS, hour=DEBUG_HOUR, minute=DEBUG_MIN, second=0)
         else:
-            return datetime.datetime.now().replace(day=DEBUG_DAYS, hour=DEBUG_HOUR, minute=DEBUG_MIN, second=0, microsecond=0)
+            return datetime.datetime.now().replace(day=DEBUG_DAYS, hour=DEBUG_HOUR, minute=DEBUG_MIN, second=0)
     else:
         if settings.USE_TZ:
             tz = pytz.timezone(settings.TIME_ZONE)
