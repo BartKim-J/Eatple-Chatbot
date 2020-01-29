@@ -270,7 +270,6 @@ def kakaoView_PickupTime(kakaoPayload):
     currentStock = menu.getCurrentStock()
 
     if(menu.max_stock <= menu.current_stock):
-        
         kakaoForm.BasicCard_Push(
             '이 메뉴는 이미 매진됬습니다.',
             '아쉽지만 다른 메뉴를 주문해주세요!',
@@ -684,16 +683,20 @@ def kakaoView_OrderPaymentCheck(kakaoPayload):
 
             return JsonResponse(kakaoForm.GetForm())
         
+        currentStock = menu.getCurrentStock()
+
+        if(menu.max_stock <= menu.current_stock):
             kakaoForm.BasicCard_Push(
-                '{} - 메뉴가 매진됬어요!'.format(menu.name),
-                '{} - {}\n{}'.format(
-                    menu.store.name,
-                    walkTime, 
-                    menu.description, 
-                ),
-                thumbnail,
-                buttons
+                '이 메뉴는 이미 매진됬습니다.',
+                '아쉽지만 다른 메뉴를 주문해주세요!',
+                {},
+                []
             )
+            kakaoForm.BasicCard_Add()
+
+            kakaoForm.QuickReplies_AddWithMap(QUICKREPLIES_MAP)
+            
+            return JsonResponse(kakaoForm.GetForm())
 
         order.payment_status = IAMPORT_ORDER_STATUS_PAID
         order.save()
