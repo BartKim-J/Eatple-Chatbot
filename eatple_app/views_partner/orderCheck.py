@@ -109,7 +109,7 @@ def kakaoView_OrderDetails(kakaoPayload):
                     sellingTime=dict(SELLING_TIME_CATEGORY)[refOrder.menu.selling_time], 
                     count=totalCount
                 ),
-                'imageUrl': '{}{}'.format(HOST_URL, '/media/STORE_DB/images/default/partnerOrderSheet.png'),
+                'imageUrl': '{}{}'.format(HOST_URL, PARTNER_ORDER_SHEET_IMG),
             }
             
             

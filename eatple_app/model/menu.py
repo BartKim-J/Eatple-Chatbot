@@ -175,22 +175,25 @@ class Menu(MenuInfo, MenuStatus, MenuSetting):
 
     def getCurrentStock(self):
         currentDate = dateNowByTimeZone()
+        currentDateWithoutTime = currentDate.replace(
+            hour=0, minute=0, second=0, microsecond=0)
+        
         expireDate = currentDate + datetime.timedelta(hours=-24)
-        deadline = currentDate.replace(hour=16, minute=20, second=0)
+        deadline = currentDate.replace(hour=16, minute=0, second=0)
 
-        if(deadline >= currentDate):
-            availableOrders = Order.objects.filter(menu=self).filter(
-                (
-                    Q(status=ORDER_STATUS_PICKUP_WAIT) |
-                    Q(status=ORDER_STATUS_PICKUP_PREPARE) |
-                    Q(status=ORDER_STATUS_ORDER_CONFIRM_WAIT) |
-                    Q(status=ORDER_STATUS_ORDER_CONFIRMED) |
-                    Q(status=ORDER_STATUS_PICKUP_COMPLETED)
-                ) &
-                Q(payment_date__gt=expireDate)
-            )
-        else:
-            availableOrders = Order.objects.none()
+        TODAY = currentDateWithoutTime
+        
+        availableOrders = Order.objects.filter(menu=self).filter(
+            (
+                Q(status=ORDER_STATUS_PICKUP_WAIT) |
+                Q(status=ORDER_STATUS_PICKUP_PREPARE) |
+                Q(status=ORDER_STATUS_ORDER_CONFIRM_WAIT) |
+                Q(status=ORDER_STATUS_ORDER_CONFIRMED) |
+                Q(status=ORDER_STATUS_PICKUP_COMPLETED)
+            ) &
+            Q(payment_date__gt=expireDate) &
+            Q(pickup_time__gt=currentDate + datetime.timedelta(hours=-1, minutes=-30))
+        )
 
         print(availableOrders)
         self.current_stock = availableOrders.count()

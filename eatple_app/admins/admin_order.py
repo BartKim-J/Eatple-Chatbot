@@ -14,7 +14,6 @@ from django.utils.translation import ugettext_lazy as _
 from django.utils.safestring import mark_safe
 
 from django.contrib.admin import SimpleListFilter
-
 class TypeFilter(MultipleChoiceListFilter):
     title = '유형'
     parameter_name = 'type__in'
@@ -89,6 +88,7 @@ class OrderAdmin(ImportExportMixin, admin.ModelAdmin):
         qs = super(OrderAdmin, self).get_queryset(request)
         
         return qs.exclude(Q(store=None) & Q(menu=None))
+        #return qs
 
     def make_enable(self, request, queryset):
         updated_count = queryset.update(status=ORDER_STATUS_ORDER_CONFIRMED,payment_status= IAMPORT_ORDER_STATUS_PAID) #queryset.update

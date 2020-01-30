@@ -55,6 +55,7 @@ def SlackLogPaydOrder(order):
                             "*{dev}{name}님이 일반 잇플패스를 발급함* :hearts:\n"
                             "```\n"
                             "주문번호 [ <{host_url}/admin/eatple_app/order/{order_index}/change|{order_id}> ]\n"
+                            " - 점포명 : {store}\n"
                             " - 메뉴명 : {menu}\n"
                             " - 픽업시간 {pickup_time}\n"
                             " > <{host_url}/admin/eatple_app/order/{order_index}/change|주문 자세히 보기>\n"
@@ -63,6 +64,7 @@ def SlackLogPaydOrder(order):
                             order_id=order.order_id,
                             dev=DEV_LOG,
                             name=order.ordersheet.user.nickname,
+                            store=order.store,
                             menu=order.menu,
                             pickup_time=dateByTimeZone(order.pickup_time).strftime(
                                 '%-m월 %-d일 %p %-I시 %-M분').replace('AM', '오전').replace('PM', '오후'),
@@ -98,6 +100,7 @@ def SlackLogPaydOrder(order):
                             "*{dev}{name}님이 {company}에서 B2B 잇플패스를 발급함* :briefcase:\n"
                             "```\n"
                             "주문번호 [ <{host_url}/admin/eatple_app/order/{order_index}/change|{order_id}> ]\n"
+                            " - 점포명 : {store}\n"
                             " - 메뉴명 : {menu}\n"
                             " - 픽업시간 {pickup_time}\n"
                             " > <{host_url}/admin/eatple_app/order/{order_index}/change|주문 자세히 보기>\n"
@@ -107,6 +110,7 @@ def SlackLogPaydOrder(order):
                             dev=DEV_LOG,
                             name=order.ordersheet.user.nickname,
                             company=order.ordersheet.user.company.name,
+                            store=order.store,
                             menu=order.menu,
                             pickup_time=dateByTimeZone(order.pickup_time).strftime(
                                 '%-m월 %-d일 %p %-I시 %-M분').replace('AM', '오전').replace('PM', '오후'),
@@ -142,6 +146,7 @@ def SlackLogPaydOrder(order):
                             "*{dev}{name}님이 프로모션 잇플패스를 발급함* :blue_heart:\n"
                             "```\n"
                             "주문번호 [ <{host_url}/admin/eatple_app/order/{order_index}/change|{order_id}> ]\n"
+                            " - 점포명 : {store}\n"
                             " - 메뉴명 : {menu}\n"
                             " - 픽업시간 {pickup_time}\n"
                             " > <{host_url}/admin/eatple_app/order/{order_index}/change|주문 자세히 보기>\n"
@@ -150,6 +155,7 @@ def SlackLogPaydOrder(order):
                             order_id=order.order_id,
                             dev=DEV_LOG,
                             name=order.ordersheet.user.nickname,
+                            store=order.store,
                             menu=order.menu,
                             pickup_time=dateByTimeZone(order.pickup_time).strftime(
                                 '%-m월 %-d일 %p %-I시 %-M분').replace('AM', '오전').replace('PM', '오후'),
@@ -201,6 +207,7 @@ def SlackLogCancelOrder(order):
                         "*{dev}{name}님이 잇플패스를 취소함* :thinking_face:\n"
                         "```\n"
                         "주문번호 [ <{host_url}/admin/eatple_app/order/{order_index}/change|{order_id}> ]\n"
+                        " - 점포명 : {store}\n"
                         " - 메뉴명 : {menu}\n"
                         " - 픽업시간 {pickup_time}\n"
                         " > <{host_url}/admin/eatple_app/order/{order_index}/change|주문 자세히 보기>\n"
@@ -209,6 +216,7 @@ def SlackLogCancelOrder(order):
                             order_id=order.order_id,
                             dev=DEV_LOG,
                             name=order.ordersheet.user.nickname,
+                            store=order.store,
                             menu=order.menu,
                             pickup_time=dateByTimeZone(order.pickup_time).strftime(
                                 '%-m월 %-d일 %p %-I시 %-M분').replace('AM', '오전').replace('PM', '오후'),

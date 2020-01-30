@@ -228,7 +228,7 @@ def partnerValidation(kakaoPayload):
 def userValidation(kakaoPayload):
     try:
         if(USER_ID_DEBUG_MODE):
-            app_user_id = kakaoPayload.user_properties['app_user_id']
+            app_user_id = 1232187598
         else:
             app_user_id = kakaoPayload.user_properties['app_user_id']
         try:

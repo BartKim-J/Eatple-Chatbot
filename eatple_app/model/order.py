@@ -182,11 +182,7 @@ def orderUpdate(order):
     #Ordering State Update    
     menu = order.menu
 
-    if(ORDER_TIME_CHECK_DEBUG_MODE):
-        paymentDate = dateNowByTimeZone()
-    else:
-        print(order.payment_date)
-        paymentDate = dateByTimeZone(order.payment_date)
+    paymentDate = dateByTimeZone(order.payment_date)
     paymentDateWithoutTime = paymentDate.replace(
         hour=0, minute=0, second=0, microsecond=0)
 
@@ -261,7 +257,8 @@ def orderUpdate(order):
                     order.save()
 
             # next phase Lunch order
-            elif (nextlunchOrderEditTimeStart <= currentDate) and (currentDate <= nextlunchOrderEditTimeEnd) and \
+            elif (nextlunchOrderEditTimeStart <= currentDate) and \
+                 (currentDate <= nextlunchOrderEditTimeEnd) and \
                  (paymentDate >= nextlunchOrderEditTimeStart):
                 print("주문 완료 - B")
                 order.status = ORDER_STATUS_ORDER_CONFIRMED

@@ -48,6 +48,17 @@ TIME_ZONE = settings.TIME_ZONE
 
 HOST_URL = 'https://www.eatple.com:8000'
 
+# DEFAULT IMAEG URL
+PARTNER_ORDER_SHEET_IMG = '/media/STORE_DB/images/default/partnerOrderSheet.png'
+
+EATPLE_PASS_IMG_01 = '/media/STORE_DB/images/default/EatplePass_01.png'
+EATPLE_PASS_IMG_02 = '/media/STORE_DB/images/default/EatplePass_02.png'
+EATPLE_PASS_IMG_03 = '/media/STORE_DB/images/default/EatplePass_03.png'
+EATPLE_PASS_IMG_04 = '/media/STORE_DB/images/default/EatplePass_04.png'
+EATPLE_PASS_IMG_05 = '/media/STORE_DB/images/default/EatplePass_05.png'
+EATPLE_PASS_IMG_MORE = '/media/STORE_DB/images/default/EatplePass_More.png'
+EATPLE_PASS_IMG_NULL = '/media/STORE_DB/images/default/EatplePass_Null.png'
+
 NOT_APPLICABLE = VALUE_NOT_APPLICABLE
 
 # IMAGE DB PATH
@@ -318,10 +329,10 @@ def dateNowByTimeZone():
     '''
     # Time QA DEBUG
     if(ORDER_TIME_CHECK_DEBUG_MODE):
-        DEBUG_DAYS = 29
+        DEBUG_DAYS = 30
         DEBUG_HOUR = 16
-        DEBUG_MIN = 48
-        DEBUG_SEC = 28
+        DEBUG_MIN = 30
+        DEBUG_SEC = 1
 
         if settings.USE_TZ:
             tz = pytz.timezone(settings.TIME_ZONE)

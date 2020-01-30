@@ -32,7 +32,8 @@ def kakaoView_MenuListup(kakaoPayload):
     prev_block_id = prevBlockValidation(kakaoPayload)
     if(prev_block_id != KAKAO_BLOCK_USER_HOME and
        prev_block_id != KAKAO_BLOCK_USER_EATPLE_PASS and
-       prev_block_id != KAKAO_BLOCK_USER_ORDER_DETAILS):
+       prev_block_id != KAKAO_BLOCK_USER_ORDER_DETAILS and 
+       prev_block_id != KAKAO_BLOCK_USER_SET_PICKUP_TIME):
         return errorView('Invalid Block Access', '정상적이지 않은 경로거나, 오류가 발생했습니다.\n다시 주문해주세요!')
 
     # User Validation
@@ -219,7 +220,8 @@ def kakaoView_MenuListup(kakaoPayload):
 def kakaoView_PickupTime(kakaoPayload):
     # Block Validation
     prev_block_id = prevBlockValidation(kakaoPayload)
-    if(prev_block_id != KAKAO_BLOCK_USER_GET_MENU and prev_block_id != KAKAO_BLOCK_USER_SET_ORDER_SHEET):
+    if( prev_block_id != KAKAO_BLOCK_USER_GET_MENU and
+        prev_block_id != KAKAO_BLOCK_USER_SET_ORDER_SHEET):
         return errorView('Invalid Block Access', '정상적이지 않은 경로거나, 오류가 발생했습니다.\n다시 주문해주세요!')
 
     # User Validation
@@ -337,6 +339,15 @@ def kakaoView_PickupTime(kakaoPayload):
 
     order = orderValidation(kakaoPayload)
 
+    if(pickupTimes.count() < 2):
+        kakaoForm.BasicCard_Push(
+                                ' - 픽업시간이 제한된 점포입니다 -',
+                                '\"{}\"은 점주님의 요청으로 픽업 시간을 한 타임으로 제한합니다.'.format(store.name),
+                                {},
+                                []
+                                )
+        kakaoForm.BasicCard_Add()
+        
     kakaoForm.BasicCard_Push('픽업시간을 설정해주세요.',
                              '{} - {}'.format(menu.store.name, menu.name),
                              {},
@@ -344,14 +355,6 @@ def kakaoView_PickupTime(kakaoPayload):
                              )
 
     kakaoForm.BasicCard_Add()
-    if(pickupTimes.count() < 2):
-        kakaoForm.BasicCard_Push(
-                                '픽업시간이 제한된 점포입니다.',
-                                '\"{}\"은 점주님의 요청으로 픽업 시간을 한 타임으로 제한합니다.'.format(store.name),
-                                {},
-                                []
-                                )
-        kakaoForm.BasicCard_Add()
 
     for pickupTime in pickupTimes:
         dataActionExtra = {
@@ -372,6 +375,16 @@ def kakaoView_PickupTime(kakaoPayload):
             KAKAO_BLOCK_USER_SET_ORDER_SHEET,
             dataActionExtra
         )
+
+    kakaoForm.QuickReplies_Add(
+        'block',
+        "다른메뉴 보기",
+        '로딩중..',
+        KAKAO_BLOCK_USER_GET_MENU,
+        {
+            KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_SET_PICKUP_TIME
+        }
+    )
 
     return JsonResponse(kakaoForm.GetForm())
 
@@ -802,7 +815,7 @@ def kakaoView_EatplePassIssuance(kakaoPayload):
         kakaoForm = KakaoForm()
             
         thumbnail = {
-            'imageUrl': '{}{}'.format(HOST_URL, '/media/STORE_DB/images/default/eatplePassImg.png'),
+            'imageUrl': '{}{}'.format(HOST_URL, EATPLE_PASS_IMG_01),
         }
 
         kakaoMapUrl = 'https://map.kakao.com/link/map/{},{}'.format(

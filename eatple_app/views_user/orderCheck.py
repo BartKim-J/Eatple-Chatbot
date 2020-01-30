@@ -50,6 +50,13 @@ def kakaoView_EatplePass(kakaoPayload):
     ORDER_LIST_QUICKREPLIES_MAP = [
         {
             'action': 'block',
+            'label': '새로고침',
+            'messageText': '로딩중..',
+            'blockId': KAKAO_BLOCK_USER_EATPLE_PASS,
+            'extra': {}
+        },
+        {
+            'action': 'block',
             'label': '홈으로 돌아가기',
             'messageText': '로딩중..',
             'blockId': KAKAO_BLOCK_USER_HOME,
@@ -63,7 +70,7 @@ def kakaoView_EatplePass(kakaoPayload):
     availableEatplePass = orderManager.availableOrderStatusUpdate()
     ownEatplePass = availableEatplePass.filter(Q(ordersheet__user=user))
     delegatedEatplePass = availableEatplePass.filter(~Q(delegate=None))
-    
+    delegatedEatplePassCount = delegatedEatplePass.count()
     
     if ownEatplePass:
         nicknameList = ownEatplePass.first().ordersheet.user.nickname
@@ -79,8 +86,24 @@ def kakaoView_EatplePass(kakaoPayload):
         kakaoForm = KakaoForm()
 
         for order in ownEatplePass:
+            
+            if(order.delegate != None):
+                imgUrl = '{}{}'.format(HOST_URL, EATPLE_PASS_IMG_NULL)
+            elif(delegatedEatplePassCount == 0):
+                imgUrl = '{}{}'.format(HOST_URL, EATPLE_PASS_IMG_01)
+            elif(delegatedEatplePassCount == 1):
+                imgUrl = '{}{}'.format(HOST_URL, EATPLE_PASS_IMG_02)
+            elif(delegatedEatplePassCount == 2):
+                imgUrl = '{}{}'.format(HOST_URL, EATPLE_PASS_IMG_03)
+            elif(delegatedEatplePassCount == 3):
+                imgUrl = '{}{}'.format(HOST_URL, EATPLE_PASS_IMG_04)
+            elif(delegatedEatplePassCount == 4):
+                imgUrl = '{}{}'.format(HOST_URL, EATPLE_PASS_IMG_05) 
+            else:
+                imgUrl = '{}{}'.format(HOST_URL, EATPLE_PASS_IMG_MORE)
+            
             thumbnail = {
-                'imageUrl': '{}{}'.format(HOST_URL, '/media/STORE_DB/images/default/eatplePassImg.png'),
+                'imageUrl': imgUrl,
             }
 
             kakaoMapUrl = 'https://map.kakao.com/link/map/{},{}'.format(
@@ -238,19 +261,20 @@ def kakaoView_EatplePass(kakaoPayload):
 
         kakaoForm.BasicCard_Add()
         
-        kakaoForm.BasicCard_Push(
-            '{}'.format(order.store.addr),
-            '',
-            {},
-            [
-                {
-                    'action': 'webLink',
-                    'label': '위치보기',
-                    'webLinkUrl': kakaoMapUrl
-                }
-            ]
-        )
-        kakaoForm.BasicCard_Add()
+        if(order.delegate == None):
+            kakaoForm.BasicCard_Push(
+                '{}'.format(order.store.addr),
+                '',
+                {},
+                [
+                    {
+                        'action': 'webLink',
+                        'label': '위치보기',
+                        'webLinkUrl': kakaoMapUrl
+                    }
+                ]
+            )
+            kakaoForm.BasicCard_Add()
         
     # No EatplePass
     else:
@@ -316,7 +340,7 @@ def kakaoView_OrderDetails(kakaoPayload):
     else:
         kakaoForm = KakaoForm()
 
-        kakaoForm.SimpleText_Add('현재 조회 가능한 잇플패스가 없습니다! 주문을 먼저 해주세요!')
+        kakaoForm.SimpleText_Add('지금까지 주문한 잇플패스가 없습니다! 어서 주문을 해보세요!')
 
     kakaoForm.QuickReplies_AddWithMap(ORDER_LIST_QUICKREPLIES_MAP)
 

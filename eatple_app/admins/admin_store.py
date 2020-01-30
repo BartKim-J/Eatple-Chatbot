@@ -94,12 +94,9 @@ class StoreAdmin(ImportExportMixin, admin.GeoModelAdmin):
     def menu_pickup_status(self, obj):
         current_pickup_done_order = Menu.objects.filter(store=obj, status=OC_OPEN).order_by('-current_stock').first().getCurrentStock().filter(Q(status=ORDER_STATUS_PICKUP_COMPLETED)).count()
         current_stock = Menu.objects.filter(store=obj, status=OC_OPEN).order_by('-current_stock').first().current_stock
-    
-        print(current_pickup_done_order)
-        print(current_stock)
         
         if(current_stock != 0):
-            return "{}/{} ({}%)".format(current_pickup_done_order, current_stock, round((current_pickup_done_order / current_stock) * 100))
+            return "{}/{} ({}%) 개".format(current_pickup_done_order, current_stock, round((current_pickup_done_order / current_stock) * 100))
         else:
             return "0/0 (100%) 개"
         

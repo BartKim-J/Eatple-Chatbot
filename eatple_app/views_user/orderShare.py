@@ -119,7 +119,7 @@ def kakaoView_GetDelegateUser(kakaoPayload):
     orderManager = UserOrderManager(delegateUser)
     orderManager.orderPaidCheck()
 
-    delegateUserOrder = orderManager.availableOrderStatusUpdate().first();
+    delegateUserOrder = orderManager.availableOrderStatusUpdate().filter(Q(ordersheet__user=delegateUser)).first();
     delegateUserOrder.orderStatusUpdate()
 
     if (order.status != ORDER_STATUS_ORDER_CONFIRM_WAIT and
