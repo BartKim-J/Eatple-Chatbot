@@ -43,6 +43,26 @@ class UserB2BAdmin(ImportExportMixin, admin.ModelAdmin):
 
     search_fields = ['company__name', 'name', 'phone_number']
 
+    def account_sync_flag(self, obj):
+        try:
+            User.objects.get(phone_number=obj.phone_number)
+            return True
+        except User.DoesNotExist:
+            return False
+        
+        return False
+    account_sync_flag.short_description = "카카오 계정 연동 상태"
+    account_sync_flag.boolean = True
+    
+    def account_info(self, obj):
+        try:
+            user = User.objects.get(phone_number=obj.phone_number)
+            return "{} : {}".format(user.nickname, user.app_user_id)
+        except User.DoesNotExist:
+            return "미등록"
+    
+    account_info.short_description = "카카오 계정"
+
     def phonenumber(self, obj):
         return obj.phone_number.as_national
     phonenumber.short_description = "전화번호"
@@ -50,12 +70,15 @@ class UserB2BAdmin(ImportExportMixin, admin.ModelAdmin):
 
     list_filter = (
         ('company', RelatedDropdownFilter),
+        ('create_date', DateRangeFilter),
     )
 
     list_display = (
         'company',
         'name',
         'phonenumber',
+        'account_info',
+        'account_sync_flag',
     )
 
     inlines = []

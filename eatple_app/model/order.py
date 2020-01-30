@@ -185,6 +185,7 @@ def orderUpdate(order):
     if(ORDER_TIME_CHECK_DEBUG_MODE):
         paymentDate = dateNowByTimeZone()
     else:
+        print(order.payment_date)
         paymentDate = dateByTimeZone(order.payment_date)
     paymentDateWithoutTime = paymentDate.replace(
         hour=0, minute=0, second=0, microsecond=0)
@@ -268,6 +269,9 @@ def orderUpdate(order):
 
             # Invalid Time Range is Dinner Order Time ( prev phase lunch order ~ dinner order ~ next phase lunch order )
             else:
+                print(paymentDate)
+                print(nextlunchOrderEditTimeStart)
+                print((paymentDate >= nextlunchOrderEditTimeStart))
                 print("픽업 완료 - A")
                 order.status = ORDER_STATUS_PICKUP_COMPLETED
                 order.save()

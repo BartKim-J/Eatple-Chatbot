@@ -13,6 +13,13 @@ from django.core import validators
 from django.utils.translation import ugettext_lazy as _
 from django.utils.safestring import mark_safe
     
+class TypeFilter(MultipleChoiceListFilter):
+    title = '유형'
+    parameter_name = 'type__in'
+
+    def lookups(self, request, model_admin):
+        return STORE_TYPE
+        
 class CRNInline(admin.TabularInline):
     model = CRN
     min_num = 1
@@ -84,24 +91,23 @@ class StoreAdmin(ImportExportMixin, admin.GeoModelAdmin):
     )
     logo_preview.short_description = "이미지 미리보기"
 
-    def menu_done_stock(self, obj):
-        current_pickup_order = Menu.objects.filter(store=obj).order_by('-current_stock').first().getCurrentStock().filter(Q(status=ORDER_STATUS_PICKUP_COMPLETED)).count()
+    def menu_pickup_status(self, obj):
+        current_pickup_done_order = Menu.objects.filter(store=obj).order_by('-current_stock').first().getCurrentStock().filter(Q(status=ORDER_STATUS_PICKUP_COMPLETED)).count()
         current_stock = Menu.objects.filter(store=obj).order_by('-current_stock').first().current_stock
-
-        if(current_stock != 0):
-            return "{} ({}%)".format(current_pickup_order, round(( current_pickup_order / current_stock ) * 100))
-        else:
-            return "0 (100%)"
         
-    menu_done_stock.short_description = "일일 픽업완료"    
+        if(current_stock != 0):
+            return "{}/{} ({}%)".format(current_pickup_done_order, current_stock, round((current_pickup_done_order / current_stock) * 100))
+        else:
+            return "0/0 (100%)"
+        
+    menu_pickup_status.short_description = "일일 픽업완료/픽업대기"    
 
-    def menu_current_stock(self, obj):
-        return Menu.objects.filter(store=obj).order_by('-current_stock').first().current_stock
-    menu_current_stock.short_description = "일일 주문량"
-    
-    def menu_max_stock(self, obj):
-        return Menu.objects.filter(store=obj).order_by('-current_stock').first().max_stock
-    menu_max_stock.short_description = "일일 재고"
+    def menu_stock(self, obj):
+        current_stock = Menu.objects.filter(store=obj).order_by('-current_stock').first().current_stock
+        max_stock = Menu.objects.filter(store=obj).order_by('-current_stock').first().max_stock
+        
+        return "{}/{} ({}%)".format(current_stock, max_stock, round((current_stock / max_stock) * 100))
+    menu_stock.short_description = "일일 주문량/재고"
     
     def menu_name(self, obj):
         return Menu.objects.filter(store=obj).first().name
@@ -110,7 +116,7 @@ class StoreAdmin(ImportExportMixin, admin.GeoModelAdmin):
     list_filter = (
         ('status', ChoiceDropdownFilter), 
         ('area', ChoiceDropdownFilter), 
-        ('type', ChoiceDropdownFilter)
+        TypeFilter,
     )
 
     def status_flag(self, obj):
@@ -131,9 +137,8 @@ class StoreAdmin(ImportExportMixin, admin.GeoModelAdmin):
         'area',
         'status_flag',
         'menu_name',
-        'menu_current_stock',
-        'menu_done_stock',
-        'menu_max_stock',
+        'menu_pickup_status',
+        'menu_stock',
     )
 
     def store_open(self, request, queryset):

@@ -15,6 +15,13 @@ from django.utils.safestring import mark_safe
 
 from django.contrib.admin import SimpleListFilter
 
+class TypeFilter(MultipleChoiceListFilter):
+    title = '유형'
+    parameter_name = 'type__in'
+
+    def lookups(self, request, model_admin):
+        return ORDER_TYPE
+        
 class OrderShareFlagFilter(SimpleListFilter):
     title = '부탁하기'
     parameter_name = '부탁하기 플래그'
@@ -132,7 +139,7 @@ class OrderAdmin(ImportExportMixin, admin.ModelAdmin):
         ('payment_status', ChoiceDropdownFilter),
         ('status', ChoiceDropdownFilter),
         ('ordersheet__user__company', RelatedDropdownFilter),
-        ('type', ChoiceDropdownFilter),
+        TypeFilter,
         ('ordersheet__user__type', ChoiceDropdownFilter),
         OrderShareFlagFilter,
     )

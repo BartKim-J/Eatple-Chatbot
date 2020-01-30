@@ -282,44 +282,41 @@ def kakaoView_PickupTime(kakaoPayload):
         
         return JsonResponse(kakaoForm.GetForm())
     
-    if(user.type != USER_TYPE_ADMIN):
-        currentSellingTime = sellingTimeCheck()
-            
-        if (currentSellingTime == None):
-            return errorView('Get Invalid Selling Time', '잘못된 주문 시간입니다.')
-        elif currentSellingTime == SELLING_TIME_DINNER:
-            '''
-                @NOTE Dinner Time Close In Alpha 
-            '''
-            kakaoForm.BasicCard_Push(
-                '오늘 점심은 이미 마감되었어요.',
-                '내일 점심은 오늘 16:30부터 내일 10:30까지 주문하실 수 있어요.',
-                {},
-                []
-            )
-            kakaoForm.BasicCard_Add()
+    currentSellingTime = sellingTimeCheck()
+        
+    if (currentSellingTime == None):
+        return errorView('Get Invalid Selling Time', '잘못된 주문 시간입니다.')
+    elif currentSellingTime == SELLING_TIME_DINNER:
+        '''
+            @NOTE Dinner Time Close In Alpha 
+        '''
+        kakaoForm.BasicCard_Push(
+            '오늘 점심은 이미 마감되었어요.',
+            '내일 점심은 오늘 16:30부터 내일 10:30까지 주문하실 수 있어요.',
+            {},
+            []
+        )
+        kakaoForm.BasicCard_Add()
 
-            kakaoForm.QuickReplies_AddWithMap(QUICKREPLIES_MAP)
+        kakaoForm.QuickReplies_AddWithMap(QUICKREPLIES_MAP)
 
-            return JsonResponse(kakaoForm.GetForm())
+        return JsonResponse(kakaoForm.GetForm())
 
-        isVacationDay = vacationTimeCheck()
-        isClosedDay = weekendTimeCheck()
-    
-        if(isClosedDay or isVacationDay):
-            kakaoForm.BasicCard_Push('※ 안내사항 ※',
-                                    '잇플 알파에서는 \'주말 및 공휴일\' 영업을 하지 않고있습니다. 정식 출시를 기대해주세요!',
-                                    {},
-                                    []
-                                    )
+    isVacationDay = vacationTimeCheck()
+    isClosedDay = weekendTimeCheck()
 
-            kakaoForm.BasicCard_Add()
+    if(isClosedDay or isVacationDay):
+        kakaoForm.BasicCard_Push('※ 안내사항 ※',
+                                '잇플 알파에서는 \'주말 및 공휴일\' 영업을 하지 않고있습니다. 정식 출시를 기대해주세요!',
+                                {},
+                                []
+                                )
 
-            kakaoForm.QuickReplies_AddWithMap(QUICKREPLIES_MAP)
+        kakaoForm.BasicCard_Add()
 
-            return JsonResponse(kakaoForm.GetForm())
-    else:
-        currentSellingTime = SELLING_TIME_LUNCH
+        kakaoForm.QuickReplies_AddWithMap(QUICKREPLIES_MAP)
+
+        return JsonResponse(kakaoForm.GetForm())
 
     # Order Record
     try:

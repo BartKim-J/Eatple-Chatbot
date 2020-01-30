@@ -62,6 +62,8 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework_swagger',
 
+    'django_admin_multiple_choice_list_filter',
+    
     # local-app
     'eatple_app.apps.EatpleChatbotAppConfig',
 

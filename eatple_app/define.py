@@ -21,6 +21,7 @@ from eatple_app.views_slack.slack_logger import *
 from phonenumber_field.modelfields import PhoneNumberField
 
 from django_admin_listfilter_dropdown.filters import DropdownFilter, RelatedDropdownFilter, ChoiceDropdownFilter
+from django_admin_multiple_choice_list_filter.list_filters import MultipleChoiceListFilter
 
 from rangefilter.filter import DateRangeFilter, DateTimeRangeFilter
 
@@ -164,11 +165,9 @@ STORE_TYPE = [
 # USER_TYPE
 USER_TYPE_NORMAL = 'normal'
 USER_TYPE_B2B = 'b2b'
-USER_TYPE_ADMIN = 'admin'
 USER_TYPE = [
     (USER_TYPE_NORMAL, '일반'),
     (USER_TYPE_B2B, 'B2B'),
-    (USER_TYPE_ADMIN, '관리자'),
 ]
 
 # PARTNER_TYPE
@@ -300,14 +299,17 @@ if(settings.SETTING_ID == 'DEPLOY'):
     ORDERING_DEBUG_MODE = False
     ORDER_TIME_CHECK_DEBUG_MODE = False
     VALIDATION_DEBUG_MODE = False
+    USER_ID_DEBUG_MODE = False
 elif(settings.SETTING_ID == 'DEBUG'):
     ORDERING_DEBUG_MODE = True
     ORDER_TIME_CHECK_DEBUG_MODE = True
     VALIDATION_DEBUG_MODE = False
+    USER_ID_DEBUG_MODE = False
 else:
     ORDERING_DEBUG_MODE = False
     ORDER_TIME_CHECK_DEBUG_MODE = False
     VALIDATION_DEBUG_MODE = False
+    USER_ID_DEBUG_MODE = False
     
 # Time Functions
 def dateNowByTimeZone():
@@ -318,13 +320,14 @@ def dateNowByTimeZone():
     if(ORDER_TIME_CHECK_DEBUG_MODE):
         DEBUG_DAYS = 29
         DEBUG_HOUR = 16
-        DEBUG_MIN = 25
+        DEBUG_MIN = 48
+        DEBUG_SEC = 28
 
         if settings.USE_TZ:
             tz = pytz.timezone(settings.TIME_ZONE)
-            return tz.localize(datetime.datetime.now()).replace(day=DEBUG_DAYS, hour=DEBUG_HOUR, minute=DEBUG_MIN, second=0)
+            return tz.localize(datetime.datetime.now()).replace(day=DEBUG_DAYS, hour=DEBUG_HOUR, minute=DEBUG_MIN, second=DEBUG_SEC)
         else:
-            return datetime.datetime.now().replace(day=DEBUG_DAYS, hour=DEBUG_HOUR, minute=DEBUG_MIN, second=0)
+            return datetime.datetime.now().replace(day=DEBUG_DAYS, hour=DEBUG_HOUR, minute=DEBUG_MIN, second=DEBUG_SEC)
     else:
         if settings.USE_TZ:
             tz = pytz.timezone(settings.TIME_ZONE)
