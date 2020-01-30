@@ -1,18 +1,62 @@
-from eatple_app.views_slack.slack_define import * 
+# Define
+from eatple_app.define import *
 
-def eatple_total_status():
+from eatple_app.model.menu import Menu, PickupTime
+
+def eatple_b2b_status():
+    menuList = Menu.objects.filter(
+        store__type=STORE_TYPE_B2B,         
+        status=OC_OPEN,
+        store__status=OC_OPEN,
+    )
+    
+    menuStatusBlock = []
+    menuStatusBlock += {
+        "type": "divider"
+    },
+    for menu in menuList:
+        current_pickup_done_order=menu.getCurrentStock().filter(Q(status=ORDER_STATUS_PICKUP_COMPLETED)).count()
+        current_stock = menu.current_stock
+
+        if(current_stock != 0):
+            stock_result = "{}/{} ({}%) 개".format(current_pickup_done_order, current_stock, round((current_pickup_done_order / current_stock) * 100))
+        else:
+            stock_result = "주문 없음"            
+            
+        menuStatusBlock += {
+                "type": "section",
+                "text": {
+                    "type": "mrkdwn",
+                    "text": (
+                        "*{name}* :eight_pointed_black_star:\n"
+                        "```\n"
+                        " - 메뉴명 : {menu}\n"
+                        " - 일일 주문량 : {stock_result}\n"
+                        " > <{host_url}/admin/eatple_app/store/{store_index}/change|점포 자세히 보기>\n"
+                        "```"
+                    ).format(
+                            name=menu.store.name,
+                            menu=menu.name,
+                            current_pickup_done_order=current_pickup_done_order,
+                            stock_result=stock_result,
+                            host_url=HOST_URL,
+                            store_index=menu.store.id,
+                    )
+                },
+                #"accessory": {
+                #    "type": "image",
+                #    "image_url": '{}{}'.format(HOST_URL, order.menu.imgURL()),
+                #    "alt_text": "menu"
+                #}
+            },
+        
+    menuStatusBlock += {
+        "type": "divider"
+    },
+    
     res = client.chat_postMessage(
         channel=SLACK_CHANNEL_EATPLE_LOG,
-        text="전체 가입자수 : {userCount}명, 전체 주문수: {orderCount}개".format(
-            userCount=User.objects.all().count(), 
-            orderCount=Order.objects.all().filter(
-                Q(status=ORDER_STATUS_PICKUP_WAIT) |
-                Q(status=ORDER_STATUS_PICKUP_PREPARE) |
-                Q(status=ORDER_STATUS_PICKUP_COMPLETED) |
-                Q(status=ORDER_STATUS_ORDER_CONFIRM_WAIT) |
-                Q(status=ORDER_STATUS_ORDER_CONFIRMED)
-            ).count()
-        )
+        blocks=menuStatusBlock
     )
 
     return Response(status=status.HTTP_200_OK)
@@ -71,10 +115,8 @@ class Events(APIView):
             text = event_message.get('text')
             channel = event_message.get('channel')
 
-            if SLACK_COMMAND_DAILY_STATUS in text.lower():
-                return eatple_daily_status()
+            if SLACK_COMMAND_B2B_STATUS in text.lower():
+                return eatple_b2b_status()
                 
-            if SLACK_COMMAND_TOTAL_STATUS in text.lower():
-                return eatple_total_status()
 
         return Response(status=status.HTTP_200_OK)

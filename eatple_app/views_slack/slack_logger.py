@@ -1,4 +1,5 @@
-from eatple_app.views_slack.slack_define import * 
+# Define
+from eatple_app.define import *
 
 def SlackLogFollow(nickname):
     res = client.chat_postMessage(

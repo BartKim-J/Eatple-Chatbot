@@ -376,16 +376,6 @@ def kakaoView_PickupTime(kakaoPayload):
             dataActionExtra
         )
 
-    kakaoForm.QuickReplies_Add(
-        'block',
-        "다른메뉴 보기",
-        '로딩중..',
-        KAKAO_BLOCK_USER_GET_MENU,
-        {
-            KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_SET_PICKUP_TIME
-        }
-    )
-
     return JsonResponse(kakaoForm.GetForm())
 
 

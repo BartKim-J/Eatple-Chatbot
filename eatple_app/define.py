@@ -15,6 +15,10 @@ import json
 
 import pytz
 
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import status
+
 from eatple_app.module_iamport.Iamport import Iamport
 from eatple_app.views_slack.slack_logger import *
 
@@ -35,7 +39,27 @@ from django.contrib.gis.geos import *
 from django.contrib.gis.measure import D
 from django.contrib.gis.db.models.functions import Distance
 
-from django.db.models import F
+from django.db.models import F, Q
+
+###########################################################################################
+# Slack
+import slack 
+
+
+# SLACK DEFINE 
+SLACK_CLIENT_ID = '808658240627.862280783904'
+SLACK_CLIENT_SECRET = 'cd6bb7935acaf9451c1bf326f21b80bd'
+
+SLACK_VERIFICATION_TOKEN = 'qM7JgIwtYjTnMZ6KP9KbNo5o'
+SLACK_BOT_USER_TOKEN = 'xoxb-808658240627-864289607191-kT7H9kwCZeK5LEo8YsnrLfFW'
+
+SLACK_CHANNEL_EATPLE_LOG = 'CQZKF5W02'
+
+SLACK_COMMAND_B2B_STATUS = 'bs'
+
+client = slack.WebClient(token=SLACK_BOT_USER_TOKEN)
+
+###########################################################################################
 
 VALUE_NOT_APPLICABLE = 'N/A'
 
@@ -51,13 +75,13 @@ HOST_URL = 'https://www.eatple.com:8000'
 # DEFAULT IMAEG URL
 PARTNER_ORDER_SHEET_IMG = '/media/STORE_DB/images/default/partnerOrderSheet.png'
 
-EATPLE_PASS_IMG_01 = '/media/STORE_DB/images/default/EatplePass_01.png'
-EATPLE_PASS_IMG_02 = '/media/STORE_DB/images/default/EatplePass_02.png'
-EATPLE_PASS_IMG_03 = '/media/STORE_DB/images/default/EatplePass_03.png'
-EATPLE_PASS_IMG_04 = '/media/STORE_DB/images/default/EatplePass_04.png'
-EATPLE_PASS_IMG_05 = '/media/STORE_DB/images/default/EatplePass_05.png'
-EATPLE_PASS_IMG_MORE = '/media/STORE_DB/images/default/EatplePass_More.png'
-EATPLE_PASS_IMG_NULL = '/media/STORE_DB/images/default/EatplePass_Null.png'
+EATPLE_PASS_IMG_01 = '/media/STORE_DB/images/default/EatplePassImg_01.png'
+EATPLE_PASS_IMG_02 = '/media/STORE_DB/images/default/EatplePassImg_02.png'
+EATPLE_PASS_IMG_03 = '/media/STORE_DB/images/default/EatplePassImg_03.png'
+EATPLE_PASS_IMG_04 = '/media/STORE_DB/images/default/EatplePassImg_04.png'
+EATPLE_PASS_IMG_05 = '/media/STORE_DB/images/default/EatplePassImg_05.png'
+EATPLE_PASS_IMG_MORE = '/media/STORE_DB/images/default/EatplePassImg_More.png'
+EATPLE_PASS_IMG_NULL = '/media/STORE_DB/images/default/EatplePassImg_Null.png'
 
 NOT_APPLICABLE = VALUE_NOT_APPLICABLE
 
@@ -358,3 +382,4 @@ def dateByTimeZone(UTC):
         localeTime = UTC.replace(tzinfo=KST) + timeDiffrence
 
         return localeTime  # TO Korea
+

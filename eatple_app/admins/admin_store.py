@@ -103,7 +103,6 @@ class StoreAdmin(ImportExportMixin, admin.GeoModelAdmin):
     menu_pickup_status.short_description = "일일 픽업완료/주문량"    
 
     def menu_stock(self, obj):
-    
         max_stock = Menu.objects.filter(store=obj, status=OC_OPEN).order_by('-current_stock').first().max_stock
         
         return "{}개".format(max_stock)
