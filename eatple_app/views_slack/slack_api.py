@@ -28,7 +28,7 @@ def eatple_b2b_status():
                 "text": {
                     "type": "mrkdwn",
                     "text": (
-                        "*{name}* :eight_pointed_black_star:\n"
+                        "*{name}*\n"
                         "```\n"
                         " - 메뉴명 : {menu}\n"
                         " - 일일 주문량 : {stock_result}\n"

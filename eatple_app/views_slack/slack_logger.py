@@ -1,4 +1,5 @@
 # Define
+
 from eatple_app.define import *
 
 def SlackLogFollow(nickname):
@@ -31,7 +32,9 @@ def SlackLogSignUp(user):
     
     return res
 
-def SlackLogPaydOrder(order):
+def SlackLogPayOrder(order):
+    client = slack.WebClient(token=SLACK_BOT_USER_TOKEN)
+
     if(settings.SETTING_ID == 'DEPLOY'):
         SERVER_PORT = 8000
         DEV_LOG=''
@@ -185,6 +188,8 @@ def SlackLogPaydOrder(order):
         return res
 
 def SlackLogCancelOrder(order):
+    client = slack.WebClient(token=SLACK_BOT_USER_TOKEN)
+
     if(settings.SETTING_ID == 'DEPLOY'):
         SERVER_PORT = 8000
         DEV_LOG=''

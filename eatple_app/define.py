@@ -20,7 +20,6 @@ from rest_framework.response import Response
 from rest_framework import status
 
 from eatple_app.module_iamport.Iamport import Iamport
-from eatple_app.views_slack.slack_logger import *
 
 from phonenumber_field.modelfields import PhoneNumberField
 
