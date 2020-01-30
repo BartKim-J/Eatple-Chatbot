@@ -92,22 +92,25 @@ class StoreAdmin(ImportExportMixin, admin.GeoModelAdmin):
     logo_preview.short_description = "이미지 미리보기"
 
     def menu_pickup_status(self, obj):
-        current_pickup_done_order = Menu.objects.filter(store=obj).order_by('-current_stock').first().getCurrentStock().filter(Q(status=ORDER_STATUS_PICKUP_COMPLETED)).count()
-        current_stock = Menu.objects.filter(store=obj).order_by('-current_stock').first().current_stock
+        current_pickup_done_order = Menu.objects.filter(store=obj, status=OC_OPEN).order_by('-current_stock').first().getCurrentStock().filter(Q(status=ORDER_STATUS_PICKUP_COMPLETED)).count()
+        current_stock = Menu.objects.filter(store=obj, status=OC_OPEN).order_by('-current_stock').first().current_stock
+    
+        print(current_pickup_done_order)
+        print(current_stock)
         
         if(current_stock != 0):
             return "{}/{} ({}%)".format(current_pickup_done_order, current_stock, round((current_pickup_done_order / current_stock) * 100))
         else:
-            return "0/0 (100%)"
+            return "0/0 (100%) 개"
         
-    menu_pickup_status.short_description = "일일 픽업완료/픽업대기"    
+    menu_pickup_status.short_description = "일일 픽업완료/주문량"    
 
     def menu_stock(self, obj):
-        current_stock = Menu.objects.filter(store=obj).order_by('-current_stock').first().current_stock
-        max_stock = Menu.objects.filter(store=obj).order_by('-current_stock').first().max_stock
+    
+        max_stock = Menu.objects.filter(store=obj, status=OC_OPEN).order_by('-current_stock').first().max_stock
         
-        return "{}/{} ({}%)".format(current_stock, max_stock, round((current_stock / max_stock) * 100))
-    menu_stock.short_description = "일일 주문량/재고"
+        return "{}개".format(max_stock)
+    menu_stock.short_description = "일일 가능량"
     
     def menu_name(self, obj):
         return Menu.objects.filter(store=obj).first().name

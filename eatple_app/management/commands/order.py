@@ -22,8 +22,6 @@ class Command(BaseCommand):
             currentDate = dateNowByTimeZone()
             expireDate = currentDate + datetime.timedelta(hours=-24)
             
-            print(expireDate)
-            
             orderList = Order.objects.filter(
                 Q(payment_date__gt=expireDate) &
                 ~Q(store=None) &
