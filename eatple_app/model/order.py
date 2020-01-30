@@ -162,7 +162,7 @@ def orderUpdate(order):
             order.save()
             
             #@SLACK LOGGER
-            SlackLogPaydOrder(order)
+            SlackLogPayOrder(order)
             
         #@PROMOTION
         if(order.type == ORDER_TYPE_PROMOTION):
