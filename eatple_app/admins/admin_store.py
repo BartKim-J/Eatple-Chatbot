@@ -98,7 +98,7 @@ class StoreAdmin(ImportExportMixin, admin.GeoModelAdmin):
         if(current_stock != 0):
             return "{}/{} ({}%) 개".format(current_pickup_done_order, current_stock, round((current_pickup_done_order / current_stock) * 100))
         else:
-            return "0/0 (100%) 개"
+            return "주문 없음"
         
     menu_pickup_status.short_description = "일일 픽업완료/주문량"    
 
@@ -110,7 +110,7 @@ class StoreAdmin(ImportExportMixin, admin.GeoModelAdmin):
     menu_stock.short_description = "일일 가능량"
     
     def menu_name(self, obj):
-        return Menu.objects.filter(store=obj).first().name
+        return Menu.objects.filter(store=obj, status=OC_OPEN).order_by('-current_stock').first().name
     menu_name.short_description = "메뉴명"
     
     list_filter = (
