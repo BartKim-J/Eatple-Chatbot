@@ -61,7 +61,7 @@ def SlackLogPayOrder(order):
                             "주문번호 [ <{host_url}/admin/eatple_app/order/{order_index}/change|{order_id}> ]\n"
                             " - 점포명 : {store}\n"
                             " - 메뉴명 : {menu}\n"
-                            " - 픽업시간 {pickup_time}\n"
+                            " - 픽업시간 {pickup_time}\n\n"
                             " > <{host_url}/admin/eatple_app/order/{order_index}/change|주문 자세히 보기>\n"
                             "```"
                         ).format(
@@ -106,7 +106,7 @@ def SlackLogPayOrder(order):
                             "주문번호 [ <{host_url}/admin/eatple_app/order/{order_index}/change|{order_id}> ]\n"
                             " - 점포명 : {store}\n"
                             " - 메뉴명 : {menu}\n"
-                            " - 픽업시간 {pickup_time}\n"
+                            " - 픽업시간 {pickup_time}\n\n"
                             " > <{host_url}/admin/eatple_app/order/{order_index}/change|주문 자세히 보기>\n"
                             "```"
                         ).format(
@@ -152,7 +152,7 @@ def SlackLogPayOrder(order):
                             "주문번호 [ <{host_url}/admin/eatple_app/order/{order_index}/change|{order_id}> ]\n"
                             " - 점포명 : {store}\n"
                             " - 메뉴명 : {menu}\n"
-                            " - 픽업시간 {pickup_time}\n"
+                            " - 픽업시간 {pickup_time}\n\n"
                             " > <{host_url}/admin/eatple_app/order/{order_index}/change|주문 자세히 보기>\n"
                             "```"
                         ).format(
@@ -215,7 +215,7 @@ def SlackLogCancelOrder(order):
                         "주문번호 [ <{host_url}/admin/eatple_app/order/{order_index}/change|{order_id}> ]\n"
                         " - 점포명 : {store}\n"
                         " - 메뉴명 : {menu}\n"
-                        " - 픽업시간 {pickup_time}\n"
+                        " - 픽업시간 {pickup_time}\n\n"
                         " > <{host_url}/admin/eatple_app/order/{order_index}/change|주문 자세히 보기>\n"
                         "```"
                     ).format(

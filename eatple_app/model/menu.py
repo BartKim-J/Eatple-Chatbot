@@ -195,7 +195,6 @@ class Menu(MenuInfo, MenuStatus, MenuSetting):
             Q(pickup_time__gt=currentDate + datetime.timedelta(hours=-1, minutes=-30))
         )
 
-        print(availableOrders)
         self.current_stock = availableOrders.count()
         self.save()
         
