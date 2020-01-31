@@ -50,7 +50,7 @@ class CompanyAdmin(ImportExportMixin, admin.GeoModelAdmin):
     logo_preview.short_description = "이미지 미리보기"
     
     list_filter = (
-        ('status', ChoiceDropdownFilter), 
+        'status', 
     )
     
     list_display = (

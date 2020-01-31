@@ -113,8 +113,8 @@ class StoreAdmin(ImportExportMixin, admin.GeoModelAdmin):
     menu_name.short_description = "메뉴명"
     
     list_filter = (
-        ('status', ChoiceDropdownFilter), 
-        ('area', ChoiceDropdownFilter), 
+        'status', 
+        'area', 
         TypeFilter,
     )
 

@@ -69,7 +69,7 @@ class UserB2BAdmin(ImportExportMixin, admin.ModelAdmin):
     
 
     list_filter = (
-        ('company', RelatedDropdownFilter),
+        'company',
         ('create_date', DateRangeFilter),
     )
 

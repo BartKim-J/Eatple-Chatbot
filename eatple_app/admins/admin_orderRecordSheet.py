@@ -33,7 +33,7 @@ class OrderRecordSheetAdmin(ImportExportMixin, admin.ModelAdmin):
 
     list_filter = (
         'status', 
-        ('menu', RelatedDropdownFilter),
+        'menu',
         'update_date', 
         'created_date'
     )
