@@ -21,20 +21,29 @@ class TypeFilter(MultipleChoiceListFilter):
         return STORE_TYPE
         
 class CRNInline(admin.TabularInline):
+    verbose_name = "사업자 등록번호"
+    verbose_name_plural = "사업자 등록번호"
+    
     model = CRN
     min_num = 1
 
     readonly_fields = ('CRN_id',)
 
 class PlaceInline(admin.TabularInline):
+    verbose_name = "장소"
+    verbose_name_plural = "장소"
+    
     model = Place
     min_num = 1
 
     formfield_overrides = {
-        models.PointField: {"widget": GooglePointFieldWidget}
+        models.PointField: {"widget": GoogleStaticMapWidget}
     }
 
 class MenuInline(admin.StackedInline):
+    verbose_name = "메뉴"
+    verbose_name_plural = "메뉴"
+    
     model = Menu
     extra = 0
     min_num = 1
@@ -75,8 +84,7 @@ class StoreAdmin(ImportExportMixin, admin.GeoModelAdmin):
     list_editable = ()
 
     fieldsets = [
-        (None,                   {'fields': ['store_id']}),
-        ('기본 정보',            {'fields': ['name', 'addr', 'owner' ,'phone_number']}),
+        ('기본 정보',            {'fields': ['store_id', 'name', 'addr', 'owner' ,'phone_number']}),
         ('설정',                 {'fields': ['category', 'description', 'logo', 'logo_preview']}),
         ('상태',                 {'fields': ['status', 'type', 'area']}),
     ]
@@ -92,15 +100,14 @@ class StoreAdmin(ImportExportMixin, admin.GeoModelAdmin):
     logo_preview.short_description = "이미지 미리보기"
 
     def menu_pickup_status(self, obj):
-        current_pickup_done_order = Menu.objects.filter(store=obj, status=OC_OPEN).order_by('-current_stock').first().getCurrentStock().filter(Q(status=ORDER_STATUS_PICKUP_COMPLETED)).count()
         current_stock = Menu.objects.filter(store=obj, status=OC_OPEN).order_by('-current_stock').first().current_stock
         
         if(current_stock != 0):
-            return "{}/{} ({}%) 개".format(current_pickup_done_order, current_stock, round((current_pickup_done_order / current_stock) * 100))
+            return "{}개".format(current_stock)
         else:
-            return "주문 없음"
+            return "들어온 주문 없음"
         
-    menu_pickup_status.short_description = "일일 픽업완료/주문량"    
+    menu_pickup_status.short_description = "픽업 대기중인 주문"    
 
     def menu_stock(self, obj):
         max_stock = Menu.objects.filter(store=obj, status=OC_OPEN).order_by('-current_stock').first().max_stock
@@ -115,18 +122,17 @@ class StoreAdmin(ImportExportMixin, admin.GeoModelAdmin):
     list_filter = (
         'status', 
         'area', 
-        TypeFilter,
+        'type',
     )
 
     def status_flag(self, obj):
         if(obj.status == OC_OPEN):
-            return True
+            return 'O'
         else:
-            return False
+            return 'X'
         
         return False
     status_flag.short_description = "상태"
-    status_flag.boolean = True
     
     list_display = (
         'name', 
@@ -152,4 +158,4 @@ class StoreAdmin(ImportExportMixin, admin.GeoModelAdmin):
     
     actions = ['store_open', 'store_close']
 
-    inlines = [PlaceInline, CRNInline, MenuInline]
+    inlines = [PlaceInline, MenuInline, CRNInline]

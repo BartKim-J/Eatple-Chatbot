@@ -46,13 +46,12 @@ class UserB2BAdmin(ImportExportMixin, admin.ModelAdmin):
     def account_sync_flag(self, obj):
         try:
             User.objects.get(phone_number=obj.phone_number)
-            return True
+            return 'O'
         except User.DoesNotExist:
-            return False
+            return 'X'
         
         return False
     account_sync_flag.short_description = "카카오 계정 연동 상태"
-    account_sync_flag.boolean = True
     
     def account_info(self, obj):
         try:

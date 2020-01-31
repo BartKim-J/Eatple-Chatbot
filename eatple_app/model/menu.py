@@ -179,7 +179,6 @@ class Menu(MenuInfo, MenuStatus, MenuSetting):
             hour=0, minute=0, second=0, microsecond=0)
         
         expireDate = currentDate + datetime.timedelta(hours=-24)
-        deadline = currentDate.replace(hour=16, minute=0, second=0)
 
         TODAY = currentDateWithoutTime
         
@@ -188,11 +187,9 @@ class Menu(MenuInfo, MenuStatus, MenuSetting):
                 Q(status=ORDER_STATUS_PICKUP_WAIT) |
                 Q(status=ORDER_STATUS_PICKUP_PREPARE) |
                 Q(status=ORDER_STATUS_ORDER_CONFIRM_WAIT) |
-                Q(status=ORDER_STATUS_ORDER_CONFIRMED) |
-                Q(status=ORDER_STATUS_PICKUP_COMPLETED)
+                Q(status=ORDER_STATUS_ORDER_CONFIRMED)
             ) &
-            Q(payment_date__gt=expireDate) &
-            Q(pickup_time__gt=currentDate + datetime.timedelta(hours=-1, minutes=-30))
+            Q(payment_date__gt=expireDate)
         )
 
         self.current_stock = availableOrders.count()

@@ -16,13 +16,9 @@ def eatple_b2b_status():
     },
     
     total_stock = 0
-    total_pickup_done = 0
     
     for menu in menuList:
-        current_pickup_done_order=menu.getCurrentStock().filter(Q(status=ORDER_STATUS_PICKUP_COMPLETED)).count()
-        
         total_stock += menu.current_stock
-        total_pickup_done += current_pickup_done_order
         
         menuStatusBlock += {
                 "type": "section",
@@ -32,14 +28,12 @@ def eatple_b2b_status():
                         "*{name} - {menu}*\n"
                         "```\n"
                         "일일 재고량 : {max_stock}개, "
-                        "일일 주문량 : {current_stock}개, "
-                        "픽업 완료됨 : {current_pickup_done_order}개"
+                        "픽업 대기중 : {current_stock}개"
                         "```"
                         " > <{host_url}/admin/eatple_app/store/{store_index}/change|점포 자세히 보기>\n"
                     ).format(
                             name=menu.store.name,
                             menu=menu.name,
-                            current_pickup_done_order=current_pickup_done_order,
                             current_stock=menu.current_stock,
                             max_stock=menu.max_stock,
                             host_url=HOST_URL,
@@ -61,10 +55,9 @@ def eatple_b2b_status():
         "text": {
             "type": "mrkdwn",
             "text": (
-                "*총 주문량 : {total_stock}개 - 픽업 완료됨 : {total_pickup_done}개*"
+                "*총 픽업 대기중인 주문 : {total_stock}개*"
             ).format(
                 total_stock=total_stock,
-                total_pickup_done=total_pickup_done,
             )
         },
     },

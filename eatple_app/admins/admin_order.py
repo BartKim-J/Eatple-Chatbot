@@ -112,13 +112,13 @@ class OrderAdmin(ImportExportMixin, admin.ModelAdmin):
     
     def delegate_flag(self, obj):
         if(obj.delegate != None):
-            return True
+            return 'O'
         else:
-            return False
+            return 'X'
         
         return False
     delegate_flag.short_description = "부탁하기"
-    delegate_flag.boolean = True
+
     
     def b2b_name(self, obj):
         if(obj.ordersheet.user.company != None and obj.type == ORDER_TYPE_B2B):
@@ -126,10 +126,19 @@ class OrderAdmin(ImportExportMixin, admin.ModelAdmin):
         else:
             return ''
     b2b_name.short_description = "B2B"
-        
+
+    fieldsets = [
+        ('기본 정보',            {'fields': ['order_id', 'ordersheet', 'store', 'menu', 'type',]}),
+        ('구성',                 {'fields': ['totalPrice', 'count', ]}),
+        ('상태',                 {'fields': ['payment_status', 'status', ]}),
+        ('부탁하기',             {'fields': ['delegate', ]}),
+        ('시간',                 {'fields': ['order_date', 'payment_date', 'update_date', ]}),
+    ]
+
     search_fields = ['order_id', 'ordersheet__user__nickname', 'ordersheet__user__app_user_id']
 
     readonly_fields = (
+        'update_date',
     )
     
     list_filter = (
