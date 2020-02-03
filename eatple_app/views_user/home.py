@@ -117,7 +117,7 @@ def kakaoView_SignUp():
     buttons = [
         {
             'action': 'block',
-            'label': '연동하러 가기',
+            'label': '가입하러 가기',
             'messageText': '로딩중..',
             'blockId': KAKAO_BLOCK_USER_SIGNUP,
             'extra': {
@@ -129,8 +129,8 @@ def kakaoView_SignUp():
     thumbnail = {'imageUrl': ''}
 
     kakaoForm.BasicCard_Push(
-        '아직 잇플 서비스에 연동되지 않은 카카오 계정입니다.',
-        '잇플 서비스에 연동하러 가볼까요?',
+        '아직 잇플 서비스에 가입되지 않은 카카오 계정입니다.',
+        '잇플 서비스에 가입하러 가볼까요?',
         thumbnail,
         buttons
     )

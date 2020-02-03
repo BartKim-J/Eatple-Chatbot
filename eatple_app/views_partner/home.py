@@ -42,7 +42,7 @@ def kakaoView_SignUp():
     BTN_MAP = [
         {
             'action': 'block',
-            'label': '연동하러 가기',
+            'label': '가입하러 가기',
             'messageText': '로딩중..',
             'blockId': KAKAO_BLOCK_PARTNER_SIGNUP,
             'extra': {
@@ -58,8 +58,8 @@ def kakaoView_SignUp():
     buttons = BTN_MAP
 
     kakaoForm.BasicCard_Push(
-        '아직 잇플에 연동되지 않은 파트너 카카오 계정입니다.',
-        '함께 연동하러 가볼까요?',
+        '아직 잇플에 가입되지 않은 파트너 카카오 계정입니다.',
+        '함께 가입하러 가볼까요?',
         thumbnail,
         buttons
     )

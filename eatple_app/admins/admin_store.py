@@ -47,7 +47,7 @@ class MenuInline(admin.StackedInline):
     model = Menu
     extra = 0
     min_num = 1
-    max_num = 2
+    max_num = 5
     
     readonly_fields = ('menu_id', "image_preview", "image_soldout_preview")
 

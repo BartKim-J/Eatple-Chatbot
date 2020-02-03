@@ -88,20 +88,20 @@ def kakaoView_OrderDetails(kakaoPayload):
         },
     ]
 
+    kakaoForm = KakaoForm()
+
     if(orderCheckTimeValidation()):
         
         orderManager = PartnerOrderManager(partner)
         orderManager.orderPaidCheck()
         
         availableOrders = orderManager.getAvailableOrders()
-        
+
         if availableOrders:
             menuList = Menu.objects.filter(store=partner.store)
             
             for menu in menuList:
-                
                 totalOrder = 0
-                kakaoForm = KakaoForm()
                 
                 totalCount = availableOrders.count()
                 
@@ -128,30 +128,25 @@ def kakaoView_OrderDetails(kakaoPayload):
                         second=0,
                         microsecond=0
                     )
-                    orderByPickupTime = availableOrders.filter(pickup_time=datetime_pickup_time)
+                    orderByPickupTime = availableOrders.filter(pickup_time=datetime_pickup_time, menu=menu)
                     orderCount = orderByPickupTime.count()
                     
                     
-                    if(orderCount > 0):
-                        kakaoForm.ListCard_Push(
-                            '{pickupTime} - [ {count}개 ]'.format(
-                                pickupTime=datetime_pickup_time.strftime('%p %I시 %M분').replace('AM','오전').replace('PM','오후'),
-                                count=orderCount
-                            ),
-                            '{menu}'.format(menu=menu.name),
-                            imageUrl, 
-                            None
-                        )
+                    kakaoForm.ListCard_Push(
+                        '{menu}'.format(menu=menu.name),
+                        '{pickupTime} - [ {count}개 ]'.format(
+                            pickupTime=datetime_pickup_time.strftime('%p %I시 %M분').replace('AM','오전').replace('PM','오후'),
+                            count=orderCount
+                        ),
+                        imageUrl, 
+                        None
+                    )
                     
-                kakaoForm.ListCard_Add(header)
+            kakaoForm.ListCard_Add(header)
                 
         else:
-            kakaoForm = KakaoForm()
-
             kakaoForm.SimpleText_Add('오늘은 들어온 주문이 없어요!')
     else:
-        kakaoForm = KakaoForm()
-
         kakaoForm.BasicCard_Push(
             '아직 주문조회 가능시간이 아닙니다.', 
             ' 점심 주문조회 가능시간\n - 오전 10시 30분 ~ 오후 2시', 

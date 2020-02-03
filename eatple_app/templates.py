@@ -7,7 +7,7 @@ from eatple_app.models import *
 from eatple_app.define import *
 
 # TEMPLATES
-def stock_list(request):
-    menus = Menu.objects.filter(status=OC_OPEN)
+def base(request):
+    menus = Menu.objects.order_by('-current_stock','store__name')
     
-    return render(request, 'eatple_app/stock_list.html', {'menus': menus})
+    return render(request, 'base/index.html', {'menus': menus})
