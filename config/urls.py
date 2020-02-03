@@ -24,6 +24,7 @@ from django.conf.urls.static import static
 from django.conf.urls import url
 
 from eatple_app import views
+from eatple_app import templates
 
 schema_view = get_swagger_view(title="Eatple Rest API")
 
@@ -37,6 +38,7 @@ urlpatterns = [
     path('jet/', include('jet.urls', 'jet')),  # Django JET URLS
     path('jet/dashboard/', include('jet.dashboard.urls', 'jet-dashboard')),  # Django JET dashboard URLS
     path('admin/', admin.site.urls),
+    path('', templates.stock_list),
 ]
 
 # Urls - User App

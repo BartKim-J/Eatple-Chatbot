@@ -95,44 +95,55 @@ def kakaoView_OrderDetails(kakaoPayload):
         
         availableOrders = orderManager.getAvailableOrders()
         
-        if availableOrders:        
-            totalOrder = 0
-            kakaoForm = KakaoForm()
+        if availableOrders:
+            menuList = Menu.objects.filter(store=partner.store)
             
-            refOrder = availableOrders[0]
-            totalCount = availableOrders.count()
-            
-            pickupTimes = refOrder.menu.pickup_time.all()
-            
-            header = {
-                'title': '총 {sellingTime} 주문량은 {count}개 입니다.'.format(
-                    sellingTime=dict(SELLING_TIME_CATEGORY)[refOrder.menu.selling_time], 
-                    count=totalCount
-                ),
-                'imageUrl': '{}{}'.format(HOST_URL, PARTNER_ORDER_SHEET_IMG),
-            }
-            
-            
-            imageUrl = '{}{}'.format(HOST_URL, refOrder.menu.imgURL())
+            for menu in menuList:
+                
+                totalOrder = 0
+                kakaoForm = KakaoForm()
+                
+                totalCount = availableOrders.count()
+                
+                pickupTimes = menu.pickup_time.all()
+                
+                header = {
+                    'title': '총 {sellingTime} 주문량은 {count}개 입니다.'.format(
+                        sellingTime=dict(SELLING_TIME_CATEGORY)[menu.selling_time], 
+                        count=totalCount
+                    ),
+                    'imageUrl': '{}{}'.format(HOST_URL, PARTNER_ORDER_SHEET_IMG),
+                }
+                
+                
+                imageUrl = '{}{}'.format(HOST_URL, menu.imgURL())
 
-            for pickupTime in pickupTimes:
-                refPickupTime = refOrder.pickupTimeToDateTime(str(pickupTime.time))
-                
-                orderByPickupTime = availableOrders.filter(pickup_time=refPickupTime)
-                orderCount = orderByPickupTime.count()
-                
-                if(orderCount > 0):
-                    kakaoForm.ListCard_Push(
-                        '{pickupTime} - [ {count}개 ]'.format(
-                            pickupTime=refPickupTime.strftime('%p %I시 %M분').replace('AM','오전').replace('PM','오후'),
-                            count=orderCount
-                        ),
-                        '{menu}'.format(menu=refOrder.menu.name),
-                        imageUrl, 
-                        None
+                for pickupTime in pickupTimes:
+                    refPickupTime = [x.strip() for x in str(pickupTime.time).split(':')]
+
+                    currentTime = dateNowByTimeZone()
+                    datetime_pickup_time = currentTime.replace(
+                        hour=int(refPickupTime[0]),
+                        minute=int(refPickupTime[1]),
+                        second=0,
+                        microsecond=0
                     )
-                
-            kakaoForm.ListCard_Add(header)
+                    orderByPickupTime = availableOrders.filter(pickup_time=datetime_pickup_time)
+                    orderCount = orderByPickupTime.count()
+                    
+                    
+                    if(orderCount > 0):
+                        kakaoForm.ListCard_Push(
+                            '{pickupTime} - [ {count}개 ]'.format(
+                                pickupTime=datetime_pickup_time.strftime('%p %I시 %M분').replace('AM','오전').replace('PM','오후'),
+                                count=orderCount
+                            ),
+                            '{menu}'.format(menu=menu.name),
+                            imageUrl, 
+                            None
+                        )
+                    
+                kakaoForm.ListCard_Add(header)
                 
         else:
             kakaoForm = KakaoForm()

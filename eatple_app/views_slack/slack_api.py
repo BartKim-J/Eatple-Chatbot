@@ -18,34 +18,37 @@ def eatple_b2b_status():
     total_stock = 0
     
     for menu in menuList:
-        total_stock += menu.current_stock
-        
-        menuStatusBlock += {
-                "type": "section",
-                "text": {
-                    "type": "mrkdwn",
-                    "text": (
-                        "*{name} - {menu}*\n"
-                        "```\n"
-                        "일일 재고량 : {max_stock}개, "
-                        "픽업 대기중 : {current_stock}개"
-                        "```"
-                        " > <{host_url}/admin/eatple_app/store/{store_index}/change|점포 자세히 보기>\n"
-                    ).format(
-                            name=menu.store.name,
-                            menu=menu.name,
-                            current_stock=menu.current_stock,
-                            max_stock=menu.max_stock,
-                            host_url=HOST_URL,
-                            store_index=menu.store.id,
-                    )
+        if(menu.current_stock == 0):
+            pass
+        else:
+            total_stock += menu.current_stock
+            
+            menuStatusBlock += {
+                    "type": "section",
+                    "text": {
+                        "type": "mrkdwn",
+                        "text": (
+                            "*{name} - {menu}*\n"
+                            "```\n"
+                            "일일 재고량 : {max_stock}개, "
+                            "픽업 대기중 : {current_stock}개"
+                            "```"
+                            " > <{host_url}/admin/eatple_app/store/{store_index}/change|점포 자세히 보기>\n"
+                        ).format(
+                                name=menu.store.name,
+                                menu=menu.name,
+                                current_stock=menu.current_stock,
+                                max_stock=menu.max_stock,
+                                host_url=HOST_URL,
+                                store_index=menu.store.id,
+                        )
+                    },
+                    #"accessory": {
+                    #    "type": "image",
+                    #    "image_url": '{}{}'.format(HOST_URL, menuList.first().image.url),
+                    #    "alt_text": "menu"
+                    #}
                 },
-                #"accessory": {
-                #    "type": "image",
-                #    "image_url": '{}{}'.format(HOST_URL, menuList.first().image.url),
-                #    "alt_text": "menu"
-                #}
-            },
         
     menuStatusBlock += {
         "type": "divider"

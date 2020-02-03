@@ -83,7 +83,7 @@ class Partner(KakaoUser, models.Model):
         max_length=WORD_LENGTH, 
         default=PARTNER_TYPE_NORMAL,
         choices=PARTNER_TYPE,
-        verbose_name = "제휴 유형"
+        verbose_name = "권한"
     )
 
     create_date = models.DateTimeField(

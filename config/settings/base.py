@@ -13,7 +13,7 @@ https://docs.djangoproject.com/en/2.2/ref/settings/
 import os
 from django.utils.translation import gettext_lazy as _
 
-SETTING_ID = 'BASE'
+SETTING_ID = 'DEBUG'
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -44,9 +44,9 @@ ALLOWED_HOSTS = [
 # Application definition
 
 INSTALLED_APPS = [
-    # 'suit',
-    # 'eatple_app.apps.SuitConfig',
-    
+    'jet.dashboard',
+    'jet',
+
     'django.contrib.gis',
     'django.contrib.admin',
     'django.contrib.auth',
@@ -58,15 +58,17 @@ INSTALLED_APPS = [
 
     'import_export',
     'phonenumber_field',
-    
+
+    'django_feedparser',
+
     'rest_framework',
     'rest_framework_swagger',
 
     'django_admin_multiple_choice_list_filter',
-    
+
     # local-app
     'eatple_app.apps.EatpleChatbotAppConfig',
-    
+
     'corsheaders',
 
     'rangefilter',
@@ -94,7 +96,7 @@ TEMPLATES = [
         'OPTIONS': {
             'context_processors': [
                 'django.template.context_processors.debug',
-                'django.template.context_processors.request', # Make sure you have this line
+                'django.template.context_processors.request',  # Make sure you have this line
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
             ],
@@ -149,7 +151,7 @@ MAP_WIDGETS = {
         ("zoom", 55),
         ("mapCenterLocation", [37.49492000000000, 127.02739000000000]),
     ),
-    
+
     "GoogleStaticMapWidget": (
         ("zoom", 18),
         ("size", "480x480"),
@@ -184,8 +186,8 @@ USE_L10N = True
 USE_TZ = True
 
 # Rest framework
-REST_FRAMEWORK = { 
-    'DEFAULT_SCHEMA_CLASS': 'rest_framework.schemas.coreapi.AutoSchema' 
+REST_FRAMEWORK = {
+    'DEFAULT_SCHEMA_CLASS': 'rest_framework.schemas.coreapi.AutoSchema'
 }
 
 # Static files (CSS, JavaScript, Images)
@@ -200,8 +202,8 @@ STATIC_ROOT = os.path.join(ROOT_DIR, 'static')
 
 # COOKIES
 #SECURE_SSL_REDIRECT = True
-CSRF_COOKIE_SECURE = True
-SESSION_COOKIE_SECURE = True
+#CSRF_COOKIE_SECURE = True
+#SESSION_COOKIE_SECURE = True
 
 # CORS
 CORS_ORIGIN_ALLOW_ALL = False
@@ -216,4 +218,44 @@ CORS_ORIGIN_WHITELIST = [
     'https://eatple.com:8001',
     'http://localhost:3000',
     'http://localhost:5000',
+]
+
+# JET
+JET_INDEX_DASHBOARD = 'jet.dashboard.dashboard.DefaultIndexDashboard'
+JET_APP_INDEX_DASHBOARD = 'jet.dashboard.dashboard.DefaultAppIndexDashboard'
+
+JET_SIDE_MENU_COMPACT = True
+JET_CHANGE_FORM_SIBLING_LINKS = True
+JET_DEFAULT_THEME = 'light-violet'
+JET_THEMES = [
+    {
+        'theme': 'default',  # theme folder name
+        'color': '#47bac1',  # color of the theme's button in user menu
+        'title': 'Default'  # theme title
+    },
+    {
+        'theme': 'green',
+        'color': '#44b78b',
+        'title': 'Green'
+    },
+    {
+        'theme': 'light-green',
+        'color': '#2faa60',
+        'title': 'Light Green'
+    },
+    {
+        'theme': 'light-violet',
+        'color': '#a464c4',
+        'title': 'Light Violet'
+    },
+    {
+        'theme': 'light-blue',
+        'color': '#5EADDE',
+        'title': 'Light Blue'
+    },
+    {
+        'theme': 'light-gray',
+        'color': '#222',
+        'title': 'Light Gray'
+    }
 ]

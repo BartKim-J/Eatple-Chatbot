@@ -1,0 +1,18 @@
+<html>
+    <head>
+        <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+        <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css">
+    </head>
+    <body>
+        <div>
+            <h1><a href="/">메뉴 재고 현황</a></h1>
+        </div>
+
+        {% for menu in menus %}
+            <div>
+                <h1><a href="">{{ menu.name }}</a></h1>
+                <p>{{ post.current_stock|linebreaksbr }}</p>
+            </div>
+        {% endfor %}
+    </body>
+</html>

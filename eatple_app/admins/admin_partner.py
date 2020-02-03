@@ -41,6 +41,8 @@ class PartnerAdmin(ImportExportMixin, admin.ModelAdmin):
     
     list_display = (
         'store', 
+        'type',
+        'nickname',
         'phonenumber', 
         'crn',
     )

@@ -44,8 +44,8 @@ ALLOWED_HOSTS = [
 # Application definition
 
 INSTALLED_APPS = [
-    'jet',
     'jet.dashboard',
+    'jet',
     
     'django.contrib.gis',
     'django.contrib.admin',
@@ -221,7 +221,8 @@ CORS_ORIGIN_WHITELIST = [
 ]
 
 # JET
-JET_INDEX_DASHBOARD = 'jet.dashboard.dashboard.DefaultIndexDashboard'
+JET_INDEX_DASHBOARD = 'eatple_app.dashboard.CustomIndexDashboard'
+#JET_INDEX_DASHBOARD = 'jet.dashboard.dashboard.DefaultIndexDashboard'
 JET_APP_INDEX_DASHBOARD = 'jet.dashboard.dashboard.DefaultAppIndexDashboard'
 
 JET_SIDE_MENU_COMPACT = True

@@ -33,8 +33,6 @@ def SlackLogSignUp(user):
     return res
 
 def SlackLogPayOrder(order):
-    client = slack.WebClient(token=SLACK_BOT_USER_TOKEN)
-
     if(settings.SETTING_ID == 'DEPLOY'):
         SERVER_PORT = 8000
         DEV_LOG=''
@@ -188,8 +186,6 @@ def SlackLogPayOrder(order):
         return res
 
 def SlackLogCancelOrder(order):
-    client = slack.WebClient(token=SLACK_BOT_USER_TOKEN)
-
     if(settings.SETTING_ID == 'DEPLOY'):
         SERVER_PORT = 8000
         DEV_LOG=''

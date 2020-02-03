@@ -9,6 +9,8 @@ from eatple_app.models import *
 # Define
 from eatple_app.define import *
 
+from eatple_app.views_slack.slack_logger import SlackLogSignUp
+
 # Modules
 from eatple_app.module_kakao.reponseForm import *
 from eatple_app.module_kakao.requestForm import *
@@ -26,7 +28,6 @@ def isLocationParam(kakaoPayload):
 
         
 def userSignUp(userProfile):
-    
     nickname = userProfile['nickname']
     phone_number = userProfile['phone_number']
     email = userProfile['email']
@@ -63,7 +64,7 @@ def userSignUp(userProfile):
         
     if(app_user_id == None):
         app_user_id = "N/A"
-    
+
     user = User.signUp(
         app_user_id=app_user_id,
         nickname=nickname,
@@ -75,7 +76,7 @@ def userSignUp(userProfile):
         ci=ci,
         ci_authenticated_at=ci_ci_authenticated_at,
     )
-
+    
     return user
 
 def userLocationRegistration(user, locationData):
@@ -278,8 +279,8 @@ def kakaoView_Home(user):
             if(settings.SETTING_ID == 'DEPLOY'):
                 logoImg = '{}{}'.format(HOST_URL, user.company.logoImgURL())
             else:
-                logoImg = '{}{}'.format(HOST_URL, HOME_HEAD_BLACK_IMG_URL)
-                print(logoImg)
+                logoImg = '{}{}'.format(HOST_URL, user.company.logoImgURL())
+                #logoImg = '{}{}'.format(HOST_URL, HOME_HEAD_BLACK_IMG_URL)
                 
             thumbnail = {
                 'imageUrl': logoImg,
@@ -401,11 +402,8 @@ def GET_UserHome(request):
                     url=otpURL, rest_api_key=KAKAO_REST_API_KEY))
 
                 if(kakaoResponse.status_code == 200):
-                    print(kakaoResponse.json())
+                    user = userSignUp(kakaoResponse.json())            
                     
-                    user = userSignUp(kakaoResponse.json())
-            
-                        
                     #@SLACK LOGGER
                     SlackLogSignUp(user)
                     

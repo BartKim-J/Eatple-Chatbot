@@ -44,8 +44,8 @@ ALLOWED_HOSTS = [
 # Application definition
 
 INSTALLED_APPS = [
-    'jet',
     'jet.dashboard',
+    'jet',
     
     'django.contrib.gis',
     'django.contrib.admin',
