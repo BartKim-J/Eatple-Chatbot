@@ -84,6 +84,7 @@ def userLocationRegistration(user, locationData):
         user.location.lat = locationData['latitude']
         user.location.long = locationData['longitude']
         user.location.address = locationData['address']
+        
         # @TODO will update kakao location api
         # user.location.address = locationData['road_address']['address_name']
         user.location.point = Point(
@@ -273,8 +274,15 @@ def kakaoView_Home(user):
         )
     else: 
         if(isB2BUser(user)):
+            
+            if(settings.SETTING_ID == 'DEPLOY'):
+                logoImg = '{}{}'.format(HOST_URL, user.company.logoImgURL())
+            else:
+                logoImg = '{}{}'.format(HOST_URL, HOME_HEAD_BLACK_IMG_URL)
+                print(logoImg)
+                
             thumbnail = {
-                'imageUrl': '{}{}'.format(HOST_URL, user.company.logoImgURL()),
+                'imageUrl': logoImg,
                 'fixedRatio': 'true',
                 'width': 800,
                 'height': 800,
@@ -287,8 +295,14 @@ def kakaoView_Home(user):
                 buttons
             )
         else:
+            if(settings.SETTING_ID == 'DEPLOY'):
+                homeImg = '{}{}'.format(HOST_URL, HOME_HEAD_IMG_URL)
+            else:
+                homeImg = '{}{}'.format(HOST_URL, HOME_HEAD_BLACK_IMG_URL)
+                print(homeImg)
+                
             thumbnail = {
-                'imageUrl': '{}{}'.format(HOST_URL, '/media/STORE_DB/images/default/homeHead.png'),
+                'imageUrl': homeImg,
                 'fixedRatio': 'true',
                 'width': 800,
                 'height': 800,

@@ -309,7 +309,7 @@ def kakaoView_PickupTime(kakaoPayload):
 
     if(isClosedDay or isVacationDay):
         kakaoForm.BasicCard_Push('※ 안내사항 ※',
-                                '잇플 알파에서는 \'주말 및 공휴일\' 영업을 하지 않고있습니다. 정식 출시를 기대해주세요!',
+                                '잇플은 \'주말 및 공휴일\'에 서비스 하지 않고있습니다.',
                                 {},
                                 []
                                 )

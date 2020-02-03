@@ -83,6 +83,9 @@ EATPLE_PASS_IMG_05 = '/media/STORE_DB/images/default/EatplePassImg_05.png'
 EATPLE_PASS_IMG_MORE = '/media/STORE_DB/images/default/EatplePassImg_More.png'
 EATPLE_PASS_IMG_NULL = '/media/STORE_DB/images/default/EatplePassImg_Null.png'
 
+HOME_HEAD_IMG_URL = '/media/STORE_DB/images/default/homeHead.png'
+HOME_HEAD_BLACK_IMG_URL = '/media/STORE_DB/images/default/homeHeadBlack.png'
+
 NOT_APPLICABLE = VALUE_NOT_APPLICABLE
 
 # IMAGE DB PATH
@@ -336,8 +339,8 @@ if(settings.SETTING_ID == 'DEPLOY'):
     VALIDATION_DEBUG_MODE = False
     USER_ID_DEBUG_MODE = False
 elif(settings.SETTING_ID == 'DEBUG'):
-    ORDERING_DEBUG_MODE = False
-    ORDER_TIME_CHECK_DEBUG_MODE = False
+    ORDERING_DEBUG_MODE = True
+    ORDER_TIME_CHECK_DEBUG_MODE = True
     VALIDATION_DEBUG_MODE = False
     USER_ID_DEBUG_MODE = False
 else:
@@ -353,8 +356,8 @@ def dateNowByTimeZone():
     '''
     # Time QA DEBUG
     if(ORDER_TIME_CHECK_DEBUG_MODE):
-        DEBUG_DAYS = 30
-        DEBUG_HOUR = 16
+        DEBUG_DAYS = 3
+        DEBUG_HOUR = 9
         DEBUG_MIN = 30
         DEBUG_SEC = 1
 
