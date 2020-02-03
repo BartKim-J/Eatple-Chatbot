@@ -157,3 +157,7 @@ class OrderAdmin(ImportExportMixin, admin.ModelAdmin):
 
     list_display = ('order_id', 'owner', 'owner_id',  'store', 'menu', 'type', 'b2b_name',
                     'payment_status', 'status', 'delegate_flag', 'pickup_time', 'payment_date')
+    class Media:
+        js = (
+            '//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js', # jquery
+        )

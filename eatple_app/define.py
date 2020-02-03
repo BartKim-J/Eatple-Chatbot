@@ -193,7 +193,6 @@ ORDER_TYPE = [
 STORE_TYPE_NORMAL = 'normal'
 STORE_TYPE_B2B = 'B2B'
 STORE_TYPE_EVENT = 'event'
-STORE_TYPE_PROMOTION = 'promotion'
 STORE_TYPE = [
     (STORE_TYPE_NORMAL, '일반'),
     (STORE_TYPE_EVENT, '이벤트'),
@@ -341,8 +340,8 @@ if(settings.SETTING_ID == 'DEPLOY'):
     VALIDATION_DEBUG_MODE = False
     USER_ID_DEBUG_MODE = False
 elif(settings.SETTING_ID == 'DEBUG'):
-    ORDERING_DEBUG_MODE = True
-    ORDER_TIME_CHECK_DEBUG_MODE = True
+    ORDERING_DEBUG_MODE = False
+    ORDER_TIME_CHECK_DEBUG_MODE = False
     VALIDATION_DEBUG_MODE = False
     USER_ID_DEBUG_MODE = False
 else:
@@ -358,7 +357,7 @@ def dateNowByTimeZone():
     '''
     # Time QA DEBUG
     if(ORDER_TIME_CHECK_DEBUG_MODE):
-        DEBUG_DAYS = 3
+        DEBUG_DAYS = 4
         DEBUG_HOUR = 9
         DEBUG_MIN = 30
         DEBUG_SEC = 1
