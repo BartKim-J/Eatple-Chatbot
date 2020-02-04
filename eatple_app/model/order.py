@@ -497,7 +497,7 @@ class OrderManager():
 
         readyPayOrders = Order.objects.filter(
             Q(payment_status=IAMPORT_ORDER_STATUS_NOT_PUSHED) &
-            Q(payment_date__gt=expireDate) &
+            Q(payment_date__gte=expireDate) &
             ~Q(store=None) &
             ~Q(menu=None)
         ).order_by('order_date')
@@ -516,7 +516,7 @@ class OrderManager():
         
         readyPayOrders = Order.objects.filter(
             Q(payment_status=IAMPORT_ORDER_STATUS_NOT_PUSHED) &
-            Q(payment_date__gt=expireDate) &
+            Q(payment_date__gte=expireDate) &
             ~Q(store=None) &
             ~Q(menu=None)
         ).order_by('order_date')
@@ -546,7 +546,7 @@ class OrderManager():
                 Q(status=ORDER_STATUS_ORDER_CONFIRM_WAIT) |
                 Q(status=ORDER_STATUS_ORDER_CONFIRMED)
             ) &
-            Q(payment_date__gt=expireDate)
+            Q(payment_date__gte=expireDate)
         )
 
         return availableOrders

@@ -23,7 +23,7 @@ class Command(BaseCommand):
             expireDate = currentDate + datetime.timedelta(hours=-24)
             
             orderList = Order.objects.filter(
-                Q(payment_date__gt=expireDate) &
+                Q(payment_date__gte=expireDate) &
                 ~Q(store=None) &
                 ~Q(menu=None)
             ).order_by('order_date')

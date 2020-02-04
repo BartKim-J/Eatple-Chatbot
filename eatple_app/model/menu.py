@@ -186,8 +186,10 @@ class Menu(MenuInfo, MenuStatus, MenuSetting):
 
         deadline = nextlunchOrderEditTimeStart+ datetime.timedelta(minutes=-10)
 
-        if(deadline >= currentDate):
+        # order deadline  ~ pickup-day 16:20 , get yesterday 16:30 ~ orders
+        if(currentDate <= deadline):
             expireDate = prevlunchOrderEditTimeStart
+        # over deadline pickup-day 16:20 ~ , get today 16:30 ~ order
         else:
             expireDate = nextlunchOrderEditTimeStart
         
@@ -199,7 +201,7 @@ class Menu(MenuInfo, MenuStatus, MenuSetting):
                 Q(status=ORDER_STATUS_ORDER_CONFIRM_WAIT) |
                 Q(status=ORDER_STATUS_ORDER_CONFIRMED)
             ) &
-            Q(payment_date__gt=expireDate)
+            Q(payment_date__gte=expireDate)
         )
 
         self.current_stock = availableOrders.count()

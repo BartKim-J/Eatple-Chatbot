@@ -42,7 +42,7 @@ class UserServiceLocationFilter(SimpleListFilter):
                 distance_yeoksam=Distance(F('location__point'), ref_yeoksam) * 100 * 1000,
             ).filter(
                 (Q(distance_gangnam__lte=distance) &
-                Q(distance_gangnam__gt=0)) |
+                Q(distance_gangnam__gte=0)) |
                 Q(distance_yeoksam__lte=distance)
             )
             return queryset
