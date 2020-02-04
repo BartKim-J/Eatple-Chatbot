@@ -27,10 +27,10 @@
                 <p class="text-muted">잇플설명</p>
               </div>
               <div class="col-sm-4 offset-md-1 py-4">
-              <h4 class="text-white">Site Map</h4>
+              <h4 class="text-white">사이트 맵</h4>
                 <ul class="list-unstyled">
-                    <li><a href="" class="text-white">Home</a></li>
-                    <li><a href="/admin" class="text-white">Admin</a></li>
+                    <li><a href="" class="text-white">메뉴 현황</a></li>
+                    <li><a href="/admin" class="text-white">관리자 툴</a></li>
                 </ul>
               </div>
           </div>
@@ -67,19 +67,36 @@
                       {% for menu in menus %}
                         <div class="col-lg-3 col-md-6 col-sm-6">
                           <div class="card mb-3 shadow-sm">
-                            <img src={{ menu.image.url }} width="50%" height="15%" background="#55595c" color="#eceeef" class="card-img-top" text="Thumbnail" />
-                              
+                              {% if menu.current_stock == menu.max_stock%}
+                                <img src={{ menu.soldout_image.url }} width="50%" height="15%" background="#55595c" color="#eceeef" class="card-img-top" text="Thumbnail" />
+                              {% else %}
+                                <img src={{ menu.image.url }} width="50%" height="15%" background="#55595c" color="#eceeef" class="card-img-top" text="Thumbnail" />
+                              {% endif %}
                             <div class="card-body">
                               <blockquote class="blockquote">
                                 <h6 class="mb-0">{{ menu.name }}</h6>
                                 <small class="blockquote-footer text-right">{{ menu.store.name}}</small>
                               </blockquote>
+
                               <div class="d-flex justify-content-between align-items-center">
                                   <a href="{{ site.url }}/admin/eatple_app/store/{{ menu.store.id }}/#/tab/inline_1/">
                                     <button type="button" class="btn btn-sm btn-outline-secondary">수정</button>
                                   </a>
-                                  <small class="text-muted">판매 상태 {{ menu.current_stock }}/{{ menu.max_stock }}</small>
+                                  <div class="btn-group">
+                                    {% if menu.current_stock == menu.max_stock%}
+                                      <button type="button" class="btn btn-sm btn-danger text-white">매진</button>
+                                    {% endif %}
+                                    {% if menu.status == "open" %}
+                                      <button type="button" class="btn btn-sm btn-success text-white">열림</button>
+                                    {% else %}
+                                      <button type="button" class="btn btn-sm btn-secondary text-white">닫힘</button>
+                                    {% endif %}
+                                  </div>
                               </div>
+                            </div>
+                            <div class="card-footer d-flex justify-content-between align-items-center text-muted">
+                              <small class="text-muted">픽업 대기 상태</small>
+                              <small class="text-muted">{{ menu.current_stock }}/{{ menu.max_stock }}</small>
                             </div>
                           </div>
                         </div>

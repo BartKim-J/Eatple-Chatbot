@@ -72,6 +72,7 @@ TIME_ZONE = settings.TIME_ZONE
 
 HOST_URL = 'https://www.eatple.com:8000'
 
+###########################################################################################
 # DEFAULT IMAEG URL
 PARTNER_ORDER_SHEET_IMG = '/media/STORE_DB/images/default/partnerOrderSheet.png'
 
@@ -85,6 +86,8 @@ EATPLE_PASS_IMG_NULL = '/media/STORE_DB/images/default/EatplePassImg_Null.png'
 
 HOME_HEAD_IMG_URL = '/media/STORE_DB/images/default/homeHead.png'
 HOME_HEAD_BLACK_IMG_URL = '/media/STORE_DB/images/default/homeHeadBlack.png'
+
+###########################################################################################
 
 NOT_APPLICABLE = VALUE_NOT_APPLICABLE
 

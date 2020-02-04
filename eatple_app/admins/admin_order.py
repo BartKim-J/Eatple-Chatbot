@@ -15,7 +15,7 @@ from django.utils.safestring import mark_safe
 
 from django.contrib.admin import SimpleListFilter
 class TypeFilter(MultipleChoiceListFilter):
-    title = '유형'
+    title = '주문 타입'
     parameter_name = 'type__in'
 
     def lookups(self, request, model_admin):
@@ -125,7 +125,7 @@ class OrderAdmin(ImportExportMixin, admin.ModelAdmin):
             return obj.ordersheet.user.company.name
         else:
             return ''
-    b2b_name.short_description = "B2B"
+    b2b_name.short_description = "소속 회사"
 
     fieldsets = [
         ('기본 정보',            {'fields': ['order_id', 'ordersheet', 'store', 'menu', 'type',]}),
@@ -144,13 +144,12 @@ class OrderAdmin(ImportExportMixin, admin.ModelAdmin):
     list_filter = (
         ('payment_date', DateRangeFilter),
         ('pickup_time', DateRangeFilter),
-        'store',
-        'payment_status',
-        'status',
-        'ordersheet__user__company',
-        TypeFilter,
-        'ordersheet__user__type',
         OrderShareFlagFilter,
+        'ordersheet__user__company',
+        'status',
+        'payment_status',
+        TypeFilter,
+        'store',
     )
     
     actions = ['make_enable']

@@ -98,6 +98,8 @@ class KakaoForm():
                 'items': self.items
             }
         },
+        
+        self.items = []
 
     def ListCard_Push(self, _title, _description, _imageUrl, _link):
         self.items += {
