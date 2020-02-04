@@ -147,7 +147,7 @@ def kakaoView_OrderDetails(kakaoPayload):
                         
                         kakaoForm.ListCard_Push(
                             '{}'.format(menu.name),
-                            '픽업 대기중 {}개'.format(orderCount),
+                            '들어온 주문 : {}개'.format(orderCount),
                             imageUrl, 
                             None
                         )

@@ -58,11 +58,11 @@ class OrderResource(resources.ModelResource):
          return dict(IAMPORT_ORDER_STATUS)[obj.payment_status]
 
     def dehydrate_order_date(self, obj):
-        return obj.order_date.strftime(
+        return dateByTimeZone(obj.order_date).strftime(
                     '%Y년 %-m월 %-d일 %-H시 %-M분 %-S초')
 
     def dehydrate_payment_date(self, obj):
-        return obj.payment_date.strftime(
+        return dateByTimeZone(obj.payment_date).strftime(
                     '%Y년 %-m월 %-d일 %-H시 %-M분 %-S초')
 
     order_id = Field(attribute='order_id', column_name='주문번호')

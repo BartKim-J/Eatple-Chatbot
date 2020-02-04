@@ -28,10 +28,8 @@ class Command(BaseCommand):
                 ~Q(menu=None)
             ).order_by('order_date')
             
-            menuList = Menu.objects.filter(
-                status=OC_OPEN,
-                store__status=OC_OPEN,
-            )
+            menuList = Menu.objects.all()
+            
         except (Order.DoesNotExist, Menu.DoesNotExist):
             raise CommandError('Order or Menu does not exist' % poll_id)
         
