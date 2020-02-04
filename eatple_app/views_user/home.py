@@ -173,7 +173,7 @@ def kakaoView_Home(user):
     kakaoForm = KakaoForm()
 
     orderManager = UserOrderManager(user)
-    orderManager.orderPanddingCleanUp()
+    orderManager.orderPenddingCleanUp()
     orderManager.availableOrderStatusUpdate()
 
     orderList = orderManager.getAvailableOrders().filter(Q(ordersheet__user=user))

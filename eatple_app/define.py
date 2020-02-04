@@ -343,8 +343,8 @@ if(settings.SETTING_ID == 'DEPLOY'):
     VALIDATION_DEBUG_MODE = False
     USER_ID_DEBUG_MODE = False
 elif(settings.SETTING_ID == 'DEBUG'):
-    ORDERING_DEBUG_MODE = False
-    ORDER_TIME_CHECK_DEBUG_MODE = False
+    ORDERING_DEBUG_MODE = True
+    ORDER_TIME_CHECK_DEBUG_MODE = True
     VALIDATION_DEBUG_MODE = False
     USER_ID_DEBUG_MODE = False
 else:
@@ -360,10 +360,10 @@ def dateNowByTimeZone():
     '''
     # Time QA DEBUG
     if(ORDER_TIME_CHECK_DEBUG_MODE):
-        DEBUG_DAYS = 4
-        DEBUG_HOUR = 9
-        DEBUG_MIN = 30
-        DEBUG_SEC = 1
+        DEBUG_DAYS = 3
+        DEBUG_HOUR = 16
+        DEBUG_MIN = 32
+        DEBUG_SEC = 55
 
         if settings.USE_TZ:
             tz = pytz.timezone(settings.TIME_ZONE)

@@ -128,7 +128,7 @@ def kakaoView_GetDelegateUser(kakaoPayload):
         
         kakaoForm.BasicCard_Push(
             '현재는 부탁하기 취소가 불가능한 시간입니다.',
-            '부탁 가능 시간 : 픽업 시간 이전까지',
+            '부탁 가능 시간 : 픽업 시간 15분 전까지',
             {},
             []
         )
@@ -341,7 +341,7 @@ def kakaoView_DelegateUserRemoveAll(kakaoPayload):
         order.orderStatusUpdate()
     
     orderManager = UserOrderManager(user)
-    orderManager.orderPanddingCleanUp()
+    orderManager.orderPenddingCleanUp()
 
     availableEatplePass = orderManager.availableOrderStatusUpdate()
     ownEatplePass = availableEatplePass.filter(Q(delegate=None))

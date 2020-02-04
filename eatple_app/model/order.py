@@ -432,7 +432,6 @@ class Order(models.Model):
         return datetime_pickup_time
 
     def orderStatusUpdate(self):
-    
         return orderUpdate(self)
 
     def orderCancel(self):
@@ -492,7 +491,7 @@ class OrderManager():
 
         return self.getAvailableOrders()
 
-    def orderPanddingCleanUp(self):
+    def orderPenddingCleanUp(self):
         currentDate = dateNowByTimeZone()
         expireDate = currentDate + datetime.timedelta(hours=-24)
 

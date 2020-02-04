@@ -139,7 +139,7 @@ def kakaoView_ConfirmUseEatplePass(kakaoPayload):
         order.orderStatusUpdate()
 
     orderManager = UserOrderManager(user)
-    orderManager.orderPanddingCleanUp()
+    orderManager.orderPenddingCleanUp()
 
     availableEatplePass = orderManager.availableOrderStatusUpdate()
     ownEatplePass = availableEatplePass.filter(Q(delegate=None))
