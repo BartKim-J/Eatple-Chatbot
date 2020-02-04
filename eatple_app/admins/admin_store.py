@@ -107,7 +107,7 @@ class StoreAdmin(ImportExportMixin, admin.GeoModelAdmin):
         else:
             return "들어온 주문 없음"
         
-    menu_pickup_status.short_description = "픽업 대기중인 주문"    
+    menu_pickup_status.short_description = "들어온 주문"    
 
     def menu_stock(self, obj):
         max_stock = Menu.objects.filter(store=obj, status=OC_OPEN).order_by('-current_stock').first().max_stock

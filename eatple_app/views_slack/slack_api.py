@@ -58,7 +58,7 @@ def eatple_b2b_status():
         "text": {
             "type": "mrkdwn",
             "text": (
-                "*총 픽업 대기중인 주문 : {total_stock}개*"
+                "*총 들어온 주문 : {total_stock}개*"
             ).format(
                 total_stock=total_stock,
             )

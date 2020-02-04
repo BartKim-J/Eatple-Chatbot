@@ -8,6 +8,6 @@ from eatple_app.define import *
 
 # TEMPLATES
 def base(request):
-    menus = Menu.objects.filter(~Q(store__type=STORE_TYPE_EVENT)).order_by('-current_stock','store__name')
+    menus = Menu.objects.filter(~Q(store__type=STORE_TYPE_EVENT)).order_by('-status', '-store__status', '-current_stock','store__name')
     
     return render(request, 'base/index.html', {'menus': menus})
