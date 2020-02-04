@@ -38,7 +38,7 @@ class OrderShareFlagFilter(SimpleListFilter):
         if self.value() == 'off':
             return queryset.filter(Q(delegate=None))
         
-class OrderResource(resources.ModelResource):
+class OrderResource(resources.ModelResource):        
     def dehydrate_b2b_name(self, obj):
         if(obj.ordersheet.user.company != None):
             return obj.ordersheet.user.company.name

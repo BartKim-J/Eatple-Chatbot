@@ -78,7 +78,7 @@ class MenuInline(admin.StackedInline):
          'current_stock', 'max_stock', 'status']}),
     ]
     
-class StoreAdmin(ImportExportMixin, admin.GeoModelAdmin):        
+class StoreAdmin(ImportExportMixin, admin.GeoModelAdmin):       
     readonly_fields = ('store_id', 'logo_preview')
 
     list_editable = ()
