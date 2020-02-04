@@ -28,9 +28,14 @@ from eatple_app import templates
 
 schema_view = get_swagger_view(title="Eatple Rest API")
 
-admin.site.site_header = "Eat+ Admin"
-admin.site.site_title = "Eat+"
-admin.site.index_title = "Admin"
+
+if(settings.SETTING_ID == 'DEPLOY'):
+    admin.site.site_header = "라이브 서버"
+else:
+    admin.site.site_header = "개발 서버"
+
+admin.site.index_title = "Dashboard"    
+admin.site.site_title = "Eat+ Admin"
 
 # Urls
 urlpatterns = [

@@ -140,7 +140,7 @@ class MenuStatus(models.Model):
         default=0, 
         verbose_name = "현재 재고"
     )
-    
+
     max_stock = models.IntegerField(
         default=50, 
         verbose_name = "일일 재고"
@@ -177,13 +177,23 @@ class Menu(MenuInfo, MenuStatus, MenuSetting):
         currentDate = dateNowByTimeZone()
         currentDateWithoutTime = currentDate.replace(
             hour=0, minute=0, second=0, microsecond=0)
-        
-        expireDate = currentDate + datetime.timedelta(hours=-24)
 
-        TODAY = currentDateWithoutTime
+        # Prev Lunch Order Edit Time 16:30 ~ 시:25(~ 10:30)
+        prevlunchOrderEditTimeStart = currentDateWithoutTime + datetime.timedelta(hours=16, minutes=30, days=-1)
+
+        # Next Lunch Order Edit Time 16:30 ~ 9:30(~ 10:30)
+        nextlunchOrderEditTimeStart = currentDateWithoutTime + datetime.timedelta(hours=16, minutes=30)
+
+        deadline = nextlunchOrderEditTimeStart+ datetime.timedelta(minutes=-10)
+
+        if(deadline >= currentDate):
+            expireDate = prevlunchOrderEditTimeStart
+        else:
+            expireDate = nextlunchOrderEditTimeStart
         
         availableOrders = Order.objects.filter(menu=self).filter(
             (
+                Q(status=ORDER_STATUS_PICKUP_COMPLETED) |
                 Q(status=ORDER_STATUS_PICKUP_WAIT) |
                 Q(status=ORDER_STATUS_PICKUP_PREPARE) |
                 Q(status=ORDER_STATUS_ORDER_CONFIRM_WAIT) |
@@ -196,7 +206,6 @@ class Menu(MenuInfo, MenuStatus, MenuSetting):
         self.save()
         
         return availableOrders
-
 
     def imgURL(self):
         try:
