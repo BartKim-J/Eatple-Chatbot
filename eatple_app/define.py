@@ -39,7 +39,7 @@ from django.contrib.gis.geos import *
 from django.contrib.gis.measure import D
 from django.contrib.gis.db.models.functions import Distance
 
-from django.db.models import F, Q
+from django.db.models import F, Q, Count
 
 ###########################################################################################
 # Slack
@@ -344,7 +344,7 @@ if(settings.SETTING_ID == 'DEPLOY'):
     USER_ID_DEBUG_MODE = False
 elif(settings.SETTING_ID == 'DEBUG'):
     ORDERING_DEBUG_MODE = False
-    ORDER_TIME_CHECK_DEBUG_MODE = True
+    ORDER_TIME_CHECK_DEBUG_MODE = False
     VALIDATION_DEBUG_MODE = False
     USER_ID_DEBUG_MODE = False
 else:
@@ -390,3 +390,10 @@ def dateByTimeZone(UTC):
 
         return localeTime  # TO Korea
 
+def dateByUTC(KOR):
+    timeDiffrence = datetime.timedelta(hours=-9)
+    UTC = datetime.timezone(datetime.timedelta(hours=0))
+
+    localeTime = KOR.replace(tzinfo=UTC) + timeDiffrence
+
+    return localeTime  # TO Korea

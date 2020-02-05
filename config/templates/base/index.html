@@ -1,15 +1,17 @@
 {% load static %}
 {% load humanize %}
+{% load compress %}
 
 <html>
   <header>
-    <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/feather-icons/4.9.0/feather.min.js" type="text/javascript"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.3/Chart.min.js" type="text/javascript"></script>
-    
+    <title>잇플 - Dashboard</title>
+
     <link rel="shortcut icon" type="image/png" href="{% static 'favicon.ico' %}"/>
     
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
@@ -17,194 +19,314 @@
     <link rel="stylesheet" href="{% static 'base/css/base.css' %}">
     <link rel="stylesheet" href="{% static 'base/css/sb-admin-2.css' %}">
 
-    <link href="{% static 'base/vendor/datatables/dataTables.bootstrap4.min.css' %}" rel="stylesheet">
+    <!-- Custom fonts for this template-->
+    <link href="{% static 'base/vendor/fontawesome-free/css/all.min.css' %}" rel="stylesheet" type="text/css">
+    <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
 
-    <script type="text/javascript" src="{% static 'base/js/base.js' %}"></script>
-    <script type="text/javascript" src="{% static 'base/js/sb-admin-2.js' %}"></script>
-    <script type="text/javascript" src="{% static 'base/js/datatables.init.js' %}"></script>
-    
-    <script type="text/javascript" src="{% static 'base/vendor/datatables/jquery.dataTables.min.js' %}"></script>
-    <script type="text/javascript" src="{% static 'base/vendor/datatables/dataTables.bootstrap4.min.js' %}"></script>
-    
+    <link href="{% static 'base/vendor/datatables/dataTables.bootstrap4.min.css' %}" rel="stylesheet" type="text/css">
   </header>
 
   <body>
-    <div class="collapse bg-dark" id="navbarHeader">
-        <div class="container">
-          <div class="row">
-              <div class="col-sm-8 col-md-7 py-4">
-                <h4 class="text-white">설명</h4>
-                <p class="text-muted">잇플설명</p>
-              </div>
-              <div class="col-sm-4 offset-md-1 py-4">
-              <h4 class="text-white">사이트 맵</h4>
-                <ul class="list-unstyled">
-                    <li><a href="" class="text-white">메뉴 현황</a></li>
-                    <li><a href="/admin" class="text-white">관리자 툴</a></li>
-                </ul>
-              </div>
-          </div>
-        </div>
-    </div>
-    <div class="navbar navbar-dark bg-dark shadow-sm">
-        <div class="container d-flex justify-content-between">
-        <a href="" class="navbar-brand d-flex align-items-center">
-            <strong>잇플</strong>
-        </a>
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarHeader" aria-controls="navbarHeader" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        </div>
-    </div>
-
-
     <main role="main">
 
-        <!-- Begin Page Content -->
-        <div class="card-body">
-          <div class="container">
-  
-            <!-- Page Heading -->
-            <div class="d-sm-flex align-items-center justify-content-between mb-4">
-              <h1 class="h3 mb-0 text-gray-800">대시보드</h1>
+      <!-- Page Wrapper -->
+      <div id="wrapper">
+        <!-- Sidebar -->
+        <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion fixed-left" id="accordionSidebar">
+
+          <!-- Sidebar - Brand -->
+          <a class="sidebar-brand d-flex align-items-center justify-content-center" href="index.html">
+            <div class="sidebar-brand-icon rotate-n-15">
+              <i class="fas fa-book"></i>
             </div>
+            <div class="sidebar-brand-text mx-3">Eatple<sup> 1.0.0V</sup></div>
+          </a>
 
-            <!-- Content Row -->
-            <div class="row">
-              <!-- Earnings (Monthly) Card Example -->
-              <div class="col-xl-3 col-md-6 mb-4">
-                <div class="card border-left-info shadow h-100 py-2">
-                  <div class="card-body">
-                    <div class="row no-gutters align-items-center">
-                      <div class="col mr-2">
-                        <div class="text-xs font-weight-bold text-info text-uppercase mb-1">총 가입자 수</div>
-                        <div class="h5 mb-0 font-weight-bold text-gray-800">{{ totalUser }} 명</div>
-                      </div>
-                      <div class="col-auto">
-                        <i class="fas fa-clipboard-list fa-2x text-gray-300"></i>
-                      </div>
-                    </div>
-                  </div>
-                </div>
+          <!-- Divider -->
+          <hr class="sidebar-divider my-0">
+
+          <!-- Nav Item - Dashboard -->
+          <li class="nav-item active">
+            <a class="nav-link" href="">
+              <i class="fas fa-fw fa-tachometer-alt"></i>
+              <span>대쉬보드</span></a>
+          </li>
+
+          <!-- Divider -->
+          <hr class="sidebar-divider">
+
+          <!-- Heading -->
+          <div class="sidebar-heading">
+            BOOKMARKS
+          </div>
+
+          <!-- Nav Item - Pages Collapse Menu -->
+          <li class="nav-item">
+            <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="true" aria-controls="collapseTwo">
+              <i class="fas fa-fw fa-cog"></i>
+              <span>관리자</span>
+            </a>
+            <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
+              <div class="bg-white py-2 collapse-inner rounded">
+                <h6 class="collapse-header">관리자 사이트 맵</h6>
+                <a class="collapse-item" href="/admin">관리자 툴</a>
+                <a class="collapse-item" href="/admin">KPI</a>
               </div>
+            </div>
+          </li>
 
-              <!-- Pending Requests Card Example -->
-              <div class="col-xl-3 col-md-6 mb-4">
-                <div class="card border-left-warning shadow h-100 py-2">
-                  <div class="card-body">
-                    <div class="row no-gutters align-items-center">
-                      <div class="col mr-2">
-                        <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">총 발급된 잇플패스</div>
-                        <div class="h5 mb-0 font-weight-bold text-gray-800">{{ totalOrder }} 잇플패스</div>
-                      </div>
-                      <div class="col-auto">
-                        <i class="fas fa-comments fa-2x text-gray-300"></i>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
+          <!-- Divider -->
+          <hr class="sidebar-divider d-none d-md-block">
 
-              <!-- Earnings (Monthly) Card Example -->
-              <div class="col-xl-3 col-md-6 mb-4">
-                <div class="card border-left-primary shadow h-100 py-2">
-                  <div class="card-body">
-                    <div class="row no-gutters align-items-center">
-                      <div class="col mr-2">
-                        <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">일일 수익</div>
-                        <div class="h5 mb-0 font-weight-bold text-gray-800">
-                          {{ totalPrice|intcomma }}원
+          <!-- Sidebar Toggler (Sidebar) -->
+          <div class="text-center d-none d-md-inline">
+            <button class="rounded-circle border-0" id="sidebarToggle"></button>
+          </div>
+
+        </ul>
+        <!-- End of Sidebar -->
+
+        <!-- Content Wrapper -->
+        <div id="content-wrapper" class="d-flex flex-column">
+
+          <!-- Main Content -->
+          <div id="content">
+            <div class="card-body">
+              <div class="container">
+
+                <!-- Content Row -->
+                <div class="row">
+                  <!-- Total User Counter Card -->
+                  <div class="col-xl-3 col-md-6 mb-4">
+                    <div class="card border-left-info shadow h-100 py-2">
+                      <div class="card-body">
+                        <div class="row no-gutters align-items-center">
+                          <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-info text-uppercase mb-1">총 가입자 수</div>
+                            <div class="h6 font-weight-bold" id="TotalUserStatus"><i id="TotalUserStatusIcon" class="fas"></i> {{ totalUserIncrease }}</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ totalUser }} 명</div>
+                          </div>
+                          <div class="col-auto">
+                            <i class="fas fa-users fa-2x text-gray-300"></i>
+                          </div>
                         </div>
                       </div>
-                      <div class="col-auto">
-                        <i class="fas fa-calendar fa-2x text-gray-300"></i>
+                    </div>
+                  </div>
+
+                  <!-- Toal Eatplepass Card  -->
+                  <div class="col-xl-3 col-md-6 mb-4">
+                    <div class="card border-left-warning shadow h-100 py-2">
+                      <div class="card-body">
+                        <div class="row no-gutters align-items-center">
+                          <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">총 발급된 잇플패스</div>
+                            <div class="h6 font-weight-bold text-success"><i class="fas fa-angle-up"></i> {{ totalStock }}</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ totalOrder }} 잇플패스</div>
+                          </div>
+                          <div class="col-auto">
+                            <i class="fas fa-ticket-alt fa-2x text-gray-300"></i>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+
+                  <!-- Daily Selled Card -->
+                  <div class="col-xl-3 col-md-6 mb-4">
+                    <div class="card border-left-success shadow h-100 py-2">
+                      <div class="card-body">
+                        <div class="row no-gutters align-items-center">
+                          <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-success text-uppercase mb-1">오늘의 판매량</div>
+                            <div class="h6 font-weight-bold" id="TotalStockStatus"><i id="TotalStockStatusIcon" class="fas"></i> {{ totalStockIncrease }}</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ totalStock }}개</div>
+                          </div>
+                          <div class="col-auto">
+                            <i class="fas fa-boxes fa-2x text-gray-300"></i>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Daily Earning Card -->
+                  <div class="col-xl-3 col-md-6 mb-4">
+                    <div class="card border-left-primary shadow h-100 py-2">
+                      <div class="card-body">
+                        <div class="row no-gutters align-items-center">
+                          <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">오늘의 거래액</div>
+                            <div class="h6 font-weight-bold" id="TotalPriceStatus"><i id="TotalPriceStatusIcon" class="fas"></i> {{ totalPriceIncrease }}</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">
+                              {{ totalPrice|intcomma }}원
+                            </div>
+                          </div>
+                          <div class="col-auto">
+                            <i class="fas fa-won-sign fa-2x text-gray-300"></i>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                </div>
+
+                <!-- Content Row -->
+                <div class="row">
+                  <!-- DAU Card -->
+                  <div class="col-xl-3 col-md-6 mb-4">
+                    <div class="card border-left-info shadow h-100 py-2">
+                      <div class="card-body">
+                        <div class="row no-gutters align-items-center">
+                          <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-info text-uppercase mb-1">DAU</div>
+                            <div class="h6 font-weight-bold" id="DAUStatus"><i id="DAUStatusIcon" class="fas"></i> {{ DAUIncrease }}</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ DAU }} 명</div>
+                          </div>
+                          <div class="col-auto">
+                            <i class="fas fa-clipboard-list fa-2x text-gray-300"></i>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- WAU Card -->
+                  <div class="col-xl-3 col-md-6 mb-4">
+                    <div class="card border-left-warning shadow h-100 py-2">
+                      <div class="card-body">
+                        <div class="row no-gutters align-items-center">
+                          <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">WAU</div>
+                            <div class="h6 font-weight-bold" id="WAUStatus"><i id="WAUStatusIcon" class="fas"></i> {{ WAUIncrease }}</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ WAU }} 명</div>
+                          </div>
+                          <div class="col-auto">
+                            <i class="fas fa-clipboard-list fa-2x text-gray-300"></i>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- MAU Card -->
+                  <div class="col-xl-3 col-md-6 mb-4">
+                    <div class="card border-left-success shadow h-100 py-2">
+                      <div class="card-body">
+                        <div class="row no-gutters align-items-center">
+                          <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-success text-uppercase mb-1">MAU</div>
+                            <div class="h6 font-weight-bold" id="MAUStatus"><i id="MAUStatusIcon" class="fas"></i> {{ MAUIncrease }}</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ MAU }} 명</div>
+                          </div>
+                          <div class="col-auto">
+                            <i class="fas fa-clipboard-list fa-2x text-gray-300"></i>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Earnings (Monthly) Card Example -->
+                  <div class="col-xl-3 col-md-6 mb-4">
+                    <div class="card border-left-primary shadow h-100 py-2">
+                      <div class="card-body">
+                        <div class="row no-gutters align-items-center">
+                          <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">N/N</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">N/N</div>
+                          </div>
+                          <div class="col-auto">
+                            <i class="fas fa-inbox fa-2x text-gray-300"></i>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                </div>
+
+                <!-- Content Row -->
+                <div class="row">
+
+                  <!-- Area Chart -->
+                  <div class="col-xl-8 col-lg-7">
+                    <div class="card shadow mb-4">
+                      <!-- Card Header - Dropdown -->
+                      <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                        <h6 class="m-0 font-weight-bold text-primary">주문 현황</h6>
+                      </div>
+                      <!-- Card Body -->
+                      <div class="card-body">
+                        <div class="chart-area">
+                          <canvas id="myAreaChart"></canvas>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Pie Chart -->
+                  <div class="col-xl-4 col-lg-5">
+                    <div class="card shadow mb-4">
+                      <!-- Card Header - Dropdown -->
+                      <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                        <h6 class="m-0 font-weight-bold text-primary">오늘 주문 차지 비율</h6>
+                      </div>
+                      <!-- Card Body -->
+                      <div class="card-body">
+                        <div class="chart-pie pt-4 pb-2">
+                          <canvas id="myPieChart"></canvas>
+                        </div>
+                        <div class="mt-4 text-center small">
+                          <span class="mr-2">
+                            <i class="fas fa-circle text-primary"></i> 베스트 메뉴 : {{ menus.first }} {{ menus.first.current_stock }}개
+                          </span>
+                        </div>
                       </div>
                     </div>
                   </div>
                 </div>
-              </div>
 
-              <!-- Earnings (Monthly) Card Example -->
-              <div class="col-xl-3 col-md-6 mb-4">
-                <div class="card border-left-success shadow h-100 py-2">
+              </div>
+            </div>
+            <!-- /.container-fluid -->
+        
+            <div class="py-5 bg-light">
+              <div class="container">
+                <div class="card shadow mb-4">
+                  <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">메뉴 현황 리스트</h6>
+                  </div>
                   <div class="card-body">
-                    <div class="row no-gutters align-items-center">
-                      <div class="col mr-2">
-                        <div class="text-xs font-weight-bold text-success text-uppercase mb-1">일일 판매량</div>
-                        <div class="h5 mb-0 font-weight-bold text-gray-800">{{ totalStock }}개</div>
-                      </div>
-                      <div class="col-auto">
-                        <i class="fas fa-dollar-sign fa-2x text-gray-300"></i>
-                      </div>
+                    <div class="table-responsive">
+                      <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                        <thead>
+                            <tr>
+                            <th>점포명</th>
+                            <th>메뉴명</th>
+                            <th>들어온 주문</th>
+                            <th>주문 가능량</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                          {% for menu in menus %}
+                            <tr>
+                              <td>{{ menu.store.name }}</td>
+                              <td>{{ menu.name }}</td>
+                              <td>{{ menu.current_stock }} 개</td>
+                              <td>{{ menu.max_stock }} 개</td>
+                            </tr>
+                          {% endfor %}
+                        </tbody>
+                      </table>
                     </div>
                   </div>
                 </div>
               </div>
             </div>
-
-            <!-- Content Row -->
-
-            <div class="row">
-
-              <!-- Area Chart -->
-              <div class="col-xl-8 col-lg-7">
-                <div class="card shadow mb-4">
-                  <!-- Card Header - Dropdown -->
-                  <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-                    <h6 class="m-0 font-weight-bold text-primary">주문 증가량</h6>
-                  </div>
-                  <!-- Card Body -->
-                  <div class="card-body">
-                    <div class="chart-area">
-                      <canvas id="myAreaChart"></canvas>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <!-- Pie Chart -->
-              <div class="col-xl-4 col-lg-5">
-                <div class="card shadow mb-4">
-                  <!-- Card Header - Dropdown -->
-                  <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-                    <h6 class="m-0 font-weight-bold text-primary">점포별 주문 차지 비율</h6>
-                  </div>
-                  <!-- Card Body -->
-                  <div class="card-body">
-                    <div class="chart-pie pt-4 pb-2">
-                      <canvas id="myPieChart"></canvas>
-                    </div>
-                    <div class="mt-4 text-center small">
-                      <span class="mr-2">
-                        <i class="fas fa-circle text-primary"></i> 애슬로우
-                      </span>
-                      <span class="mr-2">
-                        <i class="fas fa-circle text-success"></i> 심플한식
-                      </span>
-                      <span class="mr-2">
-                        <i class="fas fa-circle text-info"></i> 질할브로스
-                      </span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-          </div>
-        </div>
-          <!-- /.container-fluid -->
-    
-      <div id="accordion">
-        <div class="card">
-          <div class="card-header" id="image-list">
-            <h5 class="mb-0">
-              <button class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-                보기 모드 토글
-              </button>
-            </h5>
-          <div>
-
-          <div id="collapseOne" class="collapse show" aria-labelledby="image-list" data-parent="#accordion">
+            
             <div class="card-body">
               <div class="py-5 bg-light">
                 <div class="container">
@@ -251,55 +373,75 @@
               </div>
             </div>
           </div>
+
+          <!-- Footer -->
+          <footer class="text-muted">
+            <div class="container">
+              <p class="float-right">
+                <a href="">위로 올라가버리기</a>
+              </p>
+              <p>요것은 잇플 관리자의 푸터라는 말씀입니다.</p>
+              <p>어쩌실껀가여? <a href="{{ site.url }}/">다시 홈으로 가보실라우?</a> 아니면 <a href="{{ site.baseurl }}/admin"> 어드민 가던가</a>.</p>
+            </div>
+          </footer>
+          <!-- End of Footer -->
           
         </div>
+        <!-- End of Content Wrapper -->
+
       </div>
-      
-      <div class="py-5 bg-light">
-        <div class="container">
-          <div class="card shadow mb-4">
-            <div class="card-header py-3">
-              <h6 class="m-0 font-weight-bold text-primary">메뉴 현황 리스트</h6>
-            </div>
-            <div class="card-body">
-              <div class="table-responsive">
-                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
-                  <thead>
-                      <tr>
-                      <th>점포명</th>
-                      <th>메뉴명</th>
-                      <th>들어온 주문</th>
-                      <th>주문 가능량</th>
-                      </tr>
-                  </thead>
-                  <tbody>
-                    {% for menu in menus %}
-                      <tr>
-                        <td>{{ menu.store.name }}</td>
-                        <td>{{ menu.name }}</td>
-                        <td>{{ menu.current_stock }} 개</td>
-                        <td>{{ menu.max_stock }} 개</td>
-                      </tr>
-                    {% endfor %}
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+      <!-- End of Page Wrapper -->
     </main>
-  
+
+
+    <!-- Bootstrap core JavaScript-->
+    <script type="text/javascript" src="{% static 'base/vendor/jquery/jquery.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'base/vendor/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+
+
+    <!-- Core plugin JavaScript-->
+    <script type="text/javascript" src="{% static 'base/vendor/jquery-easing/jquery.easing.min.js' %}"></script>
+    
+    <!-- Page level plugins -->
+    <script type="text/javascript" src="{% static 'base/vendor/chart.js/Chart.min.js' %}"></script>
+
+    <script type="text/javascript" src="{% static 'base/vendor/datatables/jquery.dataTables.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'base/vendor/datatables/dataTables.bootstrap4.min.js' %}"></script>
+
+    <!-- Page level javascript -->
+    {% compress js %}
+      <script>
+        totalUserIncrease = '{{ totalUserIncrease }}'
+        totalStockIncrease = '{{ totalStockIncrease }}'
+        totalPriceIncrease = '{{ totalPriceIncrease }}'
+
+        areaData = '{{ areaData }}';
+        areaData = areaData.split(",");
+
+        areaLabel = '{{ areaLabel }}';  
+        areaLabel = areaLabel.split(",");
+
+        pieData = '{{ pieData }}';
+        pieData = pieData.split(",");
+
+        pieLabel = '{{ pieLabel }}';  
+        pieLabel = pieLabel.split(",");
+
+        DAUIncrease = '{{ DAUIncrease }}';
+        WAUIncrease = '{{ WAUIncrease }}';
+        MAUIncrease = '{{ MAUIncrease }}';
+        
+      </script>
+      <script type="text/javascript" src="{% static 'base/js/base.js' %}"></script>
+      <script type="text/javascript" src="{% static 'base/js/sb-admin-2.js' %}"></script>
+      <script type="text/javascript" src="{% static 'base/js/datatables.init.js' %}"></script>
+      <script type="text/javascript" src="{% static 'base/js/chart-status.js' %}"></script>
+      <script type="text/javascript" src="{% static 'base/js/chart-area.js' %}"></script>
+      <script type="text/javascript" src="{% static 'base/js/chart-pie.js' %}"></script>
+    {% endcompress %}
+
   </body>
 
-  <footer class="text-muted">
-    <div class="container">
-      <p class="float-right">
-        <a href="#">Back to top</a>
-      </p>
-      <p>Bootstrap, but please download and customize it for yourself!</p>
-      <p>New to Bootstrap? <a href="{{ site.url }}/">Visit the homepage</a> or read our <a href="{{ site.baseurl }}/docs/{{ site.docs_version }}/getting-started/introduction/">getting started guide</a>.</p>
-    </div>
-  </footer>
+
 
 </html>

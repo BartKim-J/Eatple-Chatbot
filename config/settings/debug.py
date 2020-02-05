@@ -71,7 +71,7 @@ INSTALLED_APPS = [
     'eatple_app.apps.EatpleChatbotAppConfig',
     
     'corsheaders',
-
+    'compressor',
     'rangefilter',
     'mapwidgets',
 ]
@@ -204,6 +204,18 @@ STATICFILES_DIRS = [
     STATIC_DIR,
 ]
 STATIC_ROOT = os.path.join(ROOT_DIR, 'static')
+
+STATICFILES_FINDERS = (
+    'django.contrib.staticfiles.finders.FileSystemFinder',
+    'django.contrib.staticfiles.finders.AppDirectoriesFinder',
+    'compressor.finders.CompressorFinder',
+)
+
+COMPRESS_JS_FILTERS = [
+    'compressor.filters.template.TemplateFilter',
+]
+
+COMPRESS_ENABLED = True
 
 # COOKIES
 #SECURE_SSL_REDIRECT = True

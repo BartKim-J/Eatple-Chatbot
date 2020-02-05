@@ -117,7 +117,7 @@ def kakaoView_OrderDetails(kakaoPayload):
             pickupTimes = PickupTime.objects.all()
             
             for pickupTime in pickupTimes:
-                menuList = Menu.objects.filter(store=partner.store, pickup_time=pickupTime)
+                menuList = Menu.objects.filter(store=partner.store, pickup_time=pickupTime, status=OC_OPEN)
                 
                 refPickupTime = [x.strip() for x in str(pickupTime.time).split(':')]
                 datetime_pickup_time = currentTime.replace(
@@ -138,7 +138,16 @@ def kakaoView_OrderDetails(kakaoPayload):
                 if(menuList):
                     totalCount = 0
                     for menu in menuList:
-                        orderByPickupTime = availableOrders.filter(pickup_time=datetime_pickup_time, menu=menu)
+                        orderByPickupTime = Order.objects.filter(menu=menu).filter(
+                            (
+                                Q(status=ORDER_STATUS_PICKUP_COMPLETED) |
+                                Q(status=ORDER_STATUS_PICKUP_WAIT) |
+                                Q(status=ORDER_STATUS_PICKUP_PREPARE) |
+                                Q(status=ORDER_STATUS_ORDER_CONFIRM_WAIT) |
+                                Q(status=ORDER_STATUS_ORDER_CONFIRMED)
+                            ) &
+                            Q(pickup_time=datetime_pickup_time)
+                        )
                         orderCount = orderByPickupTime.count()
                         
                         totalCount += orderCount

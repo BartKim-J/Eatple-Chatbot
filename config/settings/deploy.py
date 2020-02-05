@@ -46,7 +46,7 @@ ALLOWED_HOSTS = [
 INSTALLED_APPS = [
     'jet.dashboard',
     'jet',
-    
+
     'django.contrib.gis',
     'django.contrib.admin',
     'django.contrib.auth',
@@ -56,7 +56,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django_admin_listfilter_dropdown',
     'django.contrib.humanize',
-    
+
     'import_export',
     'phonenumber_field',
 
@@ -66,12 +66,12 @@ INSTALLED_APPS = [
     'rest_framework_swagger',
 
     'django_admin_multiple_choice_list_filter',
-    
+
     # local-app
     'eatple_app.apps.EatpleChatbotAppConfig',
 
     'corsheaders',
-
+    'compressor',
     'rangefilter',
     'mapwidgets',
 ]
@@ -94,7 +94,7 @@ TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
         'DIRS': [
-            BASE_DIR + TEMPLATE_DIR,    
+            BASE_DIR + TEMPLATE_DIR,
         ],
         'APP_DIRS': True,
         'OPTIONS': {
@@ -199,10 +199,19 @@ REST_FRAMEWORK = {
 STATIC_URL = '/static/'
 
 STATIC_DIR = os.path.join(BASE_DIR, 'static')
+
 STATICFILES_DIRS = [
     STATIC_DIR,
 ]
 STATIC_ROOT = os.path.join(ROOT_DIR, 'static')
+
+STATICFILES_FINDERS = (
+    'django.contrib.staticfiles.finders.FileSystemFinder',
+    'django.contrib.staticfiles.finders.AppDirectoriesFinder',
+    'compressor.finders.CompressorFinder',
+)
+
+COMPRESS_ENABLED = True
 
 # COOKIES
 #SECURE_SSL_REDIRECT = True
@@ -225,17 +234,18 @@ CORS_ORIGIN_WHITELIST = [
 ]
 
 # JET
-JET_INDEX_DASHBOARD = 'jet.dashboard.dashboard.DefaultIndexDashboard'
+JET_INDEX_DASHBOARD = 'eatple_app.dashboard.CustomIndexDashboard'
+#JET_INDEX_DASHBOARD = 'jet.dashboard.dashboard.DefaultIndexDashboard'
 JET_APP_INDEX_DASHBOARD = 'jet.dashboard.dashboard.DefaultAppIndexDashboard'
 
 JET_SIDE_MENU_COMPACT = True
 JET_CHANGE_FORM_SIBLING_LINKS = True
-JET_DEFAULT_THEME = 'light-gray'
+JET_DEFAULT_THEME = 'light-violet'
 JET_THEMES = [
     {
-        'theme': 'default', # theme folder name
-        'color': '#47bac1', # color of the theme's button in user menu
-        'title': 'Default' # theme title
+        'theme': 'default',  # theme folder name
+        'color': '#47bac1',  # color of the theme's button in user menu
+        'title': 'Default'  # theme title
     },
     {
         'theme': 'green',
