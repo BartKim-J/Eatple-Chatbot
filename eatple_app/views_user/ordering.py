@@ -154,10 +154,11 @@ def kakaoView_MenuListup(kakaoPayload):
                 ]
 
                 kakaoForm.BasicCard_Push(
-                    '{}'.format(menu.name),
-                    '{} - {}\n{}'.format(
+                    '{} - {}'.format(                     
                         menu.store.name,
                         walkTime, 
+                    ),
+                    '{}'.format(
                         menu.description, 
                     ),
                     thumbnail,
@@ -184,10 +185,11 @@ def kakaoView_MenuListup(kakaoPayload):
             ]
 
             kakaoForm.BasicCard_Push(
-                '{}'.format(menu.name),
-                '{} - {}\n{}'.format(
+                '{} - {}'.format(                     
                     menu.store.name,
                     walkTime, 
+                ),
+                '{}'.format(
                     menu.description, 
                 ),
                 thumbnail,

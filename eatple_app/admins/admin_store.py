@@ -75,7 +75,7 @@ class MenuInline(admin.StackedInline):
         (None,                  {'fields': [
          'selling_time', 'pickup_time', 'tag', 'description', 'image', 'image_preview', 'soldout_image', 'image_soldout_preview', 'price', 'discount']}),
         (None,                  {'fields': [
-         'current_stock', 'max_stock', 'status']}),
+         'current_stock', 'pickuped_stock', 'max_stock', 'status']}),
     ]
     
 class StoreAdmin(ImportExportMixin, admin.GeoModelAdmin):       
@@ -100,23 +100,41 @@ class StoreAdmin(ImportExportMixin, admin.GeoModelAdmin):
     logo_preview.short_description = "이미지 미리보기"
 
     def menu_pickup_status(self, obj):
-        current_stock = Menu.objects.filter(store=obj, status=OC_OPEN).order_by('-current_stock').first().current_stock
+        menu = Menu.objects.filter(store=obj, status=OC_OPEN).order_by('-current_stock').first()
         
-        if(current_stock != 0):
-            return "{}개".format(current_stock)
+        if(menu != None):
+            current_stock = menu.current_stock
+
+            if(current_stock != 0):
+                return "{}개".format(current_stock)
+            else:
+                return "들어온 주문 없음"
+        
         else:
-            return "들어온 주문 없음"
-        
+            return "열린 메뉴가 없음"
+
     menu_pickup_status.short_description = "들어온 주문"    
 
     def menu_stock(self, obj):
-        max_stock = Menu.objects.filter(store=obj, status=OC_OPEN).order_by('-current_stock').first().max_stock
+        menu = Menu.objects.filter(store=obj, status=OC_OPEN).order_by('-current_stock').first()
         
-        return "{}개".format(max_stock)
+        if(menu != None):
+            max_stock = menu.max_stock
+            
+            return "{}개".format(max_stock)
+        else:
+            return "열린 메뉴가 없음"
+            
     menu_stock.short_description = "일일 가능량"
     
     def menu_name(self, obj):
-        return Menu.objects.filter(store=obj, status=OC_OPEN).order_by('-current_stock').first().name
+        menu = Menu.objects.filter(store=obj, status=OC_OPEN).order_by('-current_stock').first()
+
+        if(menu != None):
+            return menu.name
+        else:
+            return "열린 메뉴가 없음"
+
     menu_name.short_description = "메뉴명"
     
     list_filter = (

@@ -125,7 +125,6 @@ def getDailyOrderChartData(currentDate):
         
     return replaceRight(areaData, ",", "", 1)
 
-
 def getMenuStockChartData(menuList):
     pieData = ""
         
@@ -141,6 +140,57 @@ def getMenuStockChartLabel(menuList):
         pieLabel += "{},".format(menu.name)
         
     return replaceRight(pieLabel, ",", "", 1)
+
+def getTotalPickuped(currentDate):
+    currentDateWithoutTime = currentDate.replace(
+    hour=0, minute=0, second=0, microsecond=0)
+
+    deadline = currentDateWithoutTime + datetime.timedelta(hours=16, minutes=20)
+
+    if(currentDate <= deadline):
+        currentDateWithoutTime = currentDateWithoutTime
+    else:
+        currentDateWithoutTime = currentDateWithoutTime + datetime.timedelta(days=1)
+        
+    # Prev Lunch Order Edit Time 16:30 ~ 시:25(~ 10:30)
+    prevlunchOrderEditTimeStart = currentDateWithoutTime + datetime.timedelta(hours=16, minutes=30, days=-1)
+
+    # Next Lunch Order Edit Time 16:30 ~ 9:30(~ 10:30)
+    nextlunchOrderEditTimeStart = currentDateWithoutTime + datetime.timedelta(hours=16, minutes=30)
+
+    totalPickuped = Order.objects.filter(
+        Q(payment_status=IAMPORT_ORDER_STATUS_PAID) &
+        Q(status=ORDER_STATUS_PICKUP_COMPLETED) & 
+        Q(payment_date__gte=prevlunchOrderEditTimeStart) &
+        Q(payment_date__lt=nextlunchOrderEditTimeStart)
+    ).count()
+
+    return totalPickuped
+
+def getOrderFailed(currentDate):
+    currentDateWithoutTime = currentDate.replace(
+    hour=0, minute=0, second=0, microsecond=0)
+
+    deadline = currentDateWithoutTime + datetime.timedelta(hours=16, minutes=20)
+
+    if(currentDate <= deadline):
+        currentDateWithoutTime = currentDateWithoutTime
+    else:
+        currentDateWithoutTime = currentDateWithoutTime + datetime.timedelta(days=1)
+        
+    # Prev Lunch Order Edit Time 16:30 ~ 시:25(~ 10:30)
+    prevlunchOrderEditTimeStart = currentDateWithoutTime + datetime.timedelta(hours=16, minutes=30, days=-1)
+
+    # Next Lunch Order Edit Time 16:30 ~ 9:30(~ 10:30)
+    nextlunchOrderEditTimeStart = currentDateWithoutTime + datetime.timedelta(hours=16, minutes=30)
+
+    orderFailed = Order.objects.filter(
+        Q(payment_status=IAMPORT_ORDER_STATUS_FAILED) &
+        Q(payment_date__gte=prevlunchOrderEditTimeStart) &
+        Q(payment_date__lt=nextlunchOrderEditTimeStart)
+    ).count()
+
+    return orderFailed
 
 def getDAU(currentDate):
     currentDateWithoutTime = currentDate.replace(
@@ -227,6 +277,7 @@ def base(request):
     totalOrder = Order.objects.filter(
         Q(payment_status=IAMPORT_ORDER_STATUS_PAID) | 
         Q(payment_status=IAMPORT_ORDER_STATUS_CANCELLED)).count()
+
     totalOrderIncrease = totalUser.filter(create_date__gte=currentDateWithoutTime).count()
     
     areaLabel = getOrderChartDataLabel(currentDate)
@@ -252,7 +303,9 @@ def base(request):
     for menu in menuList:
         totalStock += menu.current_stock
     
-    
+    totalPickuped = getTotalPickuped(currentDate)
+    orderFailed = getOrderFailed(currentDate)
+
     return render(request, 'base/index.html', {
         'currentDate': "{}".format(currentDate.strftime(
                 '%Y년 %-m월 %-d일 %p %-I시 %-M분 %S초').replace('AM', '오전').replace('PM', '오후')),
@@ -262,6 +315,8 @@ def base(request):
         'totalStockIncrease': totalStock - prevTotalStock,
         'totalStock': totalStock,
         
+        'totalPickuped': totalPickuped,
+
         'totalPriceIncrease': (totalStock * 6000) - (prevTotalStock * 6000),
         'totalPrice': totalStock * 6000,
         
@@ -269,7 +324,8 @@ def base(request):
         'totalUser': totalUser.count(),
         
         'totalOrder': totalOrder,
-        
+        'orderFailed': orderFailed,
+
         'areaDailyLabel': areaDailyLabel,
         'areaDailyData': areaDailyData,
 

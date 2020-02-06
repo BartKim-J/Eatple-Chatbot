@@ -129,7 +129,7 @@ class UserAdmin(ImportExportMixin, admin.ModelAdmin):
     
     readonly_fields = (
         'app_user_id',
-        'nickname',
+        #'nickname',
         'phonenumber',
         'email',
         'birthyear',
