@@ -190,7 +190,7 @@ class Menu(MenuInfo, MenuStatus, MenuSetting):
         # Next Lunch Order Edit Time 16:30 ~ 9:30(~ 10:30)
         nextlunchOrderEditTimeStart = currentDateWithoutTime + datetime.timedelta(hours=16, minutes=30)
 
-        deadline = nextlunchOrderEditTimeStart+ datetime.timedelta(minutes=-10)
+        deadline = nextlunchOrderEditTimeStart+ datetime.timedelta(minutes=-30)
 
         # order deadline  ~ pickup-day 16:20 , get yesterday 16:30 ~ orders
         if(currentDate <= deadline):

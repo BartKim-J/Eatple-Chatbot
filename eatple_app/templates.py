@@ -28,7 +28,7 @@ def getOrderChartDataLabel(currentDate):
     currentDateWithoutTime = currentDate.replace(
         hour=0, minute=0, second=0, microsecond=0)
     
-    deadline = currentDateWithoutTime + datetime.timedelta(hours=16, minutes=20)
+    deadline = currentDateWithoutTime + datetime.timedelta(hours=16, minutes=0)
 
     if(currentDate <= deadline):
         currentDateWithoutTime = currentDateWithoutTime
@@ -49,7 +49,7 @@ def getOrderChartData(currentDate):
     currentDateWithoutTime = currentDate.replace(
         hour=0, minute=0, second=0, microsecond=0)
     
-    deadline = currentDateWithoutTime + datetime.timedelta(hours=16, minutes=20)
+    deadline = currentDateWithoutTime + datetime.timedelta(hours=16, minutes=0)
 
     if(currentDate <= deadline):
         currentDateWithoutTime = currentDateWithoutTime
@@ -81,12 +81,12 @@ def getDailyOrderChartDataLabel(currentDate):
     currentDateWithoutTime = currentDate.replace(
         hour=0, minute=0, second=0, microsecond=0)
     
-    deadline = currentDateWithoutTime + datetime.timedelta(hours=16, minutes=20)
+    deadline = currentDateWithoutTime + datetime.timedelta(hours=16, minutes=0)
 
     if(currentDate <= deadline):
         startTime = currentDateWithoutTime + datetime.timedelta(hours=16, minutes=30, days=-1)
     else:
-        startTime = currentDateWithoutTime + checkData + datetime.timedelta(hours=16, minutes=30)
+        startTime = currentDateWithoutTime + datetime.timedelta(hours=16, minutes=30)
     
     areaLabel = ""
     
@@ -102,12 +102,12 @@ def getDailyOrderChartData(currentDate):
     currentDateWithoutTime = currentDate.replace(
         hour=0, minute=0, second=0, microsecond=0)
     
-    deadline = currentDateWithoutTime + datetime.timedelta(hours=16, minutes=20)
+    deadline = currentDateWithoutTime + datetime.timedelta(hours=16, minutes=0)
 
     if(currentDate <= deadline):
         startTime = currentDateWithoutTime + datetime.timedelta(hours=16, minutes=30, days=-1)
     else:
-        startTime = currentDateWithoutTime + checkData + datetime.timedelta(hours=16, minutes=30)
+        startTime = currentDateWithoutTime + datetime.timedelta(hours=16, minutes=30)
         
     areaData = ""
         
@@ -145,7 +145,7 @@ def getTotalPickuped(currentDate):
     currentDateWithoutTime = currentDate.replace(
     hour=0, minute=0, second=0, microsecond=0)
 
-    deadline = currentDateWithoutTime + datetime.timedelta(hours=16, minutes=20)
+    deadline = currentDateWithoutTime + datetime.timedelta(hours=16, minutes=0)
 
     if(currentDate <= deadline):
         currentDateWithoutTime = currentDateWithoutTime
@@ -171,7 +171,7 @@ def getOrderFailed(currentDate):
     currentDateWithoutTime = currentDate.replace(
     hour=0, minute=0, second=0, microsecond=0)
 
-    deadline = currentDateWithoutTime + datetime.timedelta(hours=16, minutes=20)
+    deadline = currentDateWithoutTime + datetime.timedelta(hours=16, minutes=0)
 
     if(currentDate <= deadline):
         currentDateWithoutTime = currentDateWithoutTime

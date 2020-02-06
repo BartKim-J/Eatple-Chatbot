@@ -245,7 +245,12 @@ def orderUpdate(order):
                 order.status = ORDER_STATUS_PICKUP_PREPARE
                 order.save()
         # Order Time Range
-        else:            
+        else:      
+            print(nextlunchOrderEditTimeStart)
+            print(nextlunchOrderEditTimeEnd)
+            print(currentDate)
+            print(paymentDate)
+
             # prev phase Order YD 16:30 ~ TD 10:30
             if(prevlunchOrderEditTimeStart <= currentDate) and (currentDate <= prevlunchOrderTimeEnd):
                 if currentDate <= prevlunchOrderEditTimeEnd:
@@ -258,18 +263,15 @@ def orderUpdate(order):
                     order.save()
 
             # next phase Lunch order
-            elif (nextlunchOrderEditTimeStart <= currentDate) and \
+            elif ((nextlunchOrderEditTimeStart + datetime.timedelta(minutes=-5)) <= currentDate) and \
                  (currentDate <= nextlunchOrderEditTimeEnd) and \
-                 (paymentDate >= nextlunchOrderEditTimeStart):
+                 (paymentDate >= (nextlunchOrderEditTimeStart + datetime.timedelta(minutes=-5)):
                 print("주문 완료 - B")
                 order.status = ORDER_STATUS_ORDER_CONFIRMED
                 order.save()
 
             # Invalid Time Range is Dinner Order Time ( prev phase lunch order ~ dinner order ~ next phase lunch order )
             else:
-                print(paymentDate)
-                print(nextlunchOrderEditTimeStart)
-                print((paymentDate >= nextlunchOrderEditTimeStart))
                 print("픽업 완료 - A")
                 order.status = ORDER_STATUS_PICKUP_COMPLETED
                 order.save()
