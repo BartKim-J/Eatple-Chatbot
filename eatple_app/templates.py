@@ -77,6 +77,55 @@ def getOrderChartData(currentDate):
         
     return replaceRight(areaData, ",", "", 1)
 
+def getDailyOrderChartDataLabel(currentDate):
+    currentDateWithoutTime = currentDate.replace(
+        hour=0, minute=0, second=0, microsecond=0)
+    
+    deadline = currentDateWithoutTime + datetime.timedelta(hours=16, minutes=20)
+
+    if(currentDate <= deadline):
+        startTime = currentDateWithoutTime + datetime.timedelta(hours=16, minutes=30, days=-1)
+    else:
+        startTime = currentDateWithoutTime + checkData + datetime.timedelta(hours=16, minutes=30)
+    
+    areaLabel = ""
+    
+    for i in range(24):
+        checkStartTime = startTime + datetime.timedelta(hours=i)
+
+        areaLabel += "{},".format(checkStartTime.strftime(
+                '%-m월 %-d일 %p %-I시 %-M분 ~').replace('AM', '오전').replace('PM', '오후'))
+    
+    return replaceRight(areaLabel, ",", "", 1)
+
+def getDailyOrderChartData(currentDate):    
+    currentDateWithoutTime = currentDate.replace(
+        hour=0, minute=0, second=0, microsecond=0)
+    
+    deadline = currentDateWithoutTime + datetime.timedelta(hours=16, minutes=20)
+
+    if(currentDate <= deadline):
+        startTime = currentDateWithoutTime + datetime.timedelta(hours=16, minutes=30, days=-1)
+    else:
+        startTime = currentDateWithoutTime + checkData + datetime.timedelta(hours=16, minutes=30)
+        
+    areaData = ""
+        
+    for i in range(24):
+        checkStartTime = startTime + datetime.timedelta(hours=i)
+        cehckEndTime = startTime + datetime.timedelta(hours=i+1)
+
+        areaData  += "{},".format((
+            Order.objects.filter(
+                Q(payment_date__gte=checkStartTime) &
+                Q(payment_date__lt=cehckEndTime) &
+                Q(payment_status=IAMPORT_ORDER_STATUS_PAID)
+            ).count())
+        )
+        
+    return replaceRight(areaData, ",", "", 1)
+
+
 def getMenuStockChartData(menuList):
     pieData = ""
         
@@ -99,7 +148,7 @@ def getDAU(currentDate):
     
     DAUStartDate = currentDateWithoutTime + datetime.timedelta(days=-1)
     DAUEndDate = currentDateWithoutTime
-    
+
     DAU = Order.objects.filter(
         Q(payment_date__gte=DAUStartDate) &
         Q(payment_date__lt=DAUEndDate) &
@@ -170,9 +219,8 @@ def base(request):
     hour=0, minute=0, second=0, microsecond=0)
     
     menuList = Menu.objects.filter(~Q(store__type=STORE_TYPE_EVENT)).order_by('-status', '-store__status', '-current_stock','store__name')
-    
+    storeList = Store.objects.filter(~Q(type=STORE_TYPE_EVENT))
 
-    
     totalUser = User.objects.all()
     totalUserIncrease = totalUser.filter(create_date__gte=currentDateWithoutTime).count()
     
@@ -184,12 +232,15 @@ def base(request):
     areaLabel = getOrderChartDataLabel(currentDate)
     areaData = getOrderChartData(currentDate)
     
+    areaDailyLabel = getDailyOrderChartDataLabel(currentDate)
+    areaDailyData = getDailyOrderChartData(currentDate)
+
     pieLabel = getMenuStockChartLabel(menuList)
     pieData = getMenuStockChartData(menuList)
 
-    prevDAU = getDAU(currentDate - datetime.timedelta(days=1))
-    prevWAU = getWAU(currentDate - datetime.timedelta(days=7))
-    prevMAU = getMAU(currentDate - datetime.timedelta(1*365/12))
+    prevDAU = getDAU(currentDate + datetime.timedelta(days=-1))
+    prevWAU = getWAU(currentDate + datetime.timedelta(days=-1))
+    prevMAU = getMAU(currentDate + datetime.timedelta(days=-1))
     
     DAU = getDAU(currentDate)
     WAU = getWAU(currentDate)
@@ -203,8 +254,11 @@ def base(request):
     
     
     return render(request, 'base/index.html', {
+        'currentDate': "{}".format(currentDate.strftime(
+                '%Y년 %-m월 %-d일 %p %-I시 %-M분 %S초').replace('AM', '오전').replace('PM', '오후')),
         'menus': menuList,
-        
+        'stores':storeList,
+
         'totalStockIncrease': totalStock - prevTotalStock,
         'totalStock': totalStock,
         
@@ -216,12 +270,14 @@ def base(request):
         
         'totalOrder': totalOrder,
         
+        'areaDailyLabel': areaDailyLabel,
+        'areaDailyData': areaDailyData,
+
         'areaLabel': areaLabel,
         'areaData': areaData,
         
         'pieLabel': pieLabel,
         'pieData': pieData,
-        
 
         'DAU': DAU,
         'WAU': WAU,

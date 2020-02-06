@@ -1,6 +1,7 @@
 {% load static %}
 {% load humanize %}
 {% load compress %}
+{% load eatple_app_extras %}
 
 <html>
   <header>
@@ -32,10 +33,10 @@
       <!-- Page Wrapper -->
       <div id="wrapper">
         <!-- Sidebar -->
-        <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion fixed-left" id="accordionSidebar">
+        <ul class="visible-md visible-lg navbar-nav bg-gradient-primary sidebar sidebar-dark accordion fixed-left" id="accordionSidebar">
 
           <!-- Sidebar - Brand -->
-          <a class="sidebar-brand d-flex align-items-center justify-content-center" href="index.html">
+          <a class="sidebar-brand d-flex align-items-center justify-content-center" href="">
             <div class="sidebar-brand-icon rotate-n-15">
               <i class="fas fa-book"></i>
             </div>
@@ -98,7 +99,7 @@
                 <div class="row">
                   <!-- Total User Counter Card -->
                   <div class="col-xl-3 col-md-6 mb-4">
-                    <div class="card border-left-info shadow h-100 py-2">
+                    <div class="card border-bottom-info shadow py-2">
                       <div class="card-body">
                         <div class="row no-gutters align-items-center">
                           <div class="col mr-2">
@@ -116,7 +117,7 @@
 
                   <!-- Toal Eatplepass Card  -->
                   <div class="col-xl-3 col-md-6 mb-4">
-                    <div class="card border-left-warning shadow h-100 py-2">
+                    <div class="card border-bottom-warning shadow py-2">
                       <div class="card-body">
                         <div class="row no-gutters align-items-center">
                           <div class="col mr-2">
@@ -135,7 +136,7 @@
 
                   <!-- Daily Selled Card -->
                   <div class="col-xl-3 col-md-6 mb-4">
-                    <div class="card border-left-success shadow h-100 py-2">
+                    <div class="card border-bottom-success shadow py-2">
                       <div class="card-body">
                         <div class="row no-gutters align-items-center">
                           <div class="col mr-2">
@@ -153,7 +154,7 @@
 
                   <!-- Daily Earning Card -->
                   <div class="col-xl-3 col-md-6 mb-4">
-                    <div class="card border-left-primary shadow h-100 py-2">
+                    <div class="card border-bottom-primary shadow py-2">
                       <div class="card-body">
                         <div class="row no-gutters align-items-center">
                           <div class="col mr-2">
@@ -177,7 +178,7 @@
                 <div class="row">
                   <!-- DAU Card -->
                   <div class="col-xl-3 col-md-6 mb-4">
-                    <div class="card border-left-info shadow h-100 py-2">
+                    <div class="card border-bottom-info shadow py-2">
                       <div class="card-body">
                         <div class="row no-gutters align-items-center">
                           <div class="col mr-2">
@@ -195,7 +196,7 @@
 
                   <!-- WAU Card -->
                   <div class="col-xl-3 col-md-6 mb-4">
-                    <div class="card border-left-warning shadow h-100 py-2">
+                    <div class="card border-bottom-warning shadow py-2">
                       <div class="card-body">
                         <div class="row no-gutters align-items-center">
                           <div class="col mr-2">
@@ -213,7 +214,7 @@
 
                   <!-- MAU Card -->
                   <div class="col-xl-3 col-md-6 mb-4">
-                    <div class="card border-left-success shadow h-100 py-2">
+                    <div class="card border-bottom-success shadow py-2">
                       <div class="card-body">
                         <div class="row no-gutters align-items-center">
                           <div class="col mr-2">
@@ -231,7 +232,7 @@
 
                   <!-- Earnings (Monthly) Card Example -->
                   <div class="col-xl-3 col-md-6 mb-4">
-                    <div class="card border-left-primary shadow h-100 py-2">
+                    <div class="card border-bottom-primary shadow py-2">
                       <div class="card-body">
                         <div class="row no-gutters align-items-center">
                           <div class="col mr-2">
@@ -250,13 +251,12 @@
 
                 <!-- Content Row -->
                 <div class="row">
-
                   <!-- Area Chart -->
                   <div class="col-xl-8 col-lg-7">
                     <div class="card shadow mb-4">
                       <!-- Card Header - Dropdown -->
                       <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-                        <h6 class="m-0 font-weight-bold text-primary">주문 현황</h6>
+                        <h6 class="m-0 font-weight-bold text-primary">일일 주문 현황<small class="blockquote-footer">{{ currentDate }}</small></h6>
                       </div>
                       <!-- Card Body -->
                       <div class="card-body">
@@ -272,7 +272,7 @@
                     <div class="card shadow mb-4">
                       <!-- Card Header - Dropdown -->
                       <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-                        <h6 class="m-0 font-weight-bold text-primary">오늘 주문 차지 비율</h6>
+                        <h6 class="m-0 font-weight-bold text-primary">일일 주문 차지 비율<small class="blockquote-footer">{{ currentDate }}</small></h6>
                       </div>
                       <!-- Card Body -->
                       <div class="card-body">
@@ -289,90 +289,136 @@
                   </div>
                 </div>
 
-              </div>
-            </div>
-            <!-- /.container-fluid -->
-        
-            <div class="py-5 bg-light">
-              <div class="container">
-                <div class="card shadow mb-4">
-                  <div class="card-header py-3">
-                    <h6 class="m-0 font-weight-bold text-primary">메뉴 현황 리스트</h6>
-                  </div>
-                  <div class="card-body">
-                    <div class="table-responsive">
-                      <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
-                        <thead>
-                            <tr>
-                            <th>점포명</th>
-                            <th>메뉴명</th>
-                            <th>들어온 주문</th>
-                            <th>주문 가능량</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                          {% for menu in menus %}
-                            <tr>
-                              <td>{{ menu.store.name }}</td>
-                              <td>{{ menu.name }}</td>
-                              <td>{{ menu.current_stock }} 개</td>
-                              <td>{{ menu.max_stock }} 개</td>
-                            </tr>
-                          {% endfor %}
-                        </tbody>
-                      </table>
+                <!-- Content Row -->
+                <div class="row">
+                  <!-- Area Chart -->
+                  <div class="col-xl-12 col-md-12 col-lg-12">
+                    <div class="card shadow mb-4">
+                      <!-- Card Header - Dropdown -->
+                      <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                        <h6 class="m-0 font-weight-bold text-primary">실시간 주문 현황<small class="blockquote-footer">{{ currentDate }}</small></h6>
+                      </div>
+                      <!-- Card Body -->
+                      <div class="card-body">
+                        <div class="chart-area">
+                          <canvas id="myDailyAreaChart"></canvas>
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
-            </div>
-            
-            <div class="card-body">
-              <div class="py-5 bg-light">
-                <div class="container">
-                  <div class="row">
-                      {% for menu in menus %}
-                        <div class="col-lg-3 col-md-6 col-sm-6">
-                          <div class="card mb-3 shadow-sm">
-                              {% if menu.current_stock == menu.max_stock%}
-                                <img src={{ menu.soldout_image.url }} width="50%" height="15%" background="#55595c" color="#eceeef" class="card-img-top" text="Thumbnail" />
-                              {% else %}
-                                <img src={{ menu.image.url }} width="50%" height="15%" background="#55595c" color="#eceeef" class="card-img-top" text="Thumbnail" />
-                              {% endif %}
-                            <div class="card-body">
-                              <blockquote class="blockquote">
-                                <h6 class="mb-0">{{ menu.name }}</h6>
-                                <small class="blockquote-footer text-right">{{ menu.store.name}}</small>
-                              </blockquote>
 
-                              <div class="d-flex justify-content-between align-items-center">
-                                  <a href="{{ site.url }}/admin/eatple_app/store/{{ menu.store.id }}/#/tab/inline_1/">
-                                    <button type="button" class="btn btn-sm btn-outline-secondary">수정</button>
-                                  </a>
-                                  <div class="btn-group">
-                                    {% if menu.current_stock == menu.max_stock%}
-                                      <button type="button" class="btn btn-sm btn-danger text-white">매진</button>
-                                    {% endif %}
-                                    {% if menu.status == "open" and menu.store.status == "open" %}
-                                      <button type="button" class="btn btn-sm btn-success text-white">열림</button>
-                                    {% else %}
-                                      <button type="button" class="btn btn-sm btn-secondary text-white">닫힘</button>
-                                    {% endif %}
-                                  </div>
+                <!-- Content Row -->
+                <div class="row">
+                  <div class="col-xl-12 col-md-12 mb-12">
+                    <div class="card shadow mb-4">
+                      <div class="card-header">
+                        <h6 class="font-weight-bold text-primary">메뉴 현황 리스트<small class="blockquote-footer">{{ currentDate }}</small></h6>
+                      </div>
+                      <div class="card-body">
+                        <div class="table-responsive">
+                          <table class="table table-sm small table-hover" id="dataTable" width="100%" cellspacing="0">
+                            <thead class="small">
+                                <tr >
+                                  <th style="border-bottom: none;" scope="col">점포명</th>
+                                  <th style="border-bottom: none;" scope="col">구분</th>
+                                  <th style="border-bottom: none;" scope="col">담당자 번호</th>
+                                  <th style="border-bottom: none;" scope="col">메뉴</th>
+                                  <th style="border-bottom: none;" scope="col">총 주문</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                              {% for store in stores %}
+                                <tr>
+                                  <th>{{ store.name }}</th>
+                                  <td>{{ store.id|storeType }}</td>
+                                  <td>{{ store.id|storePhoneNumber }}</td>
+                                  <td style=" padding: 0;">
+                                    <table class="table table-sm" width="100%" cellspacing="0">
+                                      <thead>
+                                        <tr class="small row">
+                                          <th style="border-bottom: none; border-top: none;" class="col-md-4"><small>메뉴명</small></th>
+                                          <th style="border-bottom: none; border-top: none;" class="col-md-2"><small>주문량</small></thstyle="border-bottom: none;">
+                                          <th style="border-bottom: none; border-top: none;" class="col-md-2"><small>주문 가능</small></th>
+                                          <th style="border-bottom: none; border-top: none;" class="col-md-3"><small>픽업 수량</small></th>
+                                        </tr>
+                                      </thead>
+                                      <tbody>
+                                        {% for menu in menus %}
+                                          {% if menu.store.name == store.name %}
+                                          <tr class="small row">
+                                            <td class="col-md-4">{{ menu.name }}</td>
+                                            <td class="col-md-2">{{ menu.current_stock }}개</td>
+                                            <td class="col-md-2">{{ menu.max_stock }}개</td>
+                                            <td class="col-md-3">
+                                              {{ menu.pickuped_stock }} / {{ menu.current_stock }}개
+                                              ({{ menu.pickuped_stock|div:menu.current_stock }}%)
+                                            </td>
+                                          </tr>
+                                          {% endif %}
+                                        {% endfor %}
+                                      </tbody>
+                                    </table>
+                                  </td>
+                                  <td>{{ store.id|totalStock }}개</td>
+                                </tr>
+                              {% endfor %}
+                            </tbody>
+                          </table>
+                        </div>
+                      </div>
+                    </div>
+                 </div>
+                </div>
+                
+                <!-- Content Row -->
+                <div class="row">
+                  {% for menu in menus %}
+                    <div class="col-lg-3 col-md-6 col-sm-6">
+                      <div class="card mb-3 shadow-sm">
+                          {% if menu.current_stock == menu.max_stock %}
+                            <img src={{ menu.soldout_image.url }} class="card-img-top" text="Thumbnail" />
+                          {% else %}
+                            <img src={{ menu.image.url }} class="card-img-top" text="Thumbnail" />
+                          {% endif %}
+                        
+                          <div class="card-body">
+                          <blockquote class="blockquote">
+                            <h6 class="mb-0">{{ menu.name }}</h6>
+                            <small class="blockquote-footer text-right">{{ menu.store.name}}</small>
+                          </blockquote>
+
+                          <div class="d-flex justify-content-between align-items-center">
+                              <a href="{{ site.url }}/admin/eatple_app/store/{{ menu.store.id }}/#/tab/inline_1/">
+                                <button type="button" class="btn btn-sm btn-outline-secondary">수정</button>
+                              </a>
+                              <div class="btn-group">
+                                {% if menu.current_stock == menu.max_stock%}
+                                  <button type="button" class="btn btn-sm btn-danger text-white">매진</button>
+                                {% endif %}
+                                {% if menu.status == "open" and menu.store.status == "open" %}
+                                  <button type="button" class="btn btn-sm btn-success text-white">열림</button>
+                                {% else %}
+                                  <button type="button" class="btn btn-sm btn-secondary text-white">닫힘</button>
+                                {% endif %}
                               </div>
-                            </div>
-                            <div class="card-footer d-flex justify-content-between align-items-center text-muted">
-                              <small class="text-muted">주문 상태</small>
-                              <small class="text-muted">{{ menu.current_stock }}/{{ menu.max_stock }}</small>
-                            </div>
                           </div>
                         </div>
-                      {% endfor %}
-                  </div>
+
+                        <div class="card-footer d-flex justify-content-between align-items-center text-muted">
+                          <small class="text-muted">주문 상태</small>
+                          <small class="text-muted">{{ menu.current_stock }}/{{ menu.max_stock }}</small>
+                        </div>
+
+                      </div>
+                    </div>
+                  {% endfor %}
                 </div>
+
               </div>
             </div>
           </div>
+          <!-- End of Main Content -->
 
           <!-- Footer -->
           <footer class="text-muted">
@@ -414,7 +460,13 @@
         totalUserIncrease = '{{ totalUserIncrease }}'
         totalStockIncrease = '{{ totalStockIncrease }}'
         totalPriceIncrease = '{{ totalPriceIncrease }}'
+        
+        areaDailyData = '{{ areaDailyData }}';
+        areaDailyData = areaDailyData.split(",");
 
+        areaDailyLabel = '{{ areaDailyLabel }}';  
+        areaDailyLabel = areaDailyLabel.split(",");
+        
         areaData = '{{ areaData }}';
         areaData = areaData.split(",");
 

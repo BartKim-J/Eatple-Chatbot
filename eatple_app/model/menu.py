@@ -136,14 +136,20 @@ class MenuSetting(models.Model):
 
 
 class MenuStatus(models.Model):
+
+    pickuped_stock = models.IntegerField(
+        default=0, 
+        verbose_name = "일일 픽업 완료"
+    )
+
     current_stock = models.IntegerField(
         default=0, 
-        verbose_name = "현재 재고"
+        verbose_name = "일일 주문량"
     )
 
     max_stock = models.IntegerField(
         default=50, 
-        verbose_name = "일일 재고"
+        verbose_name = "일일 주문 가능량"
     )
 
     status = models.CharField(
@@ -203,11 +209,14 @@ class Menu(MenuInfo, MenuStatus, MenuSetting):
             ) &
             Q(payment_date__gte=expireDate)
         )
-
         self.current_stock = availableOrders.count()
+        self.pickuped_stock = availableOrders.filter(Q(status=ORDER_STATUS_PICKUP_COMPLETED)).count()
         self.save()
-        
+    
         return availableOrders
+
+    def getPickupedStock(self):
+        return getCurrentStock().filter(Q(status=ORDER_STATUS_PICKUP_COMPLETED))
 
     def imgURL(self):
         try:
