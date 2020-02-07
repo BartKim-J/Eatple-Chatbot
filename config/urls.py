@@ -52,6 +52,7 @@ urlpatterns += {
     path('', templates.dashboard),
     path('404', templates.error404),
     path('sales/dashboard', templates.sales_dashboard),
+    path('sales/menu_list', templates.sales_menulist),
 }
 # Urls - User App
 urlpatterns += [

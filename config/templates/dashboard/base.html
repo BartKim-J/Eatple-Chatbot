@@ -321,113 +321,6 @@
                   </div>
                 </div>
 
-                <!-- Table List -->
-                <div class="row">
-                  <div class="col-xl-12 col-md-12 mb-12">
-                    <div class="card shadow mb-4">
-                      <div class="card-header">
-                        <h6 class="font-weight-bold text-primary">메뉴 현황 리스트<small class="blockquote-footer">{{ currentDate }}</small></h6>
-                      </div>
-                      <div class="card-body">
-                        <div class="table-responsive">
-                          <table class="table table-sm small table-hover" id="dataTable" width="100%" cellspacing="0">
-                            <thead class="small">
-                                <tr >
-                                  <th style="border-bottom: none;" scope="col">점포명</th>
-                                  <th style="border-bottom: none;" scope="col">구분</th>
-                                  <th style="border-bottom: none;" scope="col">담당자 번호</th>
-                                  <th style="border-bottom: none;" scope="col">메뉴</th>
-                                  <th style="border-bottom: none;" scope="col">총 주문</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                              {% for store in stores %}
-                                <tr>
-                                  <th>{{ store.name }}</th>
-                                  <td>{{ store.id|storeType }}</td>
-                                  <td>{{ store.id|storePhoneNumber }}</td>
-                                  <td style=" padding: 0;">
-                                    <table class="table table-sm" width="100%" cellspacing="0">
-                                      <thead>
-                                        <tr class="small row">
-                                          <th style="border-bottom: none; border-top: none;" class="col-md-4"><small>메뉴명</small></th>
-                                          <th style="border-bottom: none; border-top: none;" class="col-md-2"><small>주문량</small></thstyle="border-bottom: none;">
-                                          <th style="border-bottom: none; border-top: none;" class="col-md-2"><small>주문 가능</small></th>
-                                          <th style="border-bottom: none; border-top: none;" class="col-md-3"><small>픽업 수량</small></th>
-                                        </tr>
-                                      </thead>
-                                      <tbody>
-                                        {% for menu in menus %}
-                                          {% if menu.store.name == store.name %}
-                                          <tr class="small row">
-                                            <td class="col-md-4">{{ menu.name }}</td>
-                                            <td class="col-md-2">{{ menu.current_stock }}개</td>
-                                            <td class="col-md-2">{{ menu.max_stock }}개</td>
-                                            <td class="col-md-3">
-                                              {{ menu.pickuped_stock }} / {{ menu.current_stock }}개
-                                              ({{ menu.pickuped_stock|div:menu.current_stock }}%)
-                                            </td>
-                                          </tr>
-                                          {% endif %}
-                                        {% endfor %}
-                                      </tbody>
-                                    </table>
-                                  </td>
-                                  <td>{{ store.id|totalStock }}개</td>
-                                </tr>
-                              {% endfor %}
-                            </tbody>
-                          </table>
-                        </div>
-                      </div>
-                    </div>
-                 </div>
-                </div>
-                
-                <!-- Menu Card List -->
-                <div class="row">
-                  {% for menu in menus %}
-                    <div class="col-lg-3 col-md-6 col-sm-6">
-                      <div class="card mb-3 shadow-sm">
-                          {% if menu.current_stock == menu.max_stock %}
-                            <img src={{ menu.soldout_image.url }} class="card-img-top" text="Thumbnail" />
-                          {% else %}
-                            <img src={{ menu.image.url }} class="card-img-top" text="Thumbnail" />
-                          {% endif %}
-                        
-                          <div class="card-body">
-                          <blockquote class="blockquote">
-                            <h6 class="mb-0">{{ menu.name }}</h6>
-                            <small class="blockquote-footer text-right">{{ menu.store.name}}</small>
-                          </blockquote>
-
-                          <div class="d-flex justify-content-between align-items-center">
-                              <a href="{{ site.url }}/admin/eatple_app/store/{{ menu.store.id }}/#/tab/inline_1/">
-                                <button type="button" class="btn btn-sm btn-outline-secondary">수정</button>
-                              </a>
-                              <div class="btn-group">
-                                {% if menu.current_stock == menu.max_stock%}
-                                  <button type="button" class="btn btn-sm btn-danger text-white">매진</button>
-                                {% endif %}
-                                {% if menu.status == "open" and menu.store.status == "open" %}
-                                  <button type="button" class="btn btn-sm btn-success text-white">열림</button>
-                                {% else %}
-                                  <button type="button" class="btn btn-sm btn-secondary text-white">닫힘</button>
-                                {% endif %}
-                              </div>
-                          </div>
-                        </div>
-
-                        <div class="card-footer d-flex justify-content-between align-items-center text-muted">
-                          <small class="text-muted">주문 상태</small>
-                          <small class="text-muted">{{ menu.current_stock }}/{{ menu.max_stock }}</small>
-                        </div>
-
-                      </div>
-                    </div>
-                  {% endfor %}
-                </div>
-
               </div>
             </div>
           </div>
@@ -457,15 +350,11 @@
     <script type="text/javascript" src="{% static 'dashboard/vendor/jquery/jquery.min.js' %}"></script>
     <script type="text/javascript" src="{% static 'dashboard/vendor/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
 
-
     <!-- Core plugin JavaScript-->
     <script type="text/javascript" src="{% static 'dashboard/vendor/jquery-easing/jquery.easing.min.js' %}"></script>
     
     <!-- Page level plugins -->
     <script type="text/javascript" src="{% static 'dashboard/vendor/chart.js/Chart.min.js' %}"></script>
-
-    <script type="text/javascript" src="{% static 'dashboard/vendor/datatables/jquery.dataTables.min.js' %}"></script>
-    <script type="text/javascript" src="{% static 'dashboard/vendor/datatables/dataTables.bootstrap4.min.js' %}"></script>
 
     <!-- Page level javascript -->
     {% compress js %}
@@ -500,7 +389,7 @@
       <script type="text/javascript" src="{% static 'dashboard/js/base.js' %}"></script>
       <script type="text/javascript" src="{% static 'dashboard/js/sb-admin-2.js' %}"></script>
       <script type="text/javascript" src="{% static 'dashboard/js/datatables.init.js' %}"></script>
-      <script type="text/javascript" src="{% static 'dashboard/js/chart-status.js' %}"></script>
+      <script type="text/javascript" src="{% static 'dashboard/js/card-status.init.js' %}"></script>
       <script type="text/javascript" src="{% static 'dashboard/js/chart-area.js' %}"></script>
       <script type="text/javascript" src="{% static 'dashboard/js/chart-pie.js' %}"></script>
     {% endcompress %}

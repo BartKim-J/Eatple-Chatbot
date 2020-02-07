@@ -107,7 +107,7 @@ class MenuSetting(models.Model):
         storage=OverwriteStorage(),
         verbose_name = "메뉴 이미지(매진)"
     )
-
+    
     selling_time = models.CharField(
         max_length=WORD_LENGTH,
         choices=SELLING_TIME_CATEGORY,

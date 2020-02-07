@@ -347,43 +347,31 @@ def dashboard(request):
 def sales_dashboard(request):
     currentDate = dateNowByTimeZone()
     currentDateWithoutTime = currentDate.replace(
-    hour=0, minute=0, second=0, microsecond=0)
-    
-    menuList = Menu.objects.filter(~Q(store__type=STORE_TYPE_EVENT)).order_by('-status', '-store__status', '-current_stock','store__name')
+        hour=0, minute=0, second=0, microsecond=0)
+
+    menuList = Menu.objects.filter(~Q(store__type=STORE_TYPE_EVENT)).order_by(
+        '-status', '-store__status', '-current_stock', 'store__name')
     storeList = Store.objects.filter(~Q(type=STORE_TYPE_EVENT))
 
     totalUser = User.objects.all()
-    totalUserIncrease = totalUser.filter(create_date__gte=currentDateWithoutTime).count()
-    
+    totalUserIncrease = totalUser.filter(
+        create_date__gte=currentDateWithoutTime).count()
+
     totalOrder = Order.objects.filter(
-        Q(payment_status=IAMPORT_ORDER_STATUS_PAID) | 
+        Q(payment_status=IAMPORT_ORDER_STATUS_PAID) |
         Q(payment_status=IAMPORT_ORDER_STATUS_CANCELLED)).count()
 
-    totalOrderIncrease = totalUser.filter(create_date__gte=currentDateWithoutTime).count()
-    
-    areaLabel = getOrderChartDataLabel(currentDate)
+    totalOrderIncrease = totalUser.filter(
+        create_date__gte=currentDateWithoutTime).count()
+
     areaData = getOrderChartData(currentDate)
-    
-    areaDailyLabel = getDailyOrderChartDataLabel(currentDate)
-    areaDailyData = getDailyOrderChartData(currentDate)
 
-    pieLabel = getMenuStockChartLabel(menuList)
-    pieData = getMenuStockChartData(menuList)
-
-    prevDAU = getDAU(currentDate + datetime.timedelta(days=-1))
-    prevWAU = getWAU(currentDate + datetime.timedelta(days=-1))
-    prevMAU = getMAU(currentDate + datetime.timedelta(days=-1))
-    
-    DAU = getDAU(currentDate)
-    WAU = getWAU(currentDate)
-    MAU = getMAU(currentDate)
-    
     areaDataList = areaData.split(",")
     prevTotalStock = int(areaDataList[len(areaDataList)-2])
     totalStock = 0
     for menu in menuList:
         totalStock += menu.current_stock
-    
+
     totalPickuped = getTotalPickuped(currentDate)
     orderFailed = getOrderFailed(currentDate)
 
@@ -401,30 +389,58 @@ def sales_dashboard(request):
         'totalPriceIncrease': (totalStock * 6000) - (prevTotalStock * 6000),
         'totalPrice': totalStock * 6000,
 
-        'totalUserIncrease': totalUserIncrease,
-        'totalUser': totalUser.count(),
+        'totalOrder': totalOrder,
+        'orderFailed': orderFailed,
+    })
+
+def sales_menulist(request):
+    currentDate = dateNowByTimeZone()
+    currentDateWithoutTime = currentDate.replace(
+        hour=0, minute=0, second=0, microsecond=0)
+
+    menuList = Menu.objects.filter(~Q(store__type=STORE_TYPE_EVENT)).order_by(
+        '-status', '-store__status', '-current_stock', 'store__name')
+    storeList = Store.objects.filter(~Q(type=STORE_TYPE_EVENT))
+
+    totalUser = User.objects.all()
+    totalUserIncrease = totalUser.filter(
+        create_date__gte=currentDateWithoutTime).count()
+
+    totalOrder = Order.objects.filter(
+        Q(payment_status=IAMPORT_ORDER_STATUS_PAID) |
+        Q(payment_status=IAMPORT_ORDER_STATUS_CANCELLED)).count()
+
+    totalOrderIncrease = totalUser.filter(
+        create_date__gte=currentDateWithoutTime).count()
+
+    areaData = getOrderChartData(currentDate)
+
+    areaDataList = areaData.split(",")
+    prevTotalStock = int(areaDataList[len(areaDataList)-2])
+    totalStock = 0
+    for menu in menuList:
+        totalStock += menu.current_stock
+
+    totalPickuped = getTotalPickuped(currentDate)
+    orderFailed = getOrderFailed(currentDate)
+
+    return render(request, 'dashboard/sales_menulist.html', {
+        'currentDate': "{}".format(currentDate.strftime(
+            '%Y년 %-m월 %-d일 %p %-I시 %-M분 %S초').replace('AM', '오전').replace('PM', '오후')),
+        'menus': menuList,
+        'stores': storeList,
+
+        'totalStockIncrease': totalStock - prevTotalStock,
+        'totalStock': totalStock,
+
+        'totalPickuped': totalPickuped,
+
+        'totalPriceIncrease': (totalStock * 6000) - (prevTotalStock * 6000),
+        'totalPrice': totalStock * 6000,
 
         'totalOrder': totalOrder,
         'orderFailed': orderFailed,
-
-        'areaDailyLabel': areaDailyLabel,
-        'areaDailyData': areaDailyData,
-
-        'areaLabel': areaLabel,
-        'areaData': areaData,
-
-        'pieLabel': pieLabel,
-        'pieData': pieData,
-
-        'DAU': DAU,
-        'WAU': WAU,
-        'MAU': MAU,
-
-        'DAUIncrease': DAU - prevDAU,
-        'WAUIncrease': WAU - prevWAU,
-        'MAUIncrease': MAU - prevMAU,
     })
-
 
 def error404(request):
     return render(request, '404.html', {})

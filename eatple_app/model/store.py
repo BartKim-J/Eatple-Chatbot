@@ -215,11 +215,10 @@ class StoreStatus(models.Model):
  
     status = models.CharField(
         max_length=WORD_LENGTH, 
-        default=OC_OPEN,
-        choices=OC_STATUS,
+        default=STORE_OC_OPEN,
+        choices=STORE_OC_STATUS,
         verbose_name="상태"
     )
-    
     
     type = models.CharField(
         max_length=WORD_LENGTH, 

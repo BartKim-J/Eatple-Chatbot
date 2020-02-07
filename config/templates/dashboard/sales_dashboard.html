@@ -103,8 +103,8 @@
 
           <!-- Main Content -->
           <div id="content">
-            <div class="card-body">
-              <div class="container">
+            <div class="container-fluid">
+              <div class="card-body">
 
                 <!-- 4 Card -->
                 <div class="row">
@@ -186,141 +186,6 @@
 
                 </div>
 
-                <!-- Daily Area Chart -->
-                <div class="row">
-                  <!-- Area Chart -->
-                  <div class="col-xl-12 col-md-12 col-lg-12">
-                    <div class="card shadow mb-4">
-                      <!-- Card Header - Dropdown -->
-                      <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-                        <h6 class="m-0 font-weight-bold text-primary">실시간 주문 현황<small class="blockquote-footer">{{ currentDate }}</small></h6>
-                      </div>
-                      <!-- Card Body -->
-                      <div class="card-body">
-                        <div class="chart-area">
-                          <canvas id="myDailyAreaChart"></canvas>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                <!-- 4 Card -->
-                <div class="row">
-                  <!-- DAU Card -->
-                  <div class="col-xl-3 col-md-6 mb-4">
-                    <div class="card border-bottom-info shadow py-2">
-                      <div class="card-body">
-                        <div class="row no-gutters align-items-center">
-                          <div class="col mr-2">
-                            <div class="text-xs font-weight-bold text-secondary text-uppercase mb-1">DAU</div>
-                            <div class="h6 font-weight-bold" id="DAUStatus"><i id="DAUStatusIcon" class="fas"></i> {{ DAUIncrease }}</div>
-                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ DAU }} 명</div>
-                          </div>
-                          <div class="col-auto">
-                            <i class="fas fa-clipboard-list fa-2x text-gray-300"></i>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-                  <!-- WAU Card -->
-                  <div class="col-xl-3 col-md-6 mb-4">
-                    <div class="card border-bottom-warning shadow py-2">
-                      <div class="card-body">
-                        <div class="row no-gutters align-items-center">
-                          <div class="col mr-2">
-                            <div class="text-xs font-weight-bold text-secondary text-uppercase mb-1">WAU</div>
-                            <div class="h6 font-weight-bold" id="WAUStatus"><i id="WAUStatusIcon" class="fas"></i> {{ WAUIncrease }}</div>
-                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ WAU }} 명</div>
-                          </div>
-                          <div class="col-auto">
-                            <i class="fas fa-clipboard-list fa-2x text-gray-300"></i>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-                  <!-- MAU Card -->
-                  <div class="col-xl-3 col-md-6 mb-4">
-                    <div class="card border-bottom-success shadow py-2">
-                      <div class="card-body">
-                        <div class="row no-gutters align-items-center">
-                          <div class="col mr-2">
-                            <div class="text-xs font-weight-bold text-secondary text-uppercase mb-1">MAU</div>
-                            <div class="h6 font-weight-bold" id="MAUStatus"><i id="MAUStatusIcon" class="fas"></i> {{ MAUIncrease }}</div>
-                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ MAU }} 명</div>
-                          </div>
-                          <div class="col-auto">
-                            <i class="fas fa-clipboard-list fa-2x text-gray-300"></i>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-                  <!-- Total User Counter Card -->
-                  <div class="col-xl-3 col-md-6 mb-4">
-                    <div class="card border-bottom-secondary shadow py-2">
-                      <div class="card-body">
-                        <div class="row no-gutters align-items-center">
-                          <div class="col mr-2">
-                            <div class="text-xs font-weight-bold text-secondary text-uppercase mb-1">총 가입자 수</div>
-                            <div class="h6 font-weight-bold" id="TotalUserStatus"><i id="TotalUserStatusIcon" class="fas"></i> {{ totalUserIncrease }}</div>
-                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ totalUser }} 명</div>
-                          </div>
-                          <div class="col-auto">
-                            <i class="fas fa-users fa-2x text-gray-300"></i>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-                </div>
-
-                <!-- Charts -->
-                <div class="row">
-                  <!-- Area Chart -->
-                  <div class="col-xl-8 col-lg-7">
-                    <div class="card shadow mb-4">
-                      <!-- Card Header - Dropdown -->
-                      <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-                        <h6 class="m-0 font-weight-bold text-primary">일일 주문 현황<small class="blockquote-footer">{{ currentDate }}</small></h6>
-                      </div>
-                      <!-- Card Body -->
-                      <div class="card-body">
-                        <div class="chart-area">
-                          <canvas id="myAreaChart"></canvas>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-                  <!-- Pie Chart -->
-                  <div class="col-xl-4 col-lg-5">
-                    <div class="card shadow mb-4">
-                      <!-- Card Header - Dropdown -->
-                      <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-                        <h6 class="m-0 font-weight-bold text-primary">일일 주문 차지 비율<small class="blockquote-footer">{{ currentDate }}</small></h6>
-                      </div>
-                      <!-- Card Body -->
-                      <div class="card-body">
-                        <div class="chart-pie pt-4 pb-2">
-                          <canvas id="myPieChart"></canvas>
-                        </div>
-                        <div class="mt-4 text-center small">
-                          <span class="mr-2">
-                            <i class="fas fa-circle text-primary"></i> 베스트 메뉴 : {{ menus.first }} {{ menus.first.current_stock }}개
-                          </span>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
                 <!-- Table List -->
                 <div class="row">
                   <div class="col-xl-12 col-md-12 mb-12">
@@ -331,7 +196,7 @@
                       <div class="card-body">
                         <div class="table-responsive">
                           <table class="table table-sm small table-hover" id="dataTable" width="100%" cellspacing="0">
-                            <thead class="small">
+                            <thead class="">
                                 <tr >
                                   <th style="border-bottom: none;" scope="col">점포명</th>
                                   <th style="border-bottom: none;" scope="col">구분</th>
@@ -343,11 +208,11 @@
                             <tbody>
                               {% for store in stores %}
                                 <tr>
-                                  <th>{{ store.name }}</th>
+                                  <th><a href="{{ site.url }}/admin/eatple_app/store/{{ menu.store.id }}/#/tab/inline_1/">{{ store.name }}</a></th>
                                   <td>{{ store.id|storeType }}</td>
                                   <td>{{ store.id|storePhoneNumber }}</td>
                                   <td style=" padding: 0;">
-                                    <table class="table table-sm" width="100%" cellspacing="0">
+                                    <table class="table table-striped" width="100%" cellspacing="0">
                                       <thead>
                                         <tr class="small row">
                                           <th style="border-bottom: none; border-top: none;" class="col-md-4"><small>메뉴명</small></th>
@@ -384,50 +249,7 @@
                  </div>
                 </div>
                 
-                <!-- Menu Card List -->
-                <div class="row">
-                  {% for menu in menus %}
-                    <div class="col-lg-3 col-md-6 col-sm-6">
-                      <div class="card mb-3 shadow-sm">
-                          {% if menu.current_stock == menu.max_stock %}
-                            <img src={{ menu.soldout_image.url }} class="card-img-top" text="Thumbnail" />
-                          {% else %}
-                            <img src={{ menu.image.url }} class="card-img-top" text="Thumbnail" />
-                          {% endif %}
-                        
-                          <div class="card-body">
-                          <blockquote class="blockquote">
-                            <h6 class="mb-0">{{ menu.name }}</h6>
-                            <small class="blockquote-footer text-right">{{ menu.store.name}}</small>
-                          </blockquote>
-
-                          <div class="d-flex justify-content-between align-items-center">
-                              <a href="{{ site.url }}/admin/eatple_app/store/{{ menu.store.id }}/#/tab/inline_1/">
-                                <button type="button" class="btn btn-sm btn-outline-secondary">수정</button>
-                              </a>
-                              <div class="btn-group">
-                                {% if menu.current_stock == menu.max_stock%}
-                                  <button type="button" class="btn btn-sm btn-danger text-white">매진</button>
-                                {% endif %}
-                                {% if menu.status == "open" and menu.store.status == "open" %}
-                                  <button type="button" class="btn btn-sm btn-success text-white">열림</button>
-                                {% else %}
-                                  <button type="button" class="btn btn-sm btn-secondary text-white">닫힘</button>
-                                {% endif %}
-                              </div>
-                          </div>
-                        </div>
-
-                        <div class="card-footer d-flex justify-content-between align-items-center text-muted">
-                          <small class="text-muted">주문 상태</small>
-                          <small class="text-muted">{{ menu.current_stock }}/{{ menu.max_stock }}</small>
-                        </div>
-
-                      </div>
-                    </div>
-                  {% endfor %}
-                </div>
-
+                
               </div>
             </div>
           </div>
@@ -470,39 +292,13 @@
     <!-- Page level javascript -->
     {% compress js %}
       <script>
-        totalUserIncrease = '{{ totalUserIncrease }}'
         totalStockIncrease = '{{ totalStockIncrease }}'
-        totalPriceIncrease = '{{ totalPriceIncrease }}'
-        
-        areaDailyData = '{{ areaDailyData }}';
-        areaDailyData = areaDailyData.split(",");
-
-        areaDailyLabel = '{{ areaDailyLabel }}';  
-        areaDailyLabel = areaDailyLabel.split(",");
-        
-        areaData = '{{ areaData }}';
-        areaData = areaData.split(",");
-
-        areaLabel = '{{ areaLabel }}';  
-        areaLabel = areaLabel.split(",");
-
-        pieData = '{{ pieData }}';
-        pieData = pieData.split(",");
-
-        pieLabel = '{{ pieLabel }}';  
-        pieLabel = pieLabel.split(",");
-
-        DAUIncrease = '{{ DAUIncrease }}';
-        WAUIncrease = '{{ WAUIncrease }}';
-        MAUIncrease = '{{ MAUIncrease }}';
-        
+        totalPriceIncrease = '{{ totalPriceIncrease }}'        
       </script>
       <script type="text/javascript" src="{% static 'dashboard/js/base.js' %}"></script>
       <script type="text/javascript" src="{% static 'dashboard/js/sb-admin-2.js' %}"></script>
       <script type="text/javascript" src="{% static 'dashboard/js/datatables.init.js' %}"></script>
       <script type="text/javascript" src="{% static 'dashboard/js/chart-status.js' %}"></script>
-      <script type="text/javascript" src="{% static 'dashboard/js/chart-area.js' %}"></script>
-      <script type="text/javascript" src="{% static 'dashboard/js/chart-pie.js' %}"></script>
     {% endcompress %}
 
   </body>

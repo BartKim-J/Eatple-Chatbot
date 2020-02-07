@@ -73,7 +73,10 @@ class MenuInline(admin.StackedInline):
         (None,                  {'fields': ['menu_id']}),
         ('메뉴 정보',                  {'fields': ['name']}),
         (None,                  {'fields': [
-         'selling_time', 'pickup_time', 'tag', 'description', 'image', 'image_preview', 'soldout_image', 'image_soldout_preview', 'price', 'discount']}),
+         'selling_time', 'pickup_time', 'tag', 'description', 
+         'image', 'image_preview', 
+         'soldout_image', 'image_soldout_preview', 
+         'price', 'discount']}),
         (None,                  {'fields': [
          'current_stock', 'pickuped_stock', 'max_stock', 'status']}),
     ]

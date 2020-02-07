@@ -179,6 +179,16 @@ OC_STATUS = [
     (OC_CLOSE, '닫힘'),
 ]
 
+STORE_OC_OPEN = 'open'
+STORE_OC_CLOSE = 'close' 
+STORE_OC_VACATION = 'vacation'
+STORE_OC_STATUS = [
+    (STORE_OC_OPEN, '열림'),
+    (STORE_OC_CLOSE, '닫힘'),
+    (STORE_OC_VACATION, '휴무'),
+    
+]
+
 #  TYPE
 ORDER_TYPE_NORMAL = 'normal'
 ORDER_TYPE_EVENT = 'event'

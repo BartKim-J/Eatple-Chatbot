@@ -83,11 +83,12 @@ def kakaoView_MenuListup(kakaoPayload):
         distance=Distance(F('store__place__point'),
                             user.location.point) * 100 * 1000
     ).filter(
-        selling_time=currentSellingTime,
-        store__type=storeFilterType,
+        Q(selling_time=currentSellingTime) &
+        Q(store__type=storeFilterType) &
 
-        status=OC_OPEN,
-        store__status=OC_OPEN,
+        Q(status=OC_OPEN) &
+        Q(store__status=OC_OPEN) |
+        Q(store__status=STORE_OC_VACATION),
     ).order_by(F'distance')
 
     sellingOutList = []
@@ -132,7 +133,7 @@ def kakaoView_MenuListup(kakaoPayload):
 
             currentStock = menu.getCurrentStock()
             
-            if(menu.max_stock > menu.current_stock):
+            if(menu.max_stock > menu.current_stock and menu.store.status == STORE_OC_OPEN):
                 buttons = [
                     {
                         'action': 'block',
@@ -169,12 +170,22 @@ def kakaoView_MenuListup(kakaoPayload):
                 sellingOutList.extend(list(Menu.objects.filter(id=menu.id)))
 
         for menu in sellingOutList:
-            thumbnail = {
-                'imageUrl': '{}{}'.format(HOST_URL, menu.soldOutImgURL()),
-                'fixedRatio': 'true',
-                'width': 800,
-                'height': 800,
-            }
+            if(menu.store.status == STORE_OC_VACATION):
+                thumbnail = {
+                    'imageUrl': '{}{}'.format(HOST_URL, menu.imgURL()),
+                    'fixedRatio': 'true',
+                    'width': 800,
+                    'height': 800,
+                }
+                
+                walkTime = "휴무중"
+            else:
+                thumbnail = {
+                    'imageUrl': '{}{}'.format(HOST_URL, menu.soldOutImgURL()),
+                    'fixedRatio': 'true',
+                    'width': 800,
+                    'height': 800,
+                }
             
             buttons = [
                 {
@@ -184,6 +195,8 @@ def kakaoView_MenuListup(kakaoPayload):
                 },
             ]
 
+
+                
             kakaoForm.BasicCard_Push(
                 '{} - {}'.format(                     
                     menu.store.name,
