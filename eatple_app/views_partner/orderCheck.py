@@ -39,13 +39,16 @@ DEFAULT_QUICKREPLIES_MAP = [
 def orderCheckTimeValidation():
     currentDate = dateNowByTimeZone()
     currentDateWithoutTime = currentDate.replace(hour=0, minute=0, second=0, microsecond=0)
-
-    # Time QA DEBUG
-    # currentDate = currentDate.replace(hour=13, minute=31, second=0, microsecond=0)
-    # currentDateWithoutTime = currentDate.replace(hour=0, minute=0, second=0, microsecond=0)
+    
+    #DEBUG
+    if(VALIDATION_DEBUG_MODE):
+        return True
+    
+        # currentDate = currentDate.replace(hour=13, minute=31, second=0, microsecond=0)
+        # currentDateWithoutTime = currentDate.replace(hour=0, minute=0, second=0, microsecond=0)
 
     # Prev Lunch Order Time 10:30 ~ 14:00
-    lunchCheckTimeStart = currentDateWithoutTime + datetime.timedelta(hours=10, minutes=30, days=-1)
+    lunchCheckTimeStart = currentDateWithoutTime + datetime.timedelta(hours=10, minutes=30)
     lunchCheckTimeEnd = currentDateWithoutTime + datetime.timedelta(hours=14, minutes=0)
 
     # Dinner Order Time 17:30 ~ 21:0
@@ -56,7 +59,6 @@ def orderCheckTimeValidation():
         return True
 
     if(dinnerCheckTimeStart < currentDate) and (currentDate < dinnerCheckTimeEnd):
-        # return True
         return False
     
     return False

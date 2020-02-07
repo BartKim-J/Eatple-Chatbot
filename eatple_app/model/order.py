@@ -210,8 +210,9 @@ def orderUpdate(order):
     dinnerOrderEditTimeEnd = currentDateWithoutTime + datetime.timedelta(hours=16, minutes=25)
     dinnerOrderTimeEnd = currentDateWithoutTime + datetime.timedelta(hours=16, minutes=30)
 
-    # Next Lunch Order Edit Time 16:30 ~ 9:30(~ 10:30)
-    nextlunchOrderEditTimeStart = currentDateWithoutTime + datetime.timedelta(hours=16, minutes=30)
+    # Next Lunch Order Edit Time 16:30 ~ 9:30(~ 10:30) 
+    # @TEST QA NEED: HOTFIX: 30 -> 25
+    nextlunchOrderEditTimeStart = currentDateWithoutTime + datetime.timedelta(hours=16, minutes=25)
     nextlunchOrderEditTimeEnd = currentDateWithoutTime + datetime.timedelta(hours=9, minutes=30, days=1)
     nextlunchOrderTimeEnd = currentDateWithoutTime + datetime.timedelta(hours=10, minutes=30, days=1)
 
@@ -263,9 +264,9 @@ def orderUpdate(order):
                     order.save()
 
             # next phase Lunch order
-            elif ((nextlunchOrderEditTimeStart + datetime.timedelta(minutes=-5)) <= currentDate) and \
+            elif (nextlunchOrderEditTimeStart <= currentDate) and \
                  (currentDate <= nextlunchOrderEditTimeEnd) and \
-                 (paymentDate >= (nextlunchOrderEditTimeStart + datetime.timedelta(minutes=-5)):
+                 (nextlunchOrderEditTimeStart <= paymentDate):
                 print("주문 완료 - B")
                 order.status = ORDER_STATUS_ORDER_CONFIRMED
                 order.save()

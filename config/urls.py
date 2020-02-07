@@ -16,6 +16,8 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 
+from django.views.static import serve
+
 from rest_framework import routers
 from rest_framework_swagger.views import get_swagger_view
 
@@ -43,9 +45,14 @@ urlpatterns = [
     path('jet/', include('jet.urls', 'jet')),  # Django JET URLS
     path('jet/dashboard/', include('jet.dashboard.urls', 'jet-dashboard')),  # Django JET dashboard URLS
     path('admin/', admin.site.urls),
-    path('', templates.base),
 ]
 
+# Dashboard Stie
+urlpatterns += {
+    path('', templates.dashboard),
+    path('404', templates.error404),
+    path('sales/dashboard', templates.sales_dashboard),
+}
 # Urls - User App
 urlpatterns += [
     # Home
@@ -126,3 +133,8 @@ urlpatterns += [
 # Media Link Url
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+
+urlpatterns += [
+    url(r'^media/(?P<path>.*)$', serve,{'document_root': settings.MEDIA_ROOT}),
+    url(r'^static/(?P<path>.*)$', serve,{'document_root': settings.STATIC_ROOT}),
+]
