@@ -80,6 +80,8 @@ def sellingTimeCheck():
     nextLunchOrderTimeStart = orderTimeSheet.GetNextLunchOrderEditTimeStart()
     nextLunchOrderTimeEnd = orderTimeSheet.GetNextLunchOrderEditTimeEnd()
 
+    print(currentDate)
+
     if(dinnerOrderTimeStart < currentDate) and (currentDate < dinnerOrderTimeEnd):
         return SELLING_TIME_DINNER
     elif(prevLunchOrderTimeStart <= currentDate) and (currentDate < prevLunchOrderTimeEnd):
@@ -91,22 +93,16 @@ def sellingTimeCheck():
 
 
 def weekendTimeCheck():
-    currentDate = dateNowByTimeZone()
-    currentDateWithoutTime = currentDate.replace(
-        hour=0, minute=0, second=0, microsecond=0)
-
-    # Time QA DEBUG
-    #currentDate = currentDate.replace(day=19, hour=9, minute=28, second=0, microsecond=0)
-    #currentDateWithoutTime = currentDate.replace(hour=0, minute=0, second=0, microsecond=0)
+    orderTimeSheet = OrderTimeSheet()
+    currentDate = orderTimeSheet.GetCurrentDate()
+    currentDateWithoutTime = orderTimeSheet.GetCurrentDateWithoutTime()
 
     # DEBUG
     if(VALIDATION_DEBUG_MODE):
         return False
 
-    closedDateStart = currentDateWithoutTime + \
-        datetime.timedelta(hours=10, minutes=30)
-    closedDateEnd = currentDateWithoutTime + \
-        datetime.timedelta(hours=16, minutes=30)
+    closedDateStart = orderTimeSheet.GetPrevLunchOrderTimeEnd()
+    closedDateEnd = orderTimeSheet.GetNextLunchOrderEditTimeStart()
 
     if(currentDate.strftime('%A') == 'Friday'):
         if(currentDate >= closedDateStart):

@@ -37,6 +37,7 @@ DEFAULT_QUICKREPLIES_MAP = [
 #
 # # # # # # # # # # # # # # # # # # # # # # # # #
 
+
 def getDelegateUser(phone_number):
     try:
         user = User.objects.get(phone_number=phone_number)
@@ -67,9 +68,9 @@ def kakaoView_GetDelegateUser(kakaoPayload):
         return errorView('잘못된 블럭 경로', '정상적이지 않은 경로거나, 잘못된 주문번호입니다.\n홈으로 돌아가 다시 주문해주세요!')
     else:
         order.orderStatusUpdate()
-    
+
     kakaoForm = KakaoForm()
-    
+
     QUICKREPLIES_MAP = [
         {
             'action': 'block',
@@ -81,51 +82,52 @@ def kakaoView_GetDelegateUser(kakaoPayload):
     ]
 
     kakaoParam_phone_number = kakaoPayload.dataActionParams['phone_number']['origin']
-    
-    try :
+
+    try:
         phone_number = phonenumbers.format_number(
             phonenumbers.parse(
                 "+82 {}".format(kakaoParam_phone_number
-            ), None), 
+                                ), None),
             phonenumbers.PhoneNumberFormat.E164
         )
     except phonenumbers.phonenumberutil.NumberParseException:
-            kakaoForm.BasicCard_Push(
-                '부탁하기에 실패했습니다.',
-                '알수없는 번호거나 잘못된 입력입니다.\n - 입력된 전화번호: {}'.format(
-                    kakaoParam_phone_number),
-                {},
-                [
-                    {
-                        'action': 'block',
-                        'label': '전화번호 다시 입력',
-                        'messageText': '로딩중..',
-                        'blockId': KAKAO_BLOCK_USER_ORDER_SHARING_START,
-                        'extra': {
-                            KAKAO_PARAM_ORDER_ID: order.order_id,
-                            KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_ORDER_SHARING_START
-                        }
-                    },
-                ]
-            )
-            kakaoForm.BasicCard_Add()
-            
-            kakaoForm.QuickReplies_AddWithMap(QUICKREPLIES_MAP)
-            
-            return JsonResponse(kakaoForm.GetForm())
-        
+        kakaoForm.BasicCard_Push(
+            '부탁하기에 실패했습니다.',
+            '알수없는 번호거나 잘못된 입력입니다.\n - 입력된 전화번호: {}'.format(
+                kakaoParam_phone_number),
+            {},
+            [
+                {
+                    'action': 'block',
+                    'label': '전화번호 다시 입력',
+                    'messageText': '로딩중..',
+                    'blockId': KAKAO_BLOCK_USER_ORDER_SHARING_START,
+                    'extra': {
+                        KAKAO_PARAM_ORDER_ID: order.order_id,
+                        KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_ORDER_SHARING_START
+                    }
+                },
+            ]
+        )
+        kakaoForm.BasicCard_Add()
+
+        kakaoForm.QuickReplies_AddWithMap(QUICKREPLIES_MAP)
+
+        return JsonResponse(kakaoForm.GetForm())
+
     delegateUser = getDelegateUser(phone_number)
-    
+
     orderManager = UserOrderManager(delegateUser)
     orderManager.orderPaidCheck()
 
-    delegateUserOrder = orderManager.availableOrderStatusUpdate().filter(Q(ordersheet__user=delegateUser)).first();
+    delegateUserOrder = orderManager.availableOrderStatusUpdate().filter(
+        Q(ordersheet__user=delegateUser)).first()
     delegateUserOrder.orderStatusUpdate()
 
     if (order.status != ORDER_STATUS_ORDER_CONFIRM_WAIT and
         order.status != ORDER_STATUS_ORDER_CONFIRMED and
-        order.status != ORDER_STATUS_PICKUP_PREPARE):
-        
+            order.status != ORDER_STATUS_PICKUP_PREPARE):
+
         kakaoForm.BasicCard_Push(
             '현재는 부탁하기 취소가 불가능한 시간입니다.',
             '부탁 가능 시간 : 픽업 시간 15분 전까지',
@@ -133,7 +135,7 @@ def kakaoView_GetDelegateUser(kakaoPayload):
             []
         )
         kakaoForm.BasicCard_Add()
- 
+
         kakaoForm.QuickReplies_AddWithMap(QUICKREPLIES_MAP)
 
         return JsonResponse(kakaoForm.GetForm())
@@ -214,7 +216,8 @@ def kakaoView_GetDelegateUser(kakaoPayload):
         else:
             kakaoForm.BasicCard_Push(
                 '부탁하기에 실패했습니다.',
-                '알수없는 번호거나 잘못된 입력입니다.\n - 입력된 전화번호: {}'.format(kakaoParam_phone_number),
+                '알수없는 번호거나 잘못된 입력입니다.\n - 입력된 전화번호: {}'.format(
+                    kakaoParam_phone_number),
                 {},
                 [
                     {
@@ -235,6 +238,7 @@ def kakaoView_GetDelegateUser(kakaoPayload):
 
     return JsonResponse(kakaoForm.GetForm())
 
+
 def kakaoView_DelegateUserRemove(kakaoPayload):
      # Block Validation
     prev_block_id = prevBlockValidation(kakaoPayload)
@@ -251,7 +255,7 @@ def kakaoView_DelegateUserRemove(kakaoPayload):
         return errorView('잘못된 블럭 경로', '정상적이지 않은 경로거나, 잘못된 주문번호입니다.\n홈으로 돌아가 다시 주문해주세요!')
     else:
         order.orderStatusUpdate()
-    
+
     kakaoForm = KakaoForm()
 
     buttons = [
@@ -263,7 +267,7 @@ def kakaoView_DelegateUserRemove(kakaoPayload):
             'extra': {}
         },
     ]
-    
+
     QUICKREPLIES_MAP = [
         {
             'action': 'block',
@@ -273,10 +277,12 @@ def kakaoView_DelegateUserRemove(kakaoPayload):
             'extra': {}
         },
     ]
-    
-    if (order.status != ORDER_STATUS_ORDER_CONFIRM_WAIT and
-        order.status != ORDER_STATUS_ORDER_CONFIRMED and
-            order.status != ORDER_STATUS_PICKUP_PREPARE):
+
+    isCafe = order.store.category.filter(name="카페").exists()
+
+    if ((order.status != ORDER_STATUS_ORDER_CONFIRM_WAIT and
+         order.status != ORDER_STATUS_ORDER_CONFIRMED and
+            order.status != ORDER_STATUS_PICKUP_PREPARE) or isCafe):
 
         kakaoForm.BasicCard_Push(
             '현재는 부탁하기 취소가 불가능한 시간입니다.',
@@ -291,7 +297,7 @@ def kakaoView_DelegateUserRemove(kakaoPayload):
         return JsonResponse(kakaoForm.GetForm())
     else:
         order.orderDelegateCancel()
-        
+
     if(order.delegate == None):
         kakaoForm.BasicCard_Push(
             '부탁하기를 취소 했습니다.',
@@ -323,6 +329,7 @@ def kakaoView_DelegateUserRemove(kakaoPayload):
 
     return JsonResponse(kakaoForm.GetForm())
 
+
 def kakaoView_DelegateUserRemoveAll(kakaoPayload):
      # Block Validation
     prev_block_id = prevBlockValidation(kakaoPayload)
@@ -339,14 +346,14 @@ def kakaoView_DelegateUserRemoveAll(kakaoPayload):
         return errorView('잘못된 블럭 경로', '정상적이지 않은 경로거나, 잘못된 주문번호입니다.\n홈으로 돌아가 다시 주문해주세요!')
     else:
         order.orderStatusUpdate()
-    
+
     orderManager = UserOrderManager(user)
     orderManager.orderPenddingCleanUp()
 
     availableEatplePass = orderManager.availableOrderStatusUpdate()
     ownEatplePass = availableEatplePass.filter(Q(delegate=None))
     delegatedEatplePass = availableEatplePass.filter(~Q(delegate=None))
-    
+
     kakaoForm = KakaoForm()
 
     buttons = [
@@ -358,7 +365,7 @@ def kakaoView_DelegateUserRemoveAll(kakaoPayload):
             'extra': {}
         },
     ]
-    
+
     QUICKREPLIES_MAP = [
         {
             'action': 'block',
@@ -371,8 +378,8 @@ def kakaoView_DelegateUserRemoveAll(kakaoPayload):
 
     if (order.status != ORDER_STATUS_ORDER_CONFIRM_WAIT and
         order.status != ORDER_STATUS_ORDER_CONFIRMED and
-        order.status != ORDER_STATUS_PICKUP_PREPARE):
-        
+            order.status != ORDER_STATUS_PICKUP_PREPARE):
+
         kakaoForm.BasicCard_Push(
             '현재는 부탁하기 취소가 불가능한 시간입니다.',
             '부탁 가능 시간 : 픽업 시간 이전까지',
@@ -380,7 +387,7 @@ def kakaoView_DelegateUserRemoveAll(kakaoPayload):
             []
         )
         kakaoForm.BasicCard_Add()
- 
+
         kakaoForm.QuickReplies_AddWithMap(QUICKREPLIES_MAP)
 
         return JsonResponse(kakaoForm.GetForm())
@@ -388,7 +395,7 @@ def kakaoView_DelegateUserRemoveAll(kakaoPayload):
     if delegatedEatplePass:
         for order in delegatedEatplePass:
             order.orderDelegateCancel()
-            
+
         if(order.delegate != None):
             kakaoForm.BasicCard_Push(
                 '부탁하기를 취소하지 못했습니다.',
@@ -397,7 +404,7 @@ def kakaoView_DelegateUserRemoveAll(kakaoPayload):
                 buttons
             )
             kakaoForm.BasicCard_Add()
-            
+
             kakaoForm.QuickReplies_AddWithMap(QUICKREPLIES_MAP)
 
             return JsonResponse(kakaoForm.GetForm())
@@ -466,6 +473,7 @@ def GET_DelegateUserRemove(request):
     except (RuntimeError, TypeError, NameError, KeyError) as ex:
         return errorView('{} '.format(ex))
 
+
 @csrf_exempt
 def GET_DelegateUserRemoveAll(request):
     EatplusSkillLog('GET_DelegateUserRemoveAll')
@@ -481,6 +489,7 @@ def GET_DelegateUserRemoveAll(request):
 
     except (RuntimeError, TypeError, NameError, KeyError) as ex:
         return errorView('{} '.format(ex))
+
 
 @csrf_exempt
 def GET_DelegateUser(request):

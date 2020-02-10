@@ -67,18 +67,15 @@ def getOrderChartData(orderTimeSheet):
     for i in range(14):
         checkData = currentDateWithoutTime + datetime.timedelta(days=-(13 - i))
 
-        # Prev Lunch Order Edit Time 16:30 ~ 시:25(~ 10:30)
-        prevlunchOrderEditTimeStart = checkData + \
+        prevLunchOrderEditTimeStart = checkData + \
             datetime.timedelta(hours=16, minutes=30, days=-1)
-
-        # Next Lunch Order Edit Time 16:30 ~ 9:30(~ 10:30)
-        nextlunchOrderEditTimeStart = checkData + \
+        nextLunchOrderEditTimeStart = checkData + \
             datetime.timedelta(hours=16, minutes=30)
 
         areaData += "{},".format((
             Order.objects.filter(
-                Q(payment_date__gte=prevlunchOrderEditTimeStart) &
-                Q(payment_date__lt=nextlunchOrderEditTimeStart) &
+                Q(payment_date__gte=prevLunchOrderEditTimeStart) &
+                Q(payment_date__lt=nextLunchOrderEditTimeStart) &
                 Q(payment_status=IAMPORT_ORDER_STATUS_PAID)
             ).count())
         )
@@ -93,11 +90,9 @@ def getDailyOrderChartDataLabel(orderTimeSheet):
     deadline = orderTimeSheet.GetInitialCountTime()
 
     if(currentDate <= deadline):
-        startTime = currentDateWithoutTime + \
-            datetime.timedelta(hours=16, minutes=30, days=-1)
+        startTime = orderTimeSheet.GetPrevLunchOrderEditTimeStart()
     else:
-        startTime = currentDateWithoutTime + \
-            datetime.timedelta(hours=16, minutes=30)
+        startTime = orderTimeSheet.GetNextLunchOrderEditTimeStart()
 
     areaLabel = ""
 
@@ -117,11 +112,9 @@ def getDailyOrderChartData(orderTimeSheet):
     deadline = orderTimeSheet.GetInitialCountTime()
 
     if(currentDate <= deadline):
-        startTime = currentDateWithoutTime + \
-            datetime.timedelta(hours=16, minutes=30, days=-1)
+        startTime = orderTimeSheet.GetPrevLunchOrderEditTimeStart()
     else:
-        startTime = currentDateWithoutTime + \
-            datetime.timedelta(hours=16, minutes=30)
+        startTime = orderTimeSheet.GetNextLunchOrderEditTimeStart()
 
     areaData = ""
 
@@ -170,19 +163,14 @@ def getTotalPickuped(orderTimeSheet):
         currentDateWithoutTime = currentDateWithoutTime + \
             datetime.timedelta(days=1)
 
-    # Prev Lunch Order Edit Time 16:30 ~ 시:25(~ 10:30)
-    prevlunchOrderEditTimeStart = currentDateWithoutTime + \
-        datetime.timedelta(hours=16, minutes=30, days=-1)
-
-    # Next Lunch Order Edit Time 16:30 ~ 9:30(~ 10:30)
-    nextlunchOrderEditTimeStart = currentDateWithoutTime + \
-        datetime.timedelta(hours=16, minutes=30)
+    prevLunchOrderEditTimeStart = orderTimeSheet.GetPrevLunchOrderEditTimeStart()
+    nextLunchOrderEditTimeStart = orderTimeSheet.GetNextLunchOrderEditTimeStart()
 
     totalPickuped = Order.objects.filter(
         Q(payment_status=IAMPORT_ORDER_STATUS_PAID) &
         Q(status=ORDER_STATUS_PICKUP_COMPLETED) &
-        Q(payment_date__gte=prevlunchOrderEditTimeStart) &
-        Q(payment_date__lt=nextlunchOrderEditTimeStart)
+        Q(payment_date__gte=prevLunchOrderEditTimeStart) &
+        Q(payment_date__lt=nextLunchOrderEditTimeStart)
     ).count()
 
     return totalPickuped
@@ -200,18 +188,13 @@ def getOrderFailed(orderTimeSheet):
         currentDateWithoutTime = currentDateWithoutTime + \
             datetime.timedelta(days=1)
 
-    # Prev Lunch Order Edit Time 16:30 ~ 시:25(~ 10:30)
-    prevlunchOrderEditTimeStart = currentDateWithoutTime + \
-        datetime.timedelta(hours=16, minutes=30, days=-1)
-
-    # Next Lunch Order Edit Time 16:30 ~ 9:30(~ 10:30)
-    nextlunchOrderEditTimeStart = currentDateWithoutTime + \
-        datetime.timedelta(hours=16, minutes=30)
+    prevLunchOrderEditTimeStart = orderTimeSheet.GetPrevLunchOrderEditTimeStart()
+    nextLunchOrderEditTimeStart = orderTimeSheet.GetNextLunchOrderEditTimeStart()
 
     orderFailed = Order.objects.filter(
         Q(payment_status=IAMPORT_ORDER_STATUS_FAILED) &
-        Q(payment_date__gte=prevlunchOrderEditTimeStart) &
-        Q(payment_date__lt=nextlunchOrderEditTimeStart)
+        Q(payment_date__gte=prevLunchOrderEditTimeStart) &
+        Q(payment_date__lt=nextLunchOrderEditTimeStart)
     ).count()
 
     return orderFailed

@@ -208,9 +208,9 @@ def orderUpdate(order):
         hour=0, minute=0, second=0, microsecond=0)
     PICKUP_YESTER_DAY = PICKUP_DAY + datetime.timedelta(days=-1)
 
-    prevLunchOrderEditTimeStart = orderTimeSheet.GetprevLunchOrderEditTimeStart()
-    prevLunchOrderEditTimeEnd = orderTimeSheet.GetprevLunchOrderEditTimeEnd()
-    prevLunchOrderTimeEnd = orderTimeSheet.GetprevLunchOrderTimeEnd()
+    prevLunchOrderEditTimeStart = orderTimeSheet.GetPrevLunchOrderEditTimeStart()
+    prevLunchOrderEditTimeEnd = orderTimeSheet.GetPrevLunchOrderEditTimeEnd()
+    prevLunchOrderTimeEnd = orderTimeSheet.GetPrevLunchOrderTimeEnd()
 
     # Dinner Order Edit Time 11:30 ~ 16:25(~ 16:30)
     dinnerOrderEditTimeStart = orderTimeSheet.GetDinnerOrderEditTimeStart()
@@ -461,6 +461,7 @@ class Order(models.Model):
 
     def orderUsed(self):
         self.status = ORDER_STATUS_PICKUP_COMPLETED
+        self.pickup_complete_date = dateNowByTimeZone()
         self.save()
 
         return self
@@ -503,8 +504,9 @@ class OrderManager():
         return self.getAvailableOrders()
 
     def orderPenddingCleanUp(self):
-        currentDate = dateNowByTimeZone()
-        expireDate = currentDate + datetime.timedelta(hours=-24)
+        orderTimeSheet = OrderTimeSheet()
+        currentDate = orderTimeSheet.GetCurrentDate()
+        expireDate = orderTimeSheet.GetOrderExpireDate()
 
         readyPayOrders = Order.objects.filter(
             Q(payment_status=IAMPORT_ORDER_STATUS_NOT_PUSHED) &
@@ -522,8 +524,9 @@ class OrderManager():
                 order.save()
 
     def orderPaidCheck(self):
-        currentDate = dateNowByTimeZone()
-        expireDate = currentDate + datetime.timedelta(hours=-24)
+        orderTimeSheet = OrderTimeSheet()
+        currentDate = orderTimeSheet.GetCurrentDate()
+        expireDate = orderTimeSheet.GetOrderExpireDate()
 
         readyPayOrders = Order.objects.filter(
             Q(payment_status=IAMPORT_ORDER_STATUS_NOT_PUSHED) &
@@ -547,8 +550,9 @@ class OrderManager():
         return unavailableOrders
 
     def getAvailableOrders(self):
-        currentDate = dateNowByTimeZone()
-        expireDate = currentDate + datetime.timedelta(hours=-24)
+        orderTimeSheet = OrderTimeSheet()
+        currentDate = orderTimeSheet.GetCurrentDate()
+        expireDate = orderTimeSheet.GetOrderExpireDate()
 
         availableOrders = self.orderList.filter(
             (

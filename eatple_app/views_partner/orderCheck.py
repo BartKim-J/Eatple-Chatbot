@@ -36,32 +36,32 @@ DEFAULT_QUICKREPLIES_MAP = [
 #
 # # # # # # # # # # # # # # # # # # # # # # # # #
 
+
 def orderCheckTimeValidation():
-    currentDate = dateNowByTimeZone()
-    currentDateWithoutTime = currentDate.replace(hour=0, minute=0, second=0, microsecond=0)
-    
-    #DEBUG
+    orderTimeSheet = OrderTimeSheet()
+    currentDate = orderTimeSheet.GetCurrentDate()
+    currentDateWithoutTime = orderTimeSheet.GetCurrentDateWithoutTime()
+
+    # DEBUG
     if(VALIDATION_DEBUG_MODE):
         return True
-    
-        # currentDate = currentDate.replace(hour=13, minute=31, second=0, microsecond=0)
-        # currentDateWithoutTime = currentDate.replace(hour=0, minute=0, second=0, microsecond=0)
 
     # Prev Lunch Order Time 10:30 ~ 14:00
-    lunchCheckTimeStart = currentDateWithoutTime + datetime.timedelta(hours=10, minutes=30)
-    lunchCheckTimeEnd = currentDateWithoutTime + datetime.timedelta(hours=14, minutes=0)
+    lunchCheckTimeStart = orderTimeSheet.GetPrevLunchOrderTimeEnd()
+    lunchCheckTimeEnd = orderTimeSheet.GetLunchOrderPickupTimeEnd()
 
-    # Dinner Order Time 17:30 ~ 21:0
-    dinnerCheckTimeStart = currentDateWithoutTime + datetime.timedelta(hours=17, minutes=30)
-    dinnerCheckTimeEnd = currentDateWithoutTime + datetime.timedelta(hours=21, minutes=0)
-    
+    # Dinner Order Time 17:30 ~ 21:00
+    dinnerCheckTimeStart = orderTimeSheet.GetDinnerOrderPickupTimeStart()
+    dinnerCheckTimeEnd = orderTimeSheet.GetDinnerOrderPickupTimeEnd()
+
     if(lunchCheckTimeStart < currentDate) and (currentDate < lunchCheckTimeEnd):
         return True
 
     if(dinnerCheckTimeStart < currentDate) and (currentDate < dinnerCheckTimeEnd):
         return False
-    
+
     return False
+
 
 def kakaoView_OrderDetails(kakaoPayload):
     # Partner Validation
@@ -95,16 +95,16 @@ def kakaoView_OrderDetails(kakaoPayload):
     if(orderCheckTimeValidation()):
         orderManager = PartnerOrderManager(partner)
         orderManager.orderPaidCheck()
-        
+
         availableOrders = orderManager.getAvailableOrders()
-        
+
         currentTime = dateNowByTimeZone()
-                        
+
         thumbnail = {
             'imageUrl': '{}{}'.format(HOST_URL, HOME_HEAD_BLACK_IMG_URL),
             'fixedRatio': 'false',
         }
-        
+
         kakaoForm.BasicCard_Push(
             '{}'.format(currentTime.strftime(
                 '%Y년 %-m월 %-d일').replace('AM', '오전').replace('PM', '오후')),
@@ -117,18 +117,20 @@ def kakaoView_OrderDetails(kakaoPayload):
 
         if availableOrders:
             pickupTimes = PickupTime.objects.all()
-            
+
             for pickupTime in pickupTimes:
-                menuList = Menu.objects.filter(store=partner.store, pickup_time=pickupTime, status=OC_OPEN)
-                
-                refPickupTime = [x.strip() for x in str(pickupTime.time).split(':')]
+                menuList = Menu.objects.filter(
+                    store=partner.store, pickup_time=pickupTime, status=OC_OPEN)
+
+                refPickupTime = [x.strip()
+                                 for x in str(pickupTime.time).split(':')]
                 datetime_pickup_time = currentTime.replace(
                     hour=int(refPickupTime[0]),
                     minute=int(refPickupTime[1]),
                     second=0,
                     microsecond=0
                 )
-                
+
                 header = {
                     'title': '{pickupTime}'.format(
                         pickupTime=datetime_pickup_time.strftime(
@@ -136,7 +138,7 @@ def kakaoView_OrderDetails(kakaoPayload):
                     ),
                     'imageUrl': '{}{}'.format(HOST_URL, PARTNER_ORDER_SHEET_IMG),
                 }
-                
+
                 if(menuList):
                     totalCount = 0
                     for menu in menuList:
@@ -151,15 +153,15 @@ def kakaoView_OrderDetails(kakaoPayload):
                             Q(pickup_time=datetime_pickup_time)
                         )
                         orderCount = orderByPickupTime.count()
-                        
+
                         totalCount += orderCount
-                        
+
                         imageUrl = '{}{}'.format(HOST_URL, menu.imgURL())
-                        
+
                         kakaoForm.ListCard_Push(
                             '{}'.format(menu.name),
                             '들어온 주문 : {}개'.format(orderCount),
-                            imageUrl, 
+                            imageUrl,
                             None
                         )
                     kakaoForm.ListCard_Add(header)
@@ -168,19 +170,21 @@ def kakaoView_OrderDetails(kakaoPayload):
             kakaoForm.SimpleText_Add('오늘은 들어온 주문이 없어요!')
     else:
         kakaoForm.BasicCard_Push(
-            '아직 주문조회 가능시간이 아닙니다.', 
-            ' 점심 주문조회 가능시간\n - 오전 10시 30분 ~ 오후 2시', 
-            {}, 
+            '아직 주문조회 가능시간이 아닙니다.',
+            ' 점심 주문조회 가능시간\n - 오전 10시 30분 ~ 오후 2시',
+            {},
             []
         )
-        
+
         kakaoForm.BasicCard_Add()
-        
+
     kakaoForm.QuickReplies_AddWithMap(ORDER_LIST_QUICKREPLIES_MAP)
-    
+
     return JsonResponse(kakaoForm.GetForm())
 
 # @TODO
+
+
 def kakaoView_CalculateDetails(kakaoPaylaod):
     # Partner Validation
     partner = partnerValidation(kakaoPayload)
@@ -201,32 +205,30 @@ def GET_ParnterOrderDetails(request):
     EatplusSkillLog('GET_ParnterOrderDetails')
     try:
         kakaoPayload = KakaoPayLoad(request)
-        
+
         # User Validation
         partner = partnerValidation(kakaoPayload)
         if (partner == None):
             return GET_PartnerHome(request)
-        
+
         return kakaoView_OrderDetails(kakaoPayload)
 
     except (RuntimeError, TypeError, NameError, KeyError) as ex:
         return errorView('{} '.format(ex))
+
 
 @csrf_exempt
 def GET_CalculateDetails(request):
     EatplusSkillLog('GET_CalculateDetails')
     try:
         kakaoPayload = KakaoPayLoad(request)
-        
+
         # User Validation
         partner = partnerValidation(kakaoPayload)
         if (partner == None):
             return GET_PartnerHome(request)
-        
+
         return kakaoView_CalculateDetails(kakaoPayload)
 
     except (RuntimeError, TypeError, NameError, KeyError) as ex:
         return errorView('{} '.format(ex))
-
-
-
