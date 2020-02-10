@@ -14,13 +14,16 @@ from django.utils.translation import ugettext_lazy as _
 from django.utils.safestring import mark_safe
 
 from django.contrib.admin import SimpleListFilter
+
+
 class TypeFilter(MultipleChoiceListFilter):
     title = '주문 타입'
     parameter_name = 'type__in'
 
     def lookups(self, request, model_admin):
         return ORDER_TYPE
-        
+
+
 class OrderShareFlagFilter(SimpleListFilter):
     title = '부탁하기'
     parameter_name = '부탁하기 플래그'
@@ -29,7 +32,7 @@ class OrderShareFlagFilter(SimpleListFilter):
         return [
             ('on', '사용자'),
             ('off', '위임자 또는 미사용자'),
-        ] 
+        ]
 
     def queryset(self, request, queryset):
         if self.value() == 'on':
@@ -37,14 +40,15 @@ class OrderShareFlagFilter(SimpleListFilter):
 
         if self.value() == 'off':
             return queryset.filter(Q(delegate=None))
-        
-class OrderResource(resources.ModelResource):        
+
+
+class OrderResource(resources.ModelResource):
     def dehydrate_b2b_name(self, obj):
         if(obj.ordersheet.user.company != None):
             return obj.ordersheet.user.company.name
         else:
             return '일반'
-    
+
     def dehydrate_phone_number(self, obj):
         if(obj.ordersheet.user.phone_number != None):
             return obj.ordersheet.user.phone_number.as_national
@@ -53,17 +57,17 @@ class OrderResource(resources.ModelResource):
 
     def dehydrate_type(self, obj):
         return dict(ORDER_TYPE)[obj.type]
-    
+
     def dehydrate_payment_status(self, obj):
-         return dict(IAMPORT_ORDER_STATUS)[obj.payment_status]
+        return dict(IAMPORT_ORDER_STATUS)[obj.payment_status]
 
     def dehydrate_order_date(self, obj):
         return dateByTimeZone(obj.order_date).strftime(
-                    '%Y년 %-m월 %-d일')
+            '%Y년 %-m월 %-d일')
 
     def dehydrate_payment_date(self, obj):
         return dateByTimeZone(obj.payment_date).strftime(
-                    '%Y년 %-m월 %-d일')
+            '%Y년 %-m월 %-d일')
 
     order_id = Field(attribute='order_id', column_name='주문번호')
     store = Field(attribute='store__name', column_name='상점')
@@ -75,10 +79,12 @@ class OrderResource(resources.ModelResource):
     phone_number = Field(column_name='전화번호')
     order_date = Field(column_name='주문 시간')
     payment_date = Field(column_name='결제 완료 시간')
-    
+
     class Meta:
         model = Order
-        exclude = ('id', 'ordersheet', 'count', 'status', 'delegate', 'update_date', 'pickup_time')
+        exclude = ('id', 'ordersheet', 'count', 'status',
+                   'delegate', 'update_date', 'pickup_time')
+
 
 class OrderAdmin(ImportExportMixin, admin.ModelAdmin):
     resource_class = OrderResource
@@ -86,20 +92,22 @@ class OrderAdmin(ImportExportMixin, admin.ModelAdmin):
 
     def get_queryset(self, request):
         qs = super(OrderAdmin, self).get_queryset(request)
-        
+
         return qs.exclude(Q(store=None) & Q(menu=None))
-        #return qs
+        # return qs
 
     def make_enable(self, request, queryset):
-        updated_count = queryset.update(status=ORDER_STATUS_ORDER_CONFIRMED,payment_status= IAMPORT_ORDER_STATUS_PAID) #queryset.update
-        self.message_user(request, '{}건의 주문을 Enable 상태로 변경'.format(updated_count)) #django message framework 활용
-        
+        updated_count = queryset.update(
+            status=ORDER_STATUS_ORDER_CONFIRMED, payment_status=IAMPORT_ORDER_STATUS_PAID)  # queryset.update
+        self.message_user(request, '{}건의 주문을 Enable 상태로 변경'.format(
+            updated_count))  # django message framework 활용
+
     make_enable.short_description = '지정 주문을 Enable 상태로 변경'
-    
+
     def owner(self, obj):
-            return obj.ordersheet.user.nickname
+        return obj.ordersheet.user.nickname
     owner.short_description = "사용자"
-    
+
     def owner_id(self, obj):
         return obj.ordersheet.user.app_user_id
     owner_id.short_description = "사용자 고유번호"
@@ -109,17 +117,16 @@ class OrderAdmin(ImportExportMixin, admin.ModelAdmin):
 
     def phone_number(self, obj):
         return obj.ordersheet.user.phone_number
-    
+
     def delegate_flag(self, obj):
         if(obj.delegate != None):
             return 'O'
         else:
             return 'X'
-        
+
         return False
     delegate_flag.short_description = "부탁하기"
 
-    
     def b2b_name(self, obj):
         if(obj.ordersheet.user.company != None and obj.type == ORDER_TYPE_B2B):
             return obj.ordersheet.user.company.name
@@ -128,19 +135,22 @@ class OrderAdmin(ImportExportMixin, admin.ModelAdmin):
     b2b_name.short_description = "소속 회사"
 
     fieldsets = [
-        ('기본 정보',            {'fields': ['order_id', 'ordersheet', 'store', 'menu', 'type',]}),
+        ('기본 정보',            {'fields': [
+         'order_id', 'ordersheet', 'store', 'menu', 'type', ]}),
         ('구성',                 {'fields': ['totalPrice', 'count', ]}),
         ('상태',                 {'fields': ['payment_status', 'status', ]}),
         ('부탁하기',             {'fields': ['delegate', ]}),
-        ('시간',                 {'fields': ['order_date', 'payment_date', 'update_date', ]}),
+        ('시간',                 {'fields': [
+         'order_date', 'payment_date', 'pickup_time', 'pickup_complete_date', 'update_date', ]}),
     ]
 
-    search_fields = ['order_id', 'ordersheet__user__nickname', 'ordersheet__user__app_user_id']
+    search_fields = ['order_id', 'ordersheet__user__nickname',
+                     'ordersheet__user__app_user_id']
 
     readonly_fields = (
         'update_date',
     )
-    
+
     list_filter = (
         ('payment_date', DateRangeFilter),
         ('pickup_time', DateRangeFilter),
@@ -151,12 +161,13 @@ class OrderAdmin(ImportExportMixin, admin.ModelAdmin):
         TypeFilter,
         'store',
     )
-    
+
     actions = ['make_enable']
 
     list_display = ('order_id', 'owner', 'owner_id',  'store', 'menu', 'type', 'b2b_name',
-                    'payment_status', 'status', 'delegate_flag', 'pickup_time', 'payment_date')
+                    'payment_status', 'status', 'delegate_flag', 'pickup_time', 'payment_date', 'pickup_complete_date')
+
     class Media:
         js = (
-            '//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js', # jquery
+            '//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js',  # jquery
         )

@@ -248,6 +248,26 @@ def kakaoView_Home(user):
         },
     ]
 
+    # UPDATE NOTIY
+    if(isB2BUser(user)):
+        kakaoForm.BasicCard_Push(
+            '※ {} {} {}.{}.{}v'.format(
+                VERSION_CODE,
+                VERSION_LEVEL,
+                MAJOR_VERSION,
+                MINOR_VERSION,
+                BUILD_VERSION),
+            '- 카페 메뉴 픽업가능시간이 상시로 변경되었습니다. ',
+            {},
+            []
+        )
+
+        kakaoForm.BasicCard_Add()
+    else:
+        # NOT DISPLAY
+        pass
+
+    # HEADER
     if(isOrderEnable):
         isCafe = order.store.category.filter(name="카페").exists()
         if(isCafe):
@@ -318,7 +338,7 @@ def kakaoView_Home(user):
                 'height': 800,
             }
 
-            description = '\'주변 맛집에서 갓 만든 도시락, 잇플\' 입니다.'
+            description = '\'주변 맛집에서 갓 만든 때시락, 잇플\' 입니다.'
 
             kakaoForm.BasicCard_Push(
                 '안녕하세요!! {}님'.format(user.nickname),
@@ -327,6 +347,7 @@ def kakaoView_Home(user):
                 buttons
             )
 
+    # MAP
     if(isOrderEnable):
         kakaoMapUrl = 'https://map.kakao.com/link/map/{},{}'.format(
             order.store.name,

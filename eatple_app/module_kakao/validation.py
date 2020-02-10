@@ -40,15 +40,15 @@ DEFAULT_QUICKREPLIES_MAP = [
 def isB2BUser(user):
     try:
         B2BUser = UserB2B.objects.get(phone_number=user.phone_number)
-        
+
         if(user.type != USER_TYPE_B2B or user.company == None or (user.company != Company.objects.get(id=int(B2BUser.company.id)))):
             user.company = Company.objects.get(id=int(B2BUser.company.id))
             user.type = USER_TYPE_B2B
             user.save()
-        
+
         if(user.company.status != OC_OPEN):
             return False
-        
+
         return True
     except UserB2B.DoesNotExist:
         user.company = None
@@ -57,45 +57,38 @@ def isB2BUser(user):
         return False
 
     return False
-    
-def sellingTimeCheck():
-    currentDate = dateNowByTimeZone()
-    currentDateWithoutTime = currentDate.replace(
-        hour=0, minute=0, second=0, microsecond=0)
 
+
+def sellingTimeCheck():
     # DEBUG
     if(VALIDATION_DEBUG_MODE):
         return SELLING_TIME_LUNCH
 
-        #currentDate = currentDate.replace(hour=10, minute=35, second=0, microsecond=0)
-        #currentDateWithoutTime = currentDate.replace(hour=0, minute=0, second=0, microsecond=0)
+    orderTimeSheet = OrderTimeSheet()
+
+    currentDate = orderTimeSheet.GetCurrentDate()
 
     # Prev Lunch Order Time 16:30 ~ 10:30
-    prevlunchOrderTimeStart = currentDateWithoutTime + \
-        datetime.timedelta(hours=16, minutes=30, days=-1)
-    prevlunchOrderTimeEnd = currentDateWithoutTime + \
-        datetime.timedelta(hours=10, minutes=30)
+    prevLunchOrderTimeStart = orderTimeSheet.GetPrevLunchOrderEditTimeStart()
+    prevLunchOrderTimeEnd = orderTimeSheet.GetPrevLunchOrderEditTimeEnd()
 
     # Dinner Order Time 10:31 ~ 16:29
-    dinnerOrderTimeStart = currentDateWithoutTime + \
-        datetime.timedelta(hours=10, minutes=31)
-    dinnerOrderTimeEnd = currentDateWithoutTime + \
-        datetime.timedelta(hours=16, minutes=29)
+    dinnerOrderTimeStart = orderTimeSheet.GetPrevLunchOrderEditTimeEnd()
+    dinnerOrderTimeEnd = orderTimeSheet.GetDinnerOrderTimeEnd()
 
     # Next Lunch Order Time 16:30 ~ 10:30
-    nextlunchOrderTimeStart = currentDateWithoutTime + \
-        datetime.timedelta(hours=16, minutes=30)
-    nextlunchOrderTimeEnd = currentDateWithoutTime + \
-        datetime.timedelta(hours=10, minutes=30, days=1)
+    nextLunchOrderTimeStart = orderTimeSheet.GetNextLunchOrderEditTimeStart()
+    nextLunchOrderTimeEnd = orderTimeSheet.GetNextLunchOrderEditTimeEnd()
 
-    if(dinnerOrderTimeStart <= currentDate) and (currentDate <= dinnerOrderTimeEnd):
+    if(dinnerOrderTimeStart < currentDate) and (currentDate < dinnerOrderTimeEnd):
         return SELLING_TIME_DINNER
-    elif(prevlunchOrderTimeStart <= currentDate) and (currentDate <= prevlunchOrderTimeEnd):
+    elif(prevLunchOrderTimeStart <= currentDate) and (currentDate < prevLunchOrderTimeEnd):
         return SELLING_TIME_LUNCH
-    elif(nextlunchOrderTimeStart <= currentDate) and (currentDate <= nextlunchOrderTimeEnd):
+    elif(nextLunchOrderTimeStart <= currentDate) and (currentDate < nextLunchOrderTimeEnd):
         return SELLING_TIME_LUNCH
     else:
         return None
+
 
 def weekendTimeCheck():
     currentDate = dateNowByTimeZone()
@@ -129,7 +122,8 @@ def weekendTimeCheck():
             return False
     else:
         return False
-    
+
+
 def vacationTimeCheck():
     currentDate = dateNowByTimeZone()
     currentDateWithoutTime = currentDate.replace(
@@ -149,31 +143,33 @@ def vacationTimeCheck():
             'to_days': 27
         },
     ]
-     
+
     # Time QA DEBUG
     #currentDate = currentDate.replace(month=1, day=26, hour=9, minute=28, second=0, microsecond=0)
     #currentDateWithoutTime = currentDate.replace(hour=0, minute=0, second=0, microsecond=0)
-    #print(currentDate)
-    
+    # print(currentDate)
+
     for vacation in vacationMap:
-        closedDateStart = currentDate.replace(month=vacation['from_month'], day=vacation['from_days'], hour=0, minute=0, second=0, microsecond=0)
+        closedDateStart = currentDate.replace(
+            month=vacation['from_month'], day=vacation['from_days'], hour=0, minute=0, second=0, microsecond=0)
         closedDateEnd = currentDate.replace(
             month=vacation['to_month'], day=vacation['to_days'], hour=23, minute=59, second=59, microsecond=0)
 
         if(closedDateStart <= currentDate and currentDate <= closedDateEnd):
             return True
-    
+
     return False
+
 
 def eatplePassValidation(user):
     orderManager = UserOrderManager(user)
     orderManager.orderPaidCheck()
-    
-    orderManager.availableOrderStatusUpdate();
+
+    orderManager.availableOrderStatusUpdate()
 
     lunchPurchaed = orderManager.getAvailableLunchOrderPurchased().exists()
-    dinnerPurchaced = orderManager.getAvailableDinnerOrderPurchased().exists()    
-    
+    dinnerPurchaced = orderManager.getAvailableDinnerOrderPurchased().exists()
+
     kakaoForm = KakaoForm()
 
     kakaoForm.QuickReplies_AddWithMap(DEFAULT_QUICKREPLIES_MAP)
@@ -182,37 +178,37 @@ def eatplePassValidation(user):
         kakaoForm.BasicCard_Push(
             '아직 사용하지 않은 잇플패스가 있어요.',
             '발급된 잇플패스를 먼저 사용해주세요.',
-            {}, 
+            {},
             []
         )
         kakaoForm.BasicCard_Add()
-        
+
         return JsonResponse(kakaoForm.GetForm())
-                
+
     elif (lunchPurchaed):
         kakaoForm.BasicCard_Push(
             '아직 사용하지 않은 잇플패스가 있어요.',
             '발급된 잇플패스를 먼저 사용해주세요.',
-            {}, 
+            {},
             []
         )
         kakaoForm.BasicCard_Add()
-        
+
         return JsonResponse(kakaoForm.GetForm())
-    
+
     elif (dinnerPurchaced):
         kakaoForm.BasicCard_Push(
             '아직 사용하지 않은 잇플패스가 있어요.',
             '발급된 잇플패스를 먼저 사용해주세요.',
-            {}, 
+            {},
             []
         )
         kakaoForm.BasicCard_Add()
-        
+
         return JsonResponse(kakaoForm.GetForm())
-        
 
     return None
+
 
 def partnerValidation(kakaoPayload):
     try:
@@ -224,6 +220,7 @@ def partnerValidation(kakaoPayload):
             return None
     except (TypeError, AttributeError, KeyError):
         return None
+
 
 def userValidation(kakaoPayload):
     try:
@@ -239,17 +236,19 @@ def userValidation(kakaoPayload):
     except (TypeError, AttributeError, KeyError):
         return None
 
+
 def userLocationValidation(user):
     try:
         try:
             location = Location.objects.get(user=user)
         except AttributeError:
             location = Location.objects.filter(user=user)[:1]
-            
+
         return location
     except Location.DoesNotExist:
         return None
-    
+
+
 def menuValidation(kakaoPayload):
     try:
         menu_id = kakaoPayload.dataActionExtra[KAKAO_PARAM_MENU_ID]
@@ -260,7 +259,8 @@ def menuValidation(kakaoPayload):
             return None
     except (TypeError, AttributeError, KeyError):
         return None
-    
+
+
 def storeValidation(kakaoPayload):
     try:
         store_id = kakaoPayload.dataActionExtra[KAKAO_PARAM_STORE_ID]
@@ -272,16 +272,18 @@ def storeValidation(kakaoPayload):
     except (TypeError, AttributeError, KeyError):
         return None
 
+
 def orderValidation(kakaoPayload):
     try:
         order_id = kakaoPayload.dataActionExtra[KAKAO_PARAM_ORDER_ID]
         try:
-            order = Order.objects.get(order_id=order_id)            
+            order = Order.objects.get(order_id=order_id)
             return order
         except Order.DoesNotExist:
             return None
     except (TypeError, AttributeError, KeyError):
         return None
+
 
 def pickupTimeValidation(kakaoPayload):
     try:
@@ -289,6 +291,7 @@ def pickupTimeValidation(kakaoPayload):
         return pickupTime
     except (TypeError, AttributeError, KeyError):
         return None
+
 
 def prevBlockValidation(kakaoPayload):
     try:

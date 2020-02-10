@@ -208,9 +208,9 @@ def orderUpdate(order):
         hour=0, minute=0, second=0, microsecond=0)
     PICKUP_YESTER_DAY = PICKUP_DAY + datetime.timedelta(days=-1)
 
-    prevlunchOrderEditTimeStart = orderTimeSheet.GetPrevLunchOrderEditTimeStart()
-    prevlunchOrderEditTimeEnd = orderTimeSheet.GetPrevLunchOrderEditTimeEnd()
-    prevlunchOrderTimeEnd = orderTimeSheet.GetPrevLunchOrderTimeEnd()
+    prevLunchOrderEditTimeStart = orderTimeSheet.GetprevLunchOrderEditTimeStart()
+    prevLunchOrderEditTimeEnd = orderTimeSheet.GetprevLunchOrderEditTimeEnd()
+    prevLunchOrderTimeEnd = orderTimeSheet.GetprevLunchOrderTimeEnd()
 
     # Dinner Order Edit Time 11:30 ~ 16:25(~ 16:30)
     dinnerOrderEditTimeStart = orderTimeSheet.GetDinnerOrderEditTimeStart()
@@ -219,9 +219,9 @@ def orderUpdate(order):
 
     # Next Lunch Order Edit Time 16:30 ~ 9:30(~ 10:30)
     # @TEST QA NEED: HOTFIX: 30 -> 25
-    nextlunchOrderEditTimeStart = orderTimeSheet.GetNextLunchOrderEditTimeStart()
-    nextlunchOrderEditTimeEnd = orderTimeSheet.GetNextLunchOrderEditTimeEnd()
-    nextlunchOrderTimeEnd = orderTimeSheet.GetNextLunchOrderTimeEnd()
+    nextLunchOrderEditTimeStart = orderTimeSheet.GetNextLunchOrderEditTimeStart()
+    nextLunchOrderEditTimeEnd = orderTimeSheet.GetNextLunchOrderEditTimeEnd()
+    nextLunchOrderTimeEnd = orderTimeSheet.GetNextLunchOrderTimeEnd()
 
     # Lunch Order Pickup Time (10:30 ~)11:30 ~ 14:00
     lunchOrderPickupTimeStart = orderTimeSheet.GetLunchOrderPickupTimeStart()
@@ -237,7 +237,7 @@ def orderUpdate(order):
             (TODAY <= PICKUP_DAY)):
 
         # Pickup Prepare Time 10:30:00  ~ 11:29:59
-        if(prevlunchOrderTimeEnd <= currentDate) and (currentDate < lunchOrderPickupTimeStart) and \
+        if(prevLunchOrderTimeEnd <= currentDate) and (currentDate < lunchOrderPickupTimeStart) and \
                 (TODAY == PICKUP_DAY):
             print("픽업 준비중 - A")
             order.status = ORDER_STATUS_PICKUP_PREPARE
@@ -254,8 +254,8 @@ def orderUpdate(order):
         # Order Time Range
         else:
             # prev phase Order YD 16:25:00 ~ TD 10:29:59
-            if(prevlunchOrderEditTimeStart <= currentDate) and (currentDate < prevlunchOrderTimeEnd):
-                if currentDate <= prevlunchOrderEditTimeEnd:
+            if(prevLunchOrderEditTimeStart <= currentDate) and (currentDate < prevLunchOrderTimeEnd):
+                if currentDate <= prevLunchOrderEditTimeEnd:
                     print("주문 완료 - A")
                     order.status = ORDER_STATUS_ORDER_CONFIRMED
                 else:
@@ -263,21 +263,20 @@ def orderUpdate(order):
                     order.status = ORDER_STATUS_PICKUP_PREPARE
 
             # next phase Lunch order 16:25:00 ~ TD 10:29:59
-            elif (nextlunchOrderEditTimeStart <= currentDate) and \
-                 (currentDate < nextlunchOrderEditTimeEnd) and \
-                 (nextlunchOrderEditTimeStart <= paymentDate):
+            elif (nextLunchOrderEditTimeStart <= currentDate) and \
+                 (currentDate < nextLunchOrderEditTimeEnd) and \
+                 (nextLunchOrderEditTimeStart <= paymentDate):
                 print("주문 완료 - B")
                 order.status = ORDER_STATUS_ORDER_CONFIRMED
 
-            elif (prevlunchOrderTimeEnd <= currentDate) and \
-                    (currentDate < nextlunchOrderEditTimeStart):
+            elif (prevLunchOrderTimeEnd <= currentDate) and \
+                    (currentDate < nextLunchOrderEditTimeStart):
                 if currentDate < lunchOrderPickupTimeEnd:
                     print("주문 완료 - C")
                     order.status = ORDER_STATUS_ORDER_CONFIRMED
                 else:
                     print("픽업 완료 - A")
                     order.status = ORDER_STATUS_PICKUP_COMPLETED
-
 
             # Invalid Time Range is Dinner Order Time ( prev phase lunch order ~ dinner order ~ next phase lunch order )
             else:
@@ -411,9 +410,15 @@ class Order(models.Model):
         default=timezone.now,
         verbose_name="주문 시간"
     )
+
     payment_date = models.DateTimeField(
         default=timezone.now,
         verbose_name="결제 완료 시간"
+    )
+
+    pickup_complete_date = models.DateTimeField(
+        default=timezone.now,
+        verbose_name="픽업 완료 시간"
     )
 
     def save(self, *args, **kwargs):
