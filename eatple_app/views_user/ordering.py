@@ -373,8 +373,7 @@ def kakaoView_PickupTime(kakaoPayload):
     elif(pickupTimes.count() < 2):
         kakaoForm.BasicCard_Push(
             ' - 픽업시간이 제한된 점포입니다 -',
-            '\"{}\"은 점주님의 요청으로 픽업 시간을 한 타임으로 제한합니다.'.format(
-                store.name),
+            '점주님의 요청으로 픽업시간이 한 타임으로 제한된 점포입니다.',
             {},
             []
         )
