@@ -116,56 +116,89 @@ def kakaoView_OrderDetails(kakaoPayload):
         kakaoForm.BasicCard_Add()
 
         if availableOrders:
+            isCafe = partner.store.category.filter(name="카페").exists()
+
             pickupTimes = PickupTime.objects.all()
 
-            for pickupTime in pickupTimes:
+            if(isCafe):
+                orderTimeSheet = OrderTimeSheet()
+
                 menuList = Menu.objects.filter(
-                    store=partner.store, pickup_time=pickupTime, status=OC_OPEN)
-
-                refPickupTime = [x.strip()
-                                 for x in str(pickupTime.time).split(':')]
-                datetime_pickup_time = currentTime.replace(
-                    hour=int(refPickupTime[0]),
-                    minute=int(refPickupTime[1]),
-                    second=0,
-                    microsecond=0
-                )
-
+                    store=partner.store, status=OC_OPEN)
                 header = {
-                    'title': '{pickupTime}'.format(
-                        pickupTime=datetime_pickup_time.strftime(
-                            '%p %-I시 %-M분').replace('AM', '오전').replace('PM', '오후'),
-                    ),
+                    'title': '상시 픽업',
                     'imageUrl': '{}{}'.format(HOST_URL, PARTNER_ORDER_SHEET_IMG),
                 }
 
-                if(menuList):
-                    totalCount = 0
-                    for menu in menuList:
-                        orderByPickupTime = Order.objects.filter(menu=menu).filter(
-                            (
-                                Q(status=ORDER_STATUS_PICKUP_COMPLETED) |
-                                Q(status=ORDER_STATUS_PICKUP_WAIT) |
-                                Q(status=ORDER_STATUS_PICKUP_PREPARE) |
-                                Q(status=ORDER_STATUS_ORDER_CONFIRM_WAIT) |
-                                Q(status=ORDER_STATUS_ORDER_CONFIRMED)
-                            ) &
-                            Q(pickup_time=datetime_pickup_time)
-                        )
-                        orderCount = orderByPickupTime.count()
+                for menu in menuList:
+                    orderByMenu = Order.objects.filter(menu=menu).filter(
+                        (
+                            Q(status=ORDER_STATUS_PICKUP_COMPLETED) |
+                            Q(status=ORDER_STATUS_PICKUP_WAIT) |
+                            Q(status=ORDER_STATUS_PICKUP_PREPARE) |
+                            Q(status=ORDER_STATUS_ORDER_CONFIRM_WAIT) |
+                            Q(status=ORDER_STATUS_ORDER_CONFIRMED)
+                        ) &
+                        Q(menu=menu) &
+                        Q(pickup_time__gte=orderTimeSheet.GetLunchOrderPickupTimeStart())
+                    )
 
-                        totalCount += orderCount
-
-                        imageUrl = '{}{}'.format(HOST_URL, menu.imgURL())
-
-                        kakaoForm.ListCard_Push(
-                            '{}'.format(menu.name),
-                            '들어온 주문 : {}개'.format(orderCount),
-                            imageUrl,
-                            None
-                        )
+                    imageUrl = '{}{}'.format(HOST_URL, menu.imgURL())
+                    kakaoForm.ListCard_Push(
+                        '{}'.format(menu.name),
+                        '들어온 주문 : {}개'.format(orderByMenu.count()),
+                        imageUrl,
+                        None
+                    )
                     kakaoForm.ListCard_Add(header)
+            else:
+                for pickupTime in pickupTimes:
+                    menuList = Menu.objects.filter(
+                        store=partner.store, pickup_time=pickupTime, status=OC_OPEN)
 
+                    refPickupTime = [x.strip()
+                                     for x in str(pickupTime.time).split(':')]
+                    datetime_pickup_time = currentTime.replace(
+                        hour=int(refPickupTime[0]),
+                        minute=int(refPickupTime[1]),
+                        second=0,
+                        microsecond=0
+                    )
+
+                    header = {
+                        'title': '{pickupTime}'.format(
+                            pickupTime=datetime_pickup_time.strftime(
+                                '%p %-I시 %-M분').replace('AM', '오전').replace('PM', '오후'),
+                        ),
+                        'imageUrl': '{}{}'.format(HOST_URL, PARTNER_ORDER_SHEET_IMG),
+                    }
+
+                    if(menuList):
+                        totalCount = 0
+                        for menu in menuList:
+                            orderByPickupTime = Order.objects.filter(menu=menu).filter(
+                                (
+                                    Q(status=ORDER_STATUS_PICKUP_COMPLETED) |
+                                    Q(status=ORDER_STATUS_PICKUP_WAIT) |
+                                    Q(status=ORDER_STATUS_PICKUP_PREPARE) |
+                                    Q(status=ORDER_STATUS_ORDER_CONFIRM_WAIT) |
+                                    Q(status=ORDER_STATUS_ORDER_CONFIRMED)
+                                ) &
+                                Q(pickup_time=datetime_pickup_time)
+                            )
+                            orderCount = orderByPickupTime.count()
+
+                            totalCount += orderCount
+
+                            imageUrl = '{}{}'.format(HOST_URL, menu.imgURL())
+
+                            kakaoForm.ListCard_Push(
+                                '{}'.format(menu.name),
+                                '들어온 주문 : {}개'.format(orderCount),
+                                imageUrl,
+                                None
+                            )
+                        kakaoForm.ListCard_Add(header)
         else:
             kakaoForm.SimpleText_Add('오늘은 들어온 주문이 없어요!')
     else:

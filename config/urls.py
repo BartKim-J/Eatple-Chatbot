@@ -36,14 +36,15 @@ if(settings.SETTING_ID == 'DEPLOY'):
 else:
     admin.site.site_header = "개발 서버"
 
-admin.site.index_title = "Dashboard"    
+admin.site.index_title = "Dashboard"
 admin.site.site_title = "Eat+ Admin"
 
 # Urls
 urlpatterns = [
     # Admin
     path('jet/', include('jet.urls', 'jet')),  # Django JET URLS
-    path('jet/dashboard/', include('jet.dashboard.urls', 'jet-dashboard')),  # Django JET dashboard URLS
+    path('jet/dashboard/', include('jet.dashboard.urls',
+                                   'jet-dashboard')),  # Django JET dashboard URLS
     path('admin/', admin.site.urls),
 ]
 
@@ -81,14 +82,17 @@ urlpatterns += [
          views.GET_EditPickupTime),
     path('skill/user/orderEdit/set_confirm_edit_pickup_time',
          views.SET_ConfirmEditPickupTime),
-    
-    # Order Share 
+
+    # Order Share
     path('skill/user/orderShare/get_delegate_user_remove',
          views.GET_DelegateUserRemove),
     path('skill/user/orderShare/get_delegate_user_remove_all',
          views.GET_DelegateUserRemoveAll),
     path('skill/user/orderShare/get_delegate_user',
          views.GET_DelegateUser),
+
+    # Notify
+    path('skill/user/etc/get_notify', views.GET_UserNotify),
 ]
 
 # Urls - Events App
@@ -102,9 +106,10 @@ urlpatterns += [
     # Kakao Plus Partner Skills
     # Home
     path('skill/partner/home', views.GET_PartnerHome),
-    
+
     # Order View Flow
-    path('skill/partner/orderView/get_order_details', views.GET_ParnterOrderDetails),
+    path('skill/partner/orderView/get_order_details',
+         views.GET_ParnterOrderDetails),
 ]
 
 # Urls - KAKAO API
@@ -136,6 +141,8 @@ urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 
 urlpatterns += [
-    url(r'^media/(?P<path>.*)$', serve,{'document_root': settings.MEDIA_ROOT}),
-    url(r'^static/(?P<path>.*)$', serve,{'document_root': settings.STATIC_ROOT}),
+    url(r'^media/(?P<path>.*)$', serve,
+        {'document_root': settings.MEDIA_ROOT}),
+    url(r'^static/(?P<path>.*)$', serve,
+        {'document_root': settings.STATIC_ROOT}),
 ]

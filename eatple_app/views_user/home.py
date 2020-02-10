@@ -251,7 +251,7 @@ def kakaoView_Home(user):
     # UPDATE NOTIY
     if(isB2BUser(user)):
         kakaoForm.BasicCard_Push(
-            '❊ {} ᴠ{}.{}.{}({})'.format(
+            '「{}」 v{}.{}.{}({})'.format(
                 VERSION_CODE,
                 MAJOR_VERSION,
                 MINOR_VERSION,

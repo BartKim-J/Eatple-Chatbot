@@ -33,7 +33,7 @@ def getOrderChartDataLabel(orderTimeSheet):
 
     deadline = orderTimeSheet.GetInitialCountTime()
 
-    if(currentDate <= deadline):
+    if(currentDate < deadline):
         currentDateWithoutTime = currentDateWithoutTime
     else:
         currentDateWithoutTime = currentDateWithoutTime + \
@@ -56,7 +56,7 @@ def getOrderChartData(orderTimeSheet):
 
     deadline = orderTimeSheet.GetInitialCountTime()
 
-    if(currentDate <= deadline):
+    if(currentDate < deadline):
         currentDateWithoutTime = currentDateWithoutTime
     else:
         currentDateWithoutTime = currentDateWithoutTime + \
@@ -89,7 +89,7 @@ def getDailyOrderChartDataLabel(orderTimeSheet):
 
     deadline = orderTimeSheet.GetInitialCountTime()
 
-    if(currentDate <= deadline):
+    if(currentDate < deadline):
         startTime = orderTimeSheet.GetPrevLunchOrderEditTimeStart()
     else:
         startTime = orderTimeSheet.GetNextLunchOrderEditTimeStart()
@@ -111,7 +111,7 @@ def getDailyOrderChartData(orderTimeSheet):
 
     deadline = orderTimeSheet.GetInitialCountTime()
 
-    if(currentDate <= deadline):
+    if(currentDate < deadline):
         startTime = orderTimeSheet.GetPrevLunchOrderEditTimeStart()
     else:
         startTime = orderTimeSheet.GetNextLunchOrderEditTimeStart()
@@ -157,14 +157,16 @@ def getTotalPickuped(orderTimeSheet):
 
     deadline = orderTimeSheet.GetInitialCountTime()
 
-    if(currentDate <= deadline):
+    if(currentDate < deadline):
         currentDateWithoutTime = currentDateWithoutTime
     else:
         currentDateWithoutTime = currentDateWithoutTime + \
             datetime.timedelta(days=1)
 
-    prevLunchOrderEditTimeStart = orderTimeSheet.GetPrevLunchOrderEditTimeStart()
-    nextLunchOrderEditTimeStart = orderTimeSheet.GetNextLunchOrderEditTimeStart()
+    prevLunchOrderEditTimeStart = currentDateWithoutTime + \
+        datetime.timedelta(hours=16, minutes=30, days=-1)
+    nextLunchOrderEditTimeStart = currentDateWithoutTime + \
+        datetime.timedelta(hours=16, minutes=30)
 
     totalPickuped = Order.objects.filter(
         Q(payment_status=IAMPORT_ORDER_STATUS_PAID) &
@@ -182,14 +184,16 @@ def getOrderFailed(orderTimeSheet):
 
     deadline = orderTimeSheet.GetInitialCountTime()
 
-    if(currentDate <= deadline):
+    if(currentDate < deadline):
         currentDateWithoutTime = currentDateWithoutTime
     else:
         currentDateWithoutTime = currentDateWithoutTime + \
             datetime.timedelta(days=1)
 
-    prevLunchOrderEditTimeStart = orderTimeSheet.GetPrevLunchOrderEditTimeStart()
-    nextLunchOrderEditTimeStart = orderTimeSheet.GetNextLunchOrderEditTimeStart()
+    prevLunchOrderEditTimeStart = currentDateWithoutTime + \
+        datetime.timedelta(hours=16, minutes=30, days=-1)
+    nextLunchOrderEditTimeStart = currentDateWithoutTime + \
+        datetime.timedelta(hours=16, minutes=30)
 
     orderFailed = Order.objects.filter(
         Q(payment_status=IAMPORT_ORDER_STATUS_FAILED) &
