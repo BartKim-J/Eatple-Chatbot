@@ -523,6 +523,14 @@ def kakaoView_EatplePassIssuance(kakaoPayload):
             },
         ]
 
+        isCafe = order.store.category.filter(name="카페").exists()
+        if(isCafe):
+            pickupTimeStr = dateByTimeZone(order.pickup_time).strftime(
+                '%-m월 %-d일 오전 11시 30분 ~ 오후 4시')
+        else:
+            pickupTimeStr = dateByTimeZone(order.pickup_time).strftime(
+                '%-m월 %-d일 %p %-I시 %-M분').replace('AM', '오전').replace('PM', '오후')
+
         kakaoForm.BasicCard_Push(
             '{}'.format(order.menu.name),
             '주문번호: {}\n - 주문자: {}({})\n\n - 매장: {}\n - 주소: {}\n\n - 총 금액: {}원\n\n - 픽업 시간: {}\n - 주문 상태: {}'.format(
@@ -532,8 +540,7 @@ def kakaoView_EatplePassIssuance(kakaoPayload):
                 order.store.name,
                 order.store.addr,
                 order.totalPrice,
-                dateByTimeZone(order.pickup_time).strftime(
-                    '%-m월 %-d일 %p %-I시 %-M분').replace('AM', '오전').replace('PM', '오후'),
+                pickupTimeStr,
                 ORDER_STATUS[order.status][1]
             ),
             thumbnail,

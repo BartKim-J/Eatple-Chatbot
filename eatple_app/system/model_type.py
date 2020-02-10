@@ -194,3 +194,11 @@ STORE_AREA = [
 
     (STORE_AREA_Z_1, '기타 지역'),
 ]
+
+###########################################################################################
+# Default Value
+# Location
+
+LOCATION_DEFAULT_ADDR = '강남 사거리'
+LOCATION_DEFAULT_LAT = 37.497907
+LOCATION_DEFAULT_LNG = 127.027635

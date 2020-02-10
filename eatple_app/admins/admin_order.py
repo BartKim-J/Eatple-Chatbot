@@ -59,11 +59,11 @@ class OrderResource(resources.ModelResource):
 
     def dehydrate_order_date(self, obj):
         return dateByTimeZone(obj.order_date).strftime(
-                    '%Y년 %-m월 %-d일 %-H시 %-M분 %-S초')
+                    '%Y년 %-m월 %-d일')
 
     def dehydrate_payment_date(self, obj):
         return dateByTimeZone(obj.payment_date).strftime(
-                    '%Y년 %-m월 %-d일 %-H시 %-M분 %-S초')
+                    '%Y년 %-m월 %-d일')
 
     order_id = Field(attribute='order_id', column_name='주문번호')
     store = Field(attribute='store__name', column_name='상점')

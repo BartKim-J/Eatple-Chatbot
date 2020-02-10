@@ -22,10 +22,10 @@ def dateNowByTimeZone():
     '''
     # Time QA DEBUG
     if(ORDER_TIME_CHECK_DEBUG_MODE):
-        DEBUG_DAYS = 6
-        DEBUG_HOUR = 16
-        DEBUG_MIN = 30
-        DEBUG_SEC = 00
+        DEBUG_DAYS = 10
+        DEBUG_HOUR = 9
+        DEBUG_MIN = 0
+        DEBUG_SEC = 0
 
         if settings.USE_TZ:
             tz = pytz.timezone(settings.TIME_ZONE)
@@ -60,3 +60,89 @@ def dateByUTC(KOR):
     localeTime = KOR.replace(tzinfo=UTC) + timeDiffrence
 
     return localeTime  # TO Korea
+
+
+class OrderTimeSheet():
+    def __init__(self):
+        self.currentDate = dateNowByTimeZone()
+        self.currentDateWithoutTime = self.currentDate.replace(
+            hour=0, minute=0, second=0, microsecond=0)
+
+        self.yesterday = self.currentDateWithoutTime + \
+            datetime.timedelta(days=-1)  # Yesterday start
+        self.today = self.currentDateWithoutTime
+        self.tomorrow = self.currentDateWithoutTime + \
+            datetime.timedelta(days=1)  # Tommorrow start
+
+    def GetCurrentDate(self):
+        return self.currentDate
+
+    def GetCurrentDateWithoutTime(self):
+        return self.currentDateWithoutTime
+
+    def GetToday(self):
+        return self.today
+
+    def GetYesterDay(self):
+        return self.yesterday
+
+    def GetTomorrow(self):
+        return self.tomorrow
+
+    # Prev Lunch Order Edit Time
+    def GetPrevLunchOrderEditTimeStart(self):
+        return self.currentDateWithoutTime + \
+            datetime.timedelta(hours=16, minutes=25, days=-1)
+
+    def GetPrevLunchOrderEditTimeEnd(self):
+        return self.currentDateWithoutTime + \
+            datetime.timedelta(hours=10, minutes=30)
+
+    def GetPrevLunchOrderTimeEnd(self):
+        return self.currentDateWithoutTime + \
+            datetime.timedelta(hours=10, minutes=30)
+
+    # Dinner Order Edit Time
+    def GetDinnerOrderEditTimeStart(self):
+        return self.currentDateWithoutTime + \
+            datetime.timedelta(hours=11, minutes=30)
+
+    def GetDinnerOrderEditTimeEnd(self):
+        return self.currentDateWithoutTime + \
+            datetime.timedelta(hours=16, minutes=25)
+
+    def GetDinnerOrderTimeEnd(self):
+        return self.currentDateWithoutTime + \
+            datetime.timedelta(hours=16, minutes=30)
+
+    # Next Lunch Order Edit Time
+    # @TEST QA NEED: HOTFIX: 30 -> 25
+    def GetNextLunchOrderEditTimeStart(self):
+        return self.currentDateWithoutTime + \
+            datetime.timedelta(hours=16, minutes=25)
+
+    def GetNextLunchOrderEditTimeEnd(self):
+        return self.currentDateWithoutTime + \
+            datetime.timedelta(hours=9, minutes=30, days=1)
+
+    def GetNextLunchOrderTimeEnd(self):
+        return self.currentDateWithoutTime + \
+            datetime.timedelta(hours=10, minutes=30, days=1)
+
+    # Lunch Order Pickup Time
+    def GetLunchOrderPickupTimeStart(self):
+        return self.currentDateWithoutTime + \
+            datetime.timedelta(hours=11, minutes=30)
+
+    def GetLunchOrderPickupTimeEnd(self):
+        return self.currentDateWithoutTime + \
+            datetime.timedelta(hours=14, minutes=30)
+
+    # Dinner Order Pickup Time
+    def GetDinnerOrderPickupTimeStart(self):
+        return self.currentDateWithoutTime + \
+            datetime.timedelta(hours=17, minutes=30)
+
+    def GetDinnerOrderPickupTimeEnd(self):
+        return self.currentDateWithoutTime + \
+            datetime.timedelta(hours=21, minutes=0)

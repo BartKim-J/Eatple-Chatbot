@@ -71,22 +71,30 @@ def kakaoView_EatplePass(kakaoPayload):
     ownEatplePass = availableEatplePass.filter(Q(ordersheet__user=user))
     delegatedEatplePass = availableEatplePass.filter(~Q(delegate=None))
     delegatedEatplePassCount = delegatedEatplePass.count()
-    
+
     if ownEatplePass:
         nicknameList = ownEatplePass.first().ordersheet.user.nickname
     else:
         nicknameList = ''
-        
+
     if delegatedEatplePass:
         for order in delegatedEatplePass:
-            nicknameList += ', {nickname}'.format(nickname=order.ordersheet.user.nickname)
-    
+            nicknameList += ', {nickname}'.format(
+                nickname=order.ordersheet.user.nickname)
+
     # Listup EatplePass
     if ownEatplePass:
         kakaoForm = KakaoForm()
 
         for order in ownEatplePass:
-            
+            isCafe = order.store.category.filter(name="카페").exists()
+            if(isCafe):
+                pickupTimeStr = dateByTimeZone(order.pickup_time).strftime(
+                    '%-m월 %-d일 오전 11시 30분 ~ 오후 4시')
+            else:
+                pickupTimeStr = dateByTimeZone(order.pickup_time).strftime(
+                    '%-m월 %-d일 %p %-I시 %-M분').replace('AM', '오전').replace('PM', '오후')
+
             if(order.delegate != None):
                 imgUrl = '{}{}'.format(HOST_URL, EATPLE_PASS_IMG_NULL)
             elif(delegatedEatplePassCount == 0):
@@ -98,10 +106,10 @@ def kakaoView_EatplePass(kakaoPayload):
             elif(delegatedEatplePassCount == 3):
                 imgUrl = '{}{}'.format(HOST_URL, EATPLE_PASS_IMG_04)
             elif(delegatedEatplePassCount == 4):
-                imgUrl = '{}{}'.format(HOST_URL, EATPLE_PASS_IMG_05) 
+                imgUrl = '{}{}'.format(HOST_URL, EATPLE_PASS_IMG_05)
             else:
                 imgUrl = '{}{}'.format(HOST_URL, EATPLE_PASS_IMG_MORE)
-            
+
             thumbnail = {
                 'imageUrl': imgUrl,
             }
@@ -131,8 +139,8 @@ def kakaoView_EatplePass(kakaoPayload):
             # CAN EDIT COUPONS
             if (order.status == ORDER_STATUS_ORDER_CONFIRM_WAIT or
                 order.status == ORDER_STATUS_ORDER_CONFIRMED or
-                order.status == ORDER_STATUS_PICKUP_PREPARE):
-                
+                    order.status == ORDER_STATUS_PICKUP_PREPARE):
+
                 if(order.delegate == None):
                     if(delegatedEatplePass.count() > 0):
                         ORDER_LIST_QUICKREPLIES_MAP.append(
@@ -160,7 +168,7 @@ def kakaoView_EatplePass(kakaoPayload):
                                 }
                             }
                         )
-                        
+
                         if(order.status == ORDER_STATUS_ORDER_CONFIRM_WAIT or
                            order.status == ORDER_STATUS_ORDER_CONFIRMED):
                             ORDER_LIST_QUICKREPLIES_MAP.append(
@@ -175,11 +183,10 @@ def kakaoView_EatplePass(kakaoPayload):
                                     }
                                 }
                             )
-                            
 
                     # @PROMOTION
                     if(order.type != ORDER_TYPE_PROMOTION):
-                        if(delegatedEatplePass.count() == 0):
+                        if(delegatedEatplePass.count() == 0 and isCafe == False):
                             buttons.append(
                                 {
                                     'action': 'block',
@@ -217,15 +224,15 @@ def kakaoView_EatplePass(kakaoPayload):
                             nicknameList,
                             delegatedEatplePass.count() + ownEatplePass.count(),
                             order.store.addr,
-                            order.totalPrice * (delegatedEatplePass.count() + ownEatplePass.count()),
-                            dateByTimeZone(order.pickup_time).strftime(
-                                '%-m월 %-d일 %p %-I시 %-M분').replace('AM', '오전').replace('PM', '오후'),
+                            order.totalPrice *
+                            (delegatedEatplePass.count() + ownEatplePass.count()),
+                            pickupTimeStr,
                             ORDER_STATUS[order.status][1]
                         ),
                         thumbnail,
                         buttons
                     )
-                else: 
+                else:
                     kakaoForm.BasicCard_Push(
                         '{}'.format(order.menu.name),
                         '주문번호: {}\n - 주문자: {}({})\n\n - 매장: {}\n\n - 총 금액: {}원\n\n - 픽업 시간: {}\n - 주문 상태: {}'.format(
@@ -234,8 +241,7 @@ def kakaoView_EatplePass(kakaoPayload):
                             str(order.ordersheet.user.phone_number)[9:13],
                             order.store.name,
                             order.totalPrice,
-                            dateByTimeZone(order.pickup_time).strftime(
-                                '%-m월 %-d일 %p %-I시 %-M분').replace('AM', '오전').replace('PM', '오후'),
+                            pickupTimeStr,
                             ORDER_STATUS[order.status][1]
                         ),
                         thumbnail,
@@ -251,8 +257,7 @@ def kakaoView_EatplePass(kakaoPayload):
                         order.delegate.nickname,
                         str(order.delegate.phone_number)[9:13],
                         order.store.name,
-                        dateByTimeZone(order.pickup_time).strftime(
-                            '%-m월 %-d일 %p %-I시 %-M분').replace('AM', '오전').replace('PM', '오후'),
+                        pickupTimeStr,
                         ORDER_STATUS[order.status][1]
                     ),
                     thumbnail,
@@ -260,7 +265,7 @@ def kakaoView_EatplePass(kakaoPayload):
                 )
 
         kakaoForm.BasicCard_Add()
-        
+
         if(order.delegate == None):
             kakaoForm.BasicCard_Push(
                 '{}'.format(order.store.addr),
@@ -275,7 +280,7 @@ def kakaoView_EatplePass(kakaoPayload):
                 ]
             )
             kakaoForm.BasicCard_Add()
-        
+
     # No EatplePass
     else:
         kakaoForm = KakaoForm()
@@ -326,11 +331,18 @@ def kakaoView_OrderDetails(kakaoPayload):
 
             buttons = []
 
+            isCafe = order.store.category.filter(name="카페").exists()
+            if(isCafe):
+                pickupTimeStr = dateByTimeZone(order.pickup_time).strftime(
+                    '%-m월 %-d일 오전 11시 30분 ~ 오후 4시')
+            else:
+                pickupTimeStr = dateByTimeZone(order.pickup_time).strftime(
+                    '%-m월 %-d일 %p %-I시 %-M분').replace('AM', '오전').replace('PM', '오후')
+
             kakaoForm.BasicCard_Push(
                 '{}'.format(order.menu.name),
                 '픽업 시간: {}\n주문 상태: {}'.format(
-                    dateByTimeZone(order.pickup_time).strftime(
-                        '%-m월 %-d일 %p %-I시 %-M분').replace('AM', '오전').replace('PM', '오후'),
+                    pickupTimeStr,
                     ORDER_STATUS[order.status][1]
                 ),
                 thumbnail, buttons

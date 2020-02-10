@@ -19,6 +19,7 @@ from eatple_app.module_kakao.validation import *
 # View-System
 from eatple_app.views_system.debugger import *
 
+
 def isLocationParam(kakaoPayload):
     try:
         param = kakaoPayload.dataActionParams['location']['origin']
@@ -26,7 +27,7 @@ def isLocationParam(kakaoPayload):
     except (TypeError, AttributeError, KeyError):
         return False
 
-        
+
 def userSignUp(userProfile):
     nickname = userProfile['nickname']
     phone_number = userProfile['phone_number']
@@ -37,7 +38,7 @@ def userSignUp(userProfile):
     ci = userProfile['ci']
     ci_ci_authenticated_at = userProfile['ci_authenticated_at']
     app_user_id = userProfile['app_user_id']
-    
+
     if(nickname == None):
         nickname = "N/A"
 
@@ -46,22 +47,22 @@ def userSignUp(userProfile):
 
     if(email == None):
         email = "N/A"
-        
+
     if(birthyear == None):
         birthyear = "N/A"
-        
+
     if(birthday == None):
         birthday = "N/A"
-        
+
     if(gender == None):
         gender = "N/A"
-        
+
     if(ci == None):
         ci = "N/A"
 
     if(ci_ci_authenticated_at == None):
         ci_ci_authenticated_at = "N/A"
-        
+
     if(app_user_id == None):
         app_user_id = "N/A"
 
@@ -76,8 +77,9 @@ def userSignUp(userProfile):
         ci=ci,
         ci_authenticated_at=ci_ci_authenticated_at,
     )
-    
+
     return user
+
 
 def userLocationRegistration(user, locationData):
 
@@ -85,30 +87,32 @@ def userLocationRegistration(user, locationData):
         user.location.lat = locationData['latitude']
         user.location.long = locationData['longitude']
         user.location.address = locationData['address']
-        
+
         # @TODO will update kakao location api
         # user.location.address = locationData['road_address']['address_name']
         user.location.point = Point(
-            y=float(locationData['latitude']), 
+            y=float(locationData['latitude']),
             x=float(locationData['longitude']),
         )
         user.location.save()
-        
+
     except User.location.RelatedObjectDoesNotExist:
         location = Location(
-            user = user,
-            lat = locationData['latitude'],
-            long = locationData['longitude'],
-            address = locationData['address'],
-            point = Point(float(locationData['latitude']), float(locationData['longitude'])),
+            user=user,
+            lat=locationData['latitude'],
+            long=locationData['longitude'],
+            address=locationData['address'],
+            point=Point(float(locationData['latitude']), float(
+                locationData['longitude'])),
         )
         location.save()
-        
+
         user.location = location
-        user.save()        
+        user.save()
 
     return user
-    
+
+
 def kakaoView_SignUp():
     EatplusSkillLog('Sign Up')
 
@@ -137,6 +141,7 @@ def kakaoView_SignUp():
     kakaoForm.BasicCard_Add()
 
     return JsonResponse(kakaoForm.GetForm())
+
 
 def kakaoView_LocationRegistration():
     EatplusSkillLog('Location Registration')
@@ -167,6 +172,7 @@ def kakaoView_LocationRegistration():
 
     return JsonResponse(kakaoForm.GetForm())
 
+
 def kakaoView_Home(user):
     EatplusSkillLog('Home')
 
@@ -179,10 +185,10 @@ def kakaoView_Home(user):
     orderList = orderManager.getAvailableOrders().filter(Q(ordersheet__user=user))
     orderCount = orderList.count()
     order = orderList.first()
-    
+
     isOrderEnable = (orderCount != 0)
-    
-    #@PROMOTION
+
+    # @PROMOTION
     try:
         address = user.location.address
     except User.location.RelatedObjectDoesNotExist:
@@ -197,10 +203,8 @@ def kakaoView_Home(user):
 
         user.location = location
         user.save()
-        
-        address = user.location.address
-    
 
+        address = user.location.address
 
     QUICKREPLIES_MAP = [
         {
@@ -243,15 +247,23 @@ def kakaoView_Home(user):
             }
         },
     ]
-    
+
     if(isOrderEnable):
+        isCafe = order.store.category.filter(name="카페").exists()
+        if(isCafe):
+            pickupTimeStr = dateByTimeZone(order.pickup_time).strftime(
+                '%-m월 %-d일 오전 11시 30분 ~ 오후 4시')
+        else:
+            pickupTimeStr = dateByTimeZone(order.pickup_time).strftime(
+                '%-m월 %-d일 %p %-I시 %-M분').replace('AM', '오전').replace('PM', '오후')
+
         thumbnail = {
             'imageUrl': '{}{}'.format(HOST_URL, order.menu.imgURL()),
             'fixedRatio': 'true',
             'width': 800,
             'height': 800,
         }
-            
+
         buttons[0] = {
             'action': 'block',
             'label': '잇플패스 확인',
@@ -261,34 +273,31 @@ def kakaoView_Home(user):
                 KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_HOME
             }
         }
-        
-        description = '픽업은 {} 입니다'.format(
-            dateByTimeZone(order.pickup_time).strftime(
-                '%-m월 %-d일 %p %-I시 %-M분').replace('AM', '오전').replace('PM', '오후'),
-        )
-        
+
+        description = '픽업은 {} 입니다'.format(pickupTimeStr,)
+
         kakaoForm.BasicCard_Push(
             '안녕하세요!! {}님'.format(user.nickname),
             '{}'.format(description),
             thumbnail,
             buttons
         )
-    else: 
+    else:
         if(isB2BUser(user)):
-            
+
             if(settings.SETTING_ID == 'DEPLOY'):
                 logoImg = '{}{}'.format(HOST_URL, user.company.logoImgURL())
             else:
                 logoImg = '{}{}'.format(HOST_URL, user.company.logoImgURL())
                 #logoImg = '{}{}'.format(HOST_URL, HOME_HEAD_BLACK_IMG_URL)
-                
+
             thumbnail = {
                 'imageUrl': logoImg,
                 'fixedRatio': 'true',
                 'width': 800,
                 'height': 800,
             }
-            
+
             kakaoForm.BasicCard_Push(
                 '{} 홈 화면입니다.'.format(user.company.name, user.nickname),
                 '반갑습니다. {}님'.format(user.nickname),
@@ -301,29 +310,29 @@ def kakaoView_Home(user):
             else:
                 homeImg = '{}{}'.format(HOST_URL, HOME_HEAD_BLACK_IMG_URL)
                 print(homeImg)
-                
+
             thumbnail = {
                 'imageUrl': homeImg,
                 'fixedRatio': 'true',
                 'width': 800,
                 'height': 800,
             }
-            
+
             description = '\'주변 맛집에서 갓 만든 도시락, 잇플\' 입니다.'
-                
+
             kakaoForm.BasicCard_Push(
                 '안녕하세요!! {}님'.format(user.nickname),
                 '{}'.format(description),
                 thumbnail,
                 buttons
             )
-    
+
     if(isOrderEnable):
         kakaoMapUrl = 'https://map.kakao.com/link/map/{},{}'.format(
             order.store.name,
             order.store.place
         )
-        
+
         thumbnail = {
             'imageUrl': 'https://maps.googleapis.com/maps/api/staticmap?center={lat},{long}&maptype=mobile&zoom={zoom}&markers=size:mid%7C{lat},{long}&size=800x800&key={apiKey}'.format(
                 zoom=18,
@@ -342,7 +351,7 @@ def kakaoView_Home(user):
                 'webLinkUrl': kakaoMapUrl
             },
         ]
-        
+
         kakaoForm.BasicCard_Push(
             '{}'.format(order.store.name),
             '{}'.format(order.store.addr),
@@ -379,34 +388,35 @@ def kakaoView_Home(user):
             thumbnail,
             buttons
         )
-    
+
     kakaoForm.BasicCard_Add()
 
     kakaoForm.QuickReplies_AddWithMap(QUICKREPLIES_MAP)
-    
+
     return JsonResponse(kakaoForm.GetForm())
-    
+
+
 @csrf_exempt
 def GET_UserHome(request):
     try:
         kakaoPayload = KakaoPayLoad(request)
-        
+
         user = userValidation(kakaoPayload)
         location = userLocationValidation(user)
-        
+
         if(user == None):
             try:
                 otpURL = kakaoPayload.dataActionParams['user_profile']['origin']
-                
+
                 kakaoResponse = requests.get('{url}?rest_api_key={rest_api_key}'.format(
                     url=otpURL, rest_api_key=KAKAO_REST_API_KEY))
 
                 if(kakaoResponse.status_code == 200):
-                    user = userSignUp(kakaoResponse.json())            
-                    
-                    #@SLACK LOGGER
+                    user = userSignUp(kakaoResponse.json())
+
+                    # @SLACK LOGGER
                     SlackLogSignUp(user)
-                    
+
                     return kakaoView_LocationRegistration()
 
                 return kakaoView_SignUp()
@@ -414,12 +424,12 @@ def GET_UserHome(request):
             except (RuntimeError, TypeError, NameError, KeyError):
                 return kakaoView_SignUp()
         elif(isLocationParam(kakaoPayload)):
-            try: 
+            try:
                 otpURL = kakaoPayload.dataActionParams['location']['origin']
 
                 kakaoResponse = requests.get('{url}?rest_api_key={rest_api_key}'.format(
                     url=otpURL, rest_api_key=KAKAO_REST_API_KEY))
-                
+
                 if(kakaoResponse.status_code == 200):
                     user = userLocationRegistration(user, kakaoResponse.json())
 
@@ -427,7 +437,7 @@ def GET_UserHome(request):
 
                 return kakaoView_LocationRegistration()
             except (RuntimeError, TypeError, NameError, KeyError):
-                return kakaoView_LocationRegistration()                     
+                return kakaoView_LocationRegistration()
         else:
             return kakaoView_Home(user)
 

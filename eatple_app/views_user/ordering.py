@@ -360,7 +360,17 @@ def kakaoView_PickupTime(kakaoPayload):
 
     order = orderValidation(kakaoPayload)
 
-    if(pickupTimes.count() < 2):
+    isCafe = store.category.filter(name="카페").exists()
+    if(isCafe):
+        kakaoForm.BasicCard_Push(
+            '- 상시픽업이 가능한 점포입니다 -'.format(
+                store.name),
+            '오전 11:30 부터 오후 4:00까지 언제든 방문하여 메뉴를 픽업할 수 있습니다.',
+            {},
+            []
+        )
+        kakaoForm.BasicCard_Add()
+    elif(pickupTimes.count() < 2):
         kakaoForm.BasicCard_Push(
             ' - 픽업시간이 제한된 점포입니다 -',
             '\"{}\"은 점주님의 요청으로 픽업 시간을 한 타임으로 제한합니다.'.format(
@@ -378,26 +388,45 @@ def kakaoView_PickupTime(kakaoPayload):
 
     kakaoForm.BasicCard_Add()
 
-    for pickupTime in pickupTimes:
+    orderTimeTable = OrderTimeSheet()
+
+    if(isCafe):
         dataActionExtra = {
             KAKAO_PARAM_STORE_ID: menu.store.store_id,
             KAKAO_PARAM_MENU_ID: menu.menu_id,
             KAKAO_PARAM_ORDER_ID: order.order_id,
-            KAKAO_PARAM_PICKUP_TIME: pickupTime.time.strftime('%H:%M'),
+            KAKAO_PARAM_PICKUP_TIME: orderTimeTable.GetLunchOrderPickupTimeStart().strftime('%H:%M'),
             KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_SET_PICKUP_TIME
         }
 
-        if(order != None):
-            dataActionExtra[KAKAO_PARAM_ORDER_ID] = order.order_id
-
         kakaoForm.QuickReplies_Add(
             'block',
-            "{}".format(pickupTime.time.strftime(
-                '%p %-I시 %-M분').replace('AM', '오전').replace('PM', '오후')),
+            "오전 11시 30분 ~ 오후 4시",
             '로딩중..',
             KAKAO_BLOCK_USER_SET_ORDER_SHEET,
             dataActionExtra
         )
+    else:
+        for pickupTime in pickupTimes:
+            dataActionExtra = {
+                KAKAO_PARAM_STORE_ID: menu.store.store_id,
+                KAKAO_PARAM_MENU_ID: menu.menu_id,
+                KAKAO_PARAM_ORDER_ID: order.order_id,
+                KAKAO_PARAM_PICKUP_TIME: pickupTime.time.strftime('%H:%M'),
+                KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_SET_PICKUP_TIME
+            }
+
+            if(order != None):
+                dataActionExtra[KAKAO_PARAM_ORDER_ID] = order.order_id
+
+            kakaoForm.QuickReplies_Add(
+                'block',
+                "{}".format(pickupTime.time.strftime(
+                    '%p %-I시 %-M분').replace('AM', '오전').replace('PM', '오후')),
+                '로딩중..',
+                KAKAO_BLOCK_USER_SET_ORDER_SHEET,
+                dataActionExtra
+            )
 
     return JsonResponse(kakaoForm.GetForm())
 
@@ -499,11 +528,19 @@ def kakaoView_OrderPayment(kakaoPayload):
         }
     ]
 
-    profile = {
-        'nickname': '픽업 시간 : {pickup_time}'.format(pickup_time=order.pickup_time.strftime(
-            '%p %-I시 %-M분').replace('AM', '오전').replace('PM', '오후'),),
-        'imageUrl': '{}{}'.format(HOST_URL, store.logoImgURL()),
-    }
+    isCafe = store.category.filter(name="카페").exists()
+    if(isCafe):
+        profile = {
+            'nickname': '픽업 시간 : {pickup_time}'.format(pickup_time=dateByTimeZone(order.pickup_time).strftime(
+                '%-m월 %-d일 오전 11시 30분 ~ 오후 4시')),
+            'imageUrl': '{}{}'.format(HOST_URL, store.logoImgURL()),
+        }
+    else:
+        profile = {
+            'nickname': '픽업 시간 : {pickup_time}'.format(pickup_time=order.pickup_time.strftime(
+                '%p %-I시 %-M분').replace('AM', '오전').replace('PM', '오후'),),
+            'imageUrl': '{}{}'.format(HOST_URL, store.logoImgURL()),
+        }
 
     kakaoMapUrl = 'https://map.kakao.com/link/map/{},{}'.format(
         store.name, menu.store.place)
@@ -594,12 +631,6 @@ def kakaoView_OrderPayment(kakaoPayload):
         kakaoForm.BasicCard_Add()
 
     GET_PICKUP_TIME_QUICKREPLIES_MAP = [
-        {
-            'action': 'block', 'label': '픽업시간 변경하기',
-            'messageText': '로딩중..',
-            'blockId': KAKAO_BLOCK_USER_SET_PICKUP_TIME,
-            'extra': dataActionExtra
-        },
         {
             'action': 'message', 'label': '홈으로 돌아가기',
             'messageText': '로딩중..',
@@ -753,12 +784,6 @@ def kakaoView_OrderPaymentCheck(kakaoPayload):
 
             QUICKREPLIES_MAP = [
                 {
-                    'action': 'block', 'label': '픽업시간 변경하기',
-                    'messageText': '로딩중..',
-                    'blockId': KAKAO_BLOCK_USER_SET_PICKUP_TIME,
-                    'extra': dataActionExtra
-                },
-                {
                     'action': 'message', 'label': '홈으로 돌아가기',
                     'messageText': '로딩중..',
                     'blockId': KAKAO_BLOCK_USER_HOME,
@@ -860,7 +885,14 @@ def kakaoView_EatplePassIssuance(kakaoPayload):
                     KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_EATPLE_PASS
                 }
             },
-            {
+        ]
+
+        isCafe = store.category.filter(name="카페").exists()
+        if(isCafe):
+            pickupTimeStr = dateByTimeZone(order.pickup_time).strftime(
+                '%-m월 %-d일 오전 11시 30분 ~ 오후 4시')
+        else:
+            buttons.append({
                 'action': 'block',
                 'label': '픽업시간 변경',
                 'messageText': '로딩중..',
@@ -869,8 +901,9 @@ def kakaoView_EatplePassIssuance(kakaoPayload):
                     KAKAO_PARAM_ORDER_ID: order.order_id,
                     KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_EATPLE_PASS
                 }
-            }
-        ]
+            })
+            pickupTimeStr = dateByTimeZone(order.pickup_time).strftime(
+                '%-m월 %-d일 %p %-I시 %-M분').replace('AM', '오전').replace('PM', '오후')
 
         kakaoForm.BasicCard_Push(
             '잇플패스 발급이 완료되었습니다.',
@@ -888,8 +921,7 @@ def kakaoView_EatplePassIssuance(kakaoPayload):
                 str(order.ordersheet.user.phone_number)[9:13],
                 order.store.name,
                 order.totalPrice,
-                dateByTimeZone(order.pickup_time).strftime(
-                    '%-m월 %-d일 %p %-I시 %-M분').replace('AM', '오전').replace('PM', '오후'),
+                pickupTimeStr,
             ),
             thumbnail,
             buttons
