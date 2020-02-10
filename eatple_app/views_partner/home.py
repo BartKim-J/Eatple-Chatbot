@@ -196,7 +196,7 @@ def GET_PartnerHome(request):
 
                         return GET_PartnerHome(request)
                     except Store.DoesNotExist as ex:
-                        return errorView('Get Invalid CRN', '잇플에 등록되지 않은 사업자 번호입니다.')
+                        return errorView('잘못된 사업자 등록번호', '잇플에 등록되지 않은 사업자 번호입니다.')
 
                     return kakaoView_StoreRegistration()
 

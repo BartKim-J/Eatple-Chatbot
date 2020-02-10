@@ -34,12 +34,12 @@ def kakaoView_UseEatplePass(kakaoPayload):
     # Block Validation
     prev_block_id = prevBlockValidation(kakaoPayload)
     if(prev_block_id != KAKAO_BLOCK_USER_GET_USE_EATPLE_PASS_CONFIRM):
-        return errorView('Invalid Block Access', '정상적이지 않은 경로거나, 오류가 발생했습니다.\n다시 주문해주세요!')
+        return errorView('잘못된 블럭 경로', '정상적이지 않은 경로거나, 오류가 발생했습니다.\n다시 주문해주세요!')
 
     # User Validation
     user = userValidation(kakaoPayload)
     if (user == None):
-        return errorView('Invalid Block Access', '정상적이지 않은 경로거나, 잘못된 계정입니다.')
+        return errorView('잘못된 블럭 경로', '정상적이지 않은 경로거나, 잘못된 계정입니다.')
 
     order = orderValidation(kakaoPayload)
     if(order == None):
@@ -130,7 +130,7 @@ def kakaoView_ConfirmUseEatplePass(kakaoPayload):
     # User Validation
     user = userValidation(kakaoPayload)
     if (user == None):
-        return errorView('Invalid Block Access', '정상적이지 않은 경로거나, 잘못된 계정입니다.')
+        return errorView('잘못된 블럭 경로', '정상적이지 않은 경로거나, 잘못된 계정입니다.')
 
     order = orderValidation(kakaoPayload)
     if(order == None):
@@ -251,12 +251,12 @@ def kakaoView_OrderCancel(kakaoPayload):
     # Block Validation
     prev_block_id = prevBlockValidation(kakaoPayload)
     if(prev_block_id != KAKAO_BLOCK_USER_EATPLE_PASS and prev_block_id != KAKAO_BLOCK_USER_SET_ORDER_SHEET):
-        return errorView('Invalid Block Access', '정상적이지 않은 경로거나, 오류가 발생했습니다.\n다시 주문해주세요!')
+        return errorView('잘못된 블럭 경로', '정상적이지 않은 경로거나, 오류가 발생했습니다.\n다시 주문해주세요!')
 
     # User Validation
     user = userValidation(kakaoPayload)
     if (user == None):
-        return errorView('Invalid Block Access', '정상적이지 않은 경로거나, 잘못된 계정입니다.')
+        return errorView('잘못된 블럭 경로', '정상적이지 않은 경로거나, 잘못된 계정입니다.')
 
     order = orderValidation(kakaoPayload)
     if(order == None):
@@ -348,12 +348,12 @@ def kakaoView_EditPickupTime(kakaoPayload):
     # Block Validation
     prev_block_id = prevBlockValidation(kakaoPayload)
     if(prev_block_id != KAKAO_BLOCK_USER_EATPLE_PASS):
-        return errorView('Invalid Block Access', '정상적이지 않은 경로거나, 오류가 발생했습니다.\n다시 주문해주세요!')
+        return errorView('잘못된 블럭 경로', '정상적이지 않은 경로거나, 오류가 발생했습니다.\n다시 주문해주세요!')
 
     # User Validation
     user = userValidation(kakaoPayload)
     if (user == None):
-        return errorView('Invalid Block Access', '정상적이지 않은 경로거나, 잘못된 계정입니다.')
+        return errorView('잘못된 블럭 경로', '정상적이지 않은 경로거나, 잘못된 계정입니다.')
 
     order = orderValidation(kakaoPayload)
     if(order == None):
@@ -461,12 +461,12 @@ def kakaoView_ConfirmEditPickupTime(kakaoPayload):
     # Block Validation
     prev_block_id = prevBlockValidation(kakaoPayload)
     if(prev_block_id != KAKAO_BLOCK_USER_EDIT_PICKUP_TIME):
-        return errorView('Invalid Block Access', '정상적이지 않은 경로거나, 오류가 발생했습니다.\n다시 주문해주세요!')
+        return errorView('잘못된 블럭 경로', '정상적이지 않은 경로거나, 오류가 발생했습니다.\n다시 주문해주세요!')
 
     # User Validation
     user = userValidation(kakaoPayload)
     if (user == None):
-        return errorView('Invalid Block Access', '정상적이지 않은 경로거나, 잘못된 계정입니다.')
+        return errorView('잘못된 블럭 경로', '정상적이지 않은 경로거나, 잘못된 계정입니다.')
 
     order = orderValidation(kakaoPayload)
     if(order == None and pickupTimeValidation == None):

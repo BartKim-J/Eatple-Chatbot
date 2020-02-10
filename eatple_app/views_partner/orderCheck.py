@@ -67,7 +67,7 @@ def kakaoView_OrderDetails(kakaoPayload):
     # Partner Validation
     partner = partnerValidation(kakaoPayload)
     if (partner == None):
-        return errorView('Invalid Block Access', '정상적이지 않은 경로거나, 잘못된 계정입니다.')
+        return errorView('잘못된 사용자 계정', '찾을 수 없는 사용자 계정 아이디입니다.')
 
     ORDER_LIST_QUICKREPLIES_MAP = [
         {
@@ -182,11 +182,10 @@ def kakaoView_OrderDetails(kakaoPayload):
 
 # @TODO
 def kakaoView_CalculateDetails(kakaoPaylaod):
-    
     # Partner Validation
     partner = partnerValidation(kakaoPayload)
     if (partner == None):
-        return errorView('Invalid Block Access', '정상적이지 않은 경로거나, 잘못된 계정입니다.')
+        return errorView('잘못된 사용자 계정', '찾을 수 없는 사용자 계정 아이디입니다.')
 
     return errorView('{}'.format(ex))
 

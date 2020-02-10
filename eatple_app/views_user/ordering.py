@@ -34,12 +34,12 @@ def kakaoView_MenuListup(kakaoPayload):
        prev_block_id != KAKAO_BLOCK_USER_EATPLE_PASS and
        prev_block_id != KAKAO_BLOCK_USER_ORDER_DETAILS and 
        prev_block_id != KAKAO_BLOCK_USER_SET_PICKUP_TIME):
-        return errorView('Invalid Block Access', '정상적이지 않은 경로거나, 오류가 발생했습니다.\n다시 주문해주세요!')
+        return errorView('잘못된 블럭 경로', '정상적이지 않은 경로거나 오류가 발생했습니다.')
 
     # User Validation
     user = userValidation(kakaoPayload)
     if (user == None):
-        return errorView('Invalid Block Access', '정상적이지 않은 경로거나, 잘못된 계정입니다.')
+        return errorView('잘못된 사용자 계정', '찾을 수 없는 사용자 계정 아이디입니다.')
 
     # Order Log Record
     orderRecordSheet = OrderRecordSheet()
@@ -237,12 +237,12 @@ def kakaoView_PickupTime(kakaoPayload):
     prev_block_id = prevBlockValidation(kakaoPayload)
     if( prev_block_id != KAKAO_BLOCK_USER_GET_MENU and
         prev_block_id != KAKAO_BLOCK_USER_SET_ORDER_SHEET):
-        return errorView('Invalid Block Access', '정상적이지 않은 경로거나, 오류가 발생했습니다.\n다시 주문해주세요!')
+        return errorView('잘못된 블럭 경로', '정상적이지 않은 경로거나, 오류가 발생했습니다.\n다시 주문해주세요!')
 
     # User Validation
     user = userValidation(kakaoPayload)
     if (user == None):
-        return errorView('Invalid Block Access', '정상적이지 않은 경로거나, 잘못된 계정입니다.')
+        return errorView('잘못된 블럭 경로', '정상적이지 않은 경로거나, 잘못된 계정입니다.')
 
     # User's Eatple Pass Validation
     eatplePassStatus = eatplePassValidation(user)
@@ -251,13 +251,13 @@ def kakaoView_PickupTime(kakaoPayload):
     
     order = orderValidation(kakaoPayload)
     if(order == None):
-        return errorView('Invalid Block Access', '정상적이지 않은 경로거나, 오류가 발생했습니다.\n홈으로 돌아가 다시 주문해주세요!')
+        return errorView('잘못된 블럭 경로', '정상적이지 않은 경로거나, 오류가 발생했습니다.\n홈으로 돌아가 다시 주문해주세요!')
 
     store = storeValidation(kakaoPayload)
     menu = menuValidation(kakaoPayload)
 
     if(store == None or menu == None):
-        return errorView('Invalid Store Paratmer', '정상적이지 않은 경로거나, 오류가 발생했습니다.\n다시 주문해주세요!')
+        return errorView('잘못된 블럭 경로', '정상적이지 않은 경로거나, 오류가 발생했습니다.\n다시 주문해주세요!')
     
     kakaoForm = KakaoForm()
 
@@ -387,12 +387,12 @@ def kakaoView_OrderPayment(kakaoPayload):
     # Block Validation
     prev_block_id = prevBlockValidation(kakaoPayload)
     if(prev_block_id != KAKAO_BLOCK_USER_SET_PICKUP_TIME and prev_block_id != KAKAO_BLOCK_USER_SET_ORDER_SHEET):
-        return errorView('Invalid Block Access', '정상적이지 않은 경로거나, 오류가 발생했습니다.\n다시 주문해주세요!')
+        return errorView('잘못된 블럭 경로', '정상적이지 않은 경로거나, 오류가 발생했습니다.\n다시 주문해주세요!')
 
     # User Validation
     user = userValidation(kakaoPayload)
     if (user == None):
-        return errorView('Invalid Block Access', '정상적이지 않은 경로거나, 잘못된 계정입니다.')
+        return errorView('잘못된 블럭 경로', '정상적이지 않은 경로거나, 잘못된 계정입니다.')
 
     # User's Eatple Pass Validation
     eatplePassStatus = eatplePassValidation(user)
@@ -404,11 +404,11 @@ def kakaoView_OrderPayment(kakaoPayload):
     pickup_time = pickupTimeValidation(kakaoPayload)
 
     if(store == None or menu == None or pickup_time == None):
-        return errorView('Invalid Store Paratmer', '정상적이지 않은 경로거나, 오류가 발생했습니다.\n다시 주문해주세요!')
+        return errorView('잘못된 블럭 경로', '정상적이지 않은 경로거나, 오류가 발생했습니다.\n다시 주문해주세요!')
     
     order = orderValidation(kakaoPayload)
     if(order == None):
-        return errorView('Invalid Store Paratmer', '정상적이지 않은 경로거나, 오류가 발생했습니다.\n다시 주문해주세요!')
+        return errorView('잘못된 블럭 경로', '정상적이지 않은 경로거나, 오류가 발생했습니다.\n다시 주문해주세요!')
     else:
         order.user = user
         order.menu = menu
@@ -598,12 +598,12 @@ def kakaoView_OrderPaymentCheck(kakaoPayload):
     # Block Validation
     prev_block_id = prevBlockValidation(kakaoPayload)
     if(prev_block_id != KAKAO_BLOCK_USER_SET_ORDER_SHEET):
-        return errorView('Invalid Block Access', '정상적이지 않은 경로거나, 오류가 발생했습니다.\n다시 주문해주세요!')
+        return errorView('잘못된 블럭 경로', '정상적이지 않은 경로거나, 오류가 발생했습니다.\n다시 주문해주세요!')
 
     # User Validation
     user = userValidation(kakaoPayload)
     if (user == None):
-        return errorView('Invalid Block Access', '정상적이지 않은 경로거나, 잘못된 계정입니다.')
+        return errorView('잘못된 블럭 경로', '정상적이지 않은 경로거나, 잘못된 계정입니다.')
 
     store = storeValidation(kakaoPayload)
     menu = menuValidation(kakaoPayload)
@@ -640,7 +640,7 @@ def kakaoView_OrderPaymentCheck(kakaoPayload):
         return JsonResponse(kakaoForm.GetForm())
         
     if(store == None or menu == None or order == None):
-        return errorView('Invalid Store Paratmer', '정상적이지 않은 경로거나, 오류가 발생했습니다.\n다시 주문해주세요!')
+        return errorView('잘못된 블럭 경로', '정상적이지 않은 경로거나, 오류가 발생했습니다.\n다시 주문해주세요!')
 
     # Order Record
     try:
@@ -769,18 +769,18 @@ def kakaoView_EatplePassIssuance(kakaoPayload):
         # Block Validation
         prev_block_id = prevBlockValidation(kakaoPayload)
         if(prev_block_id != KAKAO_BLOCK_USER_SET_ORDER_SHEET):
-            return errorView('Invalid Block Access', '정상적이지 않은 경로거나, 오류가 발생했습니다.')
+            return errorView('잘못된 블럭 경로', '정상적이지 않은 경로거나, 오류가 발생했습니다.')
 
         # User Validation
         user = userValidation(kakaoPayload)
         if (user == None):
-            return errorView('Invalid Block Access', '정상적이지 않은 경로거나, 오류가 발생했습니다.\n다시 주문해주세요!')
+            return errorView('잘못된 블럭 경로', '정상적이지 않은 경로거나, 오류가 발생했습니다.\n다시 주문해주세요!')
 
         store = storeValidation(kakaoPayload)
         menu = menuValidation(kakaoPayload)
         order = orderValidation(kakaoPayload)
         if(order == None):
-            return errorView('Invalid Store Paratmer', '정상적이지 않은 경로거나 이미 발급이 완료되었어요!')
+            return errorView('잘못된 블럭 경로', '정상적이지 않은 경로거나 이미 발급이 완료되었어요!')
         else:
             order.orderStatusUpdate()
 
@@ -995,7 +995,7 @@ def SET_OrderSheet(request):
         # Block Validation
         prev_block_id = prevBlockValidation(kakaoPayload)
         if(prev_block_id != KAKAO_BLOCK_USER_SET_PICKUP_TIME and prev_block_id != KAKAO_BLOCK_USER_SET_ORDER_SHEET):
-            return errorView('Invalid Store Paratmer', '정상적이지 않은 경로거나, 오류가 발생했습니다.\n다시 주문해주세요!')
+            return errorView('잘못된 블럭 경로', '정상적이지 않은 경로거나, 오류가 발생했습니다.\n다시 주문해주세요!')
 
         if(prev_block_id == KAKAO_BLOCK_USER_SET_PICKUP_TIME):
             return kakaoView_OrderPayment(kakaoPayload)

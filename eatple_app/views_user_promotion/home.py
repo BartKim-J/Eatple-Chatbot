@@ -88,7 +88,7 @@ def kakaoView_MenuListup(kakaoPayload):
      # User Validation
     user = userValidation(kakaoPayload)
     if (user == None):
-        return errorView('Invalid Block Access', '정상적이지 않은 경로거나, 잘못된 계정입니다.')
+        return errorView('잘못된 블럭 경로', '정상적이지 않은 경로거나, 잘못된 계정입니다.')
 
     # User's Eatple Pass Validation
     eatplePassStatus = PromotionEatplePassValidation(user)
@@ -97,7 +97,7 @@ def kakaoView_MenuListup(kakaoPayload):
 
     area = areaValidation(kakaoPayload)
     if(area == None):
-        return errorView('Invalid Area Code', '정상적이지 않은 경로거나, 오류가 발생했습니다.\n다시 주문해주세요!')
+        return errorView('잘못된 지역 코드', '정상적이지 않은 경로거나, 오류가 발생했습니다.')
 
     # Order Log Record
     orderRecordSheet = OrderRecordSheet()
@@ -117,7 +117,7 @@ def kakaoView_MenuListup(kakaoPayload):
             type=ORDER_TYPE_PROMOTION
         )
     else:
-        return errorView('Invalid Store Paratmer', '정상적이지 않은 경로거나, 오류가 발생했습니다.\n다시 주문해주세요!')
+        return errorView('스토어 검색 필요 인자 부족', '정상적이지 않은 경로거나, 오류가 발생했습니다.')
 
     menuList = Menu.objects.filter(
         store__area=area,
@@ -200,12 +200,12 @@ def kakaoView_OrderPayment(kakaoPayload):
     # Block Validation
     prev_block_id = prevBlockValidation(kakaoPayload)
     if(prev_block_id != KAKAO_BLOCK_USER_PROMOTION):
-        return errorView('Invalid Block Access', '정상적이지 않은 경로거나, 오류가 발생했습니다.\n다시 주문해주세요!')
+        return errorView('잘못된 블럭 경로', '정상적이지 않은 경로거나, 오류가 발생했습니다.\n다시 주문해주세요!')
 
     # User Validation
     user = userValidation(kakaoPayload)
     if (user == None):
-        return errorView('Invalid Block Access', '정상적이지 않은 경로거나, 잘못된 계정입니다.')
+        return errorView('잘못된 블럭 경로', '정상적이지 않은 경로거나, 잘못된 계정입니다.')
 
     # User's Eatple Pass Validation
     eatplePassStatus = PromotionEatplePassValidation(user)
@@ -223,7 +223,7 @@ def kakaoView_OrderPayment(kakaoPayload):
         pickup_time = None
 
     if(store == None or menu == None or pickup_time == None):
-        return errorView('Invalid Store Paratmer', '정상적이지 않은 경로거나, 오류가 발생했습니다.\n다시 주문해주세요!')
+        return errorView('잘못된 블럭 경로', '정상적이지 않은 경로거나, 오류가 발생했습니다.\n다시 주문해주세요!')
 
     discount = DISCOUNT_FOR_PROMOTION
     if(discount != None):
@@ -233,7 +233,7 @@ def kakaoView_OrderPayment(kakaoPayload):
 
     order = orderValidation(kakaoPayload)
     if(order == None):
-        return errorView('Invalid Store Paratmer', '정상적이지 않은 경로거나, 오류가 발생했습니다.\n다시 주문해주세요!')
+        return errorView('잘못된 블럭 경로', '정상적이지 않은 경로거나, 오류가 발생했습니다.\n다시 주문해주세요!')
     else:
         order.user = user
         order.menu = menu
@@ -362,12 +362,12 @@ def kakaoView_OrderPaymentCheck(kakaoPayload):
     # Block Validation
     prev_block_id = prevBlockValidation(kakaoPayload)
     if(prev_block_id != KAKAO_BLOCK_USER_PROMOTION):
-        return errorView('Invalid Block Access', '정상적이지 않은 경로거나, 오류가 발생했습니다.\n다시 주문해주세요!')
+        return errorView('잘못된 블럭 경로', '정상적이지 않은 경로거나, 오류가 발생했습니다.\n다시 주문해주세요!')
 
     # User Validation
     user = userValidation(kakaoPayload)
     if (user == None):
-        return errorView('Invalid Block Access', '정상적이지 않은 경로거나, 잘못된 계정입니다.')
+        return errorView('잘못된 블럭 경로', '정상적이지 않은 경로거나, 잘못된 계정입니다.')
 
     store = storeValidation(kakaoPayload)
     menu = menuValidation(kakaoPayload)
@@ -377,7 +377,7 @@ def kakaoView_OrderPaymentCheck(kakaoPayload):
         return kakaoView_OrderPayment(kakaoPayload)
 
     if(store == None or menu == None or order == None):
-        return errorView('Invalid Store Paratmer', '정상적이지 않은 경로거나, 오류가 발생했습니다.\n다시 주문해주세요!')
+        return errorView('잘못된 블럭 경로', '정상적이지 않은 경로거나, 오류가 발생했습니다.\n다시 주문해주세요!')
 
     # Order Record
     try:
@@ -460,12 +460,12 @@ def kakaoView_EatplePassIssuance(kakaoPayload):
         # Block Validation
         prev_block_id = prevBlockValidation(kakaoPayload)
         if(prev_block_id != KAKAO_BLOCK_USER_PROMOTION):
-            return errorView('Invalid Block Access', '정상적이지 않은 경로거나, 오류가 발생했습니다.')
+            return errorView('잘못된 블럭 경로', '정상적이지 않은 경로거나, 오류가 발생했습니다.')
 
         # User Validation
         user = userValidation(kakaoPayload)
         if (user == None):
-            return errorView('Invalid Block Access', '정상적이지 않은 경로거나, 오류가 발생했습니다.\n다시 주문해주세요!')
+            return errorView('잘못된 블럭 경로', '정상적이지 않은 경로거나, 오류가 발생했습니다.\n다시 주문해주세요!')
 
         store = storeValidation(kakaoPayload)
         menu = menuValidation(kakaoPayload)
@@ -474,7 +474,7 @@ def kakaoView_EatplePassIssuance(kakaoPayload):
         order.orderStatusUpdate()
 
         if(order == None):
-            return errorView('Invalid Store Paratmer', '정상적이지 않은 경로거나 이미 발급이 완료되었어요!')
+            return errorView('잘못된 블럭 경로', '정상적이지 않은 경로거나 이미 발급이 완료되었어요!')
 
         # Order Record
         try:

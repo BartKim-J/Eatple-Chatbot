@@ -38,7 +38,7 @@
           <!-- Sidebar - Brand -->
           <a class="sidebar-brand d-flex align-items-center justify-content-center" href="/">
             <div class="sidebar-brand-icon rotate-n-15">
-              <i class="fas fa-book"></i>
+              <i class="fas fa-tools"></i>
             </div>
             <div class="sidebar-brand-text mx-3">Eatple<sup> 1.0.0V</sup></div>
           </a>
@@ -109,27 +109,8 @@
                 <!-- 4 Card -->
                 <div class="row">
 
-                  <!-- Toal Eatplepass Card  -->
-                  <div class="col-xl-3 col-md-6 mb-4">
-                    <div class="card border-bottom-primary shadow py-2">
-                      <div class="card-body">
-                        <div class="row no-gutters align-items-center">
-                          <div class="col mr-2">
-                            <div class="text-xs font-weight-bold text-secondary text-uppercase mb-1">총 발급된 잇플패스</div>
-                            <div class="h6 font-weight-bold text-success"><i class="fas fa-angle-up"></i> {{ totalStock }}</div>
-                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ totalOrder }} 잇플패스</div>
-                          </div>
-                          <div class="col-auto">
-                            <i class="fas fa-ticket-alt fa-2x text-gray-300"></i>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-
                   <!-- Daily Selled Card -->
-                  <div class="col-xl-3 col-md-6 mb-4">
+                  <div class="col-xl-4 col-md-6 mb-4">
                     <div class="card border-bottom-primary shadow py-2">
                       <div class="card-body">
                         <div class="row no-gutters align-items-center">
@@ -147,7 +128,7 @@
                   </div>
 
                   <!-- Earnings (Monthly) Card Example -->
-                  <div class="col-xl-3 col-md-6 mb-4">
+                  <div class="col-xl-4 col-md-6 mb-4">
                     <div class="card border-bottom-primary shadow py-2">
                       <div class="card-body">
                         <div class="row no-gutters align-items-center">
@@ -165,19 +146,19 @@
                   </div>
                                     
                   <!-- Daily Earning Card -->
-                  <div class="col-xl-3 col-md-6 mb-4">
+                  <div class="col-xl-4 col-md-6 mb-4">
                     <div class="card border-bottom-primary shadow py-2">
                       <div class="card-body">
                         <div class="row no-gutters align-items-center">
                           <div class="col mr-2">
-                            <div class="text-xs font-weight-bold text-secondary text-uppercase mb-1">오늘의 거래액</div>
-                            <div class="h6 font-weight-bold" id="TotalPriceStatus"><i id="TotalPriceStatusIcon" class="fas"></i> {{ totalPriceIncrease }}</div>
+                            <div class="text-xs font-weight-bold text-secondary text-uppercase mb-1">활성화된 점포</div>
+                            <div class="h6 font-weight-bold" id="WASStatus"><i id="WASStatusIcon" class="fas"></i> {{ WASIncrease }}</div>
                             <div class="h5 mb-0 font-weight-bold text-gray-800">
-                              {{ totalPrice|intcomma }}원
+                              {{ WAS }} 점포
                             </div>
                           </div>
                           <div class="col-auto">
-                            <i class="fas fa-won-sign fa-2x text-gray-300"></i>
+                            <i class="fas fa-store fa-2x text-gray-300"></i>
                           </div>
                         </div>
                       </div>
@@ -195,7 +176,7 @@
                       </div>
                       <div class="card-body">
                         <div class="table-responsive">
-                          <table class="table table-sm small table-hover" id="dataTable" width="100%" cellspacing="0">
+                          <table class="table table-sm small table-borderless table-hover" id="dataTable" width="100%" cellspacing="0">
                             <thead class="">
                                 <tr >
                                   <th style="border-bottom: none;" scope="col">점포명</th>
@@ -208,11 +189,11 @@
                             <tbody>
                               {% for store in stores %}
                                 <tr>
-                                  <th><a href="{{ site.url }}/admin/eatple_app/store/{{ menu.store.id }}/#/tab/inline_1/">{{ store.name }}</a></th>
+                                  <th><a href="{{ site.url }}/admin/eatple_app/store/{{ store.id }}/#/tab/inline_1/">{{ store.name }}</a></th>
                                   <td>{{ store.id|storeType }}</td>
                                   <td>{{ store.id|storePhoneNumber }}</td>
-                                  <td style=" padding: 0;">
-                                    <table class="table table-striped" width="100%" cellspacing="0">
+                                  <td>
+                                    <table class="table thead-light">
                                       <thead>
                                         <tr class="small row">
                                           <th style="border-bottom: none; border-top: none;" class="col-md-4"><small>메뉴명</small></th>
@@ -257,13 +238,7 @@
 
           <!-- Footer -->
           <footer class="text-muted">
-            <div class="container">
-              <p class="float-right">
-                <a href="">위로 올라가버리기</a>
-              </p>
-              <p>요것은 잇플 관리자의 푸터라는 말씀입니다.</p>
-              <p>어쩌실껀가여? <a href="{{ site.url }}/">다시 홈으로 가보실라우?</a> 아니면 <a href="{{ site.baseurl }}/admin"> 어드민 가던가</a>.</p>
-            </div>
+            <a id="scroll-to-top" href="#" class="btn btn-primary btn-lg scroll-to-top-btn" role="button"><i class="fas fa-chevron-up"></i></a>
           </footer>
           <!-- End of Footer -->
           
@@ -293,16 +268,16 @@
     {% compress js %}
       <script>
         totalStockIncrease = '{{ totalStockIncrease }}'
-        totalPriceIncrease = '{{ totalPriceIncrease }}'        
+        
+
+        WASIncrease = '{{ WASIncrease }}'     
       </script>
       <script type="text/javascript" src="{% static 'dashboard/js/base.js' %}"></script>
+      <script type="text/javascript" src="{% static 'dashboard/js/scroll-to-top.js' %}"></script>
       <script type="text/javascript" src="{% static 'dashboard/js/sb-admin-2.js' %}"></script>
       <script type="text/javascript" src="{% static 'dashboard/js/datatables.init.js' %}"></script>
-      <script type="text/javascript" src="{% static 'dashboard/js/chart-status.js' %}"></script>
+      <script type="text/javascript" src="{% static 'dashboard/js/card-status.init.js' %}"></script>
     {% endcompress %}
 
   </body>
-
-
-
 </html>

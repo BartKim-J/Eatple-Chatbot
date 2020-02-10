@@ -261,6 +261,29 @@ def getMAU(currentDate):
     
     return len(MAU)
     
+def getWAS(currentDate):
+    currentDateWithoutTime = currentDate.replace(
+        hour=0, minute=0, second=0, microsecond=0)
+    
+    WAUStartDate = currentDateWithoutTime + datetime.timedelta(days=-7)
+    WAUEndDate = currentDateWithoutTime
+    
+    WAS = Order.objects.filter(
+        Q(payment_date__gte=WAUStartDate) &
+        Q(payment_date__lt=WAUEndDate) &
+        (
+            Q(payment_status=IAMPORT_ORDER_STATUS_PAID) | 
+            Q(payment_status=IAMPORT_ORDER_STATUS_CANCELLED) |
+            Q(payment_status=IAMPORT_ORDER_STATUS_FAILED) | 
+            Q(payment_status=IAMPORT_ORDER_STATUS_NOT_PUSHED) |
+            Q(payment_status=IAMPORT_ORDER_STATUS_READY)
+        )
+    ).values_list("store_id")
+    
+    WAS = list(set(WAS))
+    
+    return len(WAS)
+
 ########################################################################
 # TEMPLATES
 def dashboard(request):
@@ -366,6 +389,10 @@ def sales_dashboard(request):
 
     areaData = getOrderChartData(currentDate)
 
+    prevWAS = getWAS(currentDate + datetime.timedelta(days=-1))
+    
+    WAS = getWAS(currentDate)
+
     areaDataList = areaData.split(",")
     prevTotalStock = int(areaDataList[len(areaDataList)-2])
     totalStock = 0
@@ -381,13 +408,13 @@ def sales_dashboard(request):
         'menus': menuList,
         'stores': storeList,
 
+        'WASIncrease': WAS - prevWAS,
+        'WAS': WAS,
+        
         'totalStockIncrease': totalStock - prevTotalStock,
         'totalStock': totalStock,
 
         'totalPickuped': totalPickuped,
-
-        'totalPriceIncrease': (totalStock * 6000) - (prevTotalStock * 6000),
-        'totalPrice': totalStock * 6000,
 
         'totalOrder': totalOrder,
         'orderFailed': orderFailed,
@@ -414,7 +441,11 @@ def sales_menulist(request):
         create_date__gte=currentDateWithoutTime).count()
 
     areaData = getOrderChartData(currentDate)
-
+    
+    prevWAS = getWAS(currentDate + datetime.timedelta(days=-1))
+    
+    WAS = getWAS(currentDate)
+    
     areaDataList = areaData.split(",")
     prevTotalStock = int(areaDataList[len(areaDataList)-2])
     totalStock = 0
@@ -430,13 +461,13 @@ def sales_menulist(request):
         'menus': menuList,
         'stores': storeList,
 
+        'WASIncrease': WAS - prevWAS,
+        'WAS': WAS,
+        
         'totalStockIncrease': totalStock - prevTotalStock,
         'totalStock': totalStock,
 
         'totalPickuped': totalPickuped,
-
-        'totalPriceIncrease': (totalStock * 6000) - (prevTotalStock * 6000),
-        'totalPrice': totalStock * 6000,
 
         'totalOrder': totalOrder,
         'orderFailed': orderFailed,

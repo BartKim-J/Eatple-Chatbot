@@ -38,7 +38,7 @@
           <!-- Sidebar - Brand -->
           <a class="sidebar-brand d-flex align-items-center justify-content-center" href="/">
             <div class="sidebar-brand-icon rotate-n-15">
-              <i class="fas fa-book"></i>
+              <i class="fas fa-tools"></i>
             </div>
             <div class="sidebar-brand-text mx-3">Eatple<sup> 1.0.0V</sup></div>
           </a>
@@ -321,6 +321,7 @@
                   </div>
                 </div>
 
+                
               </div>
             </div>
           </div>
@@ -328,13 +329,7 @@
 
           <!-- Footer -->
           <footer class="text-muted">
-            <div class="container">
-              <p class="float-right">
-                <a href="">위로 올라가버리기</a>
-              </p>
-              <p>요것은 잇플 관리자의 푸터라는 말씀입니다.</p>
-              <p>어쩌실껀가여? <a href="{{ site.url }}/">다시 홈으로 가보실라우?</a> 아니면 <a href="{{ site.baseurl }}/admin"> 어드민 가던가</a>.</p>
-            </div>
+            <a id="scroll-to-top" href="#" class="btn btn-primary btn-lg scroll-to-top-btn" role="button"><i class="fas fa-chevron-up"></i></a>
           </footer>
           <!-- End of Footer -->
           
@@ -387,6 +382,7 @@
         
       </script>
       <script type="text/javascript" src="{% static 'dashboard/js/base.js' %}"></script>
+      <script type="text/javascript" src="{% static 'dashboard/js/scroll-to-top.js' %}"></script>
       <script type="text/javascript" src="{% static 'dashboard/js/sb-admin-2.js' %}"></script>
       <script type="text/javascript" src="{% static 'dashboard/js/datatables.init.js' %}"></script>
       <script type="text/javascript" src="{% static 'dashboard/js/card-status.init.js' %}"></script>
