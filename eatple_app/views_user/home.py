@@ -251,12 +251,12 @@ def kakaoView_Home(user):
     # UPDATE NOTIY
     if(isB2BUser(user)):
         kakaoForm.BasicCard_Push(
-            '※ {} {} {}.{}.{}v'.format(
+            '❊ {} ᴠ{}.{}.{}({})'.format(
                 VERSION_CODE,
-                VERSION_LEVEL,
                 MAJOR_VERSION,
                 MINOR_VERSION,
-                BUILD_VERSION),
+                BUILD_VERSION,
+                VERSION_LEVEL,),
             '- 카페 메뉴 픽업가능시간이 상시로 변경되었습니다. ',
             {},
             []
