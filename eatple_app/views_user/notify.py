@@ -52,7 +52,7 @@ def kakaoView_notifiy(kakaoPayload):
 
     kakaoForm.ListCard_Push(
         '카페 메뉴 픽업 가능시간이 상시로 변경되었습니다.',
-        '2020.01.20',
+        '2020.02.10',
         None,
         None
     )
