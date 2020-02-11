@@ -119,6 +119,7 @@ def kakaoView_GetDelegateUser(kakaoPayload):
 
     orderManager = UserOrderManager(delegateUser)
     orderManager.orderPaidCheck()
+    orderManager.orderPenddingCleanUp()
 
     delegateUserOrder = orderManager.availableOrderStatusUpdate().filter(
         Q(ordersheet__user=delegateUser)).first()

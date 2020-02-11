@@ -752,7 +752,20 @@ def kakaoView_OrderPaymentCheck(kakaoPayload):
             return JsonResponse(kakaoForm.GetForm())
 
         order.payment_status = IAMPORT_ORDER_STATUS_PAID
+        order.status = ORDER_STATUS_ORDER_CONFIRMED
         order.save()
+
+        if(order.payment_status != IAMPORT_ORDER_STATUS_PAID):
+            kakaoForm.BasicCard_Push(
+                '주문에 실패하였습니다.',
+                '죄송하지만 처음부터 다시 주문해주세요..',
+                {},
+                []
+            )
+            kakaoForm.BasicCard_Add()
+            kakaoForm.QuickReplies_AddWithMap(QUICKREPLIES_MAP)
+
+            return JsonResponse(kakaoForm.GetForm())
 
         return kakaoView_EatplePassIssuance(kakaoPayload)
 
@@ -828,7 +841,20 @@ def kakaoView_EatplePassIssuance(kakaoPayload):
         else:
             order.orderStatusUpdate()
 
+        if(order.payment_status != IAMPORT_ORDER_STATUS_PAID):
+            kakaoForm.BasicCard_Push(
+                '주문에 실패하였습니다.',
+                '죄송하지만 처음부터 다시 주문해주세요..',
+                {},
+                []
+            )
+            kakaoForm.BasicCard_Add()
+            kakaoForm.QuickReplies_AddWithMap(QUICKREPLIES_MAP)
+
+            return JsonResponse(kakaoForm.GetForm())
+            
         orderManager = UserOrderManager(user)
+        orderManager.orderPaidCheck()
         orderManager.orderPenddingCleanUp()
 
         # Order Record

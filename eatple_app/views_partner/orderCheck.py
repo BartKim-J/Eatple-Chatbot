@@ -95,6 +95,7 @@ def kakaoView_OrderDetails(kakaoPayload):
     if(orderCheckTimeValidation()):
         orderManager = PartnerOrderManager(partner)
         orderManager.orderPaidCheck()
+        orderManager.orderPenddingCleanUp()
 
         availableOrders = orderManager.getAvailableOrders()
 

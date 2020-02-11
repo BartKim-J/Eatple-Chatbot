@@ -112,6 +112,15 @@ def kakaoView_UseEatplePass(kakaoPayload):
         kakaoForm.BasicCard_Add()
 
         kakaoForm.QuickReplies_AddWithMap(QUICKREPLIES_MAP)
+    elif(order.status == ORDER_STATUS_ORDER_FAILED):
+        kakaoForm.BasicCard_Push(
+            ' - 주의! -',
+            '결제 실패한 잇플패스입니다. 다시 주문을 확인해주세요',
+            {}, []
+        )
+        kakaoForm.BasicCard_Add()
+
+        kakaoForm.QuickReplies_AddWithMap(QUICKREPLIES_MAP)
     else:
         kakaoForm.BasicCard_Push(
             '사용 가능한 픽업 시간이 아닙니다!',
@@ -229,6 +238,15 @@ def kakaoView_ConfirmUseEatplePass(kakaoPayload):
         kakaoForm.BasicCard_Push(
             ' - 주의! -',
             '이미 사용된 잇플패스입니다. 다시 주문을 정확히 확인해주세요.',
+            {}, []
+        )
+        kakaoForm.BasicCard_Add()
+
+        kakaoForm.QuickReplies_AddWithMap(QUICKREPLIES_MAP)
+    elif(order.status == ORDER_STATUS_ORDER_FAILED):
+        kakaoForm.BasicCard_Push(
+            ' - 주의! -',
+            '결제 실패한 잇플패스입니다. 다시 주문을 확인해주세요',
             {}, []
         )
         kakaoForm.BasicCard_Add()

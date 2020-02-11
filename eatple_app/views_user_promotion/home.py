@@ -53,6 +53,7 @@ def areaValidation(kakaoPayload):
 def PromotionEatplePassValidation(user):
     orderManager = UserOrderManager(user)
     orderManager.orderPaidCheck()
+    orderManager.orderPenddingCleanUp()
 
     orderManager.availableOrderStatusUpdate()
 
