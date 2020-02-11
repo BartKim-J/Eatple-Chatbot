@@ -752,7 +752,6 @@ def kakaoView_OrderPaymentCheck(kakaoPayload):
             return JsonResponse(kakaoForm.GetForm())
 
         order.payment_status = IAMPORT_ORDER_STATUS_PAID
-        order.status = ORDER_STATUS_ORDER_CONFIRMED
         order.save()
 
         if(order.payment_status != IAMPORT_ORDER_STATUS_PAID):

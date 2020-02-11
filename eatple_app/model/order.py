@@ -165,6 +165,7 @@ def orderUpdate(order):
         print('메뉴 선택중')
 
     if(order.payment_status == IAMPORT_ORDER_STATUS_PAID):
+        print(order.status)
         if(order.status == ORDER_STATUS_MENU_CHOCIED):
             order.status = ORDER_STATUS_ORDER_CONFIRM_WAIT
             order.save()
@@ -280,8 +281,8 @@ def orderUpdate(order):
 
             # Invalid Time Range is Dinner Order Time ( prev phase lunch order ~ dinner order ~ next phase lunch order )
             else:
-                print("픽업 완료 - ERROR")
-                order.status = ORDER_STATUS_PICKUP_COMPLETED
+                print("주문 완료 - ERROR")
+                order.status = ORDER_STATUS_ORDER_CONFIRMED
 
     # Dinner Order
     elif (SELLING_TIME_DINNER == menu.selling_time) and (paymentDateWithoutTime == TODAY):

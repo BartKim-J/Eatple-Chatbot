@@ -11,9 +11,9 @@ if(settings.SETTING_ID == 'DEPLOY'):
 
 elif(settings.SETTING_ID == 'DEBUG'):
     ORDERING_DEBUG_MODE = False
-    ORDER_TIME_CHECK_DEBUG_MODE = True
+    ORDER_TIME_CHECK_DEBUG_MODE = False
     VALIDATION_DEBUG_MODE = False
-    USER_ID_DEBUG_MODE = True
+    USER_ID_DEBUG_MODE = False
 
 else:
     ORDERING_DEBUG_MODE = False
