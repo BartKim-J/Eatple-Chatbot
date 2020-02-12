@@ -8,6 +8,7 @@ from django.db import models
 from django.db.models import Q
 from django_mysql.models import Model
 
+from eatple_app.model.orderRecord import OrderRecordSheet, OrderRecord
 
 def iamportOrderValidation(order):
     iamport = Iamport(imp_key=IAMPORT_API_KEY,
@@ -20,14 +21,14 @@ def iamportOrderValidation(order):
     except Iamport.ResponseError as e:
         order.payment_status = IAMPORT_ORDER_STATUS_FAILED
         order.save()
-        print(e.code)
-        print(e.message)
+        #print(e.code)
+        #print(e.message)
 
         return order
 
     except Iamport.HttpError as http_error:
-        print(http_error.code)
-        print(http_error.reason)
+        #print(http_error.code)
+        #print(http_error.reason)
 
         if(order.payment_status != IAMPORT_ORDER_STATUS_FAILED):
             order.payment_status = IAMPORT_ORDER_STATUS_NOT_PUSHED
@@ -35,7 +36,6 @@ def iamportOrderValidation(order):
 
         return order
 
-    print(response['status'])
     order.payment_status = response['status']
     order.save()
 
@@ -125,6 +125,7 @@ def promotionOrderUpdate(order):
 
 
 def orderUpdate(order):
+    print('주문 상태 =>')
     # B2B User Pass
     if(order.ordersheet.user.type == USER_TYPE_B2B and
        order.ordersheet.user.company != None and
@@ -165,7 +166,6 @@ def orderUpdate(order):
         print('메뉴 선택중')
 
     if(order.payment_status == IAMPORT_ORDER_STATUS_PAID):
-        print(order.status)
         if(order.status == ORDER_STATUS_MENU_CHOCIED):
             order.status = ORDER_STATUS_ORDER_CONFIRM_WAIT
             order.save()
@@ -446,6 +446,8 @@ class Order(models.Model):
         return orderUpdate(self)
 
     def orderCancel(self):
+        isCancelled = False
+
         # @SLACK LOGGER
         SlackLogCancelOrder(self)
 
@@ -455,15 +457,41 @@ class Order(models.Model):
            self.ordersheet.user.company.status != OC_CLOSE):
             self.payment_status = IAMPORT_ORDER_STATUS_CANCELLED
             self.save()
-            return True
+            
+            isCancelled = True
         else:
-            return iamportOrderCancel(self)
+            isCancelled = iamportOrderCancel(self)
+
+        if(isCancelled):
+            # Order Record
+            try:
+                orderRecordSheet = OrderRecordSheet.objects.get(order=self)
+            except OrderRecordSheet.DoesNotExist:
+                orderRecordSheet = OrderRecordSheet()
+
+            orderRecordSheet.user = self.ordersheet.user
+            orderRecordSheet.order = self
+            orderRecordSheet.paid = True
+            orderRecordSheet.recordUpdate(ORDER_RECORD_PAYMENT_CANCELED)
+
+        return isCancelled
 
     def orderUsed(self):
         self.status = ORDER_STATUS_PICKUP_COMPLETED
         self.pickup_complete_date = dateNowByTimeZone()
         self.save()
 
+        # Order Record
+        try:
+            orderRecordSheet = OrderRecordSheet.objects.get(order=self)
+        except OrderRecordSheet.DoesNotExist:
+            orderRecordSheet = OrderRecordSheet()
+
+        orderRecordSheet.user = self.ordersheet.user
+        orderRecordSheet.order = self
+        orderRecordSheet.paid = True
+        orderRecordSheet.recordUpdate(ORDER_RECORD_PAYMENT_COMPLETED)
+            
         return self
 
     def orderDelegate(self, order):

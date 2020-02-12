@@ -188,7 +188,16 @@ def kakaoView_ConfirmUseEatplePass(kakaoPayload):
 
         return JsonResponse(kakaoForm.GetForm())
 
-    if(order.status == ORDER_STATUS_PICKUP_WAIT):
+    if(order.status == ORDER_STATUS_ORDER_CANCELED):
+        kakaoForm.BasicCard_Push(
+            ' - 주의! -',
+            '이 잇플패스는 이미 취소된 잇플패스입니다. 다시 주문을 정확히 확인해주세요.',
+            {}, []
+        )
+        kakaoForm.BasicCard_Add()
+
+        kakaoForm.QuickReplies_AddWithMap(QUICKREPLIES_MAP)
+    elif(order.status == ORDER_STATUS_PICKUP_WAIT):
         thumbnail = {
             'fixedRatio': 'true'
         }
@@ -303,6 +312,18 @@ def kakaoView_OrderCancel(kakaoPayload):
     ]
 
     kakaoForm = KakaoForm()
+
+    if(order.status == ORDER_STATUS_ORDER_CANCELED):
+        kakaoForm.BasicCard_Push(
+            '이 잇플패스는 이미 취소된 잇플패스입니다.',
+            '다시 주문을 확인해주세요.',
+            {}, []
+        )
+        kakaoForm.BasicCard_Add()
+
+        kakaoForm.QuickReplies_AddWithMap(QUICKREPLIES_MAP)
+
+        return JsonResponse(kakaoForm.GetForm())
 
     if (order.status == ORDER_STATUS_ORDER_CONFIRM_WAIT or
             order.status == ORDER_STATUS_ORDER_CONFIRMED):
@@ -658,15 +679,14 @@ def POST_UseEatplePass(request):
 def POST_OrderCancel(request):
     EatplusSkillLog('POST_OrderCancel')
 
-    try:
-        kakaoPayload = KakaoPayLoad(request)
 
-        # User Validation
-        user = userValidation(kakaoPayload)
-        if (user == None):
-            return GET_UserHome(request)
+    kakaoPayload = KakaoPayLoad(request)
 
-        return kakaoView_OrderCancel(kakaoPayload)
+    # User Validation
+    user = userValidation(kakaoPayload)
+    if (user == None):
+        return GET_UserHome(request)
 
-    except (RuntimeError, TypeError, NameError, KeyError) as ex:
-        return errorView('{}'.format(ex))
+    return kakaoView_OrderCancel(kakaoPayload)
+
+

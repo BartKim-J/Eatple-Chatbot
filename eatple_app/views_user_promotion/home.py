@@ -461,7 +461,7 @@ def kakaoView_EatplePassIssuance(kakaoPayload):
         # Block Validation
         prev_block_id = prevBlockValidation(kakaoPayload)
         if(prev_block_id != KAKAO_BLOCK_USER_PROMOTION):
-            return errorView('잘못된 블럭 경로', '정상적이지 않은 경로거나, 오류가 발생했습니다.')
+            return errorView('잘못된 블럭 경로', '정상적이지 않은 블럭 경로입니다.')
 
         # User Validation
         user = userValidation(kakaoPayload)

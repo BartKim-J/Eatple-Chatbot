@@ -83,6 +83,30 @@ def kakaoView_GetDelegateUser(kakaoPayload):
 
     kakaoParam_phone_number = kakaoPayload.dataActionParams['phone_number']['origin']
 
+
+    if(order.status == ORDER_STATUS_ORDER_CANCELED):
+        kakaoForm.BasicCard_Push(
+            ' - 주의! -',
+            '이미 취소된 잇플패스입니다. 다시 주문을 정확히 확인해주세요.',
+            {}, []
+        )
+        kakaoForm.BasicCard_Add()
+
+        kakaoForm.QuickReplies_AddWithMap(QUICKREPLIES_MAP)
+
+    elif(order.status == ORDER_STATUS_PICKUP_COMPLETED):
+
+        kakaoForm.BasicCard_Push(
+            ' - 주의! -',
+            '이미 사용된 잇플패스입니다. 다시 주문을 정확히 확인해주세요.',
+            {}, []
+        )
+        kakaoForm.BasicCard_Add()
+
+        kakaoForm.QuickReplies_AddWithMap(QUICKREPLIES_MAP)
+
+    return JsonResponse(kakaoForm.GetForm())
+
     try:
         phone_number = phonenumbers.format_number(
             phonenumbers.parse(
@@ -130,7 +154,7 @@ def kakaoView_GetDelegateUser(kakaoPayload):
             order.status != ORDER_STATUS_PICKUP_PREPARE):
 
         kakaoForm.BasicCard_Push(
-            '현재는 부탁하기 취소가 불가능한 시간입니다.',
+            '현재는 부탁하기가 불가능한 시간입니다.',
             '부탁 가능 시간 : 픽업 시간 15분 전까지',
             {},
             []

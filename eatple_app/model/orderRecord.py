@@ -43,24 +43,36 @@ class OrderRecordSheet(models.Model):
     user = models.ForeignKey(
         'User',
         on_delete=models.CASCADE,
-        null=True
+        null=True,
+        verbose_name="사용자"
     )
 
-    menu = models.ForeignKey(
-        'Menu',
+    order = models.ForeignKey(
+        'Order',
         on_delete=models.CASCADE,
-        null=True
+        null=True,
+        verbose_name="주문 번호"
     )
 
-    paid = models.BooleanField(default=False)
+    paid = models.BooleanField(
+        default=False, 
+        verbose_name="결제 완료 여부"
+    )
 
-    status = models.BooleanField(default=False)
+    status = models.BooleanField(
+        default=False, 
+        verbose_name="메뉴 선택 여부"
+    )
 
-    update_date = models.DateTimeField(auto_now=True)
-    created_date = models.DateTimeField(auto_now_add=True)
+    update_date = models.DateTimeField(
+        auto_now=True,
+        verbose_name="마지막 기록 시간"
+    )
 
-    def save(self, *args, **kwargs):
-        super().save()
+    created_date = models.DateTimeField(
+        auto_now_add=True,
+         verbose_name="주문 시작 시간"
+    )
 
     def recordUpdate(self, status, *args, **kwargs):
         isVertification = True
@@ -68,11 +80,14 @@ class OrderRecordSheet(models.Model):
         if(self.user == None):
             isVertification = False
 
-        elif(self.menu == None):
-            isVertification = False
+        elif(self.order == None):
+            if(self.order.menu == None):
+                isVertification = False
+
+        print("Order Record : {}".format(dict(ORDER_RECORD)[status]))
 
         self.status = isVertification
-        super().save()
+        self.save()
 
         orderRecord = OrderRecord(order_record_sheet=self, status=status)
         orderRecord.save()
@@ -80,16 +95,14 @@ class OrderRecordSheet(models.Model):
     def timeoutValidation(self):
         timeOut = False
 
-        if(ORDER_TIME_CHECK_DEBUG_MODE):
-            latest_date = dateNowByTimeZone()
-        else:
-            latest_date = dateByTimeZone(self.update_date)
+        deadline = dateByTimeZone(self.update_date) + datetime.timedelta(minutes=30)
 
         current_date = dateNowByTimeZone()
 
-        if (latest_date + datetime.timedelta(minutes=30) < current_date):
+        if (deadline < current_date):
             timeOut = True
 
+        print("Time Out : {}, {} < {}".format(timeOut, deadline, current_date))
         return timeOut
 
     # Methods

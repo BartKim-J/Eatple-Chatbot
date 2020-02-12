@@ -36,41 +36,36 @@ def kakaoView_MenuListup(kakaoPayload):
        prev_block_id != KAKAO_BLOCK_USER_EATPLE_PASS and
        prev_block_id != KAKAO_BLOCK_USER_ORDER_DETAILS and
        prev_block_id != KAKAO_BLOCK_USER_SET_PICKUP_TIME):
-        return errorView('잘못된 블럭 경로', '정상적이지 않은 경로거나 오류가 발생했습니다.')
+        return errorView('잘못된 블럭 경로', '정상적이지 않은 블럭 경로입니다.')
 
     # User Validation
     user = userValidation(kakaoPayload)
     if (user == None):
         return errorView('잘못된 사용자 계정', '찾을 수 없는 사용자 계정 아이디입니다.')
 
+    orderSheet = OrderSheet()
+    order = orderSheet.pushOrder(
+        user=user,
+        menu=None,
+        store=None,
+        pickup_time='00:00',
+        totalPrice=0,
+        count=1,
+        type=ORDER_TYPE_NORMAL
+    )
+
+    if(isB2BUser(user)):
+        order.type = ORDER_TYPE_B2B
+    else:
+        order.type = ORDER_TYPE_NORMAL
+
+    order.save()
+
     # Order Log Record
     orderRecordSheet = OrderRecordSheet()
     orderRecordSheet.user = user
+    orderRecordSheet.order = order
     orderRecordSheet.recordUpdate(ORDER_RECORD_GET_MENU)
-
-    order = orderValidation(kakaoPayload)
-    if(order == None):
-        orderSheet = OrderSheet()
-        order = orderSheet.pushOrder(
-            user=user,
-            menu=None,
-            store=None,
-            pickup_time='00:00',
-            totalPrice=0,
-            count=1,
-            type=ORDER_TYPE_NORMAL
-        )
-
-        if(isB2BUser(user)):
-            order.type = ORDER_TYPE_B2B
-        else:
-            order.type = ORDER_TYPE_NORMAL
-
-        order.save()
-    else:
-        order.pickup_time = order.pickupTimeToDateTime(pickup_time)
-        order.totalPrice = menu.price
-        order.save()
 
     # @PROMOTION
     # currentSellingTime = sellingTimeCheck()
@@ -254,12 +249,12 @@ def kakaoView_PickupTime(kakaoPayload):
     prev_block_id = prevBlockValidation(kakaoPayload)
     if(prev_block_id != KAKAO_BLOCK_USER_GET_MENU and
             prev_block_id != KAKAO_BLOCK_USER_SET_ORDER_SHEET):
-        return errorView('잘못된 블럭 경로', '정상적이지 않은 경로거나, 오류가 발생했습니다.\n다시 주문해주세요!')
+        return errorView('잘못된 블럭 경로', '정상적이지 않은 블럭 경로입니다.')
 
     # User Validation
     user = userValidation(kakaoPayload)
     if (user == None):
-        return errorView('잘못된 블럭 경로', '정상적이지 않은 경로거나, 잘못된 계정입니다.')
+        return errorView('잘못된 사용자 계정', '찾을 수 없는 사용자 계정 아이디입니다.')
 
     # User's Eatple Pass Validation
     eatplePassStatus = eatplePassValidation(user)
@@ -268,13 +263,28 @@ def kakaoView_PickupTime(kakaoPayload):
 
     order = orderValidation(kakaoPayload)
     if(order == None):
-        return errorView('잘못된 블럭 경로', '정상적이지 않은 경로거나, 오류가 발생했습니다.\n홈으로 돌아가 다시 주문해주세요!')
+        return errorView('잘못된 주문 번호', '잘못된 주문 번호입니다.')
 
     store = storeValidation(kakaoPayload)
     menu = menuValidation(kakaoPayload)
 
     if(store == None or menu == None):
-        return errorView('잘못된 블럭 경로', '정상적이지 않은 경로거나, 오류가 발생했습니다.\n다시 주문해주세요!')
+        return errorView('잘못된 주문 내역', '잘못된 주문 정보입니다.')
+
+    # Order Record
+    try:
+        orderRecordSheet = OrderRecordSheet.objects.get(order=order)
+    except OrderRecordSheet.DoesNotExist:
+        orderRecordSheet = OrderRecordSheet()
+
+    if (orderRecordSheet.timeoutValidation()):
+        orderRecordSheet.recordUpdate(ORDER_RECORD_TIMEOUT)
+        return kakaoView_TimeOut(KAKAO_BLOCK_USER_SET_PICKUP_TIME)
+
+    # Order Log Record
+    orderRecordSheet.user = user
+    orderRecordSheet.order = order
+    orderRecordSheet.recordUpdate(ORDER_RECORD_SET_PICKUP_TIEM)
 
     kakaoForm = KakaoForm()
 
@@ -308,7 +318,7 @@ def kakaoView_PickupTime(kakaoPayload):
     currentSellingTime = sellingTimeCheck()
 
     if (currentSellingTime == None):
-        return errorView('Get Invalid Selling Time', '잘못된 주문 시간입니다.')
+        return errorView('잘못된 주문 시간', '정상적인 주문 시간대가 아닙니다.')
     elif currentSellingTime == SELLING_TIME_DINNER:
         '''
             @NOTE Dinner Time Close In Alpha 
@@ -340,19 +350,6 @@ def kakaoView_PickupTime(kakaoPayload):
         kakaoForm.QuickReplies_AddWithMap(QUICKREPLIES_MAP)
 
         return JsonResponse(kakaoForm.GetForm())
-
-    # Order Record
-    try:
-        orderRecordSheet = OrderRecordSheet.objects.latest('update_date')
-    except OrderRecordSheet.DoesNotExist:
-        orderRecordSheet = OrderRecordSheet()
-
-    if (orderRecordSheet.timeoutValidation()):
-        return kakaoView_TimeOut(KAKAO_BLOCK_USER_SET_PICKUP_TIME)
-
-    orderRecordSheet.user = user
-    orderRecordSheet.menu = menu
-    orderRecordSheet.recordUpdate(ORDER_RECORD_SET_PICKUP_TIEM)
 
     PICKUP_TIME_QUICKREPLIES_MAP = []
 
@@ -434,12 +431,12 @@ def kakaoView_OrderPayment(kakaoPayload):
     # Block Validation
     prev_block_id = prevBlockValidation(kakaoPayload)
     if(prev_block_id != KAKAO_BLOCK_USER_SET_PICKUP_TIME and prev_block_id != KAKAO_BLOCK_USER_SET_ORDER_SHEET):
-        return errorView('잘못된 블럭 경로', '정상적이지 않은 경로거나, 오류가 발생했습니다.\n다시 주문해주세요!')
+        return errorView('잘못된 블럭 경로', '정상적이지 않은 블럭 경로입니다.')
 
     # User Validation
     user = userValidation(kakaoPayload)
     if (user == None):
-        return errorView('잘못된 블럭 경로', '정상적이지 않은 경로거나, 잘못된 계정입니다.')
+        return errorView('잘못된 사용자 계정', '찾을 수 없는 사용자 계정 아이디입니다.')
 
     # User's Eatple Pass Validation
     eatplePassStatus = eatplePassValidation(user)
@@ -451,11 +448,11 @@ def kakaoView_OrderPayment(kakaoPayload):
     pickup_time = pickupTimeValidation(kakaoPayload)
 
     if(store == None or menu == None or pickup_time == None):
-        return errorView('잘못된 블럭 경로', '정상적이지 않은 경로거나, 오류가 발생했습니다.\n다시 주문해주세요!')
+        return errorView('잘못된 주문 내역', '잘못된 주문 정보입니다.')
 
     order = orderValidation(kakaoPayload)
     if(order == None):
-        return errorView('잘못된 블럭 경로', '정상적이지 않은 경로거나, 오류가 발생했습니다.\n다시 주문해주세요!')
+        return errorView('잘못된 주문 번호', '잘못된 주문 번호입니다.')
     else:
         order.user = user
         order.menu = menu
@@ -472,15 +469,16 @@ def kakaoView_OrderPayment(kakaoPayload):
 
     # Order Record
     try:
-        orderRecordSheet = OrderRecordSheet.objects.latest('update_date')
+        orderRecordSheet = OrderRecordSheet.objects.get(order=order)
     except OrderRecordSheet.DoesNotExist:
         orderRecordSheet = OrderRecordSheet()
 
     if (orderRecordSheet.timeoutValidation()):
+        orderRecordSheet.recordUpdate(ORDER_RECORD_TIMEOUT)
         return kakaoView_TimeOut(KAKAO_BLOCK_USER_SET_ORDER_SHEET)
 
     orderRecordSheet.user = user
-    orderRecordSheet.menu = menu
+    orderRecordSheet.order = order
     orderRecordSheet.recordUpdate(ORDER_RECORD_ORDERSHEET_CHECK)
 
     dataActionExtra = kakaoPayload.dataActionExtra
@@ -654,14 +652,33 @@ def kakaoView_OrderPaymentCheck(kakaoPayload):
     if (user == None):
         return errorView('잘못된 블럭 경로', '정상적이지 않은 경로거나, 잘못된 계정입니다.')
 
+    order = orderValidation(kakaoPayload)
+    if(order == None):
+        return errorView('결제 실패', '주문을 도중에 중단한 주문 번호 입니다.')
+    else:
+        order.orderStatusUpdate()
+
     store = storeValidation(kakaoPayload)
     menu = menuValidation(kakaoPayload)
-    order = orderValidation(kakaoPayload)
+    if(store == None or menu == None):
+        return errorView('결제 실패', '주문을 도중에 중단한 주문 번호 입니다.')
 
     if(order.store != store or order.menu != menu):
         return kakaoView_OrderPayment(kakaoPayload)
 
-    kakaoForm = KakaoForm()
+    # Order Record
+    try:
+        orderRecordSheet = OrderRecordSheet.objects.get(order=order)
+    except OrderRecordSheet.DoesNotExist:
+        orderRecordSheet = OrderRecordSheet()
+
+    if (orderRecordSheet.timeoutValidation()):
+        orderRecordSheet.recordUpdate(ORDER_RECORD_TIMEOUT)
+        return kakaoView_TimeOut(KAKAO_BLOCK_USER_SET_ORDER_SHEET)
+
+    orderRecordSheet.user = user
+    orderRecordSheet.order = order
+    orderRecordSheet.recordUpdate(ORDER_RECORD_PAYMENT_CONFIRM)
 
     QUICKREPLIES_MAP = [
         {
@@ -688,21 +705,7 @@ def kakaoView_OrderPaymentCheck(kakaoPayload):
 
         return JsonResponse(kakaoForm.GetForm())
 
-    if(store == None or menu == None or order == None):
-        return errorView('잘못된 블럭 경로', '정상적이지 않은 경로거나, 오류가 발생했습니다.\n다시 주문해주세요!')
 
-    # Order Record
-    try:
-        orderRecordSheet = OrderRecordSheet.objects.latest('update_date')
-    except OrderRecordSheet.DoesNotExist:
-        orderRecordSheet = OrderRecordSheet()
-
-    if (orderRecordSheet.timeoutValidation()):
-        return kakaoView_TimeOut(KAKAO_BLOCK_USER_SET_ORDER_SHEET)
-
-    orderRecordSheet.user = user
-    orderRecordSheet.menu = menu
-    orderRecordSheet.recordUpdate(ORDER_RECORD_PAYMENT)
 
     dataActionExtra = kakaoPayload.dataActionExtra
     dataActionExtra[KAKAO_PARAM_ORDER_ID] = order.order_id
@@ -825,20 +828,23 @@ def kakaoView_EatplePassIssuance(kakaoPayload):
         # Block Validation
         prev_block_id = prevBlockValidation(kakaoPayload)
         if(prev_block_id != KAKAO_BLOCK_USER_SET_ORDER_SHEET):
-            return errorView('잘못된 블럭 경로', '정상적이지 않은 경로거나, 오류가 발생했습니다.')
+            return errorView('잘못된 블럭 경로', '정상적이지 않은 블럭 경로입니다.')
 
         # User Validation
         user = userValidation(kakaoPayload)
         if (user == None):
-            return errorView('잘못된 블럭 경로', '정상적이지 않은 경로거나, 오류가 발생했습니다.\n다시 주문해주세요!')
+            return errorView('잘못된 사용자 계정', '찾을 수 없는 사용자 계정 아이디입니다.')
+
+        order = orderValidation(kakaoPayload)
+        if(order == None):
+            return errorView('주문 상태 확인', '정상적이지 않은 경로거나 이미 발급이 완료되었어요!')
+        else:
+            order.orderStatusUpdate()
 
         store = storeValidation(kakaoPayload)
         menu = menuValidation(kakaoPayload)
-        order = orderValidation(kakaoPayload)
-        if(order == None):
-            return errorView('잘못된 블럭 경로', '정상적이지 않은 경로거나 이미 발급이 완료되었어요!')
-        else:
-            order.orderStatusUpdate()
+        if(store == None or menu == None):
+            return errorView('결제 실패', '주문을 도중에 중단한 주문 번호 입니다.')
 
         if(order.payment_status != IAMPORT_ORDER_STATUS_PAID):
             kakaoForm.BasicCard_Push(
@@ -858,15 +864,16 @@ def kakaoView_EatplePassIssuance(kakaoPayload):
 
         # Order Record
         try:
-            orderRecordSheet = OrderRecordSheet.objects.latest('update_date')
+            orderRecordSheet = OrderRecordSheet.objects.get(order=order)
         except OrderRecordSheet.DoesNotExist:
             orderRecordSheet = OrderRecordSheet()
 
         if (orderRecordSheet.timeoutValidation()):
+            orderRecordSheet.recordUpdate(ORDER_RECORD_TIMEOUT)
             return kakaoView_TimeOut(KAKAO_BLOCK_USER_SET_ORDER_SHEET)
 
         orderRecordSheet.user = user
-        orderRecordSheet.menu = menu
+        orderRecordSheet.order = order
         orderRecordSheet.paid = True
         orderRecordSheet.recordUpdate(ORDER_RECORD_PAYMENT_COMPLETED)
 
@@ -999,25 +1006,7 @@ def kakaoView_EatplePassIssuance(kakaoPayload):
 def kakaoView_TimeOut(blockId):
     kakaoForm = KakaoForm()
 
-    QUICKREPLIES_MAP = [
-        {
-            'action': 'block',
-            'label': '홈으로 돌아가기',
-            'messageText': '로딩중..',
-            'blockId': KAKAO_BLOCK_USER_HOME,
-            'extra': {
-                KAKAO_PARAM_PREV_BLOCK_ID: blockId
-            }
-        },
-    ]
-
-    kakaoForm.QuickReplies_AddWithMap(QUICKREPLIES_MAP)
-
-    kakaoForm.SimpleText_Add(
-        '주문시간이 초과되었습니다.'
-    )
-
-    return JsonResponse(kakaoForm.GetForm())
+    return errorView('주문 시간 초과', '주문은 30분 안에 마무리해주세요!', '주문 시작 후 30분안에 결제가 되지 않을 경우 주문 초과로 처리됩니다.')
 
 # # # # # # # # # # # # # # # # # # # # # # # # #
 #

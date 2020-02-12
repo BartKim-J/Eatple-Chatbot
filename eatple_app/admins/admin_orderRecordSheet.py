@@ -23,27 +23,55 @@ class OrderRecordInline(admin.TabularInline):
 
 
 class OrderRecordSheetAdmin(ImportExportMixin, admin.ModelAdmin):
+
+    def delegate_status(self, obj):
+        if(obj.status):
+            return 'O'
+        else:
+            return 'X'
+    delegate_status.short_description = "메뉴 선택 여부"    
+
+    def delegate_paid(self, obj):
+        if(obj.paid):
+            return 'O'
+        else:
+            return 'X'
+    delegate_paid.short_description = "주문 완료 여부"
+
+    def get_menu(self, obj):
+        if(obj.order == None or obj.order.menu == None):
+            return "미선택"
+        else:
+            return obj.order.menu
+    get_menu.short_description = "선택한 메뉴"
+
     readonly_fields = (
+        'order',
         'user', 
-        'menu', 
-        'status', 
+        'delegate_status', 
+        'delegate_paid', 
         'created_date', 
         'update_date'
     )
 
     list_filter = (
         'status', 
-        'menu',
         'update_date', 
         'created_date'
     )
     
     list_display = (
+        'order',
         'user', 
-        'status', 
-        'menu', 
+        'get_menu',
+        'order',
+        'delegate_status', 
+        'delegate_paid',
         'created_date', 
         'update_date'
     )
+
+    search_fields = ['order__id', 'user__nickname', 'user__app_user_id']
+
 
     inlines = [OrderRecordInline]

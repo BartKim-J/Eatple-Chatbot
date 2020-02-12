@@ -329,8 +329,7 @@ def kakaoView_Home(user):
                 homeImg = '{}{}'.format(HOST_URL, HOME_HEAD_IMG_URL)
             else:
                 homeImg = '{}{}'.format(HOST_URL, HOME_HEAD_BLACK_IMG_URL)
-                print(homeImg)
-
+                
             thumbnail = {
                 'imageUrl': homeImg,
                 'fixedRatio': 'true',
@@ -338,7 +337,7 @@ def kakaoView_Home(user):
                 'height': 800,
             }
 
-            description = '\'주변 맛집에서 갓 만든 때시락, 잇플\' 입니다.'
+            description = '\'주변 맛집에서 갓 만든 도시락, 잇플\' 입니다.'
 
             kakaoForm.BasicCard_Push(
                 '안녕하세요!! {}님'.format(user.nickname),

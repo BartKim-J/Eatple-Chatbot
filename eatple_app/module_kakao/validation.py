@@ -80,13 +80,11 @@ def sellingTimeCheck():
     nextLunchOrderTimeStart = orderTimeSheet.GetNextLunchOrderEditTimeStart()
     nextLunchOrderTimeEnd = orderTimeSheet.GetNextLunchOrderEditTimeEnd()
 
-    print(currentDate)
-
     if(dinnerOrderTimeStart < currentDate) and (currentDate < dinnerOrderTimeEnd):
         return SELLING_TIME_DINNER
-    elif(prevLunchOrderTimeStart <= currentDate) and (currentDate < prevLunchOrderTimeEnd):
+    elif(prevLunchOrderTimeStart < currentDate) and (currentDate < prevLunchOrderTimeEnd):
         return SELLING_TIME_LUNCH
-    elif(nextLunchOrderTimeStart <= currentDate) and (currentDate < nextLunchOrderTimeEnd):
+    elif(nextLunchOrderTimeStart < currentDate) and (currentDate < nextLunchOrderTimeEnd):
         return SELLING_TIME_LUNCH
     else:
         return None
@@ -139,11 +137,6 @@ def vacationTimeCheck():
             'to_days': 27
         },
     ]
-
-    # Time QA DEBUG
-    #currentDate = currentDate.replace(month=1, day=26, hour=9, minute=28, second=0, microsecond=0)
-    #currentDateWithoutTime = currentDate.replace(hour=0, minute=0, second=0, microsecond=0)
-    # print(currentDate)
 
     for vacation in vacationMap:
         closedDateStart = currentDate.replace(
@@ -221,7 +214,7 @@ def partnerValidation(kakaoPayload):
 def userValidation(kakaoPayload):
     try:
         if(USER_ID_DEBUG_MODE):
-            app_user_id = 1270117336
+            app_user_id = 1280939539
         else:
             app_user_id = kakaoPayload.user_properties['app_user_id']
         try:

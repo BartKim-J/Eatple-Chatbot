@@ -93,8 +93,8 @@ class OrderAdmin(ImportExportMixin, admin.ModelAdmin):
     def get_queryset(self, request):
         qs = super(OrderAdmin, self).get_queryset(request)
 
-        return qs.exclude(Q(store=None) & Q(menu=None))
-        # return qs
+        #return qs.exclude(Q(store=None) & Q(menu=None))
+        return qs
 
     def make_enable(self, request, queryset):
         updated_count = queryset.update(
