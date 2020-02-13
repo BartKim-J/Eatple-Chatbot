@@ -83,7 +83,6 @@ def kakaoView_GetDelegateUser(kakaoPayload):
 
     kakaoParam_phone_number = kakaoPayload.dataActionParams['phone_number']['origin']
 
-
     if(order.status == ORDER_STATUS_ORDER_CANCELED):
         kakaoForm.BasicCard_Push(
             ' - 주의! -',
@@ -105,7 +104,7 @@ def kakaoView_GetDelegateUser(kakaoPayload):
 
         kakaoForm.QuickReplies_AddWithMap(QUICKREPLIES_MAP)
 
-    return JsonResponse(kakaoForm.GetForm())
+        return JsonResponse(kakaoForm.GetForm())
 
     try:
         phone_number = phonenumbers.format_number(

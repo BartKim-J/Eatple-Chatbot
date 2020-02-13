@@ -11,14 +11,15 @@ from django.core import validators
 from django.utils.translation import ugettext_lazy as _
 from django.utils.safestring import mark_safe
 
+
 class OrderRecordInline(admin.TabularInline):
     model = OrderRecord
     extra = 0
     min_num = 0
 
     readonly_fields = (
-        'status', 
-        'record_date', 
+        'status',
+        'record_date',
     )
 
 
@@ -29,7 +30,7 @@ class OrderRecordSheetAdmin(ImportExportMixin, admin.ModelAdmin):
             return 'O'
         else:
             return 'X'
-    delegate_status.short_description = "메뉴 선택 여부"    
+    delegate_status.short_description = "메뉴 선택 여부"
 
     def delegate_paid(self, obj):
         if(obj.paid):
@@ -47,31 +48,29 @@ class OrderRecordSheetAdmin(ImportExportMixin, admin.ModelAdmin):
 
     readonly_fields = (
         'order',
-        'user', 
-        'delegate_status', 
-        'delegate_paid', 
-        'created_date', 
+        'user',
+        'status',
+        'paid',
+        'created_date',
         'update_date'
     )
 
     list_filter = (
-        'status', 
-        'update_date', 
+        'status',
+        'update_date',
         'created_date'
     )
-    
+
     list_display = (
         'order',
-        'user', 
+        'user',
         'get_menu',
-        'order',
-        'delegate_status', 
+        'delegate_status',
         'delegate_paid',
-        'created_date', 
+        'created_date',
         'update_date'
     )
 
     search_fields = ['order__id', 'user__nickname', 'user__app_user_id']
-
 
     inlines = [OrderRecordInline]
