@@ -309,9 +309,9 @@ def dashboard(request):
     currentDate = orderTimeSheet.GetCurrentDate()
     currentDateWithoutTime = orderTimeSheet.GetCurrentDateWithoutTime()
 
-    menuList = Menu.objects.filter(~Q(store__type=STORE_TYPE_EVENT)).order_by(
+    menuList = Menu.objects.filter(~Q(store__type=STORE_TYPE_PROMOTION)).order_by(
         '-status', '-store__status', '-current_stock', 'store__name')
-    storeList = Store.objects.filter(~Q(type=STORE_TYPE_EVENT))
+    storeList = Store.objects.filter(~Q(type=STORE_TYPE_PROMOTION))
 
     totalUser = User.objects.all()
     totalUserIncrease = totalUser.filter(
@@ -395,9 +395,9 @@ def sales_dashboard(request):
     currentDate = orderTimeSheet.GetCurrentDate()
     currentDateWithoutTime = orderTimeSheet.GetCurrentDateWithoutTime()
 
-    menuList = Menu.objects.filter(~Q(store__type=STORE_TYPE_EVENT)).order_by(
+    menuList = Menu.objects.filter(~Q(store__type=STORE_TYPE_PROMOTION)).order_by(
         '-status', '-store__status', '-current_stock', 'store__name')
-    storeList = Store.objects.filter(~Q(type=STORE_TYPE_EVENT))
+    storeList = Store.objects.filter(~Q(type=STORE_TYPE_PROMOTION))
 
     totalUser = User.objects.all()
     totalUserIncrease = totalUser.filter(
@@ -450,9 +450,9 @@ def sales_menulist(request):
     currentDate = orderTimeSheet.GetCurrentDate()
     currentDateWithoutTime = orderTimeSheet.GetCurrentDateWithoutTime()
 
-    menuList = Menu.objects.filter(~Q(store__type=STORE_TYPE_EVENT)).order_by(
+    menuList = Menu.objects.filter(~Q(store__type=STORE_TYPE_PROMOTION)).order_by(
         '-status', '-store__status', '-current_stock', 'store__name')
-    storeList = Store.objects.filter(~Q(type=STORE_TYPE_EVENT))
+    storeList = Store.objects.filter(~Q(type=STORE_TYPE_PROMOTION))
 
     totalUser = User.objects.all()
     totalUserIncrease = totalUser.filter(

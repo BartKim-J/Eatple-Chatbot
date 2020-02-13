@@ -123,7 +123,7 @@ def kakaoView_MenuListup(kakaoPayload):
     menuList = Menu.objects.filter(
         store__area=area,
 
-        store__type=STORE_TYPE_EVENT,
+        store__type=STORE_TYPE_PROMOTION,
 
         status=OC_OPEN,
         store__status=OC_OPEN,

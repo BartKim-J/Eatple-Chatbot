@@ -5,7 +5,7 @@ from eatple_app.model.company import Company, CompanyPlace, CompanyCRN
 from eatple_app.model.store import Store, CRN, Place
 from eatple_app.model.store import Category
 
-from eatple_app.model.menu import Menu, PickupTime
+from eatple_app.model.menu import Menu, PickupTime, StockTable
 from eatple_app.model.menu import Tag
 
 from eatple_app.model.order import OrderSheet, Order

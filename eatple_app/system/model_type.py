@@ -124,6 +124,7 @@ OC_STATUS = [
     (OC_CLOSE, '닫힘'),
 ]
 
+# STORE OPEN & CLOSE
 STORE_OC_OPEN = 'open'
 STORE_OC_CLOSE = 'close'
 STORE_OC_VACATION = 'vacation'
@@ -134,28 +135,28 @@ STORE_OC_STATUS = [
 
 ]
 
-#  TYPE
-ORDER_TYPE_NORMAL = 'normal'
-ORDER_TYPE_EVENT = 'event'
-ORDER_TYPE_PROMOTION = 'promotion'
-ORDER_TYPE_B2B = 'B2B'
-ORDER_TYPE = [
-    (ORDER_TYPE_NORMAL, '일반'),
-    (ORDER_TYPE_EVENT, '이벤트'),
-    (ORDER_TYPE_PROMOTION, '프로모션'),
-    (ORDER_TYPE_B2B, 'B2B'),
-]
-
-
 # STORE_TYPE
 STORE_TYPE_NORMAL = 'normal'
 STORE_TYPE_B2B = 'B2B'
-STORE_TYPE_EVENT = 'event'
+STORE_TYPE_B2B_AND_NORMAL = 'B2BAndNormal'
+STORE_TYPE_PROMOTION = 'promotion'
 STORE_TYPE = [
     (STORE_TYPE_NORMAL, '일반'),
-    (STORE_TYPE_EVENT, '이벤트'),
     (STORE_TYPE_B2B, 'B2B'),
+    (STORE_TYPE_B2B_AND_NORMAL, 'B2B&일반'),
+    (STORE_TYPE_PROMOTION, '프로모션'),
 ]
+
+#  TYPE
+ORDER_TYPE_NORMAL = 'normal'
+ORDER_TYPE_B2B = 'B2B'
+ORDER_TYPE_PROMOTION = 'promotion'
+ORDER_TYPE = [
+    (ORDER_TYPE_NORMAL, '일반'),
+    (ORDER_TYPE_B2B, 'B2B'),
+    (ORDER_TYPE_PROMOTION, '프로모션'),
+]
+
 
 # USER_TYPE
 USER_TYPE_NORMAL = 'normal'

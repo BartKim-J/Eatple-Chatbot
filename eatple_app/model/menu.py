@@ -22,6 +22,54 @@ from eatple_app.define import *
 DEFAULT_MENU_IMAGE_PATH = 'STORE_DB/images/default/menuImg.png'
 
 
+class StockTable(models.Model):
+    class Meta:
+        verbose_name = "재고 관리"
+        verbose_name_plural = "재고 관리"
+
+        ordering = ['-menu']
+
+    menu = models.ForeignKey(
+        'Menu',
+        on_delete=models.CASCADE,
+        null=True,
+        verbose_name="메뉴"
+    )
+
+    company = models.ForeignKey(
+        'Company',
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+        verbose_name="B2B 제휴 업체"
+    )
+
+    status = models.CharField(
+        max_length=WORD_LENGTH,
+        default=OC_OPEN,
+        choices=OC_STATUS,
+        verbose_name="메뉴 판매 여부"
+    )
+
+    pickuped_stock = models.IntegerField(
+        default=0,
+        verbose_name="일일 픽업 완료"
+    )
+
+    current_stock = models.IntegerField(
+        default=0,
+        verbose_name="일일 주문량"
+    )
+
+    max_stock = models.IntegerField(
+        default=50,
+        verbose_name="일일 주문 가능량"
+    )
+
+    def __str__(self):
+        return '{}'.format(self.company)
+
+
 class Tag(models.Model):
     # Metadata
     class Meta:
@@ -128,11 +176,6 @@ class MenuSetting(models.Model):
         verbose_name="가격"
     )
 
-    discount = models.IntegerField(
-        default=0,
-        verbose_name="할인율"
-    )
-
     class Meta:
         abstract = True
 
@@ -166,9 +209,11 @@ class MenuStatus(models.Model):
 
 
 class Menu(MenuInfo, MenuStatus, MenuSetting):
-    # Metadata
     class Meta:
-        ordering = ['status', 'menu_id']
+        verbose_name = "메뉴 리스트"
+        verbose_name_plural = "메뉴 리스트"
+
+        ordering = ['store', 'name']
 
     def __init__(self, *args, **kwargs):
         super(Menu, self).__init__(*args, **kwargs)
