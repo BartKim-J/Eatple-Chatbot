@@ -87,6 +87,10 @@ class Place(models.Model):
         return '{}, {}'.format(self.lat, self.long)
 
 class CRN(models.Model):
+    class Meta:
+        verbose_name = "사업자 등록번호"
+        verbose_name_plural = "사업자 등록번호"
+        
     store = models.OneToOneField(
         'Store', 
         on_delete=models.CASCADE, 
@@ -100,7 +104,7 @@ class CRN(models.Model):
         help_text='Unique ID',
         blank=True,
         null=True,
-        verbose_name="CRN"
+        verbose_name="사업자 등록번호"
     )
     
     UID = models.CharField(

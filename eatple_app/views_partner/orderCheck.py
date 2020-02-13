@@ -24,7 +24,7 @@ DEFAULT_QUICKREPLIES_MAP = [
     {
         'action': 'block',
         'label': '홈으로 돌아가기',
-        'messageText': '로딩중..',
+        'messageText': '...',
         'blockId': KAKAO_BLOCK_USER_HOME,
         'extra': {}
     },
@@ -73,7 +73,7 @@ def kakaoView_OrderDetails(kakaoPayload):
         {
             'action': 'block',
             'label': '새로고침',
-            'messageText': '로딩중..',
+            'messageText': '...',
             'blockId': KAKAO_BLOCK_PARTNER_GET_ORDER_DETAILS,
             'extra': {
                 KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_PARTNER_GET_ORDER_DETAILS
@@ -82,7 +82,7 @@ def kakaoView_OrderDetails(kakaoPayload):
         {
             'action': 'block',
             'label': '홈으로 돌아가기',
-            'messageText': '로딩중..',
+            'messageText': '...',
             'blockId': KAKAO_BLOCK_PARTNER_HOME,
             'extra': {
                 KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_PARTNER_GET_ORDER_DETAILS

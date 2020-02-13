@@ -25,7 +25,7 @@ DEFAULT_QUICKREPLIES_MAP = [
     {
         'action': 'block',
         'label': '홈으로 돌아가기',
-        'messageText': '로딩중..',
+        'messageText': '...',
         'blockId': KAKAO_BLOCK_USER_HOME,
         'extra': {}
     },
@@ -75,7 +75,7 @@ def kakaoView_GetDelegateUser(kakaoPayload):
         {
             'action': 'block',
             'label': '홈으로 돌아가기',
-            'messageText': '로딩중..',
+            'messageText': '...',
             'blockId': KAKAO_BLOCK_USER_HOME,
             'extra': {}
         },
@@ -123,7 +123,7 @@ def kakaoView_GetDelegateUser(kakaoPayload):
                 {
                     'action': 'block',
                     'label': '전화번호 다시 입력',
-                    'messageText': '로딩중..',
+                    'messageText': '...',
                     'blockId': KAKAO_BLOCK_USER_ORDER_SHARING_START,
                     'extra': {
                         KAKAO_PARAM_ORDER_ID: order.order_id,
@@ -173,7 +173,7 @@ def kakaoView_GetDelegateUser(kakaoPayload):
                 {
                     'action': 'block',
                     'label': '전화번호 다시 입력',
-                    'messageText': '로딩중..',
+                    'messageText': '...',
                     'blockId': KAKAO_BLOCK_USER_ORDER_SHARING_START,
                     'extra': {
                         KAKAO_PARAM_ORDER_ID: order.order_id,
@@ -214,7 +214,7 @@ def kakaoView_GetDelegateUser(kakaoPayload):
                             {
                                 'action': 'block',
                                 'label': '잇플패스 확인',
-                                'messageText': '로딩중..',
+                                'messageText': '...',
                                 'blockId': KAKAO_BLOCK_USER_EATPLE_PASS,
                                 'extra': {}
                             },
@@ -247,7 +247,7 @@ def kakaoView_GetDelegateUser(kakaoPayload):
                     {
                         'action': 'block',
                         'label': '전화번호 다시 입력',
-                        'messageText': '로딩중..',
+                        'messageText': '...',
                         'blockId': KAKAO_BLOCK_USER_ORDER_SHARING_START,
                         'extra': {
                             KAKAO_PARAM_ORDER_ID: order.order_id,
@@ -286,7 +286,7 @@ def kakaoView_DelegateUserRemove(kakaoPayload):
         {
             'action': 'block',
             'label': '잇플패스 확인',
-            'messageText': '로딩중..',
+            'messageText': '...',
             'blockId': KAKAO_BLOCK_USER_EATPLE_PASS,
             'extra': {}
         },
@@ -296,7 +296,7 @@ def kakaoView_DelegateUserRemove(kakaoPayload):
         {
             'action': 'block',
             'label': '홈으로 돌아가기',
-            'messageText': '로딩중..',
+            'messageText': '...',
             'blockId': KAKAO_BLOCK_USER_HOME,
             'extra': {}
         },
@@ -343,7 +343,7 @@ def kakaoView_DelegateUserRemove(kakaoPayload):
         {
             'action': 'block',
             'label': '홈으로 돌아가기',
-            'messageText': '로딩중..',
+            'messageText': '...',
             'blockId': KAKAO_BLOCK_USER_HOME,
             'extra': {}
         },
@@ -384,7 +384,7 @@ def kakaoView_DelegateUserRemoveAll(kakaoPayload):
         {
             'action': 'block',
             'label': '잇플패스 확인',
-            'messageText': '로딩중..',
+            'messageText': '...',
             'blockId': KAKAO_BLOCK_USER_EATPLE_PASS,
             'extra': {}
         },
@@ -394,7 +394,7 @@ def kakaoView_DelegateUserRemoveAll(kakaoPayload):
         {
             'action': 'block',
             'label': '홈으로 돌아가기',
-            'messageText': '로딩중..',
+            'messageText': '...',
             'blockId': KAKAO_BLOCK_USER_HOME,
             'extra': {}
         },
@@ -464,7 +464,7 @@ def kakaoView_DelegateUserRemoveAll(kakaoPayload):
         {
             'action': 'block',
             'label': '잇플패스 확인',
-            'messageText': '로딩중..',
+            'messageText': '...',
             'blockId': KAKAO_BLOCK_USER_EATPLE_PASS,
             'extra': {}
         },

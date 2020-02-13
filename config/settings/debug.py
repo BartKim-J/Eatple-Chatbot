@@ -46,7 +46,7 @@ ALLOWED_HOSTS = [
 INSTALLED_APPS = [
     'jet.dashboard',
     'jet',
-    
+
     'django.contrib.gis',
     'django.contrib.admin',
     'django.contrib.auth',
@@ -56,20 +56,20 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django_admin_listfilter_dropdown',
     'django.contrib.humanize',
-    
+
     'import_export',
     'phonenumber_field',
-    
+
     'django_feedparser',
 
     'rest_framework',
     'rest_framework_swagger',
 
     'django_admin_multiple_choice_list_filter',
-    
+
     # local-app
     'eatple_app.apps.EatpleChatbotAppConfig',
-    
+
     'corsheaders',
     'compressor',
     'rangefilter',
@@ -100,7 +100,7 @@ TEMPLATES = [
         'OPTIONS': {
             'context_processors': [
                 'django.template.context_processors.debug',
-                'django.template.context_processors.request', # Make sure you have this line
+                'django.template.context_processors.request',  # Make sure you have this line
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
             ],
@@ -155,7 +155,7 @@ MAP_WIDGETS = {
         ("zoom", 55),
         ("mapCenterLocation", [37.49492000000000, 127.02739000000000]),
     ),
-    
+
     "GoogleStaticMapWidget": (
         ("zoom", 18),
         ("size", "480x480"),
@@ -190,8 +190,8 @@ USE_L10N = True
 USE_TZ = True
 
 # Rest framework
-REST_FRAMEWORK = { 
-    'DEFAULT_SCHEMA_CLASS': 'rest_framework.schemas.coreapi.AutoSchema' 
+REST_FRAMEWORK = {
+    'DEFAULT_SCHEMA_CLASS': 'rest_framework.schemas.coreapi.AutoSchema'
 }
 
 # Static files (CSS, JavaScript, Images)
@@ -247,9 +247,9 @@ JET_CHANGE_FORM_SIBLING_LINKS = True
 JET_DEFAULT_THEME = 'light-violet'
 JET_THEMES = [
     {
-        'theme': 'default', # theme folder name
-        'color': '#47bac1', # color of the theme's button in user menu
-        'title': 'Default' # theme title
+        'theme': 'default',  # theme folder name
+        'color': '#47bac1',  # color of the theme's button in user menu
+        'title': 'Default'  # theme title
     },
     {
         'theme': 'green',

@@ -41,8 +41,8 @@ def getOrderChartDataLabel(orderTimeSheet):
 
     areaLabel = ""
 
-    for i in range(14):
-        checkData = currentDateWithoutTime + datetime.timedelta(days=-(13 - i))
+    for i in range(21):
+        checkData = currentDateWithoutTime + datetime.timedelta(days=-(20 - i))
 
         areaLabel += "{},".format(checkData.strftime(
             '%-m월 %-d일').replace('AM', '오전').replace('PM', '오후'))
@@ -64,8 +64,8 @@ def getOrderChartData(orderTimeSheet):
 
     areaData = ""
 
-    for i in range(14):
-        checkData = currentDateWithoutTime + datetime.timedelta(days=-(13 - i))
+    for i in range(21):
+        checkData = currentDateWithoutTime + datetime.timedelta(days=-(20 - i))
 
         prevLunchOrderEditTimeStart = checkData + \
             datetime.timedelta(hours=16, minutes=30, days=-1)
@@ -136,6 +136,9 @@ def getDailyOrderChartData(orderTimeSheet):
 def getMenuStockChartData(menuList):
     pieData = ""
 
+    menuList = menuList.filter(Q(current_stock__gte=1) & Q(
+        status=OC_OPEN) & Q(store__status=OC_OPEN))
+
     for menu in menuList:
         pieData += "{},".format(menu.current_stock)
 
@@ -144,6 +147,9 @@ def getMenuStockChartData(menuList):
 
 def getMenuStockChartLabel(menuList):
     pieLabel = ""
+
+    menuList = menuList.filter(Q(current_stock__gte=1) & Q(
+        status=OC_OPEN) & Q(store__status=OC_OPEN))
 
     for menu in menuList:
         pieLabel += "{},".format(menu.name)

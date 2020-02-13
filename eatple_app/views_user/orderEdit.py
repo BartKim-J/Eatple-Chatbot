@@ -57,7 +57,7 @@ def kakaoView_UseEatplePass(kakaoPayload):
         {
             'action': 'block',
             'label': '홈으로 돌아가기',
-            'messageText': '로딩중..',
+            'messageText': '...',
             'blockId': KAKAO_BLOCK_USER_HOME,
             'extra': {
                 KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_ORDER_DETAILS
@@ -159,7 +159,7 @@ def kakaoView_ConfirmUseEatplePass(kakaoPayload):
         {
             'action': 'block',
             'label': '홈으로 돌아가기',
-            'messageText': '로딩중..',
+            'messageText': '...',
             'blockId': KAKAO_BLOCK_USER_HOME,
             'extra': {
                 KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_GET_USE_EATPLE_PASS_CONFIRM
@@ -168,7 +168,7 @@ def kakaoView_ConfirmUseEatplePass(kakaoPayload):
         {
             'action': 'block',
             'label': '새로고침',
-            'messageText': '로딩중..',
+            'messageText': '...',
             'blockId': KAKAO_BLOCK_USER_EATPLE_PASS,
             'extra': {
                 KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_GET_USE_EATPLE_PASS_CONFIRM
@@ -206,7 +206,7 @@ def kakaoView_ConfirmUseEatplePass(kakaoPayload):
             {
                 'action': 'block',
                 'label': '확인',
-                'messageText': '로딩중..',
+                'messageText': '...',
                 'blockId': KAKAO_BLOCK_USER_POST_USE_EATPLE_PASS,
                 'extra': {
                     KAKAO_PARAM_ORDER_ID: order.order_id,
@@ -216,7 +216,7 @@ def kakaoView_ConfirmUseEatplePass(kakaoPayload):
             {
                 'action': 'block',
                 'label': '돌아가기',
-                'messageText': '로딩중..',
+                'messageText': '...',
                 'blockId': KAKAO_BLOCK_USER_EATPLE_PASS,
                 'extra': {
                     KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_GET_USE_EATPLE_PASS_CONFIRM
@@ -294,7 +294,7 @@ def kakaoView_OrderCancel(kakaoPayload):
         {
             'action': 'block',
             'label': '새로고침',
-            'messageText': '로딩중..',
+            'messageText': '...',
             'blockId': KAKAO_BLOCK_USER_EATPLE_PASS,
             'extra': {
                 KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_EATPLE_PASS
@@ -303,7 +303,7 @@ def kakaoView_OrderCancel(kakaoPayload):
         {
             'action': 'block',
             'label': '홈으로 돌아가기',
-            'messageText': '로딩중..',
+            'messageText': '...',
             'blockId': KAKAO_BLOCK_USER_HOME,
             'extra': {
                 KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_EATPLE_PASS
@@ -416,7 +416,7 @@ def kakaoView_EditPickupTime(kakaoPayload):
         {
             'action': 'block',
             'label': '홈으로 돌아가기',
-            'messageText': '로딩중..',
+            'messageText': '...',
             'blockId': KAKAO_BLOCK_USER_HOME,
             'extra': {
                 KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_EDIT_PICKUP_TIME
@@ -483,7 +483,7 @@ def kakaoView_EditPickupTime(kakaoPayload):
                 'block',
                 pickupTime.time.strftime(
                     '%p %-I시 %-M분').replace('AM', '오전').replace('PM', '오후'),
-                '로딩중..',
+                '...',
                 KAKAO_BLOCK_USER_EDIT_PICKUP_TIME_CONFIRM,
                 dataActionExtra
             )
@@ -491,7 +491,7 @@ def kakaoView_EditPickupTime(kakaoPayload):
     kakaoForm.QuickReplies_Add(
         'block',
         '돌아가기',
-        '로딩중..',
+        '...',
         KAKAO_BLOCK_USER_EATPLE_PASS,
         {
             KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_EDIT_PICKUP_TIME_CONFIRM
@@ -530,7 +530,7 @@ def kakaoView_ConfirmEditPickupTime(kakaoPayload):
         {
             'action': 'block',
             'label': '홈으로 돌아가기',
-            'messageText': '로딩중..',
+            'messageText': '...',
             'blockId': KAKAO_BLOCK_USER_HOME,
             'extra': {
                 KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_EDIT_PICKUP_TIME
@@ -588,7 +588,7 @@ def kakaoView_ConfirmEditPickupTime(kakaoPayload):
         {
             'action': 'block',
             'label': '돌아가기',
-            'messageText': '로딩중..',
+            'messageText': '...',
             'blockId': KAKAO_BLOCK_USER_EATPLE_PASS,
             'extra': {
                 KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_EDIT_PICKUP_TIME_CONFIRM
@@ -679,7 +679,6 @@ def POST_UseEatplePass(request):
 def POST_OrderCancel(request):
     EatplusSkillLog('POST_OrderCancel')
 
-
     kakaoPayload = KakaoPayLoad(request)
 
     # User Validation
@@ -688,5 +687,3 @@ def POST_OrderCancel(request):
         return GET_UserHome(request)
 
     return kakaoView_OrderCancel(kakaoPayload)
-
-

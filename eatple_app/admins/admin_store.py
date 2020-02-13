@@ -127,30 +127,6 @@ class StoreAdmin(ImportExportMixin, admin.GeoModelAdmin):
 
     menu_pickup_status.short_description = "들어온 주문"
 
-    def menu_stock(self, obj):
-        menu = Menu.objects.filter(store=obj, status=OC_OPEN).order_by(
-            '-current_stock').first()
-
-        if(menu != None):
-            max_stock = menu.max_stock
-
-            return "{}개".format(max_stock)
-        else:
-            return "열린 메뉴가 없음"
-
-    menu_stock.short_description = "일일 가능량"
-
-    def menu_name(self, obj):
-        menu = Menu.objects.filter(store=obj, status=OC_OPEN).order_by(
-            '-current_stock').first()
-
-        if(menu != None):
-            return menu.name
-        else:
-            return "열린 메뉴가 없음"
-
-    menu_name.short_description = "메뉴명"
-
     list_filter = (
         'status',
         'area',
@@ -173,10 +149,9 @@ class StoreAdmin(ImportExportMixin, admin.GeoModelAdmin):
         'type',
         'area',
         'status_flag',
-        'menu_name',
-        'menu_pickup_status',
-        'menu_stock',
     )
+
+    search_fields = ['name', 'store_id', 'area', 'menu__name']
 
     def store_open(self, request, queryset):
         updated_count = queryset.update(status=OC_OPEN)  # queryset.update

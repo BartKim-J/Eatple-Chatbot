@@ -122,7 +122,7 @@ def kakaoView_SignUp():
         {
             'action': 'block',
             'label': '가입하러 가기',
-            'messageText': '로딩중..',
+            'messageText': '...',
             'blockId': KAKAO_BLOCK_USER_SIGNUP,
             'extra': {
                 KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_HOME
@@ -152,7 +152,7 @@ def kakaoView_LocationRegistration():
         {
             'action': 'block',
             'label': '등록하러 가기',
-            'messageText': '로딩중..',
+            'messageText': '...',
             'blockId': KAKAO_BLOCK_USER_EDIT_LOCATION,
             'extra': {
                 KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_HOME
@@ -210,7 +210,7 @@ def kakaoView_Home(user):
         {
             'action': 'block',
             'label': '최근 주문내역',
-            'messageText': '로딩중..',
+            'messageText': '...',
             'blockId': KAKAO_BLOCK_USER_ORDER_DETAILS,
             'extra': {
                 KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_HOME
@@ -219,7 +219,7 @@ def kakaoView_Home(user):
         {
             'action': 'block',
             'label': '잇플 소개',
-            'messageText': '로딩중..',
+            'messageText': '...',
             'blockId': KAKAO_BLOCK_USER_INTRO,
             'extra': {
                 KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_HOME
@@ -231,7 +231,7 @@ def kakaoView_Home(user):
         {
             'action': 'block',
             'label': '주문하러 가기',
-            'messageText': '로딩중..',
+            'messageText': '...',
             'blockId': KAKAO_BLOCK_USER_GET_MENU,
             'extra': {
                 KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_HOME
@@ -240,7 +240,7 @@ def kakaoView_Home(user):
         {
             'action': 'block',
             'label': '사용 메뉴얼',
-            'messageText': '로딩중..',
+            'messageText': '...',
             'blockId': KAKAO_BLOCK_USER_MANUAL,
             'extra': {
                 KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_HOME
@@ -257,7 +257,7 @@ def kakaoView_Home(user):
                 MINOR_VERSION,
                 BUILD_VERSION,
                 VERSION_LEVEL,),
-            '- 카페 메뉴 픽업가능시간이 상시로 변경되었습니다. ',
+            '엠타워 규정상 도시락 배달이 일시적으로 중단됩니다.',
             {},
             []
         )
@@ -287,7 +287,7 @@ def kakaoView_Home(user):
         buttons[0] = {
             'action': 'block',
             'label': '잇플패스 확인',
-            'messageText': '로딩중..',
+            'messageText': '...',
             'blockId': KAKAO_BLOCK_USER_EATPLE_PASS,
             'extra': {
                 KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_HOME
@@ -329,7 +329,7 @@ def kakaoView_Home(user):
                 homeImg = '{}{}'.format(HOST_URL, HOME_HEAD_IMG_URL)
             else:
                 homeImg = '{}{}'.format(HOST_URL, HOME_HEAD_BLACK_IMG_URL)
-                
+
             thumbnail = {
                 'imageUrl': homeImg,
                 'fixedRatio': 'true',
@@ -394,7 +394,7 @@ def kakaoView_Home(user):
             {
                 'action': 'block',
                 'label': '현 위치 변경',
-                'messageText': '로딩중..',
+                'messageText': '...',
                 'blockId': KAKAO_BLOCK_USER_EDIT_LOCATION,
                 'extra': {
                     KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_HOME

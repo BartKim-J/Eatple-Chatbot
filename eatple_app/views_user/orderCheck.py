@@ -24,7 +24,7 @@ DEFAULT_QUICKREPLIES_MAP = [
     {
         'action': 'block',
         'label': '홈으로 돌아가기',
-        'messageText': '로딩중..',
+        'messageText': '...',
         'blockId': KAKAO_BLOCK_USER_HOME,
         'extra': {}
     },
@@ -51,14 +51,14 @@ def kakaoView_EatplePass(kakaoPayload):
         {
             'action': 'block',
             'label': '새로고침',
-            'messageText': '로딩중..',
+            'messageText': '...',
             'blockId': KAKAO_BLOCK_USER_EATPLE_PASS,
             'extra': {}
         },
         {
             'action': 'block',
             'label': '홈으로 돌아가기',
-            'messageText': '로딩중..',
+            'messageText': '...',
             'blockId': KAKAO_BLOCK_USER_HOME,
             'extra': {}
         },
@@ -127,7 +127,7 @@ def kakaoView_EatplePass(kakaoPayload):
                     {
                         'action': 'block',
                         'label': '사용하기(사장님 전용)',
-                        'messageText': '로딩중..',
+                        'messageText': '...',
                         'blockId': KAKAO_BLOCK_USER_GET_USE_EATPLE_PASS_CONFIRM,
                         'extra': {
                             KAKAO_PARAM_ORDER_ID: order.order_id,
@@ -147,7 +147,7 @@ def kakaoView_EatplePass(kakaoPayload):
                             {
                                 'action': 'block',
                                 'label': '부탁하기 전체취소',
-                                'messageText': '로딩중..',
+                                'messageText': '...',
                                 'blockId': KAKAO_BLOCK_USER_ORDER_SHARING_CANCEL_ALL,
                                 'extra': {
                                     KAKAO_PARAM_ORDER_ID: order.order_id,
@@ -160,7 +160,7 @@ def kakaoView_EatplePass(kakaoPayload):
                             {
                                 'action': 'block',
                                 'label': '픽업 부탁하기',
-                                'messageText': '로딩중..',
+                                'messageText': '...',
                                 'blockId': KAKAO_BLOCK_USER_ORDER_SHARING_START,
                                 'extra': {
                                     KAKAO_PARAM_ORDER_ID: order.order_id,
@@ -175,7 +175,7 @@ def kakaoView_EatplePass(kakaoPayload):
                                 {
                                     'action': 'block',
                                     'label': '주문취소',
-                                    'messageText': '로딩중..',
+                                    'messageText': '...',
                                     'blockId': KAKAO_BLOCK_USER_POST_ORDER_CANCEL,
                                     'extra': {
                                         KAKAO_PARAM_ORDER_ID: order.order_id,
@@ -191,7 +191,7 @@ def kakaoView_EatplePass(kakaoPayload):
                                 {
                                     'action': 'block',
                                     'label': '픽업시간 변경',
-                                    'messageText': '로딩중..',
+                                    'messageText': '...',
                                     'blockId': KAKAO_BLOCK_USER_EDIT_PICKUP_TIME,
                                     'extra': {
                                         KAKAO_PARAM_ORDER_ID: order.order_id,
@@ -204,7 +204,7 @@ def kakaoView_EatplePass(kakaoPayload):
                         {
                             'action': 'block',
                             'label': '부탁하기 취소',
-                            'messageText': '로딩중..',
+                            'messageText': '...',
                             'blockId': KAKAO_BLOCK_USER_ORDER_SHARING_CANCEL,
                             'extra': {
                                 KAKAO_PARAM_ORDER_ID: order.order_id,
@@ -307,7 +307,7 @@ def kakaoView_OrderDetails(kakaoPayload):
         {
             'action': 'block',
             'label': '홈으로 돌아가기',
-            'messageText': '로딩중..',
+            'messageText': '...',
             'blockId': KAKAO_BLOCK_USER_HOME,
             'extra': {}
         },

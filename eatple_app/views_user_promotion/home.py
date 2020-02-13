@@ -150,7 +150,7 @@ def kakaoView_MenuListup(kakaoPayload):
                 {
                     'action': 'block',
                     'label': '주문하기',
-                    'messageText': '로딩중..',
+                    'messageText': '...',
                     'blockId': KAKAO_BLOCK_USER_PROMOTION,
                     'extra': {
                         KAKAO_PARAM_STORE_ID: menu.store.store_id,
@@ -184,7 +184,7 @@ def kakaoView_MenuListup(kakaoPayload):
         {
             'action': 'block',
             'label': '홈으로 돌아가기',
-            'messageText': '로딩중..',
+            'messageText': '...',
             'blockId': KAKAO_BLOCK_USER_HOME,
             'extra': {
                 KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_PROMOTION
@@ -297,7 +297,7 @@ def kakaoView_OrderPayment(kakaoPayload):
         {
             'action': 'webLink',
             'label': '결제하러 가기   ➔',
-            'messageText': '로딩중..',
+            'messageText': '...',
             'extra': dataActionExtra,
 
             'webLinkUrl': 'https://www.eatple.com/payment?merchant_uid={merchant_uid}&storeName={storeName}&menuName={menuName}&menuPrice={menuPrice}&buyer_name={buyer_name}&buyer_tel={buyer_tel}&buyer_email={buyer_email}'.format(
@@ -327,7 +327,7 @@ def kakaoView_OrderPayment(kakaoPayload):
         {
             'action': 'block',
             'label': '잇플패스 확인',
-            'messageText': '로딩중..',
+            'messageText': '...',
             'blockId': KAKAO_BLOCK_USER_PROMOTION,
             'extra': dataActionExtra,
         },
@@ -348,7 +348,7 @@ def kakaoView_OrderPayment(kakaoPayload):
     GET_PICKUP_TIME_QUICKREPLIES_MAP = [
         {
             'action': 'message', 'label': '홈으로 돌아가기',
-            'messageText': '로딩중..',
+            'messageText': '...',
             'blockId': KAKAO_BLOCK_USER_HOME,
             'extra': {}
         },
@@ -408,7 +408,7 @@ def kakaoView_OrderPaymentCheck(kakaoPayload):
             {
                 'action': 'webLink',
                 'label': '결제하러 가기   ➔',
-                'messageText': '로딩중..',
+                'messageText': '...',
                 'extra': dataActionExtra,
 
                 'webLinkUrl': 'https://www.eatple.com/payment?merchant_uid={merchant_uid}&storeName={storeName}&menuName={menuName}&menuPrice={menuPrice}&buyer_name={buyer_name}&buyer_tel={buyer_tel}&buyer_email={buyer_email}'.format(
@@ -424,7 +424,7 @@ def kakaoView_OrderPaymentCheck(kakaoPayload):
             {
                 'action': 'block',
                 'label': '잇플패스 확인',
-                'messageText': '로딩중..',
+                'messageText': '...',
                 'blockId': KAKAO_BLOCK_USER_PROMOTION,
                 'extra': dataActionExtra,
             },
@@ -433,7 +433,7 @@ def kakaoView_OrderPaymentCheck(kakaoPayload):
         QUICKREPLIES_MAP = [
             {
                 'action': 'message', 'label': '홈으로 돌아가기',
-                'messageText': '로딩중..',
+                'messageText': '...',
                 'blockId': KAKAO_BLOCK_USER_HOME,
                 'extra': {}
             },
@@ -510,7 +510,7 @@ def kakaoView_EatplePassIssuance(kakaoPayload):
             {
                 'action': 'block',
                 'label': '사용하기(사장님 전용)',
-                'messageText': '로딩중..',
+                'messageText': '...',
                 'blockId': KAKAO_BLOCK_USER_GET_USE_EATPLE_PASS_CONFIRM,
                 'extra': {
                     KAKAO_PARAM_ORDER_ID: order.order_id,
@@ -553,7 +553,7 @@ def kakaoView_EatplePassIssuance(kakaoPayload):
             {
                 'action': 'block',
                 'label': '홈으로 돌아가기',
-                'messageText': '로딩중..',
+                'messageText': '...',
                 'blockId': KAKAO_BLOCK_USER_HOME,
                 'extra': {
                     KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_SET_ORDER_SHEET
@@ -576,7 +576,7 @@ def kakaoView_TimeOut(blockId):
         {
             'action': 'block',
             'label': '홈으로 돌아가기',
-            'messageText': '로딩중..',
+            'messageText': '...',
             'blockId': KAKAO_BLOCK_USER_HOME,
             'extra': {
                 KAKAO_PARAM_PREV_BLOCK_ID: blockId

@@ -43,7 +43,7 @@ def kakaoView_SignUp():
         {
             'action': 'block',
             'label': '가입하러 가기',
-            'messageText': '로딩중..',
+            'messageText': '...',
             'blockId': KAKAO_BLOCK_PARTNER_SIGNUP,
             'extra': {
                 KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_PARTNER_HOME
@@ -79,7 +79,7 @@ def kakaoView_StoreRegistration():
         {
             'action': 'block',
             'label': '등록하러 가기',
-            'messageText': '로딩중..',
+            'messageText': '...',
             'blockId': KAKAO_BLOCK_PARTNER_STORE_REGISTRATION,
             'extra': {
                 KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_PARTNER_HOME
@@ -115,7 +115,7 @@ def kakaoView_Home(partner):
         {
             'action': 'block',
             'label': '주문 확인하기',
-            'messageText': '로딩중..',
+            'messageText': '...',
             'blockId': KAKAO_BLOCK_PARTNER_GET_ORDER_DETAILS,
             'extra': {
                 KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_PARTNER_HOME
@@ -124,7 +124,7 @@ def kakaoView_Home(partner):
         {
             'action': 'block',
             'label': ' 정산일정 조회',
-            'messageText': '로딩중..',
+            'messageText': '...',
             'blockId': KAKAO_BLOCK_PARTNER_CALCULATE,
             'extra': {
                 KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_PARTNER_HOME
@@ -136,7 +136,7 @@ def kakaoView_Home(partner):
         {
             'action': 'block',
             'label': '사용 메뉴얼',
-            'messageText': '로딩중..',
+            'messageText': '...',
             'blockId': KAKAO_BLOCK_PARTNER_MANUAL,
             'extra': {
                 KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_PARTNER_HOME

@@ -68,10 +68,20 @@ class MenuAdmin(ImportExportMixin, admin.GeoModelAdmin):
          'selling_time', 'pickup_time', 'tag', 'description',
          'image', 'image_preview',
          'soldout_image', 'image_soldout_preview',
-         'price',]}),
+         'price', ]}),
         ('상태',                  {'fields': [
          'current_stock', 'pickuped_stock', 'max_stock', 'status']}),
     ]
+
+    search_fields = ['name', 'menu_id',
+                     'store__name', 'stocktable__company__name']
+
+    list_filter = (
+        'store',
+        'stocktable__company__name',
+        'status',
+        'selling_time',
+    )
 
     list_display = (
         'name',
