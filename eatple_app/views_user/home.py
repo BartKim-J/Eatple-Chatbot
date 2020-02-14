@@ -354,11 +354,11 @@ def kakaoView_Home(user):
             place=order.store.place
         )
 
-        kakaoMapUrlAndriod = 'http://m.map.kakao.com/scheme/map?ep={place}&by=FOOT'.format(
+        kakaoMapUrlAndriod = 'http://m.map.kakao.com/scheme/route?ep={place}&by=FOOT'.format(
             place=order.store.place
         )
 
-        kakaoMapUrlIOS = 'http://m.map.kakao.com/scheme/map?ep={place}&by=FOOT'.format(
+        kakaoMapUrlIOS = 'http://m.map.kakao.com/scheme/route?ep={place}&by=FOOT'.format(
             place=order.store.place
         )
 
