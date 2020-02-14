@@ -354,7 +354,7 @@ def kakaoView_Home(user):
             place=order.store.place
         )
 
-        kakaoMapUrlAndriod = 'daummaps://map.kakao.com/scheme/map?ep={place}&by=FOOT'.format(
+        kakaoMapUrlAndriod = 'http://m.map.kakao.com/scheme/map?ep={place}&by=FOOT'.format(
             place=order.store.place
         )
 
