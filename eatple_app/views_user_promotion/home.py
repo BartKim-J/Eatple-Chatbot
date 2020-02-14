@@ -143,7 +143,7 @@ def kakaoView_MenuListup(kakaoPayload):
                 'height': 800,
             }
 
-            kakaoMapUrl = 'https://map.kakao.com/link/to/{name},{place}'.format(
+            kakaoMapUrl = 'https://map.kakao.com/link/map/{name},{place}'.format(
                 name=menu.store.name,
                 place=menu.store.place
             )
@@ -304,7 +304,7 @@ def kakaoView_OrderPayment(kakaoPayload):
         'imageUrl': '{}{}'.format(HOST_URL, store.logoImgURL()),
     }
 
-    kakaoMapUrl = 'https://map.kakao.com/link/to/{name},{place}'.format(
+    kakaoMapUrl = 'https://map.kakao.com/link/map/{name},{place}'.format(
         name=order.store.name,
         place=order.store.place
     )
@@ -525,7 +525,7 @@ def kakaoView_EatplePassIssuance(kakaoPayload):
             'imageUrl': '{}{}'.format(HOST_URL, '/media/STORE_DB/images/default/eatplePassImg.png'),
         }
 
-        kakaoMapUrl = 'https://map.kakao.com/link/to/{name},{place}'.format(
+        kakaoMapUrl = 'https://map.kakao.com/link/map/{name},{place}'.format(
             name=order.store.name,
             place=order.store.place
         )

@@ -114,7 +114,7 @@ def kakaoView_EatplePass(kakaoPayload):
                 'imageUrl': imgUrl,
             }
 
-            kakaoMapUrl = 'https://map.kakao.com/link/to/{name},{place}'.format(
+            kakaoMapUrl = 'https://map.kakao.com/link/map/{name},{place}'.format(
                 name=order.store.name,
                 place=order.store.place
             )

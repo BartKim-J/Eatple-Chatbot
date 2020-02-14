@@ -258,7 +258,7 @@ def kakaoView_Home(user):
                 MINOR_VERSION,
                 BUILD_VERSION,
                 VERSION_LEVEL,),
-            '건물 규정상 도시락 배달이 일시적으로 중단됩니다.',
+            '\'길찾기\'(카카오 맵) 기능이 추가되었습니다.',
             {},
             []
         )
@@ -349,7 +349,7 @@ def kakaoView_Home(user):
 
     # MAP
     if(isOrderEnable):
-        kakaoMapUrl = 'https://map.kakao.com/link/to/{name},{place}'.format(
+        kakaoMapUrl = 'https://map.kakao.com/link/map/{name},{place}'.format(
             name=order.store.name,
             place=order.store.place
         )
@@ -363,7 +363,7 @@ def kakaoView_Home(user):
         )
 
         thumbnail = {
-            'imageUrl': 'https://maps.googleapis.com/maps/api/staticmap?center={lat},{long}&maptype=mobile&zoom={zoom}&markers=size:mid%7C{lat},{long}&size=800x800&key={apiKey}'.format(
+            'imageUrl': 'https://maps.googleapis.com/maps/api/staticmap?center={lat},{long}&maptype=mobile&zoom={zoom}&markers=size:mid%7C{lat},{long}&size=500x500&key={apiKey}'.format(
                 zoom=18,
                 lat=order.store.place.lat,
                 long=order.store.place.long,
@@ -393,7 +393,7 @@ def kakaoView_Home(user):
         )
     else:
         thumbnail = {
-            'imageUrl': 'https://maps.googleapis.com/maps/api/staticmap?center={lat},{long}&maptype=mobile&zoom={zoom}&markers=size:mid%7C{lat},{long}&size=800x800&key={apiKey}'.format(
+            'imageUrl': 'https://maps.googleapis.com/maps/api/staticmap?center={lat},{long}&maptype=mobile&zoom={zoom}&markers=size:mid%7C{lat},{long}&size=500x500&key={apiKey}'.format(
                 zoom=18,
                 lat=user.location.lat,
                 long=user.location.long,
@@ -406,7 +406,7 @@ def kakaoView_Home(user):
         buttons = [
             {
                 'action': 'block',
-                'label': '현 위치 변경',
+                'label': '자주 사용하는 위치 변경',
                 'messageText': '...',
                 'blockId': KAKAO_BLOCK_USER_EDIT_LOCATION,
                 'extra': {
