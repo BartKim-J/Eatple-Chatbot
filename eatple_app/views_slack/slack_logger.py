@@ -2,6 +2,7 @@
 
 from eatple_app.define import *
 
+
 def SlackLogFollow(nickname):
     res = client.chat_postMessage(
         channel=SLACK_CHANNEL_EATPLE_LOG,
@@ -9,8 +10,9 @@ def SlackLogFollow(nickname):
             name=nickname
         )
     )
-    
+
     return res
+
 
 def SlackLogUnfollow(nickname):
     res = client.chat_postMessage(
@@ -19,29 +21,31 @@ def SlackLogUnfollow(nickname):
             name=nickname
         )
     )
-    
+
     return res
 
-def SlackLogSignUp(user):    
+
+def SlackLogSignUp(user):
     res = client.chat_postMessage(
         channel=SLACK_CHANNEL_EATPLE_LOG,
         text="{name}님이 잇플에 들어옴, 흥폭발:face_with_hand_over_mouth:".format(
             name=user.nickname
         )
     )
-    
+
     return res
+
 
 def SlackLogPayOrder(order):
     if(settings.SETTING_ID == 'DEPLOY'):
         SERVER_PORT = 8000
-        DEV_LOG=''
+        DEV_LOG = ''
     else:
         SERVER_PORT = 8001
-        DEV_LOG='개발 서버에서 '
+        DEV_LOG = '개발 서버에서 '
 
-    HOST_URL='https://www.eatple.com:{}'.format(SERVER_PORT)
-        
+    HOST_URL = 'https://www.eatple.com:{}'.format(SERVER_PORT)
+
     if(order.type == ORDER_TYPE_NORMAL):
         res = client.chat_postMessage(
             channel=SLACK_CHANNEL_EATPLE_LOG,
@@ -74,11 +78,11 @@ def SlackLogPayOrder(order):
                             order_index=order.id,
                         )
                     },
-                    #"accessory": {
+                    # "accessory": {
                     #    "type": "image",
                     #    "image_url": '{}{}'.format(HOST_URL, order.menu.imgURL()),
                     #    "alt_text": "menu"
-                    #}
+                    # }
                 },
                 {
                     "type": "divider"
@@ -86,11 +90,11 @@ def SlackLogPayOrder(order):
             ]
         )
         return res
-    
+
     elif(order.type == ORDER_TYPE_B2B):
         res = client.chat_postMessage(
             channel=SLACK_CHANNEL_EATPLE_LOG,
-            blocks= [
+            blocks=[
                 {
                     "type": "divider"
                 },
@@ -120,19 +124,19 @@ def SlackLogPayOrder(order):
                             order_index=order.id,
                         )
                     },
-                    #"accessory": {
+                    # "accessory": {
                     #    "type": "image",
                     #    "image_url": '{}{}'.format(HOST_URL, order.menu.imgURL()),
                     #    "alt_text": "menu"
-                    #}
+                    # }
                 },
                 {
                     "type": "divider"
                 },
             ]
         )
-        return res 
-    
+        return res
+
     elif(order.type == ORDER_TYPE_PROMOTION):
         res = client.chat_postMessage(
             channel=SLACK_CHANNEL_EATPLE_LOG,
@@ -165,11 +169,11 @@ def SlackLogPayOrder(order):
                             order_index=order.id,
                         )
                     },
-                    #"accessory": {
+                    # "accessory": {
                     #    "type": "image",
                     #    "image_url": '{}{}'.format(HOST_URL, order.menu.imgURL()),
                     #    "alt_text": "menu"
-                    #}
+                    # }
                 },
                 {
                     "type": "divider"
@@ -177,7 +181,7 @@ def SlackLogPayOrder(order):
             ]
         )
         return res
-    
+
     else:
         res = client.chat_postMessage(
             channel=SLACK_CHANNEL_EATPLE_LOG,
@@ -185,16 +189,17 @@ def SlackLogPayOrder(order):
         )
         return res
 
+
 def SlackLogCancelOrder(order):
     if(settings.SETTING_ID == 'DEPLOY'):
         SERVER_PORT = 8000
-        DEV_LOG=''
+        DEV_LOG = ''
     else:
         SERVER_PORT = 8001
-        DEV_LOG='개발 서버에서 '
-        
-    HOST_URL='https://www.eatple.com:{}'.format(SERVER_PORT)
-        
+        DEV_LOG = '개발 서버에서 '
+
+    HOST_URL = 'https://www.eatple.com:{}'.format(SERVER_PORT)
+
     res = client.chat_postMessage(
         channel=SLACK_CHANNEL_EATPLE_LOG,
         blocks=[
@@ -215,22 +220,22 @@ def SlackLogCancelOrder(order):
                         " > <{host_url}/admin/eatple_app/order/{order_index}/change|주문 자세히 보기>\n"
                         "```"
                     ).format(
-                            order_id=order.order_id,
-                            dev=DEV_LOG,
-                            name=order.ordersheet.user.nickname,
-                            store=order.store,
-                            menu=order.menu,
-                            pickup_time=dateByTimeZone(order.pickup_time).strftime(
-                                '%-m월 %-d일 %p %-I시 %-M분').replace('AM', '오전').replace('PM', '오후'),
-                            host_url=HOST_URL,
-                            order_index=order.id,
+                        order_id=order.order_id,
+                        dev=DEV_LOG,
+                        name=order.ordersheet.user.nickname,
+                        store=order.store,
+                        menu=order.menu,
+                        pickup_time=dateByTimeZone(order.pickup_time).strftime(
+                            '%-m월 %-d일 %p %-I시 %-M분').replace('AM', '오전').replace('PM', '오후'),
+                        host_url=HOST_URL,
+                        order_index=order.id,
                     )
                 },
-                #"accessory": {
+                # "accessory": {
                 #    "type": "image",
                 #    "image_url": '{}{}'.format(HOST_URL, order.menu.imgURL()),
                 #    "alt_text": "menu"
-                #}
+                # }
             },
             {
                 "type": "divider"
@@ -238,4 +243,3 @@ def SlackLogCancelOrder(order):
         ]
     )
     return res
-

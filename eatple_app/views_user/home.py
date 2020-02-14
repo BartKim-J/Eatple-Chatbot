@@ -14,6 +14,7 @@ from eatple_app.views_slack.slack_logger import SlackLogSignUp
 # Modules
 from eatple_app.module_kakao.reponseForm import *
 from eatple_app.module_kakao.requestForm import *
+from eatple_app.module_kakao.kakaoPay import *
 from eatple_app.module_kakao.validation import *
 
 # View-System
@@ -257,7 +258,7 @@ def kakaoView_Home(user):
                 MINOR_VERSION,
                 BUILD_VERSION,
                 VERSION_LEVEL,),
-            '엠타워 규정상 도시락 배달이 일시적으로 중단됩니다.',
+            '건물 규정상 도시락 배달이 일시적으로 중단됩니다.',
             {},
             []
         )
@@ -348,9 +349,17 @@ def kakaoView_Home(user):
 
     # MAP
     if(isOrderEnable):
-        kakaoMapUrl = 'https://map.kakao.com/link/map/{},{}'.format(
-            order.store.name,
-            order.store.place
+        kakaoMapUrl = 'https://map.kakao.com/link/to/{name},{place}'.format(
+            name=order.store.name,
+            place=order.store.place
+        )
+
+        kakaoMapUrlAndriod = 'daummaps://map.kakao.com/scheme/map?ep={place}&by=FOOT'.format(
+            place=order.store.place
+        )
+
+        kakaoMapUrlIOS = 'http://m.map.kakao.com/scheme/map?ep={place}&by=FOOT'.format(
+            place=order.store.place
         )
 
         thumbnail = {
@@ -366,9 +375,13 @@ def kakaoView_Home(user):
         }
         buttons = [
             {
-                'action': 'webLink',
-                'label': '위치보기',
-                'webLinkUrl': kakaoMapUrl
+                'action': 'osLink',
+                'label': '길찾기',
+                'osLink': {
+                    'android': kakaoMapUrlAndriod,
+                    'ios': kakaoMapUrlIOS,
+                    'pc': kakaoMapUrl,
+                }
             },
         ]
 
@@ -424,10 +437,12 @@ def GET_UserHome(request):
         user = userValidation(kakaoPayload)
         location = userLocationValidation(user)
 
+        #kakaoPay = KakaoPay()
+        # kakaoPay.PushOrderSheet()
+
         if(user == None):
             try:
                 otpURL = kakaoPayload.dataActionParams['user_profile']['origin']
-
                 kakaoResponse = requests.get('{url}?rest_api_key={rest_api_key}'.format(
                     url=otpURL, rest_api_key=KAKAO_REST_API_KEY))
 

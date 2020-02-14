@@ -340,9 +340,17 @@ def kakaoView_OrderCancel(kakaoPayload):
             'imageUrl': ''
         }
 
-        kakaoMapUrl = 'https://map.kakao.com/link/map/{},{}'.format(
-            order.store.name,
-            order.store.place
+        kakaoMapUrl = 'https://map.kakao.com/link/to/{name},{place}'.format(
+            name=order.store.name,
+            place=order.store.place
+        )
+
+        kakaoMapUrlAndriod = 'http://m.map.kakao.com/scheme/route?ep={place}&by=FOOT'.format(
+            place=order.store.place
+        )
+
+        kakaoMapUrlIOS = 'http://m.map.kakao.com/scheme/route?ep={place}&by=FOOT'.format(
+            place=order.store.place
         )
 
         buttons = []
@@ -357,14 +365,12 @@ def kakaoView_OrderCancel(kakaoPayload):
 
         kakaoForm.BasicCard_Push(
             '주문이 취소되었습니다.',
-            ' - 주문자: {}({})\n\n - 매장: {} \n - 메뉴: {}\n\n - 총 금액: {}원\n - 픽업 시간: {}\n\n - 주문 상태: {}'.format(
+            '{}\n\n - 주문자: {}({})\n - 매장: {}\n\n - 픽업 시간: {}'.format(
+                order.menu.name,
                 order.ordersheet.user.nickname,
                 str(order.ordersheet.user.phone_number)[9:13],
                 order.store.name,
-                order.menu.name,
-                order.totalPrice,
                 pickupTimeStr,
-                ORDER_STATUS[order.status][1]
             ),
             thumbnail, buttons
         )

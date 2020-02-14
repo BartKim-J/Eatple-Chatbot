@@ -66,6 +66,44 @@ class StockTable(models.Model):
         verbose_name="일일 주문 가능량"
     )
 
+    def getCurrentStock(self):
+        orderTimeSheet = OrderTimeSheet()
+
+        currentDate = orderTimeSheet.GetCurrentDate()
+        currentDateWithoutTime = orderTimeSheet.GetCurrentDateWithoutTime()
+
+        prevLunchOrderEditTimeStart = orderTimeSheet.GetPrevLunchOrderEditTimeStart()
+        nextLunchOrderEditTimeStart = orderTimeSheet.GetNextLunchOrderEditTimeStart()
+
+        deadline = orderTimeSheet.GetInitialCountTime()
+
+        # order deadline  ~ pickup-day 16:20 , get yesterday 16:30 ~ orders
+        if(currentDate <= deadline):
+            expireDate = prevLunchOrderEditTimeStart
+        # over deadline pickup-day 16:20 ~ , get today 16:30 ~ order
+        else:
+            expireDate = nextLunchOrderEditTimeStart
+
+        availableOrders = Order.objects.filter(menu=self).filter(
+            (
+                Q(status=ORDER_STATUS_PICKUP_COMPLETED) |
+                Q(status=ORDER_STATUS_PICKUP_WAIT) |
+                Q(status=ORDER_STATUS_PICKUP_PREPARE) |
+                Q(status=ORDER_STATUS_ORDER_CONFIRM_WAIT) |
+                Q(status=ORDER_STATUS_ORDER_CONFIRMED)
+            ) &
+            Q(payment_date__gte=expireDate)
+        )
+        self.current_stock = availableOrders.count()
+        self.pickuped_stock = availableOrders.filter(
+            Q(status=ORDER_STATUS_PICKUP_COMPLETED)).count()
+        self.save()
+
+        return availableOrders
+
+    def getPickupedStock(self):
+        return getCurrentStock().filter(Q(status=ORDER_STATUS_PICKUP_COMPLETED))
+        
     def __str__(self):
         return '{}'.format(self.company)
 

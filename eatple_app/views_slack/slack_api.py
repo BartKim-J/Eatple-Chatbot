@@ -3,53 +3,58 @@ from eatple_app.define import *
 
 from eatple_app.model.menu import Menu, PickupTime
 
+
 def eatple_b2b_status():
     menuList = Menu.objects.filter(
-        store__type=STORE_TYPE_B2B,         
+        store__type=STORE_TYPE_B2B,
         status=OC_OPEN,
         store__status=OC_OPEN,
     )
-    
+
     menuStatusBlock = []
     menuStatusBlock += {
         "type": "divider"
     },
-    
+
     total_stock = 0
-    
+    total_pickuped_stock = 0
+
     for menu in menuList:
         if(menu.current_stock == 0):
             pass
         else:
             total_stock += menu.current_stock
-            
+            total_pickuped_stock += menu.pickuped_stock
+
             menuStatusBlock += {
-                    "type": "section",
-                    "text": {
+                "type": "section",
+                "text": {
                         "type": "mrkdwn",
                         "text": (
                             "*{name} - {menu}*\n"
                             "```\n"
-                            "일일 재고량 : {max_stock}개, "
-                            "픽업 대기중 : {current_stock}개"
+                            "일일 주문 가능량 : {max_stock}개, "
+                            "들어운 일일 주문 : {current_stock}개"
+                            "픽업 완료된 주문 : {pickuped_stock}개"
                             "```"
                             " > <{host_url}/admin/eatple_app/store/{store_index}/change|점포 자세히 보기>\n"
                         ).format(
-                                name=menu.store.name,
-                                menu=menu.name,
-                                current_stock=menu.current_stock,
-                                max_stock=menu.max_stock,
-                                host_url=HOST_URL,
-                                store_index=menu.store.id,
+                            name=menu.store.name,
+                            menu=menu.name,
+                            current_stock=menu.current_stock,
+                            pickuped_stock=menu.pickuped_stock,
+                            max_stock=menu.max_stock,
+                            host_url=HOST_URL,
+                            store_index=menu.store.id,
                         )
-                    },
-                    #"accessory": {
-                    #    "type": "image",
-                    #    "image_url": '{}{}'.format(HOST_URL, menuList.first().image.url),
-                    #    "alt_text": "menu"
-                    #}
                 },
-        
+                # "accessory": {
+                #    "type": "image",
+                #    "image_url": '{}{}'.format(HOST_URL, menuList.first().image.url),
+                #    "alt_text": "menu"
+                # }
+            },
+
     menuStatusBlock += {
         "type": "divider"
     },
@@ -58,16 +63,17 @@ def eatple_b2b_status():
         "text": {
             "type": "mrkdwn",
             "text": (
-                "*총 들어온 주문 : {total_stock}개*"
+                "*총 들어온 주문 : {total_stock}개, 총 픽업된 주문 : {total_picuped_stock}개*"
             ).format(
                 total_stock=total_stock,
+                total_picuped_stock=total_pickuped_stock,
             )
         },
     },
     menuStatusBlock += {
         "type": "divider"
     },
-    
+
     res = client.chat_postMessage(
         channel=SLACK_CHANNEL_EATPLE_LOG,
         blocks=menuStatusBlock
@@ -81,9 +87,11 @@ def eatple_daily_status():
     currentDateWithoutTime = currentDate.replace(
         hour=0, minute=0, second=0, microsecond=0)
 
-    YESTERDAY = currentDateWithoutTime + datetime.timedelta(days=-1)  # Yesterday start
+    YESTERDAY = currentDateWithoutTime + \
+        datetime.timedelta(days=-1)  # Yesterday start
     TODAY = currentDateWithoutTime
-    TOMORROW = currentDateWithoutTime + datetime.timedelta(days=1)  # Tommorrow start
+    TOMORROW = currentDateWithoutTime + \
+        datetime.timedelta(days=1)  # Tommorrow start
 
     res = client.chat_postMessage(
         channel=SLACK_CHANNEL_EATPLE_LOG,
@@ -105,6 +113,7 @@ def eatple_daily_status():
     )
 
     return Response(status=status.HTTP_200_OK)
+
 
 class Events(APIView):
     def post(self, request, *args, **kwargs):
@@ -131,6 +140,5 @@ class Events(APIView):
 
             if SLACK_COMMAND_B2B_STATUS in text.lower():
                 return eatple_b2b_status()
-                
 
         return Response(status=status.HTTP_200_OK)

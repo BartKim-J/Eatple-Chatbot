@@ -143,8 +143,18 @@ def kakaoView_MenuListup(kakaoPayload):
                 'height': 800,
             }
 
-            kakaoMapUrl = 'https://map.kakao.com/link/map/{},{}'.format(
-                menu.store.name, menu.store.place)
+            kakaoMapUrl = 'https://map.kakao.com/link/to/{name},{place}'.format(
+                name=menu.store.name,
+                place=menu.store.place
+            )
+
+            kakaoMapUrlAndriod = 'http://m.map.kakao.com/scheme/route?ep={place}&by=FOOT'.format(
+                place=menu.store.place
+            )
+
+            kakaoMapUrlIOS = 'http://m.map.kakao.com/scheme/route?ep={place}&by=FOOT'.format(
+                place=menu.store.place
+            )
 
             buttons = [
                 {
@@ -160,9 +170,13 @@ def kakaoView_MenuListup(kakaoPayload):
                     }
                 },
                 {
-                    'action': 'webLink',
-                    'label': '위치보기',
-                    'webLinkUrl': kakaoMapUrl
+                    'action': 'osLink',
+                    'label': '길찾기',
+                    'osLink': {
+                        'android': kakaoMapUrlAndriod,
+                        'ios': kakaoMapUrlIOS,
+                        'pc': kakaoMapUrl,
+                    }
                 },
             ]
 
@@ -290,8 +304,18 @@ def kakaoView_OrderPayment(kakaoPayload):
         'imageUrl': '{}{}'.format(HOST_URL, store.logoImgURL()),
     }
 
-    kakaoMapUrl = 'https://map.kakao.com/link/map/{},{}'.format(
-        store.name, menu.store.place)
+    kakaoMapUrl = 'https://map.kakao.com/link/to/{name},{place}'.format(
+        name=order.store.name,
+        place=order.store.place
+    )
+
+    kakaoMapUrlAndriod = 'http://m.map.kakao.com/scheme/route?ep={place}&by=FOOT'.format(
+        place=order.store.place
+    )
+
+    kakaoMapUrlIOS = 'http://m.map.kakao.com/scheme/route?ep={place}&by=FOOT'.format(
+        place=order.store.place
+    )
 
     buttons = [
         {
@@ -501,9 +525,17 @@ def kakaoView_EatplePassIssuance(kakaoPayload):
             'imageUrl': '{}{}'.format(HOST_URL, '/media/STORE_DB/images/default/eatplePassImg.png'),
         }
 
-        kakaoMapUrl = 'https://map.kakao.com/link/map/{},{}'.format(
-            order.store.name,
-            order.store.place
+        kakaoMapUrl = 'https://map.kakao.com/link/to/{name},{place}'.format(
+            name=order.store.name,
+            place=order.store.place
+        )
+
+        kakaoMapUrlAndriod = 'http://m.map.kakao.com/scheme/route?ep={place}&by=FOOT'.format(
+            place=order.store.place
+        )
+
+        kakaoMapUrlIOS = 'http://m.map.kakao.com/scheme/route?ep={place}&by=FOOT'.format(
+            place=order.store.place
         )
 
         buttons = [
@@ -518,9 +550,12 @@ def kakaoView_EatplePassIssuance(kakaoPayload):
                 }
             },
             {
-                'action': 'webLink',
-                'label': '위치보기',
-                'webLinkUrl': kakaoMapUrl
+                'action': 'osLink',
+                'osLink': {
+                    'android': kakaoMapUrlAndriod,
+                    'ios': kakaoMapUrlIOS,
+                    'pc': kakaoMapUrl,
+                }
             },
         ]
 
@@ -534,15 +569,14 @@ def kakaoView_EatplePassIssuance(kakaoPayload):
 
         kakaoForm.BasicCard_Push(
             '{}'.format(order.menu.name),
-            '주문번호: {}\n - 주문자: {}({})\n\n - 매장: {}\n - 주소: {}\n\n - 총 금액: {}원\n\n - 픽업 시간: {}\n - 주문 상태: {}'.format(
+            '주문번호: {}\n - 주문자: {}({})\n\n - 매장: {}\n - 주소: {}\n - 주문 상태: {}\n\n - 픽업 시간: {}'.format(
                 order.order_id,
                 order.ordersheet.user.nickname,
                 str(order.ordersheet.user.phone_number)[9:13],
                 order.store.name,
                 order.store.addr,
-                order.totalPrice,
+                dict(ORDER_STATUS)[order.status],
                 pickupTimeStr,
-                ORDER_STATUS[order.status][1]
             ),
             thumbnail,
             buttons

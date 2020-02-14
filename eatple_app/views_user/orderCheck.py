@@ -114,9 +114,17 @@ def kakaoView_EatplePass(kakaoPayload):
                 'imageUrl': imgUrl,
             }
 
-            kakaoMapUrl = 'https://map.kakao.com/link/map/{},{}'.format(
-                order.store.name,
-                order.store.place
+            kakaoMapUrl = 'https://map.kakao.com/link/to/{name},{place}'.format(
+                name=order.store.name,
+                place=order.store.place
+            )
+
+            kakaoMapUrlAndriod = 'http://m.map.kakao.com/scheme/route?ep={place}&by=FOOT'.format(
+                place=order.store.place
+            )
+
+            kakaoMapUrlIOS = 'http://m.map.kakao.com/scheme/route?ep={place}&by=FOOT'.format(
+                place=order.store.place
             )
 
             if(order.delegate != None):
@@ -219,15 +227,13 @@ def kakaoView_EatplePass(kakaoPayload):
                 if(delegatedEatplePass.count() > 0):
                     kakaoForm.BasicCard_Push(
                         '{}'.format(order.menu.name),
-                        '주문번호: {}\n - 주문자: {}\n - 총 잇플패스 : {}개\n\n - 매장: {}\n\n - 총 금액: {}원\n\n - 픽업 시간: {}\n - 주문 상태: {}'.format(
+                        '주문번호: {}\n - 주문자: {}\n - 총 잇플패스 : {}개\n\n - 매장: {}\n - 주문 상태: {}\n\n - 픽업 시간: {}'.format(
                             order.order_id,
                             nicknameList,
                             delegatedEatplePass.count() + ownEatplePass.count(),
                             order.store.addr,
-                            order.totalPrice *
-                            (delegatedEatplePass.count() + ownEatplePass.count()),
                             pickupTimeStr,
-                            ORDER_STATUS[order.status][1]
+                            dict(ORDER_STATUS)[order.status]
                         ),
                         thumbnail,
                         buttons
@@ -235,14 +241,13 @@ def kakaoView_EatplePass(kakaoPayload):
                 else:
                     kakaoForm.BasicCard_Push(
                         '{}'.format(order.menu.name),
-                        '주문번호: {}\n - 주문자: {}({})\n\n - 매장: {}\n\n - 총 금액: {}원\n\n - 픽업 시간: {}\n - 주문 상태: {}'.format(
+                        '주문번호: {}\n - 주문자: {}({})\n\n - 매장: {}\n - 주문 상태: {}\n\n - 픽업 시간: {}'.format(
                             order.order_id,
                             order.ordersheet.user.nickname,
                             str(order.ordersheet.user.phone_number)[9:13],
                             order.store.name,
-                            order.totalPrice,
+                            dict(ORDER_STATUS)[order.status],
                             pickupTimeStr,
-                            ORDER_STATUS[order.status][1]
                         ),
                         thumbnail,
                         buttons
@@ -250,15 +255,15 @@ def kakaoView_EatplePass(kakaoPayload):
             else:
                 kakaoForm.BasicCard_Push(
                     '{}님에게 부탁된 잇플패스 입니다.'.format(order.delegate.nickname),
-                    '주문번호: {}\n - 소유자: {}({})\n - 위임자: {}({})\n\n - 매장: {}\n - 픽업 시간: {}\n - 주문 상태: {}'.format(
+                    '주문번호: {}\n - 소유자: {}({})\n\n - 위임자: {}({})\n\n - 매장: {}\n - 주문 상태: {}\n\n - 픽업 시간: {}'.format(
                         order.order_id,
                         order.ordersheet.user.nickname,
                         str(order.ordersheet.user.phone_number)[9:13],
                         order.delegate.nickname,
                         str(order.delegate.phone_number)[9:13],
                         order.store.name,
+                        dict(ORDER_STATUS)[order.status],
                         pickupTimeStr,
-                        ORDER_STATUS[order.status][1]
                     ),
                     thumbnail,
                     buttons
@@ -273,9 +278,13 @@ def kakaoView_EatplePass(kakaoPayload):
                 {},
                 [
                     {
-                        'action': 'webLink',
-                        'label': '위치보기',
-                        'webLinkUrl': kakaoMapUrl
+                        'action': 'osLink',
+                        'label': '길찾기',
+                        'osLink': {
+                            'android': kakaoMapUrlAndriod,
+                            'ios': kakaoMapUrlIOS,
+                            'pc': kakaoMapUrl,
+                        }
                     }
                 ]
             )
@@ -344,7 +353,7 @@ def kakaoView_OrderDetails(kakaoPayload):
                 '{}'.format(order.menu.name),
                 '픽업 시간: {}\n주문 상태: {}'.format(
                     pickupTimeStr,
-                    ORDER_STATUS[order.status][1]
+                    dict(ORDER_STATUS)[order.status]
                 ),
                 thumbnail, buttons
             )
