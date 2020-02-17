@@ -66,6 +66,18 @@ def kakaoView_notifiy(kakaoPayload):
     )
     kakaoForm.ListCard_Add(header)
 
+    QUICKREPLIES_MAP = [
+        {
+            'action': 'block',
+            'label': '홈으로 돌아가기',
+            'messageText': KAKAO_EMOJI_LOADING,
+            'blockId': KAKAO_BLOCK_USER_HOME,
+            'extra': {
+                KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_GET_MENU
+            }
+        },
+    ]
+
     return JsonResponse(kakaoForm.GetForm())
 
 
@@ -79,7 +91,7 @@ def kakaoView_notifiy(kakaoPayload):
 @csrf_exempt
 def GET_UserNotify(request):
     EatplusSkillLog('GET_UserNotify')
-    
+
     try:
         kakaoPayload = KakaoPayLoad(request)
 
