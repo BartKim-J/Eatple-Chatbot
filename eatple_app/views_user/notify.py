@@ -78,7 +78,8 @@ def kakaoView_notifiy(kakaoPayload):
 
 @csrf_exempt
 def GET_UserNotify(request):
-    EatplusSkillLog('GET_CalculateDetails')
+    EatplusSkillLog('GET_UserNotify')
+    
     try:
         kakaoPayload = KakaoPayLoad(request)
 

@@ -441,6 +441,7 @@ def kakaoView_DelegateUserRemoveAll(kakaoPayload):
 @csrf_exempt
 def GET_DelegateUserRemove(request):
     EatplusSkillLog('GET_DelegateUserRemove')
+
     try:
         kakaoPayload = KakaoPayLoad(request)
 
@@ -458,6 +459,7 @@ def GET_DelegateUserRemove(request):
 @csrf_exempt
 def GET_DelegateUserRemoveAll(request):
     EatplusSkillLog('GET_DelegateUserRemoveAll')
+
     try:
         kakaoPayload = KakaoPayLoad(request)
 
@@ -475,6 +477,7 @@ def GET_DelegateUserRemoveAll(request):
 @csrf_exempt
 def GET_DelegateUser(request):
     EatplusSkillLog('GET_DelegateUser')
+
     try:
         kakaoPayload = KakaoPayLoad(request)
 

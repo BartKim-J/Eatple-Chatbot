@@ -524,33 +524,39 @@ def kakaoView_ConfirmEditPickupTime(kakaoPayload):
 def GET_EditPickupTime(request):
     EatplusSkillLog('GET_EditPickupTime')
 
-    kakaoPayload = KakaoPayLoad(request)
+    try:
+        kakaoPayload = KakaoPayLoad(request)
 
-    # User Validation
-    user = userValidation(kakaoPayload)
-    if (user == None):
-        return GET_UserHome(request)
+        # User Validation
+        user = userValidation(kakaoPayload)
+        if (user == None):
+            return GET_UserHome(request)
 
-    return kakaoView_EditPickupTime(kakaoPayload)
-
+        return kakaoView_EditPickupTime(kakaoPayload)
+    except (RuntimeError, TypeError, NameError, KeyError) as ex:
+        return errorView('{} '.format(ex))
 
 @csrf_exempt
 def SET_ConfirmEditPickupTime(request):
     EatplusSkillLog('SET_ConfirmEditPickupTime')
 
-    kakaoPayload = KakaoPayLoad(request)
+    try:
+        kakaoPayload = KakaoPayLoad(request)
 
-    # User Validation
-    user = userValidation(kakaoPayload)
-    if (user == None):
-        return GET_UserHome(request)
+        # User Validation
+        user = userValidation(kakaoPayload)
+        if (user == None):
+            return GET_UserHome(request)
 
-    return kakaoView_ConfirmEditPickupTime(kakaoPayload)
+        return kakaoView_ConfirmEditPickupTime(kakaoPayload)
+    except (RuntimeError, TypeError, NameError, KeyError) as ex:
+        return errorView('{} '.format(ex))
 
 
 @csrf_exempt
 def GET_ConfirmUseEatplePass(request):
     EatplusSkillLog('GET_ConfirmUseEatplePass')
+    
     try:
         kakaoPayload = KakaoPayLoad(request)
 
@@ -568,6 +574,7 @@ def GET_ConfirmUseEatplePass(request):
 @csrf_exempt
 def POST_UseEatplePass(request):
     EatplusSkillLog('POST_UserEatplePass')
+    
     try:
         kakaoPayload = KakaoPayLoad(request)
 

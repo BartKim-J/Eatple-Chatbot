@@ -900,21 +900,23 @@ def kakaoView_TimeOut(blockId):
 
 @csrf_exempt
 def GET_Menu(request):
-    EatplusSkillLog('Get Menu')
+    EatplusSkillLog('GET_Menu')
 
-    kakaoPayload = KakaoPayLoad(request)
+    try:
+        kakaoPayload = KakaoPayLoad(request)
 
-    # User Validation
-    user = userValidation(kakaoPayload)
-    if (user == None):
-        return GET_UserHome(request)
+        # User Validation
+        user = userValidation(kakaoPayload)
+        if (user == None):
+            return GET_UserHome(request)
 
-    return kakaoView_MenuListup(kakaoPayload)
-
+        return kakaoView_MenuListup(kakaoPayload)
+    except (RuntimeError, TypeError, NameError, KeyError) as ex:
+        return errorView('{} '.format(ex))
 
 @csrf_exempt
 def SET_PickupTime(request):
-    EatplusSkillLog('Get PickupTime')
+    EatplusSkillLog('SET_PickupTime')
 
     try:
         kakaoPayload = KakaoPayLoad(request)
@@ -931,7 +933,8 @@ def SET_PickupTime(request):
 
 @csrf_exempt
 def SET_OrderSheet(request):
-    EatplusSkillLog('Order Sheet Check')
+    EatplusSkillLog('SET_OrderSheet')
+    
     try:
         kakaoPayload = KakaoPayLoad(request)
 

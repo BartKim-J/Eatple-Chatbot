@@ -276,8 +276,26 @@ def kakaoView_Home(user):
         )
         kakaoForm.BasicCard_Add()
     else:
-        # NOT DISPLAY
-        pass
+        kakaoForm.BasicCard_Push(
+            '「{}」 v{}.{}.{}({})'.format(
+                VERSION_CODE,
+                MAJOR_VERSION,
+                MINOR_VERSION,
+                BUILD_VERSION,
+                VERSION_LEVEL,),
+            '업데이트 내역을 확인하세요. ➔'.format(
+                NOTIFY
+            ),
+            {},
+            [],
+        )
+        kakaoForm.BasicCard_Push(
+            '\'길찾기(카카오 맵)\' 기능 추가',
+            '복사하지 말고 바로 카카오 맵으로 길찾기!',
+            {},
+            [],
+        )
+        kakaoForm.BasicCard_Add()
 
     # HEADER
     if(isOrderEnable):
@@ -442,6 +460,8 @@ def kakaoView_Home(user):
 
 @csrf_exempt
 def GET_UserHome(request):
+    EatplusSkillLog('GET_UserHome')
+
     try:
         kakaoPayload = KakaoPayLoad(request)
 
