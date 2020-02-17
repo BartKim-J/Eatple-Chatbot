@@ -256,9 +256,15 @@ def kakaoView_Home(user):
                 MINOR_VERSION,
                 BUILD_VERSION,
                 VERSION_LEVEL,),
-            '업데이트 내역을 확인하세요 ➔'.format(
+            '업데이트 내역을 확인하세요. ➔'.format(
                 NOTIFY
             ),
+            {},
+            [],
+        )
+        kakaoForm.BasicCard_Push(
+            '\'주문 완료\' 절차 간소화',
+            '픽업시간 선택 후 바로 잇플패스가 발급돼요!',
             {},
             [],
         )

@@ -52,7 +52,7 @@ def eatplePassImg(order, delegatedEatplePassCount):
     return imgUrl
 
 
-def eatplePass(order, delegatedEatplePassCount, delegatedEatplePass, kakaoForm):
+def eatplePass(order, ownEatplePass, delegatedEatplePassCount, delegatedEatplePass, nicknameList, ORDER_LIST_QUICKREPLIES_MAP, kakaoForm):
     isCafe = order.store.category.filter(name="카페").exists()
     if(isCafe):
         pickupTimeStr = dateByTimeZone(order.pickup_time).strftime(
@@ -77,6 +77,7 @@ def eatplePass(order, delegatedEatplePassCount, delegatedEatplePass, kakaoForm):
             }
         },
     ]
+
     if(delegatedEatplePass.count() > 0):
         # CAN EDIT COUPONS
         if (order.status == ORDER_STATUS_ORDER_CONFIRM_WAIT or
@@ -171,7 +172,7 @@ def eatplePass(order, delegatedEatplePassCount, delegatedEatplePass, kakaoForm):
         )
 
 
-def eatplePassDelegated(order, delegatedEatplePassCount, delegatedEatplePass, kakaoForm):
+def eatplePassDelegated(order, ownEatplePass, delegatedEatplePassCount, delegatedEatplePass, nicknameList, ORDER_LIST_QUICKREPLIES_MAP, kakaoForm):
     isCafe = order.store.category.filter(name="카페").exists()
     if(isCafe):
         pickupTimeStr = dateByTimeZone(order.pickup_time).strftime(
@@ -268,18 +269,26 @@ def kakaoView_EatplePass(kakaoPayload):
     # Listup EatplePass
     if ownEatplePass:
         for order in ownEatplePass:
+            print(ownEatplePass)
             if(order.delegate == None):
                 eatplePass(
                     order,
+                    ownEatplePass,
                     delegatedEatplePassCount,
                     delegatedEatplePass,
+                    nicknameList,
+                    ORDER_LIST_QUICKREPLIES_MAP,
                     kakaoForm
                 )
             else:
+                print(order.ordersheet.user)
                 eatplePassDelegated(
                     order,
+                    ownEatplePass,
                     delegatedEatplePassCount,
                     delegatedEatplePass,
+                    nicknameList,
+                    ORDER_LIST_QUICKREPLIES_MAP,
                     kakaoForm
                 )
 
@@ -406,6 +415,7 @@ def GET_OrderDetails(request):
 @csrf_exempt
 def GET_EatplePass(request):
     EatplusSkillLog('GET_EatplePass')
+
     try:
         kakaoPayload = KakaoPayLoad(request)
 
@@ -415,6 +425,5 @@ def GET_EatplePass(request):
             return GET_UserHome(request)
 
         return kakaoView_EatplePass(kakaoPayload)
-
     except (RuntimeError, TypeError, NameError, KeyError) as ex:
         return errorView('{} '.format(ex))
