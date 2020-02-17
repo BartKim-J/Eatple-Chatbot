@@ -169,7 +169,7 @@ def kakaoView_ConfirmUseEatplePass(kakaoPayload):
     elif(order.status == ORDER_STATUS_ORDER_CANCELED):
         KakaoInstantForm().Message(
             ' - 주의! -',
-            '이 잇플패스는 이미 취소된 잇플패스입니다. 다시 주문을 정확히 확인해주세요.',
+            '이미 취소된 잇플패스입니다. 다시 주문을 정확히 확인해주세요.',
             kakaoForm=kakaoForm
         )
 
