@@ -123,7 +123,7 @@ def kakaoView_SignUp():
     buttons = [
         {
             'action': 'block',
-            'label': '가입하러 가기',
+            'label': '카카오로 간편가입',
             'messageText': KAKAO_EMOJI_LOADING,
             'blockId': KAKAO_BLOCK_USER_SIGNUP,
             'extra': {
@@ -133,8 +133,8 @@ def kakaoView_SignUp():
     ]
 
     return KakaoInstantForm().Message(
-        '아직 잇플 서비스에 가입되지 않은 카카오 계정입니다.',
-        '잇플 서비스에 가입하러 가볼까요?',
+        '아직 잇플에 가입하지 않은 계정임을 확인하였습니다.',
+        '가입을 시작해볼까요?',
         buttons=buttons,
     )
 
@@ -147,9 +147,18 @@ def kakaoView_LocationRegistration():
     buttons = [
         {
             'action': 'block',
-            'label': '등록하러 가기',
+            'label': '위치 등록하기',
             'messageText': KAKAO_EMOJI_LOADING,
             'blockId': KAKAO_BLOCK_USER_EDIT_LOCATION,
+            'extra': {
+                KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_HOME
+            }
+        },
+        {
+            'action': 'block',
+            'label': '나중에 하기',
+            'messageText': KAKAO_EMOJI_LOADING,
+            'blockId': KAKAO_BLOCK_USER_HOME,
             'extra': {
                 KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_HOME
             }
@@ -157,8 +166,8 @@ def kakaoView_LocationRegistration():
     ]
 
     return KakaoInstantForm().Message(
-        '보다 정확한 메뉴를 불러오기 위해 사용자의 위치 정보가 필요해요!',
-        '현재 위치를 등록하러 가볼까요?',
+        '잇플은 위치 기반으로 주변 맛집을 추천해드리고 있습니다.',
+        '지금 위치를 등록하러 갈까요?',
         buttons=buttons,
     )
 

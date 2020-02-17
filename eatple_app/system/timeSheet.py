@@ -22,9 +22,9 @@ def dateNowByTimeZone():
     '''
     # Time QA DEBUG
     if(ORDER_TIME_CHECK_DEBUG_MODE):
-        DEBUG_DAYS = 12
-        DEBUG_HOUR = 18
-        DEBUG_MIN = 55
+        DEBUG_DAYS = 17
+        DEBUG_HOUR = 11
+        DEBUG_MIN = 26
         DEBUG_SEC = 0
 
         if settings.USE_TZ:

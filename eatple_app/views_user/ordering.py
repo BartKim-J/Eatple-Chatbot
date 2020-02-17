@@ -846,32 +846,13 @@ def kakaoView_EatplePassIssuance(kakaoPayload):
         order.payment_date = dateNowByTimeZone()
         order.save()
 
-        isCafe = store.category.filter(name="카페").exists()
-        if(isCafe):
-            pickupTimeStr = dateByTimeZone(order.pickup_time).strftime(
-                '%-m월 %-d일 오전 11시 30분 ~ 오후 4시')
-        else:
-            buttons.append({
-                'action': 'block',
-                'label': '픽업시간 변경',
-                'messageText': KAKAO_EMOJI_LOADING,
-                'blockId': KAKAO_BLOCK_USER_EDIT_PICKUP_TIME,
-                'extra': {
-                    KAKAO_PARAM_ORDER_ID: order.order_id,
-                    KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_EATPLE_PASS
-                }
-            })
-            pickupTimeStr = dateByTimeZone(order.pickup_time).strftime(
-                '%-m월 %-d일 %p %-I시 %-M분').replace('AM', '오전').replace('PM', '오후')
-
         KakaoInstantForm().Message(
             '잇플패스 발급이 완료되었습니다.',
             kakaoForm=kakaoForm
         )
 
-        KakaoInstantForm().EatplePass(
+        KakaoInstantForm().EatplePassIssued(
             order,
-            pickupTimeStr,
             kakaoForm,
         )
 

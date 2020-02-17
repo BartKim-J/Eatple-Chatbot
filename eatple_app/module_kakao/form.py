@@ -33,7 +33,7 @@ class KakaoInstantForm():
 
         return JsonResponse(kakaoForm.GetForm())
 
-    def EatplePass(self, order, pickupTimeStr='', kakaoForm=None):
+    def EatplePassIssued(self, order, kakaoForm=None):
         if(kakaoForm == None):
             kakaoForm = KakaoForm()
 
@@ -77,6 +77,24 @@ class KakaoInstantForm():
             },
         ]
 
+        isCafe = order.store.category.filter(name="카페").exists()
+        if(isCafe):
+            pickupTimeStr = dateByTimeZone(order.pickup_time).strftime(
+                '%-m월 %-d일 오전 11시 30분 ~ 오후 4시')
+        else:
+            buttons.append({
+                'action': 'block',
+                'label': '픽업시간 변경',
+                'messageText': KAKAO_EMOJI_LOADING,
+                'blockId': KAKAO_BLOCK_USER_EDIT_PICKUP_TIME,
+                'extra': {
+                    KAKAO_PARAM_ORDER_ID: order.order_id,
+                    KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_EATPLE_PASS
+                }
+            })
+            pickupTimeStr = dateByTimeZone(order.pickup_time).strftime(
+                '%-m월 %-d일 %p %-I시 %-M분').replace('AM', '오전').replace('PM', '오후')
+
         kakaoForm.BasicCard_Push(
             '{}'.format(order.menu.name),
             '주문번호: {}\n - 주문자: {}({})\n\n - 매장: {}\n - 주문 상태: {}\n\n - 픽업 시간: {}'.format(
@@ -112,20 +130,39 @@ class KakaoInstantForm():
 
         return JsonResponse(kakaoForm.GetForm())
 
-    def EatplePassDelegated(self, order, pickupTimeStr='', kakaoForm=None):
+    def EatplePass (self,order, kakaoForm=None):
+        if(kakaoForm == None):
+            kakaoForm = KakaoForm()
+
+    def OrderList(self, order, kakaoForm=None):
+        if(kakaoForm == None):
+            kakaoForm = KakaoForm()
+
+        thumbnail = {
+            'imageUrl': '{}{}'.format(HOST_URL, order.menu.imgURL()),
+            'fixedRatio': 'true',
+            'width': 800,
+            'height': 800,
+        }
+
+        isCafe = order.store.category.filter(name="카페").exists()
+        if(isCafe):
+            pickupTimeStr = dateByTimeZone(order.pickup_time).strftime(
+                '%-m월 %-d일 오전 11시 30분 ~ 오후 4시')
+        else:
+            pickupTimeStr = dateByTimeZone(order.pickup_time).strftime(
+                '%-m월 %-d일 %p %-I시 %-M분').replace('AM', '오전').replace('PM', '오후')
+
         kakaoForm.BasicCard_Push(
             '{}'.format(order.menu.name),
-            '주문번호: {}\n - 주문자: {}\n - 총 잇플패스 : {}개\n\n - 매장: {}\n - 주문 상태: {}\n\n - 픽업 시간: {}'.format(
-                order.order_id,
-                nicknameList,
-                delegatedEatplePass.count() + ownEatplePass.count(),
-                order.store.addr,
+            '픽업 시간: {}\n주문 상태: {}'.format(
                 pickupTimeStr,
                 dict(ORDER_STATUS)[order.status]
             ),
             thumbnail,
-            buttons
+            []
         )
+
     def MenuList(self, menu, subText='', thumbnail={}, buttons=[], kakaoForm=None):
         if(kakaoForm == None):
             kakaoForm = KakaoForm()
