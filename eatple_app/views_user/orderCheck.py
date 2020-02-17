@@ -24,7 +24,7 @@ DEFAULT_QUICKREPLIES_MAP = [
     {
         'action': 'block',
         'label': '홈으로 돌아가기',
-        'messageText': '...',
+        'messageText': KAKAO_EMOJI_LOADING,
         'blockId': KAKAO_BLOCK_USER_HOME,
         'extra': {}
     },
@@ -42,27 +42,29 @@ ORDER_LIST_LENGTH = 4
 
 
 def kakaoView_EatplePass(kakaoPayload):
-    # User Validation
-    user = userValidation(kakaoPayload)
-    if (user == None):
-        return errorView('잘못된 블럭 경로', '정상적이지 않은 경로거나, 잘못된 계정입니다.')
+    kakaoForm = KakaoForm()
 
     ORDER_LIST_QUICKREPLIES_MAP = [
         {
             'action': 'block',
             'label': '새로고침',
-            'messageText': '...',
+            'messageText': KAKAO_EMOJI_LOADING,
             'blockId': KAKAO_BLOCK_USER_EATPLE_PASS,
             'extra': {}
         },
         {
             'action': 'block',
             'label': '홈으로 돌아가기',
-            'messageText': '...',
+            'messageText': KAKAO_EMOJI_LOADING,
             'blockId': KAKAO_BLOCK_USER_HOME,
             'extra': {}
         },
     ]
+
+    # User Validation
+    user = userValidation(kakaoPayload)
+    if (user == None):
+        return errorView('잘못된 블럭 경로', '정상적이지 않은 경로거나, 잘못된 계정입니다.')
 
     orderManager = UserOrderManager(user)
     orderManager.orderPenddingCleanUp()
@@ -84,8 +86,6 @@ def kakaoView_EatplePass(kakaoPayload):
 
     # Listup EatplePass
     if ownEatplePass:
-        kakaoForm = KakaoForm()
-
         for order in ownEatplePass:
             isCafe = order.store.category.filter(name="카페").exists()
             if(isCafe):
@@ -128,14 +128,13 @@ def kakaoView_EatplePass(kakaoPayload):
             )
 
             if(order.delegate != None):
-                buttons = [
-                ]
+                buttons = []
             else:
                 buttons = [
                     {
                         'action': 'block',
                         'label': '사용하기(사장님 전용)',
-                        'messageText': '...',
+                        'messageText': KAKAO_EMOJI_LOADING,
                         'blockId': KAKAO_BLOCK_USER_GET_USE_EATPLE_PASS_CONFIRM,
                         'extra': {
                             KAKAO_PARAM_ORDER_ID: order.order_id,
@@ -155,7 +154,7 @@ def kakaoView_EatplePass(kakaoPayload):
                             {
                                 'action': 'block',
                                 'label': '부탁하기 전체취소',
-                                'messageText': '...',
+                                'messageText': KAKAO_EMOJI_LOADING,
                                 'blockId': KAKAO_BLOCK_USER_ORDER_SHARING_CANCEL_ALL,
                                 'extra': {
                                     KAKAO_PARAM_ORDER_ID: order.order_id,
@@ -168,7 +167,7 @@ def kakaoView_EatplePass(kakaoPayload):
                             {
                                 'action': 'block',
                                 'label': '픽업 부탁하기',
-                                'messageText': '...',
+                                'messageText': KAKAO_EMOJI_LOADING,
                                 'blockId': KAKAO_BLOCK_USER_ORDER_SHARING_START,
                                 'extra': {
                                     KAKAO_PARAM_ORDER_ID: order.order_id,
@@ -183,7 +182,7 @@ def kakaoView_EatplePass(kakaoPayload):
                                 {
                                     'action': 'block',
                                     'label': '주문취소',
-                                    'messageText': '...',
+                                    'messageText': KAKAO_EMOJI_LOADING,
                                     'blockId': KAKAO_BLOCK_USER_POST_ORDER_CANCEL,
                                     'extra': {
                                         KAKAO_PARAM_ORDER_ID: order.order_id,
@@ -199,7 +198,7 @@ def kakaoView_EatplePass(kakaoPayload):
                                 {
                                     'action': 'block',
                                     'label': '픽업시간 변경',
-                                    'messageText': '...',
+                                    'messageText': KAKAO_EMOJI_LOADING,
                                     'blockId': KAKAO_BLOCK_USER_EDIT_PICKUP_TIME,
                                     'extra': {
                                         KAKAO_PARAM_ORDER_ID: order.order_id,
@@ -212,7 +211,7 @@ def kakaoView_EatplePass(kakaoPayload):
                         {
                             'action': 'block',
                             'label': '부탁하기 취소',
-                            'messageText': '...',
+                            'messageText': KAKAO_EMOJI_LOADING,
                             'blockId': KAKAO_BLOCK_USER_ORDER_SHARING_CANCEL,
                             'extra': {
                                 KAKAO_PARAM_ORDER_ID: order.order_id,
@@ -316,7 +315,7 @@ def kakaoView_OrderDetails(kakaoPayload):
         {
             'action': 'block',
             'label': '홈으로 돌아가기',
-            'messageText': '...',
+            'messageText': KAKAO_EMOJI_LOADING,
             'blockId': KAKAO_BLOCK_USER_HOME,
             'extra': {}
         },

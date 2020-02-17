@@ -15,6 +15,7 @@ from eatple_app.views_slack.slack_logger import SlackLogSignUp
 from eatple_app.module_kakao.reponseForm import *
 from eatple_app.module_kakao.requestForm import *
 from eatple_app.module_kakao.kakaoPay import *
+from eatple_app.module_kakao.form import *
 from eatple_app.module_kakao.validation import *
 
 # View-System
@@ -123,7 +124,7 @@ def kakaoView_SignUp():
         {
             'action': 'block',
             'label': '가입하러 가기',
-            'messageText': '...',
+            'messageText': KAKAO_EMOJI_LOADING,
             'blockId': KAKAO_BLOCK_USER_SIGNUP,
             'extra': {
                 KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_HOME
@@ -131,17 +132,11 @@ def kakaoView_SignUp():
         },
     ]
 
-    thumbnail = {'imageUrl': ''}
-
-    kakaoForm.BasicCard_Push(
+    return KakaoInstantForm().Message(
         '아직 잇플 서비스에 가입되지 않은 카카오 계정입니다.',
         '잇플 서비스에 가입하러 가볼까요?',
-        thumbnail,
-        buttons
+        buttons=buttons,
     )
-    kakaoForm.BasicCard_Add()
-
-    return JsonResponse(kakaoForm.GetForm())
 
 
 def kakaoView_LocationRegistration():
@@ -153,7 +148,7 @@ def kakaoView_LocationRegistration():
         {
             'action': 'block',
             'label': '등록하러 가기',
-            'messageText': '...',
+            'messageText': KAKAO_EMOJI_LOADING,
             'blockId': KAKAO_BLOCK_USER_EDIT_LOCATION,
             'extra': {
                 KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_HOME
@@ -161,17 +156,11 @@ def kakaoView_LocationRegistration():
         },
     ]
 
-    thumbnail = {'imageUrl': ''}
-
-    kakaoForm.BasicCard_Push(
+    return KakaoInstantForm().Message(
         '보다 정확한 메뉴를 불러오기 위해 사용자의 위치 정보가 필요해요!',
         '현재 위치를 등록하러 가볼까요?',
-        thumbnail,
-        buttons
+        buttons=buttons,
     )
-    kakaoForm.BasicCard_Add()
-
-    return JsonResponse(kakaoForm.GetForm())
 
 
 def kakaoView_Home(user):
@@ -211,7 +200,7 @@ def kakaoView_Home(user):
         {
             'action': 'block',
             'label': '최근 주문내역',
-            'messageText': '...',
+            'messageText': KAKAO_EMOJI_LOADING,
             'blockId': KAKAO_BLOCK_USER_ORDER_DETAILS,
             'extra': {
                 KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_HOME
@@ -220,7 +209,7 @@ def kakaoView_Home(user):
         {
             'action': 'block',
             'label': '잇플 소개',
-            'messageText': '...',
+            'messageText': KAKAO_EMOJI_LOADING,
             'blockId': KAKAO_BLOCK_USER_INTRO,
             'extra': {
                 KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_HOME
@@ -232,7 +221,7 @@ def kakaoView_Home(user):
         {
             'action': 'block',
             'label': '주문하러 가기',
-            'messageText': '...',
+            'messageText': KAKAO_EMOJI_LOADING,
             'blockId': KAKAO_BLOCK_USER_GET_MENU,
             'extra': {
                 KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_HOME
@@ -241,7 +230,7 @@ def kakaoView_Home(user):
         {
             'action': 'block',
             'label': '사용 메뉴얼',
-            'messageText': '...',
+            'messageText': KAKAO_EMOJI_LOADING,
             'blockId': KAKAO_BLOCK_USER_MANUAL,
             'extra': {
                 KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_HOME
@@ -251,19 +240,18 @@ def kakaoView_Home(user):
 
     # UPDATE NOTIY
     if(isB2BUser(user)):
-        kakaoForm.BasicCard_Push(
+        KakaoInstantForm().Message(
             '「{}」 v{}.{}.{}({})'.format(
                 VERSION_CODE,
                 MAJOR_VERSION,
                 MINOR_VERSION,
                 BUILD_VERSION,
                 VERSION_LEVEL,),
-            '\'길찾기\'(카카오 맵) 기능이 추가되었습니다.',
+            '\'길찾기(카카오 맵)\' 기능이 추가되었습니다.',
             {},
-            []
+            [],
+            kakaoForm
         )
-
-        kakaoForm.BasicCard_Add()
     else:
         # NOT DISPLAY
         pass
@@ -288,7 +276,7 @@ def kakaoView_Home(user):
         buttons[0] = {
             'action': 'block',
             'label': '잇플패스 확인',
-            'messageText': '...',
+            'messageText': KAKAO_EMOJI_LOADING,
             'blockId': KAKAO_BLOCK_USER_EATPLE_PASS,
             'extra': {
                 KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_HOME
@@ -407,7 +395,7 @@ def kakaoView_Home(user):
             {
                 'action': 'block',
                 'label': '자주 사용하는 위치 변경',
-                'messageText': '...',
+                'messageText': KAKAO_EMOJI_LOADING,
                 'blockId': KAKAO_BLOCK_USER_EDIT_LOCATION,
                 'extra': {
                     KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_HOME

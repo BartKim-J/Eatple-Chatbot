@@ -17,7 +17,7 @@ def SlackLogFollow(nickname):
 def SlackLogUnfollow(nickname):
     res = client.chat_postMessage(
         channel=SLACK_CHANNEL_EATPLE_LOG,
-        text="{name}님이 잇플 채널을 언...팔로우햇..쥐:mouse:".format(
+        text="{name}님이 잇플 채널을 언KAKAO_EMOJI_LOADING팔로우햇..쥐:mouse:".format(
             name=nickname
         )
     )

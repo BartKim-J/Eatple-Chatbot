@@ -51,7 +51,7 @@ def errorView(error_log='error message', view_log='진행하는 도중 문제가
         {
             'action': 'message',
             'label': '홈으로 돌아가기',
-            'messageText': '...',
+            'messageText': KAKAO_EMOJI_LOADING,
             'blockId': 'none',
             'extra': {}
         },

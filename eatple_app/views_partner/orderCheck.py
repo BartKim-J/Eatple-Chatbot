@@ -19,17 +19,6 @@ from eatple_app.views_system.debugger import *
 
 from eatple_app.views import *
 
-
-DEFAULT_QUICKREPLIES_MAP = [
-    {
-        'action': 'block',
-        'label': '홈으로 돌아가기',
-        'messageText': '...',
-        'blockId': KAKAO_BLOCK_USER_HOME,
-        'extra': {}
-    },
-]
-
 # # # # # # # # # # # # # # # # # # # # # # # # #
 #
 # Static View
@@ -64,6 +53,8 @@ def orderCheckTimeValidation():
 
 
 def kakaoView_OrderDetails(kakaoPayload):
+    kakaoForm = KakaoForm()
+
     # Partner Validation
     partner = partnerValidation(kakaoPayload)
     if (partner == None):
@@ -73,7 +64,7 @@ def kakaoView_OrderDetails(kakaoPayload):
         {
             'action': 'block',
             'label': '새로고침',
-            'messageText': '...',
+            'messageText': KAKAO_EMOJI_LOADING,
             'blockId': KAKAO_BLOCK_PARTNER_GET_ORDER_DETAILS,
             'extra': {
                 KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_PARTNER_GET_ORDER_DETAILS
@@ -82,15 +73,13 @@ def kakaoView_OrderDetails(kakaoPayload):
         {
             'action': 'block',
             'label': '홈으로 돌아가기',
-            'messageText': '...',
+            'messageText': KAKAO_EMOJI_LOADING,
             'blockId': KAKAO_BLOCK_PARTNER_HOME,
             'extra': {
                 KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_PARTNER_GET_ORDER_DETAILS
             }
         },
     ]
-
-    kakaoForm = KakaoForm()
 
     if(orderCheckTimeValidation()):
         orderManager = PartnerOrderManager(partner)

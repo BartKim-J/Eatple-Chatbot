@@ -23,14 +23,14 @@ DEFAULT_QUICKREPLIES_MAP = [
     {
         'action': 'block',
         'label': '홈으로 돌아가기',
-        'messageText': '...',
+        'messageText': KAKAO_EMOJI_LOADING,
         'blockId': KAKAO_BLOCK_USER_HOME,
         'extra': {}
     },
     {
         'action': 'block',
         'label': '잇플패스 확인하기',
-        'messageText': '...',
+        'messageText': KAKAO_EMOJI_LOADING,
         'blockId': KAKAO_BLOCK_USER_EATPLE_PASS,
         'extra': {}
     },
