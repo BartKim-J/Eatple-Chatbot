@@ -315,7 +315,7 @@ def kakaoView_EatplePass(kakaoPayload):
             KakaoInstantForm().Message(
                 '{}'.format(order.store.addr),
                 buttons=buttons,
-                kakaoForm=kakaForm
+                kakaoForm=kakaoForm
             )
 
     # No EatplePass

@@ -249,18 +249,26 @@ def kakaoView_Home(user):
 
     # UPDATE NOTIY
     if(isB2BUser(user)):
-        KakaoInstantForm().Message(
+        kakaoForm.BasicCard_Push(
             '「{}」 v{}.{}.{}({})'.format(
                 VERSION_CODE,
                 MAJOR_VERSION,
                 MINOR_VERSION,
                 BUILD_VERSION,
                 VERSION_LEVEL,),
-            '\'길찾기(카카오 맵)\' 기능이 추가되었습니다.',
+            '업데이트 내역을 확인하세요 ➔'.format(
+                NOTIFY
+            ),
             {},
             [],
-            kakaoForm
         )
+        kakaoForm.BasicCard_Push(
+            '\'길찾기(카카오 맵)\' 기능 추가',
+            '복사하지 말고 바로 카카오 맵으로 길찾기!',
+            {},
+            [],
+        )
+        kakaoForm.BasicCard_Add()
     else:
         # NOT DISPLAY
         pass
