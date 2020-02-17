@@ -67,7 +67,7 @@ class KakaoInstantForm():
             },
             {
                 'action': 'block',
-                'label': '부탁하기',
+                'label': '픽업 부탁하기',
                 'messageText': KAKAO_EMOJI_LOADING,
                 'blockId': KAKAO_BLOCK_USER_ORDER_SHARING_START,
                 'extra': {
@@ -130,7 +130,7 @@ class KakaoInstantForm():
 
         return JsonResponse(kakaoForm.GetForm())
 
-    def EatplePass (self,order, kakaoForm=None):
+    def EatplePass(self, order, kakaoForm=None):
         if(kakaoForm == None):
             kakaoForm = KakaoForm()
 
