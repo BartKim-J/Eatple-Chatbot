@@ -538,52 +538,6 @@ def kakaoView_order_Home(user, order):
         },
     ]
 
-    # UPDATE NOTIY
-    if(isB2BUser(user)):
-        kakaoForm.BasicCard_Push(
-            '📌 「{}」 v{}.{}.{}({})'.format(
-                VERSION_CODE,
-                MAJOR_VERSION,
-                MINOR_VERSION,
-                BUILD_VERSION,
-                VERSION_LEVEL,),
-            '업데이트 내역을 확인해보세요! ➔',
-            {},
-            [],
-        )
-        kakaoForm.BasicCard_Push(
-            '🔗 \'주문 완료\' 절차 간소화',
-            '픽업시간 선택 후 바로 잇플패스가 발급돼요!',
-            {},
-            [],
-        )
-        kakaoForm.BasicCard_Push(
-            '🔗 \'길찾기(카카오 맵)\' 기능 추가',
-            '복사하지 말고 바로 카카오 맵으로 길찾기!',
-            {},
-            [],
-        )
-        kakaoForm.BasicCard_Add()
-    else:
-        kakaoForm.BasicCard_Push(
-            '📌 「{}」 v{}.{}.{}({})'.format(
-                VERSION_CODE,
-                MAJOR_VERSION,
-                MINOR_VERSION,
-                BUILD_VERSION,
-                VERSION_LEVEL,),
-            '🛠️ 업데이트 내역을 확인하세요. ➔',
-            {},
-            [],
-        )
-        kakaoForm.BasicCard_Push(
-            '🔗 \'길찾기(카카오 맵)\' 기능 추가',
-            '복사하지 말고 바로 카카오 맵으로 길찾기!',
-            {},
-            [],
-        )
-        kakaoForm.BasicCard_Add()
-
     # HEADER
     isCafe = order.store.category.filter(name="카페").exists()
     if(isCafe):
