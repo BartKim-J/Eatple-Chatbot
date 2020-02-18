@@ -129,7 +129,7 @@ def kakaoView_SignUp():
     buttons = [
         {
             'action': 'block',
-            'label': '카카오로 간편입',
+            'label': '카카오로 간편가입',
             'messageText': KAKAO_EMOJI_LOADING,
             'blockId': KAKAO_BLOCK_USER_SIGNUP,
             'extra': {

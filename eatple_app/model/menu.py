@@ -84,21 +84,15 @@ class StockTable(models.Model):
         else:
             expireDate = nextLunchOrderEditTimeStart
 
-        availableOrders = Order.objects.filter(menu=self.menu).filter(
-            (
-                Q(status=ORDER_STATUS_PICKUP_COMPLETED) |
-                Q(status=ORDER_STATUS_PICKUP_WAIT) |
-                Q(status=ORDER_STATUS_PICKUP_PREPARE) |
-                Q(status=ORDER_STATUS_ORDER_CONFIRM_WAIT) |
-                Q(status=ORDER_STATUS_ORDER_CONFIRMED)
-            ) &
-            Q(payment_date__gte=expireDate) &
-            Q(ordersheet__user__company=self.company)
-        )
+        availableOrders = self.menu.getCurrentStock().filter(
+            Q(ordersheet__user__company=self.company))
+
         self.current_stock = availableOrders.count()
         self.pickuped_stock = availableOrders.filter(
             Q(status=ORDER_STATUS_PICKUP_COMPLETED)).count()
         self.save()
+
+        # Update Total Menu Current Stock
 
         return availableOrders
 

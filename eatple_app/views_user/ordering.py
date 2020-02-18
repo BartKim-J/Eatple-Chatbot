@@ -1281,7 +1281,7 @@ def kakaoView_B2B_OrderPaymentCheck(kakaoPayload):
     currentStock = stocktable.getCurrentStock().count()
     maxStock = stocktable.max_stock
 
-    if(menu.max_stock <= menu.current_stock):
+    if(menu.max_stock <= currentStock):
         KakaoInstantForm().Message(
             '이 메뉴는 이미 매진됬습니다.',
             '아쉽지만 다른 메뉴를 주문해주세요!',
