@@ -20,20 +20,16 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         try:
-            orderTimeSheet = OrderTimeSheet()
-            currentDate = orderTimeSheet.GetCurrentDate()
-            expireDate = orderTimeSheet.GetOrderExpireDate()
-
-            orderList = Order.objects.filter(
-                Q(payment_date__gte=expireDate) &
-                ~Q(store=None) &
-                ~Q(menu=None)
-            ).order_by('order_date')
-
-        except (Order.DoesNotExist):
+            menuList = Menu.objects.all()
+            stockTableList = StockTable.objects.all()
+            
+        except (StockTable.DoesNotExist, Menu.DoesNotExist):
             raise CommandError('Order or Menu does not exist' % poll_id)
 
-        for order in orderList:
-            Order.orderStatusUpdate(order)
+        for menu in menuList:
+            menu.getCurrentStock()
+
+        for stocktable in stockTableList:
+            stocktable.getCurrentStock()
 
         self.stdout.write(self.style.SUCCESS('Successfully update order'))

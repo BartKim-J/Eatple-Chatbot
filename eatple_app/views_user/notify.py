@@ -40,12 +40,24 @@ DEFAULT_QUICKREPLIES_MAP = [
 
 
 def kakaoView_notifiy(kakaoPayload):
+    kakaoForm = KakaoForm()
+
+    QUICKREPLIES_MAP = [
+        {
+            'action': 'block',
+            'label': '홈으로 돌아가기',
+            'messageText': KAKAO_EMOJI_LOADING,
+            'blockId': KAKAO_BLOCK_USER_HOME,
+            'extra': {
+                KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_GET_MENU
+            }
+        },
+    ]
+
     # User Validation
     user = userValidation(kakaoPayload)
     if (user == None):
         return errorView('잘못된 블럭 경로', '정상적이지 않은 경로거나, 잘못된 계정입니다.')
-
-    kakaoForm = KakaoForm()
 
     header = {
         'title': '공지사항',
@@ -66,17 +78,7 @@ def kakaoView_notifiy(kakaoPayload):
     )
     kakaoForm.ListCard_Add(header)
 
-    QUICKREPLIES_MAP = [
-        {
-            'action': 'block',
-            'label': '홈으로 돌아가기',
-            'messageText': KAKAO_EMOJI_LOADING,
-            'blockId': KAKAO_BLOCK_USER_HOME,
-            'extra': {
-                KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_GET_MENU
-            }
-        },
-    ]
+    kakaoForm.QuickReplies_AddWithMap(QUICKREPLIES_MAP)
 
     return JsonResponse(kakaoForm.GetForm())
 

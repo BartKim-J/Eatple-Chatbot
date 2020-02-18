@@ -269,7 +269,6 @@ def kakaoView_EatplePass(kakaoPayload):
     # Listup EatplePass
     if ownEatplePass:
         for order in ownEatplePass:
-            print(ownEatplePass)
             if(order.delegate == None):
                 eatplePass(
                     order,
@@ -281,7 +280,6 @@ def kakaoView_EatplePass(kakaoPayload):
                     kakaoForm
                 )
             else:
-                print(order.ordersheet.user)
                 eatplePassDelegated(
                     order,
                     ownEatplePass,
