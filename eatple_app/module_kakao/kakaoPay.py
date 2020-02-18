@@ -13,7 +13,6 @@ from eatple_app.models import *
 class KakaoPay():
     def PushOrderSheet(self):
         headers = {
-            'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8',
             'Authorization': 'KakaoAK {app_key}'.format(app_key=KAKAO_ADMIN_KEY),
         }
 

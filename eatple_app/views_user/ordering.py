@@ -164,6 +164,11 @@ def kakaoView_MenuListup(kakaoPayload):
 
         for menu in sellingOutList:
             if(menu.store.status == STORE_OC_VACATION):
+                kakaoMapUrl = 'https://map.kakao.com/link/map/{name},{place}'.format(
+                    name=menu.store.name,
+                    place=menu.store.place
+                )
+
                 thumbnail = {
                     'imageUrl': '{}{}'.format(HOST_URL, menu.imgURL()),
                     'fixedRatio': 'true',
@@ -951,6 +956,11 @@ def kakaoView_B2B_MenuListup(kakaoPayload):
                     kakaoForm
                 )
             else:
+                kakaoMapUrl = 'https://map.kakao.com/link/map/{name},{place}'.format(
+                    name=menu.store.name,
+                    place=menu.store.place
+                )
+
                 thumbnail = {
                     'imageUrl': '{}{}'.format(HOST_URL, menu.soldOutImgURL()),
                     'fixedRatio': 'true',
@@ -1316,22 +1326,18 @@ def kakaoView_B2B_EatplePassIssuance(kakaoPayload):
 def GET_Menu(request):
     EatplusSkillLog('GET_Menu')
 
-    try:
-        kakaoPayload = KakaoPayLoad(request)
+    kakaoPayload = KakaoPayLoad(request)
 
-        # User Validation
-        user = userValidation(kakaoPayload)
-        if (user == None):
-            return GET_UserHome(request)
+    # User Validation
+    user = userValidation(kakaoPayload)
+    if (user == None):
+        return GET_UserHome(request)
 
-        # User Case
-        if(isB2BUser(user)):
-            return kakaoView_B2B_MenuListup(kakaoPayload)
-        else:
-            return kakaoView_MenuListup(kakaoPayload)
-
-    except (RuntimeError, TypeError, NameError, KeyError) as ex:
-        return errorView('{} '.format(ex))
+    # User Case
+    if(isB2BUser(user)):
+        return kakaoView_B2B_MenuListup(kakaoPayload)
+    else:
+        return kakaoView_MenuListup(kakaoPayload)
 
 
 @csrf_exempt
