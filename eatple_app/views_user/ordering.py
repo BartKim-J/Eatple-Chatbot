@@ -1053,8 +1053,11 @@ def kakaoView_B2B_PickupTime(kakaoPayload):
     orderRecordSheet.order = order
     orderRecordSheet.recordUpdate(ORDER_RECORD_SET_PICKUP_TIEM)
 
-    stocktable = StockTable.objects.get(
-        menu=menu, company=user.company)
+    try:
+        stocktable = StockTable.objects.get(
+            menu=menu, company=user.company)
+    except StockTable.DoesNotExist:
+        return errorView('잘못된 블럭 경로', '정상적이지 않은 블럭 경로입니다.')
 
     currentStock = stocktable.getCurrentStock().count()
     maxStock = stocktable.max_stock
@@ -1281,7 +1284,7 @@ def kakaoView_B2B_OrderPaymentCheck(kakaoPayload):
     currentStock = stocktable.getCurrentStock().count()
     maxStock = stocktable.max_stock
 
-    if(menu.max_stock <= currentStock):
+    if(maxStock <= currentStock):
         KakaoInstantForm().Message(
             '이 메뉴는 이미 매진됬습니다.',
             '아쉽지만 다른 메뉴를 주문해주세요!',

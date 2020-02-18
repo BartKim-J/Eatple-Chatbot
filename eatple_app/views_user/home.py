@@ -660,8 +660,8 @@ def GET_UserHome(request):
         user = userValidation(kakaoPayload)
         location = userLocationValidation(user)
 
-        kakaoPay = KakaoPay()
-        kakaoPay.PushOrderSheet()
+        #kakaoPay = KakaoPay()
+        # kakaoPay.PushOrderSheet()
 
         # Sign Up
         if(user == None):
