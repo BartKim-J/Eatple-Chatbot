@@ -9,6 +9,8 @@ from eatple_app.define import *
 ########################################################################
 # METHOD
 
+WEEKDAY = ['월요일', '화요일', '수요일', '목요일', '금요일', '토요일', '일요일']
+
 
 def replaceRight(original, old, new, count_right):
     repeat = 0
@@ -44,8 +46,21 @@ def getOrderChartDataLabel(orderTimeSheet):
     for i in range(21):
         checkData = currentDateWithoutTime + datetime.timedelta(days=-(20 - i))
 
-        areaLabel += "{},".format(checkData.strftime(
-            '%-m월 %-d일').replace('AM', '오전').replace('PM', '오후'))
+        prevLunchOrderEditTimeStart = checkData + \
+            datetime.timedelta(hours=16, minutes=30, days=-1)
+        nextLunchOrderEditTimeStart = checkData + \
+            datetime.timedelta(hours=16, minutes=30)
+
+        if(prevLunchOrderEditTimeStart.strftime('%A') == 'Friday' and
+           nextLunchOrderEditTimeStart.strftime('%A') == 'Saturday'):
+            pass
+        elif(prevLunchOrderEditTimeStart.strftime('%A') == 'Saturday' and
+             nextLunchOrderEditTimeStart.strftime('%A') == 'Sunday'):
+            pass
+        else:
+            areaLabel += "{} {},".format(checkData.strftime(
+                '%-m월 %-d일').replace('AM', '오전').replace('PM', '오후'),
+                WEEKDAY[checkData.weekday()])
 
     return replaceRight(areaLabel, ",", "", 1)
 
@@ -72,13 +87,20 @@ def getOrderChartData(orderTimeSheet):
         nextLunchOrderEditTimeStart = checkData + \
             datetime.timedelta(hours=16, minutes=30)
 
-        areaData += "{},".format((
-            Order.objects.filter(
-                Q(payment_date__gte=prevLunchOrderEditTimeStart) &
-                Q(payment_date__lt=nextLunchOrderEditTimeStart) &
-                Q(payment_status=IAMPORT_ORDER_STATUS_PAID)
-            ).count())
-        )
+        if(prevLunchOrderEditTimeStart.strftime('%A') == 'Friday' and
+           nextLunchOrderEditTimeStart.strftime('%A') == 'Saturday'):
+            pass
+        elif(prevLunchOrderEditTimeStart.strftime('%A') == 'Saturday' and
+             nextLunchOrderEditTimeStart.strftime('%A') == 'Sunday'):
+            pass
+        else:
+            areaData += "{},".format((
+                Order.objects.filter(
+                    Q(payment_date__gte=prevLunchOrderEditTimeStart) &
+                    Q(payment_date__lt=nextLunchOrderEditTimeStart) &
+                    Q(payment_status=IAMPORT_ORDER_STATUS_PAID)
+                ).count())
+            )
 
     return replaceRight(areaData, ",", "", 1)
 
