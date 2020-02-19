@@ -96,7 +96,8 @@ def eatplePass(order, ownEatplePass, delegatedEatplePassCount, delegatedEatplePa
                 }
             )
         else:
-            return errorView('잘못된 블럭 경로', '정상적이지 않은 경로거나, 잘못된 경로입니다.')
+            # @TODO
+            pass
 
         kakaoForm.BasicCard_Push(
             '{}'.format(order.menu.name),
@@ -203,6 +204,9 @@ def eatplePassDelegated(order, ownEatplePass, delegatedEatplePassCount, delegate
                 }
             }
         )
+    else:
+        # @TODO
+        pass
 
     kakaoForm.BasicCard_Push(
         '{}님에게 부탁된 잇플패스 입니다.'.format(order.delegate.nickname),
