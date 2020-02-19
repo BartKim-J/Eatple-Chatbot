@@ -90,8 +90,6 @@ def GET_KAKAO_Signup(request):
     json_str = ((request.body).decode('utf-8'))
     received_json_data = json.loads(json_str)
 
-    print(received_json_data)
-
     if(isSignUpDone(int(received_json_data['app_user_id'])) != None):
         terms_groups = None
     else:
@@ -134,7 +132,6 @@ def GET_KAKAO_Signup(request):
 def GET_KAKAO_SignupSetup(request):
     json_str = ((request.body).decode('utf-8'))
     received_json_data = json.loads(json_str)
-    print(received_json_data)
 
     otpURL = received_json_data['otp']
     kakaoResponse = requests.get('{url}?rest_api_key={rest_api_key}'.format(
