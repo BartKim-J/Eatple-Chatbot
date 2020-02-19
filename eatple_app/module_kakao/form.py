@@ -9,7 +9,7 @@ from eatple_app.models import *
 # Define
 from eatple_app.define import *
 
-from eatple_app.views_slack.slack_logger import SlackLogSignUp
+from eatple_app.API_Slack.slack_logger import SlackLogSignUp
 
 # Modules
 from eatple_app.module_kakao.reponseForm import *

@@ -26,6 +26,7 @@ from django.conf.urls.static import static
 from django.conf.urls import url
 
 from eatple_app import views
+from eatple_app import api
 from eatple_app import templates
 
 schema_view = get_swagger_view(title="Eatple Rest API")
@@ -114,20 +115,20 @@ urlpatterns += [
 
 # Urls - KAKAO API
 urlpatterns += [
-    path('kakao/channel/log', views.POST_KAKAO_ChannelLog),
-    path('kakao/api/signup', views.GET_KAKAO_Signup),
-    path('kakao/api/signup_setup', views.GET_KAKAO_SignupSetup),
-    path('kakao/api/signout', views.GET_KAKAO_Signup),
+    path('kakao/channel/log', api.POST_KAKAO_ChannelLog),
+    path('kakao/api/signup', api.GET_KAKAO_Signup),
+    path('kakao/api/signup_setup', api.GET_KAKAO_SignupSetup),
+    path('kakao/api/signout', api.GET_KAKAO_Signup),
 ]
 
 # Urls - SLACK API
 urlpatterns += [
-    url('slack/events', views.Events.as_view()),
+    url('slack/events', api.Events.as_view()),
 ]
 
 router = routers.DefaultRouter()
-router.register(r'order_validation', views.OrderValidation)
-router.register(r'order_information', views.OrderInformation)
+router.register(r'order_validation', api.OrderValidation)
+router.register(r'order_information', api.OrderInformation)
 
 # Urls - REST API
 urlpatterns += [

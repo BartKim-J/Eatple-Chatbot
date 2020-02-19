@@ -3,7 +3,7 @@ from django.shortcuts import render
 from django.views.decorators.csrf import csrf_exempt
 from django.http import JsonResponse
 
-from eatple_app.views_slack.slack_logger import SlackLogFollow, SlackLogUnfollow
+from eatple_app.API_Slack.slack_logger import SlackLogFollow, SlackLogUnfollow
 
 # Models
 from eatple_app.models import *

@@ -21,7 +21,7 @@ from rest_framework import status
 from rest_framework import viewsets
 from rest_framework import permissions
 
-from eatple_app.rest_api.serializer import OrderSerializer
+from eatple_app.API_Rest.serializer import OrderSerializer
 from eatple_app.models import Order
 
 
