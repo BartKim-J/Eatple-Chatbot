@@ -9,8 +9,6 @@ from eatple_app.models import *
 # Define
 from eatple_app.define import *
 
-from eatple_app.views_slack.slack_logger import SlackLogSignUp
-
 # Modules
 from eatple_app.module_kakao.reponseForm import *
 from eatple_app.module_kakao.requestForm import *
@@ -34,59 +32,6 @@ def isLocationParam(kakaoPayload):
         return True
     except (TypeError, AttributeError, KeyError):
         return False
-
-
-def userSignUp(userProfile):
-    nickname = userProfile['nickname']
-    phone_number = userProfile['phone_number']
-    email = userProfile['email']
-    birthyear = userProfile['birthyear']
-    birthday = userProfile['birthday']
-    gender = userProfile['gender']
-    ci = userProfile['ci']
-    ci_ci_authenticated_at = userProfile['ci_authenticated_at']
-    app_user_id = userProfile['app_user_id']
-
-    if(nickname == None):
-        nickname = "N/A"
-
-    if(phone_number == None):
-        phone_number = "N/A"
-
-    if(email == None):
-        email = "N/A"
-
-    if(birthyear == None):
-        birthyear = "N/A"
-
-    if(birthday == None):
-        birthday = "N/A"
-
-    if(gender == None):
-        gender = "N/A"
-
-    if(ci == None):
-        ci = "N/A"
-
-    if(ci_ci_authenticated_at == None):
-        ci_ci_authenticated_at = "N/A"
-
-    if(app_user_id == None):
-        app_user_id = "N/A"
-
-    user = User.signUp(
-        app_user_id=app_user_id,
-        nickname=nickname,
-        phone_number=phone_number,
-        email=email,
-        birthyear=birthyear,
-        birthday=birthday,
-        gender=gender,
-        ci=ci,
-        ci_authenticated_at=ci_ci_authenticated_at,
-    )
-
-    return user
 
 
 def userLocationRegistration(user, locationData):
@@ -129,7 +74,7 @@ def kakaoView_SignUp():
     buttons = [
         {
             'action': 'block',
-            'label': '카카오로 간편가입',
+            'label': '가입을 시작해볼까요?',
             'messageText': KAKAO_EMOJI_LOADING,
             'blockId': KAKAO_BLOCK_USER_SIGNUP,
             'extra': {
@@ -140,7 +85,7 @@ def kakaoView_SignUp():
 
     return KakaoInstantForm().Message(
         '아직 잇플에 가입하지 않은 계정입니다.',
-        '가입을 시작해볼까요?',
+        '',
         buttons=buttons,
     )
 
@@ -178,28 +123,10 @@ def kakaoView_LocationRegistration():
     )
 
 
-def kakaoView_Home(user):
+def kakaoView_Home(user, address):
     EatplusSkillLog('Home')
 
     kakaoForm = KakaoForm()
-
-    # @PROMOTION
-    try:
-        address = user.location.address
-    except User.location.RelatedObjectDoesNotExist:
-        location = Location(
-            user=user,
-            lat=LOCATION_DEFAULT_LAT,
-            long=LOCATION_DEFAULT_LNG,
-            address=LOCATION_DEFAULT_ADDR,
-            point=Point(y=LOCATION_DEFAULT_LAT, x=LOCATION_DEFAULT_LNG),
-        )
-        location.save()
-
-        user.location = location
-        user.save()
-
-        address = user.location.address
 
     QUICKREPLIES_MAP = [
         {
@@ -323,28 +250,10 @@ def kakaoView_Home(user):
     return JsonResponse(kakaoForm.GetForm())
 
 
-def kakaoView_B2B_Home(user):
+def kakaoView_B2B_Home(user, address):
     EatplusSkillLog('Home')
 
     kakaoForm = KakaoForm()
-
-    # @PROMOTION
-    try:
-        address = user.location.address
-    except User.location.RelatedObjectDoesNotExist:
-        location = Location(
-            user=user,
-            lat=LOCATION_DEFAULT_LAT,
-            long=LOCATION_DEFAULT_LNG,
-            address=LOCATION_DEFAULT_ADDR,
-            point=Point(y=LOCATION_DEFAULT_LAT, x=LOCATION_DEFAULT_LNG),
-        )
-        location.save()
-
-        user.location = location
-        user.save()
-
-        address = user.location.address
 
     QUICKREPLIES_MAP = [
         {
@@ -473,28 +382,10 @@ def kakaoView_B2B_Home(user):
     return JsonResponse(kakaoForm.GetForm())
 
 
-def kakaoView_order_Home(user, order):
+def kakaoView_order_Home(user, order, address):
     EatplusSkillLog('Home')
 
     kakaoForm = KakaoForm()
-
-    # @PROMOTION
-    try:
-        address = user.location.address
-    except User.location.RelatedObjectDoesNotExist:
-        location = Location(
-            user=user,
-            lat=LOCATION_DEFAULT_LAT,
-            long=LOCATION_DEFAULT_LNG,
-            address=LOCATION_DEFAULT_ADDR,
-            point=Point(y=LOCATION_DEFAULT_LAT, x=LOCATION_DEFAULT_LNG),
-        )
-        location.save()
-
-        user.location = location
-        user.save()
-
-        address = user.location.address
 
     QUICKREPLIES_MAP = [
         {
@@ -624,6 +515,23 @@ def kakaoView_order_Home(user, order):
 
 
 def kakaoView_Route_Home(user):
+    try:
+        address = user.location.address
+    except User.location.RelatedObjectDoesNotExist:
+        location = Location(
+            user=user,
+            lat=LOCATION_DEFAULT_LAT,
+            long=LOCATION_DEFAULT_LNG,
+            address=LOCATION_DEFAULT_ADDR,
+            point=Point(y=LOCATION_DEFAULT_LAT, x=LOCATION_DEFAULT_LNG),
+        )
+        location.save()
+
+        user.location = location
+        user.save()
+
+        address = user.location.address
+
     orderManager = UserOrderManager(user)
     orderManager.orderPenddingCleanUp()
     orderManager.availableOrderStatusUpdate()
@@ -635,12 +543,12 @@ def kakaoView_Route_Home(user):
     isOrderEnable = (orderCount != 0)
 
     if(isOrderEnable):
-        return kakaoView_order_Home(user, order)
+        return kakaoView_order_Home(user, order, address)
     else:
         if(isB2BUser(user)):
-            return kakaoView_B2B_Home(user)
+            return kakaoView_B2B_Home(user, address)
         else:
-            return kakaoView_Home(user)
+            return kakaoView_Home(user, address)
 
 # # # # # # # # # # # # # # # # # # # # # # # # #
 #
@@ -664,24 +572,7 @@ def GET_UserHome(request):
 
         # Sign Up
         if(user == None):
-            try:
-                otpURL = kakaoPayload.dataActionParams['user_profile']['origin']
-                kakaoResponse = requests.get('{url}?rest_api_key={rest_api_key}'.format(
-                    url=otpURL, rest_api_key=KAKAO_REST_API_KEY))
-
-                if(kakaoResponse.status_code == 200):
-                    user = userSignUp(kakaoResponse.json())
-
-                    # @SLACK LOGGER
-                    SlackLogSignUp(user)
-
-                    return kakaoView_LocationRegistration()
-
-                return kakaoView_SignUp()
-
-            except (RuntimeError, TypeError, NameError, KeyError):
-                return kakaoView_SignUp()
-
+            return kakaoView_SignUp()
         # Location Register
         elif(isLocationParam(kakaoPayload)):
             try:

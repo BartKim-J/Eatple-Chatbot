@@ -114,7 +114,10 @@ urlpatterns += [
 
 # Urls - KAKAO API
 urlpatterns += [
-    path('kakao/channel/log', views.POST_KAKAO_ChannelLog)
+    path('kakao/channel/log', views.POST_KAKAO_ChannelLog),
+    path('kakao/api/signup', views.GET_KAKAO_Signup),
+    path('kakao/api/signup_setup', views.GET_KAKAO_SignupSetup),
+    path('kakao/api/signout', views.GET_KAKAO_Signup),
 ]
 
 # Urls - SLACK API

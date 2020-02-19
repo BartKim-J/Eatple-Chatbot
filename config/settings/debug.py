@@ -34,11 +34,10 @@ DEBUG = True
 
 ALLOWED_HOSTS = [
     '54.65.75.156',
-    'ec2-52-198-15-69.ap-northeast-1.compute.amazonaws.com',
-    'dev.eatple.com',
-    'admin.eatple.com',
-    'eatple.com',
     'www.eatple.com',
+    'eatple.com',
+    'admin.eatple.com',
+    'dev.eatple.com',
     'localhost'
 ]
 

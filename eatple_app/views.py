@@ -42,7 +42,8 @@ from eatple_app.views_partner.orderCheck import GET_ParnterOrderDetails
 
 # Kakao
 from eatple_app.views_kakao.channel import POST_KAKAO_ChannelLog
-
+from eatple_app.views_kakao.signup import GET_KAKAO_Signup
+from eatple_app.views_kakao.signup import GET_KAKAO_SignupSetup
 # Slack
 from eatple_app.views_slack.slack_api import Events
 
