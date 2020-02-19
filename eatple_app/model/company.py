@@ -180,6 +180,11 @@ class CompanySetting(models.Model):
         verbose_name="로고 이미지"
     )
 
+    notice = models.TextField(
+        blank=True,
+        verbose_name="공지사항"
+    )
+
 
 class CompanyStatus(models.Model):
     class Meta:

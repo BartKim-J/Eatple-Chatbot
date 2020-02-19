@@ -13,6 +13,7 @@ from eatple_app.define import *
 from eatple_app.module_kakao.reponseForm import *
 from eatple_app.module_kakao.requestForm import *
 from eatple_app.module_kakao.kakaoPay import *
+from eatple_app.module_kakao.kakao import *
 from eatple_app.module_kakao.form import *
 from eatple_app.module_kakao.validation import *
 
@@ -590,6 +591,10 @@ def GET_UserHome(request):
             except (RuntimeError, TypeError, NameError, KeyError):
                 return kakaoView_LocationRegistration()
         else:
+            # Get user profile data from Kakao server
+            kakao = Kakao()
+            user = kakao.getProfile(user)
+
             return kakaoView_Route_Home(user)
 
     except (RuntimeError, TypeError, NameError, KeyError) as ex:

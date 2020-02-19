@@ -38,7 +38,7 @@ class CompanyAdmin(ImportExportMixin, admin.GeoModelAdmin):
     fieldsets = [
         ('기본 정보',            {'fields': [
          'company_id', 'name', 'addr', 'phone_number']}),
-        ('설정',                 {'fields': ['logo', 'logo_preview']}),
+        ('설정',                 {'fields': ['logo', 'logo_preview', 'notice']}),
         ('상태',                 {'fields': ['status']}),
     ]
 
