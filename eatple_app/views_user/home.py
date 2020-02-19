@@ -610,14 +610,13 @@ def kakaoView_order_Home(user, order):
         },
     ]
 
-    kakaoForm.BasicCard_Push(
+    KakaoInstantForm().Message(
         '{}'.format(order.store.name),
         '{}'.format(order.store.addr),
-        thumbnail,
-        buttons
+        thumbnail=thumbnail,
+        buttons=buttons,
+        kakaoForm=kakaoForm
     )
-
-    kakaoForm.BasicCard_Add()
 
     kakaoForm.QuickReplies_AddWithMap(QUICKREPLIES_MAP)
 
@@ -661,7 +660,7 @@ def GET_UserHome(request):
         location = userLocationValidation(user)
 
         #kakaoPay = KakaoPay()
-        # kakaoPay.PushOrderSheet()
+        # return kakaoPay.PushOrderSheet(user)
 
         # Sign Up
         if(user == None):

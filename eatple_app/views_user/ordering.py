@@ -882,6 +882,7 @@ def kakaoView_B2B_MenuListup(kakaoPayload):
 
             if(maxStock > currentStock and menu.store.status == STORE_OC_OPEN):
                 distance = menu.distance
+
                 walkTime = round((distance / 100) * 2.1)
 
                 if(distance <= 1000):

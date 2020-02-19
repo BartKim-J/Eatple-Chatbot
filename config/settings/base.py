@@ -33,11 +33,12 @@ SECRET_KEY = '8b%m$==a68uz-y#zl&hb^rb$oyl3ejy5=8c!5**l5x#lou1(i$'
 DEBUG = True
 
 ALLOWED_HOSTS = [
-    'ec2-52-198-15-69.ap-northeast-1.compute.amazonaws.com',
     '54.65.75.156',
-    'skill.eatple.com',
-    'www.eatple.com',
+    'ec2-52-198-15-69.ap-northeast-1.compute.amazonaws.com',
+    'dev.eatple.com',
+    'admin.eatple.com',
     'eatple.com',
+    'www.eatple.com',
     'localhost'
 ]
 
@@ -55,6 +56,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django_admin_listfilter_dropdown',
+    'django.contrib.humanize',
 
     'import_export',
     'phonenumber_field',
@@ -70,7 +72,7 @@ INSTALLED_APPS = [
     'eatple_app.apps.EatpleChatbotAppConfig',
 
     'corsheaders',
-
+    'compressor',
     'rangefilter',
     'mapwidgets',
 ]
@@ -88,10 +90,13 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = 'config.urls'
 
+TEMPLATE_DIR = '/templates/'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [
+            BASE_DIR + TEMPLATE_DIR,
+        ],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -195,10 +200,23 @@ REST_FRAMEWORK = {
 STATIC_URL = '/static/'
 
 STATIC_DIR = os.path.join(BASE_DIR, 'static')
+
 STATICFILES_DIRS = [
     STATIC_DIR,
 ]
 STATIC_ROOT = os.path.join(ROOT_DIR, 'static')
+
+STATICFILES_FINDERS = (
+    'django.contrib.staticfiles.finders.FileSystemFinder',
+    'django.contrib.staticfiles.finders.AppDirectoriesFinder',
+    'compressor.finders.CompressorFinder',
+)
+
+COMPRESS_JS_FILTERS = [
+    'compressor.filters.template.TemplateFilter',
+]
+
+COMPRESS_ENABLED = True
 
 # COOKIES
 #SECURE_SSL_REDIRECT = True
@@ -221,7 +239,8 @@ CORS_ORIGIN_WHITELIST = [
 ]
 
 # JET
-JET_INDEX_DASHBOARD = 'jet.dashboard.dashboard.DefaultIndexDashboard'
+JET_INDEX_DASHBOARD = 'eatple_app.dashboard.CustomIndexDashboard'
+#JET_INDEX_DASHBOARD = 'jet.dashboard.dashboard.DefaultIndexDashboard'
 JET_APP_INDEX_DASHBOARD = 'jet.dashboard.dashboard.DefaultAppIndexDashboard'
 
 JET_SIDE_MENU_COMPACT = True
