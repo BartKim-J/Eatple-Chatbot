@@ -48,19 +48,16 @@ def kakaoView_MenuListup(kakaoPayload):
         },
     ]
 
-    # Block Validation
-    prev_block_id = prevBlockValidation(kakaoPayload)
-    if(prev_block_id != KAKAO_BLOCK_USER_HOME and
-       prev_block_id != KAKAO_BLOCK_USER_EATPLE_PASS and
-       prev_block_id != KAKAO_BLOCK_USER_ORDER_DETAILS and
-       prev_block_id != KAKAO_BLOCK_USER_SET_PICKUP_TIME):
-        return errorView('잘못된 블럭 경로', '정상적이지 않은 블럭 경로입니다.')
-
     # User Validation
     user = userValidation(kakaoPayload)
     if (user == None):
         return errorView('잘못된 사용자 계정', '찾을 수 없는 사용자 계정 아이디입니다.')
 
+    # User's Eatple Pass Validation
+    eatplePassStatus = eatplePassValidation(user)
+    if(eatplePassStatus != None):
+        return eatplePassStatus
+        
     orderSheet = OrderSheet()
     order = orderSheet.pushOrder(
         user=user,
@@ -814,18 +811,15 @@ def kakaoView_B2B_MenuListup(kakaoPayload):
         },
     ]
 
-    # Block Validation
-    prev_block_id = prevBlockValidation(kakaoPayload)
-    if(prev_block_id != KAKAO_BLOCK_USER_HOME and
-       prev_block_id != KAKAO_BLOCK_USER_EATPLE_PASS and
-       prev_block_id != KAKAO_BLOCK_USER_ORDER_DETAILS and
-       prev_block_id != KAKAO_BLOCK_USER_SET_PICKUP_TIME):
-        return errorView('잘못된 블럭 경로', '정상적이지 않은 블럭 경로입니다.')
-
     # User Validation
     user = userValidation(kakaoPayload)
     if (user == None):
         return errorView('잘못된 사용자 계정', '찾을 수 없는 사용자 계정 아이디입니다.')
+
+    # User's Eatple Pass Validation
+    eatplePassStatus = eatplePassValidation(user)
+    if(eatplePassStatus != None):
+        return eatplePassStatus
 
     orderSheet = OrderSheet()
     order = orderSheet.pushOrder(
