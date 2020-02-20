@@ -58,6 +58,9 @@ urlpatterns += {
 }
 # Urls - User App
 urlpatterns += [
+    #Test
+    path('skill/user/test', views.GET_Test),
+    
     # Home
     path('skill/user/home', views.GET_UserHome),
 
