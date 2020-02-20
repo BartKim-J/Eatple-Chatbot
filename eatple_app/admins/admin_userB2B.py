@@ -47,7 +47,7 @@ class UserB2BAdmin(ImportExportMixin, admin.ModelAdmin):
         try:
             User.objects.get(phone_number=obj.phone_number)
             return 'O'
-        except User.DoesNotExist:
+        except (User.DoesNotExist, User.MultipleObjectsReturned):
             return 'X'
 
         return False
@@ -57,7 +57,7 @@ class UserB2BAdmin(ImportExportMixin, admin.ModelAdmin):
         try:
             user = User.objects.get(phone_number=obj.phone_number)
             return "{} : {}".format(user.nickname, user.app_user_id)
-        except User.DoesNotExist:
+        except (User.DoesNotExist, User.MultipleObjectsReturned):
             return "미등록"
 
     account_info.short_description = "카카오 계정"

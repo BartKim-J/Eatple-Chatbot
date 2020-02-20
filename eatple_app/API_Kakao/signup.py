@@ -137,7 +137,8 @@ def GET_KAKAO_SignupSetup(request):
     kakaoResponse = requests.get('{url}?rest_api_key={rest_api_key}'.format(
         url=otpURL, rest_api_key=KAKAO_REST_API_KEY))
 
-    user = userSignUp(kakaoResponse.json())
+    if(isSignUpDone(kakaoResponse.json()['app_user_id'])):
+        user = userSignUp(kakaoResponse.json())
 
     # @SLACK LOGGER
     SlackLogSignUp(user)

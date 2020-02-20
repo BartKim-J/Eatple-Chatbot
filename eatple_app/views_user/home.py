@@ -139,15 +139,6 @@ def kakaoView_Home(user, address):
                 KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_HOME
             }
         },
-        {
-            'action': 'block',
-            'label': '잇플 소개',
-            'messageText': KAKAO_EMOJI_LOADING,
-            'blockId': KAKAO_BLOCK_USER_INTRO,
-            'extra': {
-                KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_HOME
-            }
-        },
     ]
 
     buttons = [
@@ -262,15 +253,6 @@ def kakaoView_B2B_Home(user, address):
             'label': '최근 주문내역',
             'messageText': KAKAO_EMOJI_LOADING,
             'blockId': KAKAO_BLOCK_USER_ORDER_DETAILS,
-            'extra': {
-                KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_HOME
-            }
-        },
-        {
-            'action': 'block',
-            'label': '잇플 소개',
-            'messageText': KAKAO_EMOJI_LOADING,
-            'blockId': KAKAO_BLOCK_USER_INTRO,
             'extra': {
                 KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_HOME
             }
@@ -394,15 +376,6 @@ def kakaoView_order_Home(user, order, address):
             'label': '최근 주문내역',
             'messageText': KAKAO_EMOJI_LOADING,
             'blockId': KAKAO_BLOCK_USER_ORDER_DETAILS,
-            'extra': {
-                KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_HOME
-            }
-        },
-        {
-            'action': 'block',
-            'label': '잇플 소개',
-            'messageText': KAKAO_EMOJI_LOADING,
-            'blockId': KAKAO_BLOCK_USER_INTRO,
             'extra': {
                 KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_HOME
             }
