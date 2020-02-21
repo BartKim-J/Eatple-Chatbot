@@ -71,6 +71,6 @@ class OrderRecordSheetAdmin(ImportExportMixin, admin.ModelAdmin):
         'update_date'
     )
 
-    search_fields = ['order__id', 'user__nickname', 'user__app_user_id']
+    search_fields = ['order__order_id', 'user__nickname', 'user__app_user_id']
 
     inlines = [OrderRecordInline]

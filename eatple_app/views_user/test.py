@@ -28,6 +28,8 @@ from eatple_app.views_system.debugger import *
 
 
 def kakaoView_Test(user):
+    return errorView('잘못된 블럭 경로', '정상적이지 않은 블럭 경로입니다.')
+
     kakaoForm = KakaoForm()
 
     QUICKREPLIES_MAP = [

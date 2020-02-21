@@ -536,6 +536,7 @@ def GET_EditPickupTime(request):
     except (RuntimeError, TypeError, NameError, KeyError) as ex:
         return errorView('{} '.format(ex))
 
+
 @csrf_exempt
 def SET_ConfirmEditPickupTime(request):
     EatplusSkillLog('SET_ConfirmEditPickupTime')
@@ -556,7 +557,7 @@ def SET_ConfirmEditPickupTime(request):
 @csrf_exempt
 def GET_ConfirmUseEatplePass(request):
     EatplusSkillLog('GET_ConfirmUseEatplePass')
-    
+
     try:
         kakaoPayload = KakaoPayLoad(request)
 
@@ -574,7 +575,7 @@ def GET_ConfirmUseEatplePass(request):
 @csrf_exempt
 def POST_UseEatplePass(request):
     EatplusSkillLog('POST_UserEatplePass')
-    
+
     try:
         kakaoPayload = KakaoPayLoad(request)
 

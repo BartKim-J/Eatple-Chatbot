@@ -144,7 +144,7 @@ def kakaoView_Home(user, address):
     buttons = [
         {
             'action': 'block',
-            'label': '주문하러 가기',
+            'label': '🍽  주문하기',
             'messageText': KAKAO_EMOJI_LOADING,
             'blockId': KAKAO_BLOCK_USER_GET_MENU,
             'extra': {
@@ -153,7 +153,7 @@ def kakaoView_Home(user, address):
         },
         {
             'action': 'block',
-            'label': '사용 메뉴얼',
+            'label': '📗 메뉴얼',
             'messageText': KAKAO_EMOJI_LOADING,
             'blockId': KAKAO_BLOCK_USER_MANUAL,
             'extra': {
@@ -219,7 +219,7 @@ def kakaoView_Home(user, address):
     buttons = [
         {
             'action': 'block',
-            'label': '자주 사용하는 위치 변경',
+            'label': '🗺️  위치 변경',
             'messageText': KAKAO_EMOJI_LOADING,
             'blockId': KAKAO_BLOCK_USER_EDIT_LOCATION,
             'extra': {
@@ -229,7 +229,7 @@ def kakaoView_Home(user, address):
     ]
 
     kakaoForm.BasicCard_Push(
-        '등록된 주소',
+        '자주 사용하는 위치',
         '{}'.format(address),
         thumbnail,
         buttons
@@ -262,7 +262,7 @@ def kakaoView_B2B_Home(user, address):
     buttons = [
         {
             'action': 'block',
-            'label': '주문하러 가기',
+            'label': '🍽  주문하기',
             'messageText': KAKAO_EMOJI_LOADING,
             'blockId': KAKAO_BLOCK_USER_GET_MENU,
             'extra': {
@@ -271,7 +271,7 @@ def kakaoView_B2B_Home(user, address):
         },
         {
             'action': 'block',
-            'label': '사용 메뉴얼',
+            'label': '📗 메뉴얼',
             'messageText': KAKAO_EMOJI_LOADING,
             'blockId': KAKAO_BLOCK_USER_MANUAL,
             'extra': {
@@ -321,7 +321,7 @@ def kakaoView_B2B_Home(user, address):
     }
 
     kakaoForm.BasicCard_Push(
-        '{} 홈 화면입니다.'.format(user.company.name, user.nickname),
+        '🏢  「{}」 전용 카드입니다.'.format(user.company.name, user.nickname),
         '반갑습니다. {}님'.format(user.nickname),
         thumbnail,
         buttons
@@ -342,7 +342,7 @@ def kakaoView_B2B_Home(user, address):
     buttons = [
         {
             'action': 'block',
-            'label': '자주 사용하는 위치 변경',
+            'label': '🗺️  위치 변경',
             'messageText': KAKAO_EMOJI_LOADING,
             'blockId': KAKAO_BLOCK_USER_EDIT_LOCATION,
             'extra': {
@@ -352,7 +352,7 @@ def kakaoView_B2B_Home(user, address):
     ]
 
     kakaoForm.BasicCard_Push(
-        '등록된 주소',
+        '자주 사용하는 위치',
         '{}'.format(address),
         thumbnail,
         buttons

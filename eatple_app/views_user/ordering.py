@@ -57,7 +57,7 @@ def kakaoView_MenuListup(kakaoPayload):
     eatplePassStatus = eatplePassValidation(user)
     if(eatplePassStatus != None):
         return eatplePassStatus
-        
+
     orderSheet = OrderSheet()
     order = orderSheet.pushOrder(
         user=user,
@@ -293,6 +293,20 @@ def kakaoView_PickupTime(kakaoPayload):
 
         return JsonResponse(kakaoForm.GetForm())
 
+    isVacationDay = vacationTimeCheck()
+    isClosedDay = weekendTimeCheck()
+
+    if(isClosedDay or isVacationDay):
+        KakaoInstantForm().Message(
+            '📌  안내사항',
+            '잇플은 \'주말 및 공휴일\'에 서비스 하지 않고있습니다.',
+            kakaoForm=kakaoForm
+        )
+
+        kakaoForm.QuickReplies_AddWithMap(QUICKREPLIES_MAP)
+
+        return JsonResponse(kakaoForm.GetForm())
+
     currentSellingTime = sellingTimeCheck()
 
     if (currentSellingTime == None):
@@ -308,19 +322,6 @@ def kakaoView_PickupTime(kakaoPayload):
 
         return JsonResponse(kakaoForm.GetForm())
 
-    isVacationDay = vacationTimeCheck()
-    isClosedDay = weekendTimeCheck()
-
-    if(isClosedDay or isVacationDay):
-        KakaoInstantForm().Message(
-            '※ 안내사항 ※',
-            '잇플은 \'주말 및 공휴일\'에 서비스 하지 않고있습니다.',
-            kakaoForm=kakaoForm
-        )
-
-        kakaoForm.QuickReplies_AddWithMap(QUICKREPLIES_MAP)
-
-        return JsonResponse(kakaoForm.GetForm())
     PICKUP_TIME_QUICKREPLIES_MAP = []
 
     pickupTimes = menu.pickup_time.filter(selling_time=currentSellingTime)
@@ -330,16 +331,17 @@ def kakaoView_PickupTime(kakaoPayload):
     isCafe = store.category.filter(name="카페").exists()
     if(isCafe):
         KakaoInstantForm().Message(
-            '- 상시픽업이 가능한 점포입니다 -',
+            '🛎  상시픽업이 가능한 점포입니다.',
             '오전 11:30 부터 오후 4:00까지 언제든 방문하여 메뉴를 픽업할 수 있습니다.',
             kakaoForm=kakaoForm
         )
-    elif(pickupTimes.count() < 2):
-        KakaoInstantForm().Message(
-            ' - 픽업시간이 제한된 점포입니다 -',
-            '점주님의 요청으로 픽업시간이 한 타임으로 제한된 점포입니다.',
-            kakaoForm=kakaoForm
-        )
+    else:
+        if(pickupTimes.count() < 2):
+            KakaoInstantForm().Message(
+                '❗ 픽업시간이 제한된 점포입니다',
+                '점주님의 요청으로 픽업시간이 한 타임으로 제한된 점포입니다.',
+                kakaoForm=kakaoForm
+            )
 
     KakaoInstantForm().Message(
         '픽업시간을 선택 해주세요.',
@@ -1055,6 +1057,20 @@ def kakaoView_B2B_PickupTime(kakaoPayload):
     except StockTable.DoesNotExist:
         return errorView('잘못된 블럭 경로', '정상적이지 않은 블럭 경로입니다.')
 
+    isVacationDay = vacationTimeCheck()
+    isClosedDay = weekendTimeCheck()
+
+    if(isClosedDay or isVacationDay):
+        KakaoInstantForm().Message(
+            '📌  안내사항',
+            '월요일 점심 주문은 일요일 16:30 부터 가능합니다',
+            kakaoForm=kakaoForm
+        )
+
+        kakaoForm.QuickReplies_AddWithMap(QUICKREPLIES_MAP)
+
+        return JsonResponse(kakaoForm.GetForm())
+
     currentStock = stocktable.getCurrentStock().count()
     maxStock = stocktable.max_stock
 
@@ -1084,19 +1100,6 @@ def kakaoView_B2B_PickupTime(kakaoPayload):
 
         return JsonResponse(kakaoForm.GetForm())
 
-    isVacationDay = vacationTimeCheck()
-    isClosedDay = weekendTimeCheck()
-
-    if(isClosedDay or isVacationDay):
-        KakaoInstantForm().Message(
-            '※ 안내사항 ※',
-            '잇플은 \'주말 및 공휴일\'에 서비스 하지 않고있습니다.',
-            kakaoForm=kakaoForm
-        )
-
-        kakaoForm.QuickReplies_AddWithMap(QUICKREPLIES_MAP)
-
-        return JsonResponse(kakaoForm.GetForm())
     PICKUP_TIME_QUICKREPLIES_MAP = []
 
     pickupTimes = menu.pickup_time.filter(selling_time=currentSellingTime)
@@ -1106,16 +1109,17 @@ def kakaoView_B2B_PickupTime(kakaoPayload):
     isCafe = store.category.filter(name="카페").exists()
     if(isCafe):
         KakaoInstantForm().Message(
-            '- 상시픽업이 가능한 점포입니다 -',
+            '🛎  상시픽업이 가능한 점포입니다.',
             '오전 11:30 부터 오후 4:00까지 언제든 방문하여 메뉴를 픽업할 수 있습니다.',
             kakaoForm=kakaoForm
         )
-    elif(pickupTimes.count() < 2):
-        KakaoInstantForm().Message(
-            ' - 픽업시간이 제한된 점포입니다 -',
-            '점주님의 요청으로 픽업시간이 한 타임으로 제한된 점포입니다.',
-            kakaoForm=kakaoForm
-        )
+    else:
+        if(pickupTimes.count() < 2):
+            KakaoInstantForm().Message(
+                '❗ 픽업시간이 제한된 점포입니다.',
+                '점주님의 요청으로 픽업시간이 한 타임으로 제한된 점포입니다.',
+                kakaoForm=kakaoForm
+            )
 
     KakaoInstantForm().Message(
         '픽업시간을 선택 해주세요.',

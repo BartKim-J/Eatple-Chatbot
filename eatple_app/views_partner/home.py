@@ -133,15 +133,6 @@ def kakaoView_Home(partner):
     ]
 
     QUICKREPLIES_MAP = [
-        {
-            'action': 'block',
-            'label': '사용 메뉴얼',
-            'messageText': KAKAO_EMOJI_LOADING,
-            'blockId': KAKAO_BLOCK_PARTNER_MANUAL,
-            'extra': {
-                KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_PARTNER_HOME
-            }
-        },
     ]
 
     thumbnail = {
