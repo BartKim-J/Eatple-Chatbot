@@ -229,6 +229,25 @@
 
                 <!-- 4 Card -->
                 <div class="row">
+
+                  <!-- Total User Counter Card -->
+                  <div class="col-xl-3 col-md-6 mb-4">
+                    <div class="card border-bottom-secondary shadow py-2">
+                      <div class="card-body">
+                        <div class="row no-gutters align-items-center">
+                          <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-secondary text-uppercase mb-1">총 가입자 수</div>
+                            <div class="h6 font-weight-bold" id="TotalUserStatus"><i id="TotalUserStatusIcon" class="fas"></i> {{ totalUserIncrease }}</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ totalUser }} 명</div>
+                          </div>
+                          <div class="col-auto">
+                            <i class="fas fa-users fa-2x text-gray-300"></i>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
                   <!-- DAU Card -->
                   <div class="col-xl-3 col-md-6 mb-4">
                     <div class="card border-bottom-info shadow py-2">
@@ -283,15 +302,20 @@
                     </div>
                   </div>
 
+
+                </div>
+
+                <!-- 4 Card -->
+                <div class="row">
+
                   <!-- Total User Counter Card -->
                   <div class="col-xl-3 col-md-6 mb-4">
                     <div class="card border-bottom-secondary shadow py-2">
                       <div class="card-body">
                         <div class="row no-gutters align-items-center">
                           <div class="col mr-2">
-                            <div class="text-xs font-weight-bold text-secondary text-uppercase mb-1">총 가입자 수</div>
-                            <div class="h6 font-weight-bold" id="TotalUserStatus"><i id="TotalUserStatusIcon" class="fas"></i> {{ totalUserIncrease }}</div>
-                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ totalUser }} 명</div>
+                            <div class="text-xs font-weight-bold text-secondary text-uppercase mb-1">서비스 지역 사용자</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ userInService }} 명</div>
                           </div>
                           <div class="col-auto">
                             <i class="fas fa-users fa-2x text-gray-300"></i>
@@ -300,6 +324,58 @@
                       </div>
                     </div>
                   </div>
+
+                  <!-- User In Service Card -->
+                  <div class="col-xl-3 col-md-6 mb-4">
+                    <div class="card border-bottom-info shadow py-2">
+                      <div class="card-body">
+                        <div class="row no-gutters align-items-center">
+                          <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-secondary text-uppercase mb-1">1회 사용자</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ inActive }} 명</div>
+                          </div>
+                          <div class="col-auto">
+                            <i class="fas fa-clipboard-list fa-2x text-gray-300"></i>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- WAU Card -->
+                  <div class="col-xl-3 col-md-6 mb-4">
+                    <div class="card border-bottom-warning shadow py-2">
+                      <div class="card-body">
+                        <div class="row no-gutters align-items-center">
+                          <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-secondary text-uppercase mb-1">2회 이상 사용자</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ getActive }} 명</div>
+                          </div>
+                          <div class="col-auto">
+                            <i class="fas fa-clipboard-list fa-2x text-gray-300"></i>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- MAU Card -->
+                  <div class="col-xl-3 col-md-6 mb-4">
+                    <div class="card border-bottom-success shadow py-2">
+                      <div class="card-body">
+                        <div class="row no-gutters align-items-center">
+                          <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-secondary text-uppercase mb-1">미 사용자</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ notActive }} 명</div>
+                          </div>
+                          <div class="col-auto">
+                            <i class="fas fa-clipboard-list fa-2x text-gray-300"></i>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
 
                 </div>
 

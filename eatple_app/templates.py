@@ -327,6 +327,73 @@ def getWAS(orderTimeSheet):
 
     return len(WAS)
 
+
+def getUserInService():
+    distance = 500
+    ref_gangnam = Point(y=37.497907, x=127.027635, srid=4326)
+    ref_yeoksam = Point(y=37.500787, x=127.036919, srid=4326)
+    ref_samsung = Point(y=37.508852, x=127.063145, srid=4326)
+
+    queryset = User.objects.all().annotate(
+        distance_gangnam=Distance(
+            F('location__point'), ref_gangnam) * 100 * 1000,
+        distance_yeoksam=Distance(
+            F('location__point'), ref_yeoksam) * 100 * 1000,
+        distance_samsung=Distance(
+            F('location__point'), ref_samsung) * 100 * 1000,
+    ).filter(
+        (Q(distance_gangnam__lte=distance) &
+         Q(distance_gangnam__gte=0)) |
+        Q(distance_yeoksam__lte=distance) |
+        Q(distance_samsung__lte=distance)
+    )
+    return queryset
+
+
+def getUserActive():
+    NotAtive = 0
+    InActive = 0
+    GetActive = 0
+    OnActive = 0
+
+    userList = User.objects.all()
+
+    userListInService = getUserInService()
+
+    for user in userList:
+        orderList = Order.objects.filter(
+            (
+                Q(payment_status=IAMPORT_ORDER_STATUS_PAID) |
+                Q(payment_status=IAMPORT_ORDER_STATUS_CANCELLED)
+            )
+            &
+            Q(ordersheet__user=user)
+        )
+
+        count = orderList.count()
+
+        if(count == 0):
+            NotAtive += 1
+
+        elif(count == 1):
+            InActive += 1
+
+        elif(count >= 2):
+            GetActive += 1
+
+        elif(count >= 3):
+            OnActive += 1
+
+    data = {
+        'userInService': userListInService.count(),
+        'notActive': NotAtive,
+        'inActive': InActive,
+        'getActive': GetActive,
+        'onActive': OnActive,
+    }
+
+    return data
+
 ########################################################################
 # TEMPLATES
 
@@ -378,6 +445,9 @@ def dashboard(request):
     totalPickuped = getTotalPickuped(orderTimeSheet)
     orderFailed = getOrderFailed(orderTimeSheet)
 
+    userActive = getUserActive()
+    print(userActive)
+
     return render(request, 'dashboard/base.html', {
         'currentDate': "{}".format(currentDate.strftime(
             '%Y년 %-m월 %-d일 %p %-I시 %-M분 %S초').replace('AM', '오전').replace('PM', '오후')),
@@ -394,6 +464,11 @@ def dashboard(request):
 
         'totalUserIncrease': totalUserIncrease,
         'totalUser': totalUser.count(),
+
+        'userInService': userActive['userInService'],
+        'notActive': userActive['notActive'],
+        'inActive': userActive['inActive'],
+        'getActive': userActive['getActive'],
 
         'totalOrder': totalOrder,
         'orderFailed': orderFailed,

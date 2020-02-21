@@ -15,6 +15,7 @@ from django.utils.safestring import mark_safe
 
 from django.contrib.admin import SimpleListFilter
 
+
 class UserServiceLocationFilter(SimpleListFilter):
     title = '지역'
     parameter_name = 'service area'
@@ -26,31 +27,37 @@ class UserServiceLocationFilter(SimpleListFilter):
             ('fastfive_gangnam_1', '패파 강남 1호점'),
             ('fastfive_gangnam_2', '패파 강남 2호점'),
             ('fastfive_gangnam_3', '패파 강남 3호점'),
-        ] 
+        ]
 
     def queryset(self, request, queryset):
         if self.value() == 'all':
             return queryset
-        
+
         if self.value() == 'service':
             distance = 500
             ref_gangnam = Point(y=37.497907, x=127.027635, srid=4326)
             ref_yeoksam = Point(y=37.500787, x=127.036919, srid=4326)
-            
+            ref_samsung = Point(y=37.508852, x=127.063145, srid=4326)
+
             queryset = queryset.annotate(
-                distance_gangnam=Distance(F('location__point'), ref_gangnam) * 100 * 1000,
-                distance_yeoksam=Distance(F('location__point'), ref_yeoksam) * 100 * 1000,
+                distance_gangnam=Distance(
+                    F('location__point'), ref_gangnam) * 100 * 1000,
+                distance_yeoksam=Distance(
+                    F('location__point'), ref_yeoksam) * 100 * 1000,
+                distance_samsung=Distance(
+                    F('location__point'), ref_samsung) * 100 * 1000,
             ).filter(
                 (Q(distance_gangnam__lte=distance) &
-                Q(distance_gangnam__gte=0)) |
-                Q(distance_yeoksam__lte=distance)
+                 Q(distance_gangnam__gte=0)) |
+                Q(distance_yeoksam__lte=distance) |
+                Q(distance_samsung__lte=distance)
             )
             return queryset
 
         if self.value() == 'fastfive_gangnam_1':
             distance = 50
             ref_location = Point(y=37.496949, x=127.028679, srid=4326)
-            
+
             queryset = queryset.annotate(
                 distance=Distance(
                     F('location__point'), ref_location) * 100 * 1000,
@@ -62,7 +69,7 @@ class UserServiceLocationFilter(SimpleListFilter):
         if self.value() == 'fastfive_gangnam_2':
             distance = 50
             ref_location = Point(y=37.495536, x=127.029352, srid=4326)
-            
+
             queryset = queryset.annotate(
                 distance=Distance(
                     F('location__point'), ref_location) * 100 * 1000,
@@ -70,7 +77,7 @@ class UserServiceLocationFilter(SimpleListFilter):
                 Q(distance__lte=distance)
             )
             return queryset
-        
+
         if self.value() == 'fastfive_gangnam_3':
             distance = 50
             ref_location = Point(y=37.496608, x=127.025092, srid=4326)
@@ -82,17 +89,20 @@ class UserServiceLocationFilter(SimpleListFilter):
                 Q(distance__lte=distance)
             )
             return queryset
-        
+
+
 class UserResource(resources.ModelResource):
-    
-    def latlng(self,obj):
+
+    def latlng(self, obj):
         return "{}, {}".format(obj.location.lat, obj.location.long)
+
     class Meta:
         model = User
         fields = (
             'nickname',
             'phone_number'
         )
+
 
 class LocationInline(admin.TabularInline):
     model = Location
@@ -115,21 +125,22 @@ class UserAdmin(ImportExportMixin, admin.ModelAdmin):
     list_per_page = 50
 
     def address(self, obj):
-        if(obj.location.address == LOCATION_DEFAULT_ADDR or 
-           (obj.location.lat == LOCATION_DEFAULT_LAT and obj.location.long == LOCATION_DEFAULT_LNG)
-        ):
+        if(obj.location.address == LOCATION_DEFAULT_ADDR or
+           (obj.location.lat == LOCATION_DEFAULT_LAT and obj.location.long ==
+            LOCATION_DEFAULT_LNG)
+           ):
             return "위치 미등록"
         else:
             return obj.location.address
     address.short_description = "주소"
-    
+
     def phonenumber(self, obj):
         return obj.phone_number.as_national
     phonenumber.short_description = "전화번호"
-    
+
     readonly_fields = (
         'app_user_id',
-        #'nickname',
+        # 'nickname',
         'phonenumber',
         'email',
         'birthyear',
@@ -140,7 +151,8 @@ class UserAdmin(ImportExportMixin, admin.ModelAdmin):
         'flag_promotion',
     )
 
-    search_fields = ['nickname', 'app_user_id', 'phone_number', 'location__address']
+    search_fields = ['nickname', 'app_user_id',
+                     'phone_number', 'location__address']
 
     list_filter = (
         ('create_date', DateRangeFilter),
