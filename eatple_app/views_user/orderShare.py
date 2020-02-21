@@ -217,7 +217,7 @@ def kakaoView_GetDelegateUser(kakaoPayload):
                 else:
                     KakaoInstantForm().Message(
                         '부탁하기 유저와 주문이 달라요.',
-                        '주문과 픽업시간이 부탁 할 유저와 동일해야합니다.',
+                        '주문과 픽업 시간이 부탁 할 유저와 동일해야합니다.',
                         kakaoForm=kakaoForm
                     )
             else:

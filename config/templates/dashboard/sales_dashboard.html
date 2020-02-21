@@ -33,68 +33,68 @@
       <!-- Page Wrapper -->
       <div id="wrapper">
         <!-- Sidebar -->
-        <ul class="visible-md visible-lg navbar-nav bg-gradient-primary sidebar sidebar-dark accordion fixed-left" id="accordionSidebar">
-
-          <!-- Sidebar - Brand -->
-          <a class="sidebar-brand d-flex align-items-center justify-content-center" href="/">
-            <div class="sidebar-brand-icon rotate-n-15">
-              <i class="fas fa-tools"></i>
-            </div>
-            <div class="sidebar-brand-text mx-3">Eatple<sup> 1.0.0V</sup></div>
-          </a>
-
-          <!-- Divider -->
-          <hr class="sidebar-divider my-0">
-
-          <!-- Nav Item - Dashboard -->
-          <li class="nav-item active">
-            <a class="nav-link" href="/">
-              <i class="fas fa-fw fa-tachometer-alt"></i>
-              <span>대쉬보드</span></a>
-          </li>
-
-          <!-- Divider -->
-          <hr class="sidebar-divider">
-
-          <!-- Heading -->
-          <div class="sidebar-heading">
-            BOOKMARKS
-          </div>
-
-          <!-- Nav Item - Pages Collapse Menu -->
-          <li class="nav-item">
-            <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseTwo">
-              <i class="fas fa-fw fa-cog"></i>
-              <span>관리자</span>
-            </a>
-            <div id="collapseOne" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
-              <div class="bg-white py-2 collapse-inner rounded">
-                <h6 class="collapse-header">관리자 사이트 맵</h6>
-                <a class="collapse-item" href="/admin">관리자 툴</a>
+        <ul class="visible-md visible-lg navbar-nav bg-very-dark sidebar sidebar-dark accordion fixed-left" id="accordionSidebar">
+          <div class="side-nav m-2">
+            <!-- Sidebar - Brand -->
+            <a class="sidebar-brand d-flex align-items-center justify-content-center" href="/">
+              <div class="sidebar-brand-icon rotate-n-15">
+                <i class="fas fa-tools"></i>
               </div>
-            </div>
-
-            <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="true" aria-controls="collapseTwo">
-              <i class="fas fa-fw fa-list-alt"></i>
-              <span>세일즈</span>
+              <div class="sidebar-brand-text mx-3">잇플<sup> 2.0.0V</sup></div>
             </a>
-            <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
-              <div class="bg-white py-2 collapse-inner rounded">
-                <h6 class="collapse-header">세일즈 팀 사이트 맵</h6>
-                <a class="collapse-item" href="/sales/dashboard">메뉴 실시간 현황</a>
-                <a class="collapse-item" href="/sales/menu_list">메뉴 리스트</a>
-              </div>
+
+            <!-- Divider -->
+            <hr class="sidebar-divider my-0">
+
+            <!-- Nav Item - Dashboard -->
+            <li class="nav-item active">
+              <a class="nav-link" href="/">
+                <i class="fas fa-fw fa-tachometer-alt"></i>
+                <span>대쉬보드</span></a>
+            </li>
+
+            <!-- Divider -->
+            <hr class="sidebar-divider">
+
+            <!-- Heading -->
+            <div class="sidebar-heading">
+              BOOKMARKS
             </div>
-          </li>
 
-          <!-- Divider -->
-          <hr class="sidebar-divider d-none d-md-block">
+            <!-- Nav Item - Pages Collapse Menu -->
+            <li class="nav-item">
+              <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseTwo">
+                <i class="fas fa-fw fa-cog"></i>
+                <span>관리자</span>
+              </a>
+              <div id="collapseOne" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
+                <div class="bg-white py-2 collapse-inner rounded">
+                  <h6 class="collapse-header">관리자 사이트 맵</h6>
+                  <a class="collapse-item" href="/admin">관리자 툴</a>
+                </div>
+              </div>
 
-          <!-- Sidebar Toggler (Sidebar) -->
-          <div class="text-center d-none d-md-inline">
-            <button class="rounded-circle border-0" id="sidebarToggle"></button>
+              <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="true" aria-controls="collapseTwo">
+                <i class="fas fa-fw fa-list-alt"></i>
+                <span>세일즈</span>
+              </a>
+              <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
+                <div class="bg-white py-2 collapse-inner rounded">
+                  <h6 class="collapse-header">세일즈 팀 사이트 맵</h6>
+                  <a class="collapse-item" href="/sales/dashboard">메뉴 실시간 현황</a>
+                  <a class="collapse-item" href="/sales/menu_list">메뉴 리스트</a>
+                </div>
+              </div>
+            </li>
+
+            <!-- Divider -->
+            <hr class="sidebar-divider d-none d-md-block">
+
+            <!-- Sidebar Toggler (Sidebar) -->
+            <div class="text-center w-100">
+              <button class="rounded-circle border-0 p-2" id="sidebarToggle"></button>
+            </div>
           </div>
-
         </ul>
         <!-- End of Sidebar -->
 
@@ -102,7 +102,7 @@
         <div id="content-wrapper" class="d-flex flex-column">
 
           <!-- Main Content -->
-          <div id="content">
+          <div id="content" class="bg-dark">
             <div class="container-fluid">
               <div class="card-body">
 
@@ -111,16 +111,16 @@
 
                   <!-- Daily Selled Card -->
                   <div class="col-xl-4 col-md-6 mb-4">
-                    <div class="card border-bottom-primary shadow py-2">
+                    <div class="card bg-dark-gray text-white border-bottom-primary shadow py-2">
                       <div class="card-body">
                         <div class="row no-gutters align-items-center">
                           <div class="col mr-2">
                             <div class="text-xs font-weight-bold text-secondary text-uppercase mb-1">일일 판매량</div>
                             <div class="h6 font-weight-bold" id="TotalStockStatus"><i id="TotalStockStatusIcon" class="fas"></i> {{ totalStockIncrease }}</div>
-                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ totalStock }}개</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-100">{{ totalStock }}개</div>
                           </div>
                           <div class="col-auto">
-                            <i class="fas fa-boxes fa-2x text-gray-300"></i>
+                            <i class="fas fa-boxes fa-2x text-white"></i>
                           </div>
                         </div>
                       </div>
@@ -129,16 +129,16 @@
 
                   <!-- Earnings (Monthly) Card Example -->
                   <div class="col-xl-4 col-md-6 mb-4">
-                    <div class="card border-bottom-primary shadow py-2">
+                    <div class="card bg-dark-gray text-white border-bottom-primary shadow py-2">
                       <div class="card-body">
                         <div class="row no-gutters align-items-center">
                           <div class="col mr-2">
                             <div class="text-xs font-weight-bold text-secondary text-uppercase mb-1">일일 픽업</div>
                             <div class="h6 font-weight-bold text-danger"></i> <small>주문 실패</small> : {{ orderFailed }}개</div>
-                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ totalPickuped }} 개</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-100">{{ totalPickuped }} 개</div>
                           </div>
                           <div class="col-auto">
-                            <i class="fas fa-inbox fa-2x text-gray-300"></i>
+                            <i class="fas fa-inbox fa-2x text-white"></i>
                           </div>
                         </div>
                       </div>
@@ -147,18 +147,18 @@
                                     
                   <!-- Daily Earning Card -->
                   <div class="col-xl-4 col-md-6 mb-4">
-                    <div class="card border-bottom-primary shadow py-2">
+                    <div class="card bg-dark-gray text-white border-bottom-primary shadow py-2">
                       <div class="card-body">
                         <div class="row no-gutters align-items-center">
                           <div class="col mr-2">
                             <div class="text-xs font-weight-bold text-secondary text-uppercase mb-1">활성화된 점포</div>
                             <div class="h6 font-weight-bold" id="WASStatus"><i id="WASStatusIcon" class="fas"></i> {{ WASIncrease }}</div>
-                            <div class="h5 mb-0 font-weight-bold text-gray-800">
+                            <div class="h5 mb-0 font-weight-bold text-gray-100">
                               {{ WAS }} 점포
                             </div>
                           </div>
                           <div class="col-auto">
-                            <i class="fas fa-store fa-2x text-gray-300"></i>
+                            <i class="fas fa-store fa-2x text-white"></i>
                           </div>
                         </div>
                       </div>
@@ -170,14 +170,14 @@
                 <!-- Table List -->
                 <div class="row">
                   <div class="col-xl-12 col-md-12 mb-12">
-                    <div class="card shadow mb-4">
-                      <div class="card-header">
+                    <div class="card bg-dark-gray text-white shadow mb-4">
+                      <div class="card-header bg-dark-gray text-white">
                         <h6 class="font-weight-bold text-primary">메뉴 현황 리스트<small class="blockquote-footer">{{ currentDate }}</small></h6>
                       </div>
                       <div class="card-body">
                         <div class="table-responsive">
                           <table class="table table-sm small table-borderless table-hover" id="dataTable" width="100%" cellspacing="0">
-                            <thead class="">
+                            <thead>
                                 <tr >
                                   <th style="border-bottom: none;" scope="col">점포명</th>
                                   <th style="border-bottom: none;" scope="col">구분</th>
@@ -188,12 +188,12 @@
                             </thead>
                             <tbody>
                               {% for store in stores %}
-                                <tr>
+                                <tr class="text-white">
                                   <th><a href="{{ site.url }}/admin/eatple_app/store/{{ store.id }}/#/tab/inline_1/">{{ store.name }}</a></th>
                                   <td>{{ store.id|storeType }}</td>
                                   <td>{{ store.id|storePhoneNumber }}</td>
                                   <td>
-                                    <table class="table thead-light">
+                                    <table class="table">
                                       <thead>
                                         <tr class="small row">
                                           <th style="border-bottom: none; border-top: none;" class="col-md-4"><small>메뉴명</small></th>
@@ -205,7 +205,7 @@
                                       <tbody>
                                         {% for menu in menus %}
                                           {% if menu.store.name == store.name %}
-                                          <tr class="small row">
+                                          <tr class="small row text-white">
                                             <td class="col-md-4">{{ menu.name }}</td>
                                             <td class="col-md-2">{{ menu.current_stock }}개</td>
                                             <td class="col-md-2">{{ menu.max_stock }}개</td>
@@ -237,7 +237,7 @@
           <!-- End of Main Content -->
 
           <!-- Footer -->
-          <footer class="text-muted">
+          <footer class="text-muted bg-dark">
             <a id="scroll-to-top" href="#" class="btn btn-primary btn-lg scroll-to-top-btn" role="button"><i class="fas fa-chevron-up"></i></a>
           </footer>
           <!-- End of Footer -->

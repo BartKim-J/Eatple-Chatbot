@@ -294,7 +294,7 @@ def kakaoView_B2B_Home(user, address):
     )
     kakaoForm.BasicCard_Push(
         '🔗 \'주문 완료\' 절차 간소화',
-        '픽업시간 선택 후 바로 잇플패스가 발급돼요!',
+        '픽업 시간 선택 후 바로 잇플패스가 발급돼요!',
         {},
         [],
     )

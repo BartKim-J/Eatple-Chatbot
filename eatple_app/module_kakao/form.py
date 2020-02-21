@@ -84,7 +84,7 @@ class KakaoInstantForm():
         else:
             buttons.append({
                 'action': 'block',
-                'label': '픽업시간 변경',
+                'label': '픽업 시간 변경',
                 'messageText': KAKAO_EMOJI_LOADING,
                 'blockId': KAKAO_BLOCK_USER_EDIT_PICKUP_TIME,
                 'extra': {

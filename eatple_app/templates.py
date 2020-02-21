@@ -29,7 +29,7 @@ def replaceRight(original, old, new, count_right):
     return text
 
 
-def getOrderChartDataLabel(orderTimeSheet):
+def getOrderChart(orderTimeSheet):
     currentDate = orderTimeSheet.GetCurrentDate()
     currentDateWithoutTime = orderTimeSheet.GetCurrentDateWithoutTime()
 
@@ -41,7 +41,8 @@ def getOrderChartDataLabel(orderTimeSheet):
         currentDateWithoutTime = currentDateWithoutTime + \
             datetime.timedelta(days=1)
 
-    areaLabel = ""
+    label = ""
+    data = ""
 
     for i in range(21):
         checkData = currentDateWithoutTime + datetime.timedelta(days=-(20 - i))
@@ -58,43 +59,11 @@ def getOrderChartDataLabel(orderTimeSheet):
              nextLunchOrderEditTimeStart.strftime('%A') == 'Sunday'):
             pass
         else:
-            areaLabel += "{} {},".format(checkData.strftime(
+            label += "{} {},".format(checkData.strftime(
                 '%-m월 %-d일').replace('AM', '오전').replace('PM', '오후'),
                 WEEKDAY[checkData.weekday()])
 
-    return replaceRight(areaLabel, ",", "", 1)
-
-
-def getOrderChartData(orderTimeSheet):
-    currentDate = orderTimeSheet.GetCurrentDate()
-    currentDateWithoutTime = orderTimeSheet.GetCurrentDateWithoutTime()
-
-    deadline = orderTimeSheet.GetInitialCountTime()
-
-    if(currentDate < deadline):
-        currentDateWithoutTime = currentDateWithoutTime
-    else:
-        currentDateWithoutTime = currentDateWithoutTime + \
-            datetime.timedelta(days=1)
-
-    areaData = ""
-
-    for i in range(21):
-        checkData = currentDateWithoutTime + datetime.timedelta(days=-(20 - i))
-
-        prevLunchOrderEditTimeStart = checkData + \
-            datetime.timedelta(hours=16, minutes=30, days=-1)
-        nextLunchOrderEditTimeStart = checkData + \
-            datetime.timedelta(hours=16, minutes=30)
-
-        if(prevLunchOrderEditTimeStart.strftime('%A') == 'Friday' and
-           nextLunchOrderEditTimeStart.strftime('%A') == 'Saturday'):
-            pass
-        elif(prevLunchOrderEditTimeStart.strftime('%A') == 'Saturday' and
-             nextLunchOrderEditTimeStart.strftime('%A') == 'Sunday'):
-            pass
-        else:
-            areaData += "{},".format((
+            data += "{},".format((
                 Order.objects.filter(
                     Q(payment_date__gte=prevLunchOrderEditTimeStart) &
                     Q(payment_date__lt=nextLunchOrderEditTimeStart) &
@@ -102,10 +71,69 @@ def getOrderChartData(orderTimeSheet):
                 ).count())
             )
 
-    return replaceRight(areaData, ",", "", 1)
+    label = replaceRight(label, ",", "", 1)
+    data = replaceRight(data, ",", "", 1)
+
+    return {
+        'label': label,
+        'data': data
+    }
 
 
-def getDailyOrderChartDataLabel(orderTimeSheet):
+def getPickupTimeChart(orderTimeSheet):
+    currentDate = orderTimeSheet.GetCurrentDate()
+    currentDateWithoutTime = orderTimeSheet.GetCurrentDateWithoutTime()
+
+    deadline = orderTimeSheet.GetInitialCountTime()
+
+    if(currentDate < deadline):
+        currentDateWithoutTime = currentDateWithoutTime
+    else:
+        currentDateWithoutTime = currentDateWithoutTime + \
+            datetime.timedelta(days=1)
+
+    label = ""
+    data = ""
+
+    checkHours = 5
+    minuteInterval = 5
+
+    for i in range(int(60/minuteInterval) * checkHours):
+        checkData = currentDateWithoutTime + \
+            datetime.timedelta(
+                days=0, hours=11, minutes=30 + (minuteInterval * i))
+
+        startTime = checkData
+        endTime = checkData + datetime.timedelta(minutes=minuteInterval)
+
+        if(startTime >= currentDate):
+            label += "픽업시간이 아님,"
+        else:
+            label += "{} ~ {},".format(startTime.strftime(
+                '%p %-I시 %-M분').replace('AM', '오전').replace('PM', '오후'),
+                endTime.strftime(
+                '%p %-I시 %-M분').replace('AM', '오전').replace('PM', '오후')
+            )
+
+        data += "{},".format((
+            Order.objects.filter(
+                Q(pickup_complete_date__gte=startTime) &
+                Q(pickup_complete_date__lt=endTime) &
+                Q(payment_status=IAMPORT_ORDER_STATUS_PAID) &
+                Q(status=ORDER_STATUS_PICKUP_COMPLETED)
+            ).count())
+        )
+
+    label = replaceRight(label, ",", "", 1)
+    data = replaceRight(data, ",", "", 1)
+
+    return {
+        'label': label,
+        'data': data
+    }
+
+
+def getDailyOrderChart(orderTimeSheet):
     currentDate = orderTimeSheet.GetCurrentDate()
     currentDateWithoutTime = orderTimeSheet.GetCurrentDateWithoutTime()
 
@@ -116,35 +144,17 @@ def getDailyOrderChartDataLabel(orderTimeSheet):
     else:
         startTime = orderTimeSheet.GetNextLunchOrderEditTimeStart()
 
-    areaLabel = ""
-
-    for i in range(24):
-        checkStartTime = startTime + datetime.timedelta(hours=i)
-
-        areaLabel += "{},".format(checkStartTime.strftime(
-            '%-m월 %-d일 %p %-I시 %-M분 ~').replace('AM', '오전').replace('PM', '오후'))
-
-    return replaceRight(areaLabel, ",", "", 1)
-
-
-def getDailyOrderChartData(orderTimeSheet):
-    currentDate = orderTimeSheet.GetCurrentDate()
-    currentDateWithoutTime = orderTimeSheet.GetCurrentDateWithoutTime()
-
-    deadline = orderTimeSheet.GetInitialCountTime()
-
-    if(currentDate < deadline):
-        startTime = orderTimeSheet.GetPrevLunchOrderEditTimeStart()
-    else:
-        startTime = orderTimeSheet.GetNextLunchOrderEditTimeStart()
-
-    areaData = ""
+    label = ""
+    data = ""
 
     for i in range(24):
         checkStartTime = startTime + datetime.timedelta(hours=i)
         cehckEndTime = startTime + datetime.timedelta(hours=i+1)
 
-        areaData += "{},".format((
+        label += "{},".format(checkStartTime.strftime(
+            '%-m월 %-d일 %p %-I시 %-M분 ~').replace('AM', '오전').replace('PM', '오후'))
+
+        data += "{},".format((
             Order.objects.filter(
                 Q(payment_date__gte=checkStartTime) &
                 Q(payment_date__lt=cehckEndTime) &
@@ -152,31 +162,33 @@ def getDailyOrderChartData(orderTimeSheet):
             ).count())
         )
 
-    return replaceRight(areaData, ",", "", 1)
+    label = replaceRight(label, ",", "", 1)
+    data = replaceRight(data, ",", "", 1)
+
+    return {
+        'label': label,
+        'data': data
+    }
 
 
-def getMenuStockChartData(menuList):
-    pieData = ""
-
-    menuList = menuList.filter(Q(current_stock__gte=1) & Q(
-        status=OC_OPEN) & Q(store__status=OC_OPEN))
-
-    for menu in menuList:
-        pieData += "{},".format(menu.current_stock)
-
-    return replaceRight(pieData, ",", "", 1)
-
-
-def getMenuStockChartLabel(menuList):
-    pieLabel = ""
+def getMenuStockChart(menuList):
+    label = ""
+    data = ""
 
     menuList = menuList.filter(Q(current_stock__gte=1) & Q(
         status=OC_OPEN) & Q(store__status=OC_OPEN))
 
     for menu in menuList:
-        pieLabel += "{},".format(menu.name)
+        data += "{},".format(menu.current_stock)
+        label += "{},".format(menu.name)
 
-    return replaceRight(pieLabel, ",", "", 1)
+    data = replaceRight(data, ",", "", 1)
+    label = replaceRight(label, ",", "", 1)
+
+    return {
+        'data': data,
+        'label': label,
+    }
 
 
 def getTotalPickuped(orderTimeSheet):
@@ -419,14 +431,10 @@ def dashboard(request):
     totalOrderIncrease = totalUser.filter(
         create_date__gte=currentDateWithoutTime).count()
 
-    areaLabel = getOrderChartDataLabel(orderTimeSheet)
-    areaData = getOrderChartData(orderTimeSheet)
-
-    areaDailyLabel = getDailyOrderChartDataLabel(orderTimeSheet)
-    areaDailyData = getDailyOrderChartData(orderTimeSheet)
-
-    pieLabel = getMenuStockChartLabel(menuList)
-    pieData = getMenuStockChartData(menuList)
+    orderChart = getOrderChart(orderTimeSheet)
+    pickupTimeChart = getPickupTimeChart(orderTimeSheet)
+    dailyOrderChart = getDailyOrderChart(orderTimeSheet)
+    menuStockChart = getMenuStockChart(menuList)
 
     prevDAU = getDAU(orderTimeSheet)
     prevWAU = getWAU(orderTimeSheet)
@@ -436,7 +444,7 @@ def dashboard(request):
     WAU = getWAU(orderTimeSheet)
     MAU = getMAU(orderTimeSheet)
 
-    areaDataList = areaData.split(",")
+    areaDataList = orderChart['data'].split(",")
     prevTotalStock = int(areaDataList[len(areaDataList)-2])
     totalStock = 0
     for menu in menuList:
@@ -446,7 +454,6 @@ def dashboard(request):
     orderFailed = getOrderFailed(orderTimeSheet)
 
     userActive = getUserActive()
-    print(userActive)
 
     return render(request, 'dashboard/base.html', {
         'currentDate': "{}".format(currentDate.strftime(
@@ -473,14 +480,17 @@ def dashboard(request):
         'totalOrder': totalOrder,
         'orderFailed': orderFailed,
 
-        'areaDailyLabel': areaDailyLabel,
-        'areaDailyData': areaDailyData,
+        'areaDailyLabel':  dailyOrderChart['label'],
+        'areaDailyData': dailyOrderChart['data'],
 
-        'areaLabel': areaLabel,
-        'areaData': areaData,
+        'pickupChartLabel':  pickupTimeChart['label'],
+        'pickupChartData': pickupTimeChart['data'],
 
-        'pieLabel': pieLabel,
-        'pieData': pieData,
+        'areaLabel': orderChart['label'],
+        'areaData': orderChart['data'],
+
+        'pieLabel': menuStockChart['label'],
+        'pieData': menuStockChart['data'],
 
         'DAU': DAU,
         'WAU': WAU,
@@ -513,13 +523,13 @@ def sales_dashboard(request):
     totalOrderIncrease = totalUser.filter(
         create_date__gte=currentDateWithoutTime).count()
 
-    areaData = getOrderChartData(orderTimeSheet)
+    orderChart = getOrderChart(orderTimeSheet)
 
     prevWAS = getWAS(orderTimeSheet)
 
     WAS = getWAS(orderTimeSheet)
 
-    areaDataList = areaData.split(",")
+    areaDataList = orderChart['data'].split(",")
     prevTotalStock = int(areaDataList[len(areaDataList)-2])
     totalStock = 0
     for menu in menuList:
@@ -568,13 +578,13 @@ def sales_menulist(request):
     totalOrderIncrease = totalUser.filter(
         create_date__gte=currentDateWithoutTime).count()
 
-    areaData = getOrderChartData(orderTimeSheet)
+    orderChart = getOrderChart(orderTimeSheet)
 
     prevWAS = getWAS(orderTimeSheet)
 
     WAS = getWAS(orderTimeSheet)
 
-    areaDataList = areaData.split(",")
+    areaDataList = orderChart['data'].split(",")
     prevTotalStock = int(areaDataList[len(areaDataList)-2])
     totalStock = 0
     for menu in menuList:

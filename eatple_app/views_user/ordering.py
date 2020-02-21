@@ -338,13 +338,13 @@ def kakaoView_PickupTime(kakaoPayload):
     else:
         if(pickupTimes.count() < 2):
             KakaoInstantForm().Message(
-                '❗ 픽업시간이 제한된 점포입니다',
-                '점주님의 요청으로 픽업시간이 한 타임으로 제한된 점포입니다.',
+                '❗ 픽업 시간이 제한된 점포입니다',
+                '점주님의 요청으로 픽업 시간이 한 타임으로 제한된 점포입니다.',
                 kakaoForm=kakaoForm
             )
 
     KakaoInstantForm().Message(
-        '픽업시간을 선택 해주세요.',
+        '픽업 시간을 선택 해주세요.',
         '{} - {}'.format(menu.store.name, menu.name),
         kakaoForm=kakaoForm
     )
@@ -1116,13 +1116,13 @@ def kakaoView_B2B_PickupTime(kakaoPayload):
     else:
         if(pickupTimes.count() < 2):
             KakaoInstantForm().Message(
-                '❗ 픽업시간이 제한된 점포입니다.',
-                '점주님의 요청으로 픽업시간이 한 타임으로 제한된 점포입니다.',
+                '❗ 픽업 시간이 제한된 점포입니다.',
+                '점주님의 요청으로 픽업 시간이 한 타임으로 제한된 점포입니다.',
                 kakaoForm=kakaoForm
             )
 
     KakaoInstantForm().Message(
-        '픽업시간을 선택 해주세요.',
+        '픽업 시간을 선택 해주세요.',
         '{} - {}'.format(menu.store.name, menu.name),
         kakaoForm=kakaoForm
     )
