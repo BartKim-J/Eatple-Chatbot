@@ -238,7 +238,7 @@ def kakaoView_EatplePass(kakaoPayload):
         },
         {
             'action': 'block',
-            'label': '홈으로 돌아가기',
+            'label': '🏠  홈',
             'messageText': KAKAO_EMOJI_LOADING,
             'blockId': KAKAO_BLOCK_USER_HOME,
             'extra': {}
@@ -346,7 +346,7 @@ def kakaoView_OrderDetails(kakaoPayload):
     ORDER_LIST_QUICKREPLIES_MAP = [
         {
             'action': 'block',
-            'label': '홈으로 돌아가기',
+            'label': '🏠  홈',
             'messageText': KAKAO_EMOJI_LOADING,
             'blockId': KAKAO_BLOCK_USER_HOME,
             'extra': {}

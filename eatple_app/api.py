@@ -8,5 +8,5 @@ from eatple_app.API_Kakao.oauth import GET_KAKAO_Oauth
 from eatple_app.API_Slack.slack_api import Events
 
 # Rest Framework
-from eatple_app.API_Rest.validation import OrderValidation
-from eatple_app.API_Rest.validation import OrderInformation
+from eatple_app.API_Rest.order import OrderValidation
+from eatple_app.API_Rest.order import OrderInformation

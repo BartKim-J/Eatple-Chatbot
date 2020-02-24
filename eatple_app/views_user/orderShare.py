@@ -51,7 +51,7 @@ def kakaoView_GetDelegateUser(kakaoPayload):
     QUICKREPLIES_MAP = [
         {
             'action': 'block',
-            'label': '홈으로 돌아가기',
+            'label': '🏠  홈',
             'messageText': KAKAO_EMOJI_LOADING,
             'blockId': KAKAO_BLOCK_USER_HOME,
             'extra': {}
@@ -257,7 +257,7 @@ def kakaoView_DelegateUserRemove(kakaoPayload):
     QUICKREPLIES_MAP = [
         {
             'action': 'block',
-            'label': '홈으로 돌아가기',
+            'label': '🏠  홈',
             'messageText': KAKAO_EMOJI_LOADING,
             'blockId': KAKAO_BLOCK_USER_HOME,
             'extra': {}
@@ -343,7 +343,7 @@ def kakaoView_DelegateUserRemoveAll(kakaoPayload):
     QUICKREPLIES_MAP = [
         {
             'action': 'block',
-            'label': '홈으로 돌아가기',
+            'label': '🏠  홈',
             'messageText': KAKAO_EMOJI_LOADING,
             'blockId': KAKAO_BLOCK_USER_HOME,
             'extra': {}

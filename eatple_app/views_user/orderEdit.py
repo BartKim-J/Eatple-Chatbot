@@ -37,7 +37,7 @@ def kakaoView_UseEatplePass(kakaoPayload):
     QUICKREPLIES_MAP = [
         {
             'action': 'block',
-            'label': '홈으로 돌아가기',
+            'label': '🏠  홈',
             'messageText': KAKAO_EMOJI_LOADING,
             'blockId': KAKAO_BLOCK_USER_HOME,
             'extra': {
@@ -120,7 +120,7 @@ def kakaoView_ConfirmUseEatplePass(kakaoPayload):
     QUICKREPLIES_MAP = [
         {
             'action': 'block',
-            'label': '홈으로 돌아가기',
+            'label': '🏠  홈',
             'messageText': KAKAO_EMOJI_LOADING,
             'blockId': KAKAO_BLOCK_USER_HOME,
             'extra': {
@@ -251,7 +251,7 @@ def kakaoView_OrderCancel(kakaoPayload):
         },
         {
             'action': 'block',
-            'label': '홈으로 돌아가기',
+            'label': '🏠  홈',
             'messageText': KAKAO_EMOJI_LOADING,
             'blockId': KAKAO_BLOCK_USER_HOME,
             'extra': {
@@ -343,7 +343,7 @@ def kakaoView_EditPickupTime(kakaoPayload):
     QUICKREPLIES_MAP = [
         {
             'action': 'block',
-            'label': '홈으로 돌아가기',
+            'label': '🏠  홈',
             'messageText': KAKAO_EMOJI_LOADING,
             'blockId': KAKAO_BLOCK_USER_HOME,
             'extra': {
@@ -443,7 +443,7 @@ def kakaoView_ConfirmEditPickupTime(kakaoPayload):
     QUICKREPLIES_MAP = [
         {
             'action': 'block',
-            'label': '홈으로 돌아가기',
+            'label': '🏠  홈',
             'messageText': KAKAO_EMOJI_LOADING,
             'blockId': KAKAO_BLOCK_USER_HOME,
             'extra': {
