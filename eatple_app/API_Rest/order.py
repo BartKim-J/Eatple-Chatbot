@@ -17,6 +17,10 @@ from eatple_app.module_kakao.validation import *
 # View-System
 from eatple_app.views_system.debugger import *
 
+from eatple_app.API_Rest.error_table import *
+
+from drf_yasg.utils import swagger_auto_schema
+
 from rest_framework import status
 from rest_framework import viewsets
 from rest_framework import permissions
@@ -65,7 +69,22 @@ def orderValidation(order_id):
 class OrderValidation(viewsets.ModelViewSet):
     queryset = Order.objects.all()
     serializer_class = OrderSerializer
+    http_method_names = ['get']
 
+    @swagger_auto_schema(
+        operation_description="주문 증명",
+        responses={
+            200:
+                ORDER_200_VALID.as_md(),
+            400:
+                ORDER_201_USER_INVALID.as_md() +
+                ORDER_202_MULTI_ORDER.as_md() +
+                ORDER_203_ORDER_ID_INVALID.as_md() +
+                ORDER_204_ALREADY_PAID.as_md() +
+                ORDER_205_ALREADY_CANCELLED.as_md() +
+                ORDER_206_SELLING_TIME_INVALID.as_md()
+        }
+    )
     def list(self, request, *args, **kwargs):
         buyer_name = request.query_params.get('buyer_name')
         merchant_uid = request.query_params.get('merchant_uid')
@@ -154,6 +173,7 @@ class OrderValidation(viewsets.ModelViewSet):
 class OrderInformation(viewsets.ModelViewSet):
     queryset = Order.objects.all()
     serializer_class = OrderSerializer
+    http_method_names = ['get']
 
     def list(self, request, *args, **kwargs):
         buyer_name = request.query_params.get('buyer_name')

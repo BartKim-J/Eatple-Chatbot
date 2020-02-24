@@ -18,8 +18,9 @@ from django.urls import path, include
 
 from django.views.static import serve
 
-from rest_framework import routers
-from rest_framework_swagger.views import get_swagger_view
+from rest_framework import routers, permissions
+from drf_yasg.views import get_schema_view
+from drf_yasg import openapi
 
 from django.conf import settings
 from django.conf.urls.static import static
@@ -28,9 +29,6 @@ from django.conf.urls import url
 from eatple_app import views
 from eatple_app import api
 from eatple_app import templates
-
-schema_view = get_swagger_view(title="Eatple Rest API")
-
 
 if(settings.SETTING_ID == 'DEPLOY'):
     admin.site.site_header = "라이브 서버"
@@ -41,6 +39,32 @@ admin.site.index_title = "Dashboard"
 admin.site.site_title = "Eat+ Admin"
 
 # Urls
+schema_view = get_schema_view(
+    openapi.Info(
+        title="Eatple Inbase API",
+        default_version='v1.0.0',
+        description="Test description",
+        terms_of_service="https://www.google.com/policies/terms/",
+        contact=openapi.Contact(email="bart@eatple.com"),
+        license=openapi.License(name="BSD License"),
+    ),
+    public=True,
+    permission_classes=(permissions.AllowAny,),
+)
+
+partner_schema_view = get_schema_view(
+    openapi.Info(
+        title="Eatple Public API",
+        default_version='v1.0.0',
+        description="Test description",
+        terms_of_service="https://www.google.com/policies/terms/",
+        contact=openapi.Contact(email="bart@eatple.com"),
+        license=openapi.License(name="BSD License"),
+    ),
+    public=True,
+    permission_classes=(permissions.AllowAny,),
+)
+
 urlpatterns = [
     # Admin
     path('jet/', include('jet.urls', 'jet')),  # Django JET URLS
@@ -58,9 +82,9 @@ urlpatterns += {
 }
 # Urls - User App
 urlpatterns += [
-    #Test
+    # Test
     path('skill/user/test', views.GET_Test),
-    
+
     # Home
     path('skill/user/home', views.GET_UserHome),
 
@@ -129,21 +153,25 @@ urlpatterns += [
 
 # Urls - SLACK API
 urlpatterns += [
-    url('slack/events', api.Events.as_view()),
+    url('slack/api/events', api.Events.as_view()),
 ]
 
+# Urls - REST API
 router = routers.DefaultRouter()
 router.register(r'order_validation', api.OrderValidation)
 router.register(r'order_information', api.OrderInformation)
 
-# Urls - REST API
 urlpatterns += [
-    path('api/', include(router.urls)),
+    url('api/rest/swagger(?P<format>\.json|\.yaml)$',
+        schema_view.without_ui(cache_timeout=0), name='schema-json'),
+    url('api/rest/swagger/$', schema_view.with_ui('swagger',
+                                                  cache_timeout=0), name='schema-swagger-ui'),
+    url('api/rest/redoc/$', schema_view.with_ui('redoc',
+                                                cache_timeout=0), name='schema-redoc'),
 ]
 
-
 urlpatterns += [
-    path('api/doc', schema_view),
+    path('api/rest/', include(router.urls)),
 ]
 
 # Media Link Url

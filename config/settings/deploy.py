@@ -59,6 +59,7 @@ INSTALLED_APPS = [
     'import_export',
     'phonenumber_field',
 
+    'drf_yasg',
     'django_feedparser',
 
     'rest_framework',

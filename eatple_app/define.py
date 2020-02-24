@@ -23,6 +23,7 @@ from eatple_app.system.slack import *
 from eatple_app.system.kakao import *
 from eatple_app.system.iamport import *
 
+from drf_yasg.utils import swagger_auto_schema
 ###########################################################################################
 # System Variable
 
