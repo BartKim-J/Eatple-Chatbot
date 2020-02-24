@@ -13,6 +13,7 @@ from eatple_app.define import *
 from eatple_app.module_kakao.reponseForm import *
 from eatple_app.module_kakao.requestForm import *
 from eatple_app.module_kakao.kakaoPay import *
+from eatple_app.module_kakao.kakaoBiz import *
 from eatple_app.module_kakao.kakao import *
 from eatple_app.module_kakao.form import *
 from eatple_app.module_kakao.validation import *
@@ -28,7 +29,11 @@ from eatple_app.views_system.debugger import *
 
 
 def kakaoView_Test(user):
-    return errorView('잘못된 블럭 경로', '정상적이지 않은 블럭 경로입니다.')
+
+    message = "안녕하세요!! 잇플입니다.\n 오늘 잇플은 하루 쉬어 가겠습니다.\n내일은 주문 메시지로 만나게 되길!!"
+
+    KakaoBiz().request(message, '+821045624810')
+    KakaoBiz().request(message, '+821057809397')
 
     kakaoForm = KakaoForm()
 

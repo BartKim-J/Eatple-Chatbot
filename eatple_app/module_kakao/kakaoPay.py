@@ -16,6 +16,9 @@ from eatple_app.module_kakao.kakaoPay import *
 from eatple_app.module_kakao.form import *
 from eatple_app.module_kakao.validation import *
 
+KAKAO_PAY_HOST_URL = 'kapi.kakao.com'
+
+
 class KakaoPay():
     def PushOrderSheet(self, user, order=None):
         headers = {
@@ -49,14 +52,9 @@ class KakaoPay():
         }
 
         apiURL = '{shcme}{host}{url}'.format(
-            shcme='https://', host='kapi.kakao.com', url='/v1/payment/ready')
+            shcme='https://', host=KAKAO_PAY_HOST_URL, url='/v1/payment/ready')
 
-        try:
-            kakaoResponse = requests.post(apiURL, data=data, headers=headers)
-
-        except kakaoResponse.HttpError as http_error:
-            print(http_error.code)
-            print(http_error.reason)
+        kakaoResponse = requests.post(apiURL, data=data, headers=headers)
 
         print('Header : ', kakaoResponse.headers)
         print('URL : ', kakaoResponse.url)

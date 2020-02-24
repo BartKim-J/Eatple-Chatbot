@@ -23,7 +23,6 @@ from eatple_app.system.slack import *
 from eatple_app.system.kakao import *
 from eatple_app.system.iamport import *
 
-from drf_yasg.utils import swagger_auto_schema
 ###########################################################################################
 # System Variable
 
@@ -31,4 +30,4 @@ VERSION_CODE = "동그랑땡"
 VERSION_LEVEL = "Beta"
 MAJOR_VERSION = 1
 MINOR_VERSION = 0
-BUILD_VERSION = 5
+BUILD_VERSION = 6
