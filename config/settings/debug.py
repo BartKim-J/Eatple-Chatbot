@@ -33,9 +33,8 @@ SECRET_KEY = '8b%m$==a68uz-y#zl&hb^rb$oyl3ejy5=8c!5**l5x#lou1(i$'
 DEBUG = True
 
 ALLOWED_HOSTS = [
-    '54.65.75.156',
-    'www.eatple.com',
     'eatple.com',
+    'www.eatple.com',
     'admin.eatple.com',
     'dev.eatple.com',
     'localhost'
