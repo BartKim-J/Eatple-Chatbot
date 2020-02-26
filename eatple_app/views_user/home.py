@@ -40,10 +40,7 @@ def userLocationRegistration(user, locationData):
     try:
         user.location.lat = locationData['latitude']
         user.location.long = locationData['longitude']
-        user.location.address = locationData['address']
-
-        # @TODO will update kakao location api
-        # user.location.address = locationData['road_address']['address_name']
+        user.location.address = locationData['land_address']['address_name']
         user.location.point = Point(
             y=float(locationData['latitude']),
             x=float(locationData['longitude']),
@@ -552,8 +549,8 @@ def GET_UserHome(request):
             try:
                 otpURL = kakaoPayload.dataActionParams['location']['origin']
 
-                kakaoResponse = requests.get('{url}?rest_api_key={rest_api_key}'.format(
-                    url=otpURL, rest_api_key=KAKAO_REST_API_KEY))
+                kakaoResponse = requests.get('{url}?rest_api_key={rest_api_key}&version={version}'.format(
+                    url=otpURL, rest_api_key=KAKAO_REST_API_KEY, version="v2"))
 
                 if(kakaoResponse.status_code == 200):
                     user = userLocationRegistration(user, kakaoResponse.json())
@@ -561,7 +558,7 @@ def GET_UserHome(request):
                     return kakaoView_Route_Home(user)
 
                 return kakaoView_LocationRegistration()
-            except (RuntimeError, TypeError, NameError, KeyError):
+            except (RuntimeError, TypeError, NameError, KeyError) as ex:
                 return kakaoView_LocationRegistration()
         else:
             # Get user profile data from Kakao server
