@@ -29,5 +29,5 @@ from eatple_app.system.iamport import *
 VERSION_CODE = "동그랑땡"
 VERSION_LEVEL = "Beta"
 MAJOR_VERSION = 1
-MINOR_VERSION = 0
-BUILD_VERSION = 6
+MINOR_VERSION = 1
+BUILD_VERSION = 2

@@ -168,6 +168,13 @@ class MenuInfo(models.Model):
 
 
 class MenuSetting(models.Model):
+    type = models.CharField(
+        max_length=WORD_LENGTH,
+        default=STORE_TYPE_B2B_AND_NORMAL,
+        choices=MENU_TYPE,
+        verbose_name="유형"
+    )
+
     description = models.TextField(
         blank=True,
         verbose_name="메뉴 설명"

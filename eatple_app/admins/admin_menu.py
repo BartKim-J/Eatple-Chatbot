@@ -65,7 +65,7 @@ class MenuAdmin(ImportExportMixin, admin.GeoModelAdmin):
     fieldsets = [
         ('기본 정보',                  {'fields': ['menu_id', 'store', 'name']}),
         ('설정',                  {'fields': [
-         'selling_time', 'pickup_time', 'tag', 'description',
+         'type', 'selling_time', 'pickup_time', 'tag', 'description',
          'image', 'image_preview',
          'soldout_image', 'image_soldout_preview',
          'price', ]}),

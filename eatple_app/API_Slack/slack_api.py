@@ -6,7 +6,8 @@ from eatple_app.model.menu import Menu, PickupTime
 
 def eatple_b2b_status():
     menuList = Menu.objects.filter(
-        store__type=STORE_TYPE_B2B,
+        Q(store__type=STORE_TYPE_B2B_AND_NORMAL) |
+        Q(store__type=STORE_TYPE_B2B),
         status=OC_OPEN,
         store__status=OC_OPEN,
     )

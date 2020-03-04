@@ -159,7 +159,17 @@ def kakaoView_Home(user, address):
         },
     ]
 
-    # UPDATE NOTIY
+    # MAP
+    addressMap = address.split()
+
+    kakaoForm.BasicCard_Push(
+        '🗺️  나의 \'잇플\'레이스',
+        '[{} {} {}]  인근'.format(
+            addressMap[0], addressMap[1], addressMap[2]),
+        {},
+        []
+    )
+    # UPDATE
     kakaoForm.BasicCard_Push(
         '📌 「{}」 v{}.{}.{}({})'.format(
             VERSION_CODE,
@@ -200,38 +210,6 @@ def kakaoView_Home(user, address):
         thumbnail,
         buttons
     )
-
-    # MAP
-    thumbnail = {
-        'imageUrl': 'https://maps.googleapis.com/maps/api/staticmap?center={lat},{long}&maptype=mobile&zoom={zoom}&markers=size:mid%7C{lat},{long}&size=500x500&key={apiKey}'.format(
-            zoom=18,
-            lat=user.location.lat,
-            long=user.location.long,
-            apiKey='AIzaSyDRhnn4peSzEfKzQ_WjwDqDF9pzDiuVRhM',
-        ),
-        'fixedRatio': 'true',
-        'width': 800,
-        'height': 800,
-    }
-    buttons = [
-        {
-            'action': 'block',
-            'label': '🗺️  위치 변경',
-            'messageText': KAKAO_EMOJI_LOADING,
-            'blockId': KAKAO_BLOCK_USER_EDIT_LOCATION,
-            'extra': {
-                KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_HOME
-            }
-        },
-    ]
-
-    kakaoForm.BasicCard_Push(
-        '자주 사용하는 위치',
-        '{}'.format(address),
-        thumbnail,
-        buttons
-    )
-
     kakaoForm.BasicCard_Add()
 
     kakaoForm.QuickReplies_AddWithMap(QUICKREPLIES_MAP)
@@ -277,7 +255,27 @@ def kakaoView_B2B_Home(user, address):
         },
     ]
 
+    # MAP
+    addressMap = address.split()
+
+    kakaoForm.BasicCard_Push('🗺️  나의 \'잇플\'레이스',
+                             '[{} {} {}]  인근'.format(
+                                 addressMap[0], addressMap[1], addressMap[2]),
+                             {},
+                             []
+                             )
     # UPDATE
+    kakaoForm.BasicCard_Push(
+        '📌 「{}」 v{}.{}.{}({})'.format(
+            VERSION_CODE,
+            MAJOR_VERSION,
+            MINOR_VERSION,
+            BUILD_VERSION,
+            VERSION_LEVEL,),
+        '🛠️ 업데이트 내역을 확인하세요. ➔',
+        {},
+        [],
+    )
     kakaoForm.BasicCard_Push(
         '📌 「{}」 v{}.{}.{}({})'.format(
             VERSION_CODE,
@@ -302,7 +300,7 @@ def kakaoView_B2B_Home(user, address):
         logoImg = '{}{}'.format(HOST_URL, user.company.logoImgURL())
     else:
         logoImg = '{}{}'.format(HOST_URL, user.company.logoImgURL())
-        # logoImg = '{}{}'.format(HOST_URL, HOME_HEAD_BLACK_IMG_URL)
+        # logoImg = '{}{}'.format(HOST_URL, HO
 
     thumbnail = {
         'imageUrl': logoImg,
@@ -317,38 +315,6 @@ def kakaoView_B2B_Home(user, address):
         thumbnail,
         buttons
     )
-
-    # MAP
-    thumbnail = {
-        'imageUrl': 'https://maps.googleapis.com/maps/api/staticmap?center={lat},{long}&maptype=mobile&zoom={zoom}&markers=size:mid%7C{lat},{long}&size=500x500&key={apiKey}'.format(
-            zoom=18,
-            lat=user.location.lat,
-            long=user.location.long,
-            apiKey='AIzaSyDRhnn4peSzEfKzQ_WjwDqDF9pzDiuVRhM',
-        ),
-        'fixedRatio': 'true',
-        'width': 800,
-        'height': 800,
-    }
-    buttons = [
-        {
-            'action': 'block',
-            'label': '🗺️  위치 변경',
-            'messageText': KAKAO_EMOJI_LOADING,
-            'blockId': KAKAO_BLOCK_USER_EDIT_LOCATION,
-            'extra': {
-                KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_HOME
-            }
-        },
-    ]
-
-    kakaoForm.BasicCard_Push(
-        '자주 사용하는 위치',
-        '{}'.format(address),
-        thumbnail,
-        buttons
-    )
-
     kakaoForm.BasicCard_Add()
 
     kakaoForm.QuickReplies_AddWithMap(QUICKREPLIES_MAP)

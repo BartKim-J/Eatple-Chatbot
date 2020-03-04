@@ -7,21 +7,23 @@ from eatple_app.define import *
 
 from eatple_app.model.menu import Menu, PickupTime
 
+
 class CustomIndexDashboard(Dashboard):
     class Media:
         js = ('admin/js/vendor/jquery/jquery.min.js', 'admin/js/jquery.init.js')
-        
+
     columns = 3
-            
+
     def init_with_context(self, context):
         menuList = Menu.objects.filter(
-            store__type=STORE_TYPE_B2B,         
+            Q(store__type=STORE_TYPE_B2B_AND_NORMAL) |
+            Q(store__type=STORE_TYPE_B2B),
             status=OC_OPEN,
             store__status=OC_OPEN,
         )
-        
+
         childrenBlock = []
-        
+
         for menu in menuList:
             childrenBlock += {
                 'title': "{store} - {menu}".format(
@@ -35,7 +37,7 @@ class CustomIndexDashboard(Dashboard):
                 ),
                 'external': True,
             },
-                
+
         self.available_children.append(modules.LinkList)
         self.children.append(modules.LinkList(
             _('B2B Menu List'),

@@ -23,6 +23,8 @@ from eatple_app.views import *
 
 # STATIC CONFIG
 MENU_LIST_LENGTH = 20
+DEFAULT_DISTANCE_CONDITION = 800
+DEFAULT_DISTANCE_UNDER_FLAG = True
 
 # # # # # # # # # # # # # # # # # # # # # # # # #
 #
@@ -37,6 +39,17 @@ def kakaoView_MenuListup(kakaoPayload):
     kakaoForm = KakaoForm()
 
     QUICKREPLIES_MAP = [
+        {
+            'action': 'block',
+            'label': '그 외 지역',
+            'messageText': KAKAO_EMOJI_LOADING,
+            'blockId': KAKAO_BLOCK_USER_GET_MENU,
+            'extra': {
+                KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_GET_MENU,
+                'distance_condition': DEFAULT_DISTANCE_CONDITION,
+                'distance_under_flag': False,
+            }
+        },
         {
             'action': 'block',
             'label': '🏠 홈',
@@ -81,13 +94,28 @@ def kakaoView_MenuListup(kakaoPayload):
     # currentSellingTime = sellingTimeCheck()
     currentSellingTime = SELLING_TIME_LUNCH
 
+    distance_condition = DEFAULT_DISTANCE_CONDITION
+    distance_under_flag = DEFAULT_DISTANCE_UNDER_FLAG
+
+    try:
+        distance_conition = kakaoPayload.dataActionExtra['distance_condition']
+        distance_under_flag = kakaoPayload.dataActionExtra['distance_under_flag']
+    except:
+        pass
+
     menuList = Menu.objects.annotate(
         distance=Distance(F('store__place__point'),
                           user.location.point) * 100 * 1000
     ).filter(
         Q(selling_time=currentSellingTime) &
-        Q(store__type=STORE_TYPE_NORMAL) &
-
+        (
+            Q(store__type=STORE_TYPE_B2B_AND_NORMAL) |
+            Q(store__type=STORE_TYPE_NORMAL)
+        ) &
+        (
+            Q(type=MENU_TYPE_B2B_AND_NORMAL) |
+            Q(type=MENU_TYPE_NORMAL)
+        ) &
         Q(status=OC_OPEN) &
         (
             Q(store__status=OC_OPEN) |
@@ -95,11 +123,16 @@ def kakaoView_MenuListup(kakaoPayload):
         )
     ).order_by(F'distance')
 
+    if(distance_under_flag):
+        menuList = menuList.filter(Q(distance__lt=distance_condition))
+    else:
+        menuList = menuList.filter(Q(distance__gte=distance_condition))
+
     sellingOutList = []
 
     if menuList:
         KakaoInstantForm().Message(
-            '※ 잇플의 모든 메뉴는 6000원입니다.',
+            '※ 메뉴 선택과 픽업 시간 선택을 해주세요.',
             kakaoForm=kakaoForm
         )
 
@@ -111,7 +144,7 @@ def kakaoView_MenuListup(kakaoPayload):
                 distance = menu.distance
                 walkTime = round((distance / 100) * 2.1)
 
-                if(distance <= 1000):
+                if(distance <= distance_condition):
                     walkTime = '약 도보 {} 분'.format(walkTime)
                 else:
                     walkTime = '1 ㎞ 이상'
@@ -804,6 +837,17 @@ def kakaoView_B2B_MenuListup(kakaoPayload):
     QUICKREPLIES_MAP = [
         {
             'action': 'block',
+            'label': '그 외 지역',
+            'messageText': KAKAO_EMOJI_LOADING,
+            'blockId': KAKAO_BLOCK_USER_GET_MENU,
+            'extra': {
+                KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_GET_MENU,
+                'distance_condition': DEFAULT_DISTANCE_CONDITION,
+                'distance_under_flag': False,
+            }
+        },
+        {
+            'action': 'block',
             'label': '🏠 홈',
             'messageText': KAKAO_EMOJI_LOADING,
             'blockId': KAKAO_BLOCK_USER_HOME,
@@ -845,20 +889,40 @@ def kakaoView_B2B_MenuListup(kakaoPayload):
     # currentSellingTime = sellingTimeCheck()
     currentSellingTime = SELLING_TIME_LUNCH
 
+    distance_condition = DEFAULT_DISTANCE_CONDITION
+    distance_under_flag = DEFAULT_DISTANCE_UNDER_FLAG
+
+    try:
+        distance_conition = kakaoPayload.dataActionExtra['distance_condition']
+        distance_under_flag = kakaoPayload.dataActionExtra['distance_under_flag']
+    except:
+        pass
+
     menuList = Menu.objects.annotate(
         distance=Distance(F('store__place__point'),
                           user.location.point) * 100 * 1000
     ).filter(
         Q(stocktable__company=user.company) &
         Q(selling_time=currentSellingTime) &
-        Q(store__type=STORE_TYPE_B2B) &
-
+        (
+            Q(store__type=STORE_TYPE_B2B_AND_NORMAL) |
+            Q(store__type=STORE_TYPE_B2B)
+        ) &
+        (
+            Q(type=MENU_TYPE_B2B_AND_NORMAL) |
+            Q(type=MENU_TYPE_B2B)
+        ) &
         Q(status=OC_OPEN) &
         (
             Q(store__status=OC_OPEN) |
             Q(store__status=STORE_OC_VACATION)
         )
     ).order_by(F'distance')
+
+    if(distance_under_flag):
+        menuList = menuList.filter(Q(distance__lt=distance_condition))
+    else:
+        menuList = menuList.filter(Q(distance__gte=distance_condition))
 
     sellingOutList = []
 
@@ -881,7 +945,7 @@ def kakaoView_B2B_MenuListup(kakaoPayload):
 
                 walkTime = round((distance / 100) * 2.1)
 
-                if(distance <= 1000):
+                if(distance <= distance_conition):
                     walkTime = '약 도보 {} 분'.format(walkTime)
                 else:
                     walkTime = '1 ㎞ 이상'
