@@ -41,17 +41,6 @@ def kakaoView_MenuListup(kakaoPayload):
     QUICKREPLIES_MAP = [
         {
             'action': 'block',
-            'label': '그 외 지역',
-            'messageText': KAKAO_EMOJI_LOADING,
-            'blockId': KAKAO_BLOCK_USER_GET_MENU,
-            'extra': {
-                KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_GET_MENU,
-                'distance_condition': DEFAULT_DISTANCE_CONDITION,
-                'distance_under_flag': False,
-            }
-        },
-        {
-            'action': 'block',
             'label': '🏠 홈',
             'messageText': KAKAO_EMOJI_LOADING,
             'blockId': KAKAO_BLOCK_USER_HOME,
@@ -101,6 +90,17 @@ def kakaoView_MenuListup(kakaoPayload):
         distance_conition = kakaoPayload.dataActionExtra['distance_condition']
         distance_under_flag = kakaoPayload.dataActionExtra['distance_under_flag']
     except:
+        QUICKREPLIES_MAP.insert(0, {
+            'action': 'block',
+            'label': '그 외 지역',
+            'messageText': KAKAO_EMOJI_LOADING,
+            'blockId': KAKAO_BLOCK_USER_GET_MENU,
+            'extra': {
+                KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_GET_MENU,
+                'distance_condition': DEFAULT_DISTANCE_CONDITION,
+                'distance_under_flag': False,
+            }
+        })
         pass
 
     menuList = Menu.objects.annotate(
@@ -837,17 +837,6 @@ def kakaoView_B2B_MenuListup(kakaoPayload):
     QUICKREPLIES_MAP = [
         {
             'action': 'block',
-            'label': '그 외 지역',
-            'messageText': KAKAO_EMOJI_LOADING,
-            'blockId': KAKAO_BLOCK_USER_GET_MENU,
-            'extra': {
-                KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_GET_MENU,
-                'distance_condition': DEFAULT_DISTANCE_CONDITION,
-                'distance_under_flag': False,
-            }
-        },
-        {
-            'action': 'block',
             'label': '🏠 홈',
             'messageText': KAKAO_EMOJI_LOADING,
             'blockId': KAKAO_BLOCK_USER_HOME,
@@ -896,6 +885,17 @@ def kakaoView_B2B_MenuListup(kakaoPayload):
         distance_conition = kakaoPayload.dataActionExtra['distance_condition']
         distance_under_flag = kakaoPayload.dataActionExtra['distance_under_flag']
     except:
+        QUICKREPLIES_MAP.insert(0, {
+            'action': 'block',
+            'label': '그 외 지역',
+            'messageText': KAKAO_EMOJI_LOADING,
+            'blockId': KAKAO_BLOCK_USER_GET_MENU,
+            'extra': {
+                KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_GET_MENU,
+                'distance_condition': DEFAULT_DISTANCE_CONDITION,
+                'distance_under_flag': False,
+            }
+        })
         pass
 
     menuList = Menu.objects.annotate(
