@@ -33,12 +33,10 @@ SECRET_KEY = '8b%m$==a68uz-y#zl&hb^rb$oyl3ejy5=8c!5**l5x#lou1(i$'
 DEBUG = True
 
 ALLOWED_HOSTS = [
-    '54.65.75.156',
-    'ec2-52-198-15-69.ap-northeast-1.compute.amazonaws.com',
-    'dev.eatple.com',
-    'admin.eatple.com',
     'eatple.com',
     'www.eatple.com',
+    'admin.eatple.com',
+    'dev.eatple.com',
     'localhost'
 ]
 
@@ -61,6 +59,7 @@ INSTALLED_APPS = [
     'import_export',
     'phonenumber_field',
 
+    'drf_yasg',
     'django_feedparser',
 
     'rest_framework',

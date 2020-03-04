@@ -1,186 +1,43 @@
-"""eatplus URL Configuration
-
-The `urlpatterns` list routes URLs to views. For more information please see:
-    https://docs.djangoproject.com/en/2.2/topics/http/urls/
-Examples:
-Function views
-    1. Add an import:  from my_app import views
-    2. Add a URL to urlpatterns:  path('', views.home, name='home')
-Class-based views
-    1. Add an import:  from other_app.views import Home
-    2. Add a URL to urlpatterns:  path('', Home.as_view(), name='home')
-Including another URLconf
-    1. Import the include() function: from django.urls import include, path
-    2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
-"""
-from django.contrib import admin
-from django.urls import path, include
-
-from django.views.static import serve
-
-from rest_framework import routers, permissions
-from drf_yasg.views import get_schema_view
-from drf_yasg import openapi
-
-from django.conf import settings
-from django.conf.urls.static import static
-from django.conf.urls import url
-
-from eatple_app import views
-from eatple_app import api
-from eatple_app import templates
-
-if(settings.SETTING_ID == 'DEPLOY'):
-    admin.site.site_header = "라이브 서버"
-else:
-    admin.site.site_header = "개발 서버"
-
-admin.site.index_title = "Dashboard"
-admin.site.site_title = "Eat+ Admin"
+from config.url.system import *
+from config.url.templates import TEMPLATES_URLS
+from config.url.rest import RESTFUL_API_URLS, RESTFUL_API_DOC_URLS
+from config.url.kakao import KAKAO_API_URLS
+from config.url.slack import SLACK_API_URLS
+from config.url.kakao_skill.user import KAKAO_SKILL_USER_URLS, KAKAO_SKILL_USER_EVENT_URLS
+from config.url.kakao_skill.partner import KAKAO_SKILL_PARTNER_URLS
 
 # Urls
-schema_view = get_schema_view(
-    openapi.Info(
-        title="Eatple Inbase API",
-        default_version='v1.0.0',
-        description="Test description",
-        terms_of_service="https://www.google.com/policies/terms/",
-        contact=openapi.Contact(email="bart@eatple.com"),
-        license=openapi.License(name="BSD License"),
-    ),
-    public=True,
-    permission_classes=(permissions.AllowAny,),
-)
+urlpatterns = []
 
-partner_schema_view = get_schema_view(
-    openapi.Info(
-        title="Eatple Public API",
-        default_version='v1.0.0',
-        description="Test description",
-        terms_of_service="https://www.google.com/policies/terms/",
-        contact=openapi.Contact(email="bart@eatple.com"),
-        license=openapi.License(name="BSD License"),
-    ),
-    public=True,
-    permission_classes=(permissions.AllowAny,),
-)
+# Admin
+urlpatterns += ADMIN_URLS
 
-urlpatterns = [
-    # Admin
-    path('jet/', include('jet.urls', 'jet')),  # Django JET URLS
-    path('jet/dashboard/', include('jet.dashboard.urls',
-                                   'jet-dashboard')),  # Django JET dashboard URLS
-    path('admin/', admin.site.urls),
-]
+# Templates
+urlpatterns += TEMPLATES_URLS
 
-# Dashboard Stie
-urlpatterns += {
-    path('', templates.dashboard),
-    path('404', templates.error404),
-    path('sales/dashboard', templates.sales_dashboard),
-    path('sales/menu_list', templates.sales_menulist),
-}
 # Urls - User App
-urlpatterns += [
-    # Test
-    path('skill/user/test', views.GET_Test),
+urlpatterns += KAKAO_SKILL_USER_URLS
 
-    # Home
-    path('skill/user/home', views.GET_UserHome),
-
-    # Order Flow
-    path('skill/user/order/get_menu',         views.GET_Menu),
-    path('skill/user/order/set_pickup_time',   views.SET_PickupTime),
-    path('skill/user/order/set_order_sheet',   views.SET_OrderSheet),
-
-    # Order View Flow
-    path('skill/user/orderView/get_order_details', views.GET_OrderDetails),
-    path('skill/user/orderView/get_eatple_pass',    views.GET_EatplePass),
-
-    # Order Edit Flow
-    path('skill/user/orderEdit/post_order_cancel',     views.POST_OrderCancel),
-
-    path('skill/user/orderEdit/get_confirm_use_eatplepass',
-         views.GET_ConfirmUseEatplePass),
-    path('skill/user/orderEdit/post_use_eatplepass',
-         views.POST_UseEatplePass),
-
-    # Order Pickup Time Change Flow
-    path('skill/user/orderEdit/get_edit_pickup_time',
-         views.GET_EditPickupTime),
-    path('skill/user/orderEdit/set_confirm_edit_pickup_time',
-         views.SET_ConfirmEditPickupTime),
-
-    # Order Share
-    path('skill/user/orderShare/get_delegate_user_remove',
-         views.GET_DelegateUserRemove),
-    path('skill/user/orderShare/get_delegate_user_remove_all',
-         views.GET_DelegateUserRemoveAll),
-    path('skill/user/orderShare/get_delegate_user',
-         views.GET_DelegateUser),
-
-    # Notify
-    path('skill/user/etc/get_notify', views.GET_UserNotify),
-]
-
-# Urls - Events App
-urlpatterns += [
-    # Home
-    path('skill/promotion/home', views.GET_ProMotionHome),
-]
+# Urls - User Events App
+urlpatterns += KAKAO_SKILL_USER_EVENT_URLS
 
 # Urls - Partner App
-urlpatterns += [
-    # Kakao Plus Partner Skills
-    # Home
-    path('skill/partner/home', views.GET_PartnerHome),
-
-    # Order View Flow
-    path('skill/partner/orderView/get_order_details',
-         views.GET_ParnterOrderDetails),
-]
+urlpatterns += KAKAO_SKILL_PARTNER_URLS
 
 # Urls - KAKAO API
-urlpatterns += [
-    path('kakao/api/oauth', api.GET_KAKAO_Oauth),
-
-    path('kakao/channel/log', api.POST_KAKAO_ChannelLog),
-
-    path('kakao/api/signup', api.GET_KAKAO_Signup),
-    path('kakao/api/signup_setup', api.GET_KAKAO_SignupSetup),
-    path('kakao/api/signout', api.GET_KAKAO_Signup),
-]
+urlpatterns += KAKAO_API_URLS
 
 # Urls - SLACK API
-urlpatterns += [
-    url('slack/api/events', api.Events.as_view()),
-]
+urlpatterns += SLACK_API_URLS
 
 # Urls - REST API
-router = routers.DefaultRouter()
-router.register(r'order_validation', api.OrderValidation)
-router.register(r'order_information', api.OrderInformation)
-
-urlpatterns += [
-    url('api/swagger(?P<format>\.json|\.yaml)$',
-        schema_view.without_ui(cache_timeout=0), name='schema-json'),
-    url('api/swagger/$', schema_view.with_ui('swagger',
-                                             cache_timeout=0), name='schema-swagger-ui'),
-    url('api/redoc/$', schema_view.with_ui('redoc',
-                                           cache_timeout=0), name='schema-redoc'),
-]
-
-urlpatterns += [
-    path('api/', include(router.urls)),
-]
+urlpatterns += RESTFUL_API_DOC_URLS
+urlpatterns += RESTFUL_API_URLS
 
 # Media Link Url
-urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
-urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+urlpatterns += MEDIA_URLS
+urlpatterns += MEDIA_STAIC_URLS
 
-urlpatterns += [
-    url(r'^media/(?P<path>.*)$', serve,
-        {'document_root': settings.MEDIA_ROOT}),
-    url(r'^static/(?P<path>.*)$', serve,
-        {'document_root': settings.STATIC_ROOT}),
-]
+# Static URL
+urlpatterns += STATIC_URLS
+urlpatterns += STATIC_STATIC_URLS
