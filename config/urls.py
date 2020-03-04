@@ -1,3 +1,22 @@
+from django.contrib import admin
+from django.urls import path, include
+
+from django.views.static import serve
+
+from rest_framework import routers, permissions
+from drf_yasg.views import get_schema_view
+from drf_yasg import openapi
+
+from django.conf import settings
+from django.conf.urls.static import static
+from django.conf.urls import url
+
+## Do Not Remove this codeblock ##
+from eatple_app import views
+from eatple_app import api
+from eatple_app import templates
+##################################
+
 from config.url.system import *
 from config.url.templates import TEMPLATES_URLS
 from config.url.rest import RESTFUL_API_URLS, RESTFUL_API_DOC_URLS
@@ -15,24 +34,22 @@ urlpatterns += ADMIN_URLS
 # Templates
 urlpatterns += TEMPLATES_URLS
 
-# Urls - User App
+# User App
 urlpatterns += KAKAO_SKILL_USER_URLS
-
-# Urls - User Events App
 urlpatterns += KAKAO_SKILL_USER_EVENT_URLS
 
-# Urls - Partner App
+# Partner App
 urlpatterns += KAKAO_SKILL_PARTNER_URLS
 
-# Urls - KAKAO API
+# KAKAO API
 urlpatterns += KAKAO_API_URLS
 
-# Urls - SLACK API
+# SLACK API
 urlpatterns += SLACK_API_URLS
 
-# Urls - REST API
-urlpatterns += RESTFUL_API_DOC_URLS
+# REST API
 urlpatterns += RESTFUL_API_URLS
+urlpatterns += RESTFUL_API_DOC_URLS
 
 # Media Link Url
 urlpatterns += MEDIA_URLS
