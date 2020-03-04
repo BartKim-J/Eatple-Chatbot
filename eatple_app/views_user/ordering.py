@@ -87,7 +87,7 @@ def kakaoView_MenuListup(kakaoPayload):
     distance_under_flag = DEFAULT_DISTANCE_UNDER_FLAG
 
     try:
-        distance_conition = kakaoPayload.dataActionExtra['distance_condition']
+        distance_condition = kakaoPayload.dataActionExtra['distance_condition']
         distance_under_flag = kakaoPayload.dataActionExtra['distance_under_flag']
     except:
         QUICKREPLIES_MAP.insert(0, {
@@ -555,15 +555,9 @@ def kakaoView_OrderPayment(kakaoPayload):
             'messageText': KAKAO_EMOJI_LOADING,
             'extra': dataActionExtra,
 
-            'webLinkUrl': '{server_url}/payment?merchant_uid={merchant_uid}&storeName={storeName}&menuName={menuName}&menuPrice={menuPrice}&buyer_name={buyer_name}&buyer_tel={buyer_tel}&buyer_email={buyer_email}'.format(
+            'webLinkUrl': '{server_url}/payment?merchant_uid={merchant_uid}'.format(
                 server_url=server_url,
                 merchant_uid=order.order_id,
-                storeName=store.name,
-                menuName=menu.name,
-                menuPrice=order.totalPrice,
-                buyer_name=user.app_user_id,
-                buyer_tel=str(user.phone_number)[3:13],
-                buyer_email=user.email,
             )
         },
     ]
@@ -682,6 +676,11 @@ def kakaoView_OrderPaymentCheck(kakaoPayload):
     if(order.payment_status == IAMPORT_ORDER_STATUS_PAID):
         return kakaoView_EatplePassIssuance(kakaoPayload)
     else:
+        if(ORDERING_DEBUG_MODE):
+            server_url = 'http://localhost:3000'
+        else:
+            server_url = 'https://www.eatple.com'
+
         buttons = [
             {
                 'action': 'webLink',
@@ -689,7 +688,8 @@ def kakaoView_OrderPaymentCheck(kakaoPayload):
                 'messageText': KAKAO_EMOJI_LOADING,
                 'extra': dataActionExtra,
 
-                'webLinkUrl': 'https://www.eatple.com/payment?merchant_uid={merchant_uid}'.format(
+                'webLinkUrl': '{server_url}/payment?merchant_uid={merchant_uid}'.format(
+                    server_url=server_url,
                     merchant_uid=order.order_id,
                 )
             },
@@ -882,7 +882,7 @@ def kakaoView_B2B_MenuListup(kakaoPayload):
     distance_under_flag = DEFAULT_DISTANCE_UNDER_FLAG
 
     try:
-        distance_conition = kakaoPayload.dataActionExtra['distance_condition']
+        distance_condition = kakaoPayload.dataActionExtra['distance_condition']
         distance_under_flag = kakaoPayload.dataActionExtra['distance_under_flag']
     except:
         QUICKREPLIES_MAP.insert(0, {
@@ -945,7 +945,7 @@ def kakaoView_B2B_MenuListup(kakaoPayload):
 
                 walkTime = round((distance / 100) * 2.1)
 
-                if(distance <= distance_conition):
+                if(distance <= distance_condition):
                     walkTime = '약 도보 {} 분'.format(walkTime)
                 else:
                     walkTime = '1 ㎞ 이상'
