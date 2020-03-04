@@ -865,7 +865,6 @@ def kakaoView_B2B_MenuListup(kakaoPayload):
     if menuList:
         KakaoInstantForm().Message(
             '※ 메뉴 선택과 픽업 시간 선택을 해주세요.',
-            user.company.notice,
             kakaoForm=kakaoForm
         )
 

@@ -156,8 +156,8 @@ def eatplePassValidation(user):
 
     orderManager.availableOrderStatusUpdate()
 
-    lunchPurchaed = orderManager.getAvailableLunchOrderPurchased().exists()
-    dinnerPurchaced = orderManager.getAvailableDinnerOrderPurchased().exists()
+    lunchPurchaed = orderManager.getAvailableLunchOrderPurchased().filter(ordersheet__user=user).exists()
+    dinnerPurchaced = orderManager.getAvailableDinnerOrderPurchased().filter(ordersheet__user=user).exists()
 
     kakaoForm = KakaoForm()
 
@@ -214,7 +214,7 @@ def partnerValidation(kakaoPayload):
 def userValidation(kakaoPayload):
     try:
         if(USER_ID_DEBUG_MODE):
-            app_user_id = 1227904968
+            app_user_id = 1227287084
         else:
             app_user_id = kakaoPayload.user_properties['app_user_id']
         try:

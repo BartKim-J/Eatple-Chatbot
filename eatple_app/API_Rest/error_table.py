@@ -21,19 +21,19 @@ ORDER_200_VALID = ErrorCollection(
 
 ORDER_201_USER_INVALID = ErrorCollection(
     code=201,
-    status=status.HTTP_400_BAD_REQUEST,
+    status=status.HTTP_200_OK,
     message='알수없는 사용자입니다. 앱으로 돌아가 다시 확인해주세요.'
 )
 
 ORDER_202_MULTI_ORDER = ErrorCollection(
     code=202,
-    status=status.HTTP_400_BAD_REQUEST,
+    status=status.HTTP_200_OK,
     message='이미 잇플패스를 발급하셨습니다.'
 )
 
 ORDER_203_ORDER_ID_INVALID = ErrorCollection(
     code=203,
-    status=status.HTTP_400_BAD_REQUEST,
+    status=status.HTTP_200_OK,
     message='잘못된 주문번호입니다. 홈으로가서 다시 메뉴를 선택해주세요.'
 )
 
@@ -46,12 +46,12 @@ ORDER_204_ALREADY_PAID = ErrorCollection(
 
 ORDER_205_ALREADY_CANCELLED = ErrorCollection(
     code=205,
-    status=status.HTTP_400_BAD_REQUEST,
+    status=status.HTTP_200_OK,
     message='이미 환불 처리된 주문번호입니다.'
 )
 
 ORDER_206_SELLING_TIME_INVALID = ErrorCollection(
     code=206,
-    status=status.HTTP_400_BAD_REQUEST,
+    status=status.HTTP_200_OK,
     message='현재 주문 가능시간이 아닙니다.'
 )

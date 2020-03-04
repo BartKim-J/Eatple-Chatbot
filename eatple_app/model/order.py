@@ -10,6 +10,7 @@ from django_mysql.models import Model
 
 from eatple_app.model.orderRecord import OrderRecordSheet, OrderRecord
 
+
 def iamportOrderValidation(order):
     iamport = Iamport(imp_key=IAMPORT_API_KEY,
                       imp_secret=IAMPORT_API_SECRET_KEY)
@@ -21,14 +22,14 @@ def iamportOrderValidation(order):
     except Iamport.ResponseError as e:
         order.payment_status = IAMPORT_ORDER_STATUS_FAILED
         order.save()
-        #print(e.code)
-        #print(e.message)
+        # print(e.code)
+        # print(e.message)
 
         return order
 
     except Iamport.HttpError as http_error:
-        #print(http_error.code)
-        #print(http_error.reason)
+        # print(http_error.code)
+        # print(http_error.reason)
 
         if(order.payment_status != IAMPORT_ORDER_STATUS_FAILED):
             order.payment_status = IAMPORT_ORDER_STATUS_NOT_PUSHED
@@ -321,6 +322,8 @@ def orderUpdate(order):
         order.status = ORDER_STATUS_ORDER_EXPIRED
 
     order.save()
+
+    print("주문 ID : {}".format(order.order_id))
     return order
 
 
@@ -457,7 +460,7 @@ class Order(models.Model):
            self.ordersheet.user.company.status != OC_CLOSE):
             self.payment_status = IAMPORT_ORDER_STATUS_CANCELLED
             self.save()
-            
+
             isCancelled = True
         else:
             isCancelled = iamportOrderCancel(self)
@@ -491,7 +494,7 @@ class Order(models.Model):
         orderRecordSheet.order = self
         orderRecordSheet.paid = True
         orderRecordSheet.recordUpdate(ORDER_RECORD_PAYMENT_COMPLETED)
-            
+
         return self
 
     def orderDelegate(self, order):

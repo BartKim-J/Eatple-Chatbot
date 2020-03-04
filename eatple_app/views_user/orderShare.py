@@ -146,7 +146,17 @@ def kakaoView_GetDelegateUser(kakaoPayload):
 
     delegateUserOrder = orderManager.availableOrderStatusUpdate().filter(
         Q(ordersheet__user=delegateUser)).first()
-    delegateUserOrder.orderStatusUpdate()
+    if(delegateUserOrder == None):
+        KakaoInstantForm().Message(
+            '부탁 할 유저가 아직 주문을 하지 않았어요!',
+            '부탁하기는 주문한 유저에게만 요청 할 수 있어요.',
+            kakaoForm=kakaoForm
+        )
+        kakaoForm.QuickReplies_AddWithMap(QUICKREPLIES_MAP)
+
+        return JsonResponse(kakaoForm.GetForm())
+    else:
+        delegateUserOrder.orderStatusUpdate()
 
     if (order.status != ORDER_STATUS_ORDER_CONFIRM_WAIT and
         order.status != ORDER_STATUS_ORDER_CONFIRMED and

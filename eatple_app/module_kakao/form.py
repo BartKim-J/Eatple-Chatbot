@@ -19,7 +19,7 @@ from eatple_app.module_kakao.validation import *
 
 
 class KakaoInstantForm():
-    def Message(self, title='', content='', thumbnail={}, buttons=[], kakaoForm=None):
+    def Message(self, title='', content='', thumbnail={}, buttons=[], kakaoForm=None, prev_block_id=None):
         if(kakaoForm == None):
             kakaoForm = KakaoForm()
 
@@ -33,7 +33,7 @@ class KakaoInstantForm():
 
         return JsonResponse(kakaoForm.GetForm())
 
-    def EatplePassIssued(self, order, kakaoForm=None):
+    def EatplePassIssued(self, order, kakaoForm=None, prev_block_id=None):
         if(kakaoForm == None):
             kakaoForm = KakaoForm()
 
@@ -130,11 +130,11 @@ class KakaoInstantForm():
 
         return JsonResponse(kakaoForm.GetForm())
 
-    def EatplePass(self, order, kakaoForm=None):
+    def EatplePass(self, order, kakaoForm=None, prev_block_id=None):
         if(kakaoForm == None):
             kakaoForm = KakaoForm()
 
-    def OrderList(self, order, kakaoForm=None):
+    def OrderList(self, order, kakaoForm=None, prev_block_id=None):
         if(kakaoForm == None):
             kakaoForm = KakaoForm()
 
@@ -163,7 +163,7 @@ class KakaoInstantForm():
             []
         )
 
-    def MenuList(self, menu, subText='', thumbnail={}, buttons=[], kakaoForm=None):
+    def MenuList(self, menu, subText='', thumbnail={}, buttons=[], kakaoForm=None, prev_block_id=None):
         if(kakaoForm == None):
             kakaoForm = KakaoForm()
 

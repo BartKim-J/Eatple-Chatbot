@@ -162,16 +162,16 @@ router.register(r'order_validation', api.OrderValidation)
 router.register(r'order_information', api.OrderInformation)
 
 urlpatterns += [
-    url('api/rest/swagger(?P<format>\.json|\.yaml)$',
+    url('api/swagger(?P<format>\.json|\.yaml)$',
         schema_view.without_ui(cache_timeout=0), name='schema-json'),
-    url('api/rest/swagger/$', schema_view.with_ui('swagger',
-                                                  cache_timeout=0), name='schema-swagger-ui'),
-    url('api/rest/redoc/$', schema_view.with_ui('redoc',
-                                                cache_timeout=0), name='schema-redoc'),
+    url('api/swagger/$', schema_view.with_ui('swagger',
+                                             cache_timeout=0), name='schema-swagger-ui'),
+    url('api/redoc/$', schema_view.with_ui('redoc',
+                                           cache_timeout=0), name='schema-redoc'),
 ]
 
 urlpatterns += [
-    path('api/rest/', include(router.urls)),
+    path('api/', include(router.urls)),
 ]
 
 # Media Link Url
