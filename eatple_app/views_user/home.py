@@ -52,7 +52,7 @@ def userLocationRegistration(user, locationData):
             user=user,
             lat=locationData['latitude'],
             long=locationData['longitude'],
-            address=locationData['address'],
+            address=locationData['land_address']['address_name'],
             point=Point(float(locationData['latitude']), float(
                 locationData['longitude'])),
         )
@@ -553,6 +553,7 @@ def GET_UserHome(request):
 
                 return kakaoView_LocationRegistration()
             except (RuntimeError, TypeError, NameError, KeyError) as ex:
+                print(ex)
                 return kakaoView_LocationRegistration()
         else:
             # Get user profile data from Kakao server
