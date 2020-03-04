@@ -19,9 +19,9 @@ from eatple_app import templates
 
 from config.url.system import *
 from config.url.templates import TEMPLATES_URLS
-from config.url.rest import RESTFUL_API_URLS, RESTFUL_API_DOC_URLS
-from config.url.kakao import KAKAO_API_URLS
-from config.url.slack import SLACK_API_URLS
+from config.url.api.rest import RESTFUL_API_URLS, RESTFUL_API_DOC_URLS
+from config.url.api.kakao import KAKAO_API_URLS
+from config.url.api.slack import SLACK_API_URLS
 from config.url.kakao_skill.user import KAKAO_SKILL_USER_URLS, KAKAO_SKILL_USER_EVENT_URLS
 from config.url.kakao_skill.partner import KAKAO_SKILL_PARTNER_URLS
 

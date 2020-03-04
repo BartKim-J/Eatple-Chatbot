@@ -1,7 +1,7 @@
 # Define
 from eatple_app.define import *
 
-from eatple_app.API_Slack.slack_logger import SlackLogPayOrder, SlackLogCancelOrder
+from eatple_app.apis.slack.slack_logger import SlackLogPayOrder, SlackLogCancelOrder
 # Django Library
 from django.urls import reverse
 from django.db import models

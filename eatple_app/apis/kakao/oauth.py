@@ -3,7 +3,7 @@ from django.shortcuts import render
 from django.views.decorators.csrf import csrf_exempt
 from django.http import JsonResponse
 
-from eatple_app.API_Slack.slack_logger import SlackLogFollow, SlackLogUnfollow
+from eatple_app.apis.slack.slack_logger import SlackLogFollow, SlackLogUnfollow
 
 # Models
 from eatple_app.models import *
@@ -23,17 +23,16 @@ from eatple_app.views_system.debugger import *
 
 from eatple_app.views import *
 
+
 @csrf_exempt
-def POST_KAKAO_ChannelLog(request):
-    json_str           = ((request.body).decode('utf-8'))
+def GET_KAKAO_Oauth(request):
+    json_str = ((request.body).decode('utf-8'))
     received_json_data = json.loads(json_str)
-    
-    event = received_json_data['event']
-    
-    if(event == 'added'):
-        SlackLogFollow(received_json_data['id'])
-    else:
-        SlackLogUnfollow(received_json_data['id'])
-    
-    
-    return JsonResponse({'event': 'Eatple Channel Follow'}, status=201)
+
+    print(received_json_data)
+
+    data = {
+        'status': 200
+    }
+
+    return JsonResponse(data, status=200)

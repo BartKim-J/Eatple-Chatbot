@@ -17,7 +17,7 @@ from eatple_app.module_kakao.validation import *
 # View-System
 from eatple_app.views_system.debugger import *
 
-from eatple_app.API_Rest.error_table import *
+from eatple_app.apis.rest.error_table import *
 
 from drf_yasg.utils import swagger_auto_schema
 
@@ -25,7 +25,7 @@ from rest_framework import status
 from rest_framework import viewsets
 from rest_framework import permissions
 
-from eatple_app.API_Rest.serializer import OrderSerializer
+from eatple_app.apis.rest.serializer import OrderSerializer
 from eatple_app.models import Order
 
 

@@ -7,7 +7,6 @@ from drf_yasg import openapi
 
 from eatple_app import api
 
-# Urls
 schema_view = get_schema_view(
     openapi.Info(
         title="Eatple Inbase API",
@@ -35,12 +34,12 @@ partner_schema_view = get_schema_view(
 )
 
 RESTFUL_API_DOC_URLS = [
-    url('api/swagger(?P<format>\.json|\.yaml)$',
+    url('rest/doc/swagger(?P<format>\.json|\.yaml)$',
         schema_view.without_ui(cache_timeout=0), name='schema-json'),
-    url('api/swagger/$', schema_view.with_ui('swagger',
-                                             cache_timeout=0), name='schema-swagger-ui'),
-    url('api/redoc/$', schema_view.with_ui('redoc',
-                                           cache_timeout=0), name='schema-redoc'),
+    url('rest/doc/swagger/$', schema_view.with_ui('swagger',
+                                                  cache_timeout=0), name='schema-swagger-ui'),
+    url('rest/redoc/$', schema_view.with_ui('redoc',
+                                            cache_timeout=0), name='schema-redoc'),
 ]
 
 router = routers.DefaultRouter()
@@ -48,5 +47,5 @@ router.register(r'order_validation', api.OrderValidation)
 router.register(r'order_information', api.OrderInformation)
 
 RESTFUL_API_URLS = [
-    path('api/', include(router.urls)),
+    path('rest/api/', include(router.urls)),
 ]
