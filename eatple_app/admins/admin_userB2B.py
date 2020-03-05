@@ -74,8 +74,8 @@ class UserB2BAdmin(ImportExportMixin, admin.ModelAdmin):
     )
 
     list_display = (
-        'company',
         'name',
+        'company',
         'phonenumber',
         'account_info',
         'account_sync_flag',

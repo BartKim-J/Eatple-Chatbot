@@ -277,17 +277,6 @@ def kakaoView_B2B_Home(user, address):
         [],
     )
     kakaoForm.BasicCard_Push(
-        '📌 「{}」 v{}.{}.{}({})'.format(
-            VERSION_CODE,
-            MAJOR_VERSION,
-            MINOR_VERSION,
-            BUILD_VERSION,
-            VERSION_LEVEL,),
-        '🛠️ 업데이트 내역을 확인하세요. ➔',
-        {},
-        [],
-    )
-    kakaoForm.BasicCard_Push(
         '🔗 \'길찾기(카카오 맵)\' 기능 추가',
         '복사하지 말고 바로 카카오 맵으로 길찾기!',
         {},

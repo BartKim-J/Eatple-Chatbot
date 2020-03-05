@@ -105,7 +105,7 @@ def kakaoView_MenuListup(kakaoPayload):
 
     menuList = Menu.objects.annotate(
         distance=Distance(F('store__place__point'),
-                          user.location.point) * 100 * 1000
+                          user.location.point) * 100 * 1000,
     ).filter(
         Q(selling_time=currentSellingTime) &
         (
@@ -124,9 +124,15 @@ def kakaoView_MenuListup(kakaoPayload):
     ).order_by(F'distance')
 
     if(distance_under_flag):
-        menuList = menuList.filter(Q(distance__lt=distance_condition))
+        menuList = menuList.filter(
+            Q(distance__lt=distance_condition) |
+            Q(tag__name="픽업존")
+        )
     else:
-        menuList = menuList.filter(Q(distance__gte=distance_condition))
+        menuList = menuList.filter(
+            Q(distance__gte=distance_condition) &
+            ~Q(tag__name="픽업존")
+        )
 
     sellingOutList = []
 
@@ -141,11 +147,14 @@ def kakaoView_MenuListup(kakaoPayload):
             currentStock = menu.getCurrentStock()
 
             if(menu.max_stock > menu.current_stock and menu.store.status == STORE_OC_OPEN):
+                delivery = menu.tag.filter(name="픽업존").exists()
                 distance = menu.distance
                 walkTime = round((distance / 100) * 2.1)
 
                 if(distance <= distance_condition):
                     walkTime = '약 도보 {} 분'.format(walkTime)
+                elif(delivery):
+                    walkTime = '배달'
                 else:
                     walkTime = '1 ㎞ 이상'
 
@@ -920,9 +929,15 @@ def kakaoView_B2B_MenuListup(kakaoPayload):
     ).order_by(F'distance')
 
     if(distance_under_flag):
-        menuList = menuList.filter(Q(distance__lt=distance_condition))
+        menuList = menuList.filter(
+            Q(distance__lt=distance_condition) |
+            Q(tag__name="픽업존")
+        )
     else:
-        menuList = menuList.filter(Q(distance__gte=distance_condition))
+        menuList = menuList.filter(
+            Q(distance__gte=distance_condition) &
+            ~Q(tag__name="픽업존")
+        )
 
     sellingOutList = []
 
@@ -941,12 +956,14 @@ def kakaoView_B2B_MenuListup(kakaoPayload):
             maxStock = stocktable.max_stock
 
             if(maxStock > currentStock and menu.store.status == STORE_OC_OPEN):
+                delivery = menu.tag.filter(name="픽업존").exists()
                 distance = menu.distance
-
                 walkTime = round((distance / 100) * 2.1)
 
                 if(distance <= distance_condition):
                     walkTime = '약 도보 {} 분'.format(walkTime)
+                elif(delivery):
+                    walkTime = '배달'
                 else:
                     walkTime = '1 ㎞ 이상'
 
