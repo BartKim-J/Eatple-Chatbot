@@ -1,6 +1,3 @@
-# User
-from eatple_app.views_user.test import GET_Test
-
 # Home
 from eatple_app.views_user.home import GET_UserHome
 
@@ -41,3 +38,6 @@ from eatple_app.views_partner.home import GET_PartnerHome
 
 # Check
 from eatple_app.views_partner.orderCheck import GET_ParnterOrderDetails
+
+# User
+#from eatple_app.views_user.test import GET_Test

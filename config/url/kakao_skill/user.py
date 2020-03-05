@@ -6,7 +6,7 @@ from eatple_app import views
 # Urls - User App
 KAKAO_SKILL_USER_URLS = [
     # Test
-    path('skill/user/test', views.GET_Test),
+    #path('skill/user/test', views.GET_Test),
 
     # Home
     path('skill/user/home', views.GET_UserHome),
