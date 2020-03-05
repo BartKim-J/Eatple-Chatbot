@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'jet.dashboard',
     'jet',
 
+    'django_jenkins',
     'django.contrib.gis',
     'django.contrib.admin',
     'django.contrib.auth',
@@ -272,3 +273,9 @@ JET_THEMES = [
         'title': 'Light Gray'
     }
 ]
+
+# JENKINS
+JENKINS_TASKS = (
+    'django_jenkins.tasks.run_pep8',
+    'django_jenkins.tasks.run_pyflakes'
+)
