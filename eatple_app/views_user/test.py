@@ -28,13 +28,26 @@ from eatple_app.views_system.debugger import *
 # # # # # # # # # # # # # # # # # # # # # # # # #
 
 
-def kakaoView_Test(user):
+def kakaoView_Test(kakaoPayload):
+    """
+        Default Variable Define
+    """
+    # User Validation
+    user = userValidation(kakaoPayload)
+    if (user == None):
+        return errorView('잘못된 사용자 계정', '찾을 수 없는 사용자 계정 아이디입니다.')
 
-    message = "안녕하세요!! 잇플입니다.\n 오늘 잇플은 하루 쉬어 가겠습니다.\n내일은 주문 메시지로 만나게 되길!!"
+    """ 
+        Kakao API Test Bed
+    """
+    #message = "안녕하세요!! 잇플입니다.\n 오늘 잇플은 하루 쉬어 가겠습니다.\n내일은 주문 메시지로 만나게 되길!!"
+    #KakaoBiz().request(message, '+821057809397')
 
-    KakaoBiz().request(message, '+821045624810')
-    KakaoBiz().request(message, '+821057809397')
+    KakaoPay().PushOrderSheet(user)
 
+    """
+        KAKAO I Dev Test Bed
+    """
     kakaoForm = KakaoForm()
 
     QUICKREPLIES_MAP = [
@@ -76,7 +89,7 @@ def kakaoView_Test(user):
     ]
 
     KakaoInstantForm().Message(
-        '테스트 베드 in Server',
+        '테스트 베드',
         '',
         thumbnail=thumbnail,
         buttons=buttons,
@@ -102,9 +115,6 @@ def GET_Test(request):
         kakaoPayload = KakaoPayLoad(request)
 
         user = userValidation(kakaoPayload)
-
-        #kakaoPay = KakaoPay()
-        # return kakaoPay.PushOrderSheet(user)
 
         return kakaoView_Test(kakaoPayload)
 

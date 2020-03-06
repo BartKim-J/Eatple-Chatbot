@@ -38,13 +38,16 @@ class Kakao():
             print(http_error.code)
             print(http_error.reason)
 
-        user.nickname = kakaoResponse.json(
-        )['kakao_account']['profile']['nickname']
-        user.email = kakaoResponse.json(
-        )['kakao_account']['email']
-        user.phone_number = kakaoResponse.json(
-        )['kakao_account']['phone_number']
-        user.save()
+        try:
+            user.nickname = kakaoResponse.json(
+            )['kakao_account']['profile']['nickname']
+            user.email = kakaoResponse.json(
+            )['kakao_account']['email']
+            user.phone_number = kakaoResponse.json(
+            )['kakao_account']['phone_number']
+            user.save()
+        except:
+            pass
 
         return user
 

@@ -26,8 +26,8 @@ class KakaoPay():
         }
 
         data = {
-            # 'cid': 'CADONE0860',
-            'cid': 'TC0ONETIME',
+            'cid': 'CADONE0860',
+            # 'cid': 'TC0ONETIME',
 
             'partner_order_id': 'EP0000',
             'partner_user_id': user.app_user_id,
@@ -42,13 +42,13 @@ class KakaoPay():
 
             'tax_free_amount': 0,
 
-            # 'approval_url': 'https://www.eatple.com:8000/success',
-            # 'cancel_url': 'https://www.eatple.com:8000/fail',
-            # 'fail_url': 'https://www.eatple.com:8000/cancel',
+            'approval_url': 'https://dev.eatple.com/success',
+            'cancel_url': 'https://dev.eatple.com/fail',
+            'fail_url': 'https://dev.eatple.com/cancel',
 
-            'approval_url': 'https://developers.kakao.com/success',
-            'cancel_url': 'https://developers.kakao.com/fail',
-            'fail_url': 'https://developers.kakao.com/cancel',
+            # 'approval_url': 'https://developers.kakao.com/success',
+            # 'cancel_url': 'https://developers.kakao.com/fail',
+            # 'fail_url': 'https://developers.kakao.com/cancel',
         }
 
         apiURL = '{shcme}{host}{url}'.format(
@@ -61,25 +61,29 @@ class KakaoPay():
         print('STATUS : ', kakaoResponse.status_code)
         print('TEXT : ', kakaoResponse.text)
 
-        andriodAppLink = json.loads(kakaoResponse.text)['android_app_scheme']
-        iosAppLink = json.loads(kakaoResponse.text)['ios_app_scheme']
+        try:
+            andriodAppLink = json.loads(kakaoResponse.text)[
+                'android_app_scheme']
+            iosAppLink = json.loads(kakaoResponse.text)['ios_app_scheme']
 
-        print(andriodAppLink)
-        print(iosAppLink)
+            print(andriodAppLink)
+            print(iosAppLink)
 
-        buttons = [
-            {
-                'action': 'osLink',
-                'label': '결제하기',
-                'osLink': {
-                    'android': andriodAppLink,
-                    'ios': iosAppLink,
-                }
-            },
-        ]
+            buttons = [
+                {
+                    'action': 'osLink',
+                    'label': '결제하기',
+                    'osLink': {
+                        'android': andriodAppLink,
+                        'ios': iosAppLink,
+                    }
+                },
+            ]
 
-        return KakaoInstantForm().Message(
-            '카카오 페이 테스트',
-            '결제 완료후 눌러주세요.',
-            buttons=buttons,
-        )
+            return KakaoInstantForm().Message(
+                '카카오 페이 테스트',
+                '결제 완료후 눌러주세요.',
+                buttons=buttons,
+            )
+        except:
+            pass
