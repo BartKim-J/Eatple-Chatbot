@@ -43,7 +43,7 @@ def kakaoView_Debug(kakaoPayload):
     #message = "안녕하세요!! 잇플입니다.\n 오늘 잇플은 하루 쉬어 가겠습니다.\n내일은 주문 메시지로 만나게 되길!!"
     #KakaoBiz().request(message, '+821057809397')
 
-    KakaoPay().PushOrderSheet(user)
+    # KakaoPay().PushOrderSheet(user)
 
     """
         KAKAO I Dev Test Bed
