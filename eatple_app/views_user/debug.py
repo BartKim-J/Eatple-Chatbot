@@ -28,7 +28,7 @@ from eatple_app.views_system.debugger import *
 # # # # # # # # # # # # # # # # # # # # # # # # #
 
 
-def kakaoView_Test(kakaoPayload):
+def kakaoView_Debug(kakaoPayload):
     """
         Default Variable Define
     """
@@ -108,15 +108,15 @@ def kakaoView_Test(kakaoPayload):
 
 
 @csrf_exempt
-def GET_Test(request):
-    EatplusSkillLog('GET_Test')
+def GET_Debug(request):
+    EatplusSkillLog('GET_TestBed')
 
     try:
         kakaoPayload = KakaoPayLoad(request)
 
         user = userValidation(kakaoPayload)
 
-        return kakaoView_Test(kakaoPayload)
+        return kakaoView_Debug(kakaoPayload)
 
     except (RuntimeError, TypeError, NameError, KeyError) as ex:
         return errorView('{}'.format(ex))

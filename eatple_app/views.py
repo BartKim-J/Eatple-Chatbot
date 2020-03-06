@@ -1,6 +1,5 @@
 # User
-from eatple_app.views_user.testBed import GET_Test
-
+from eatple_app.views_user.debug import GET_Debug
 # Home
 from eatple_app.views_user.home import GET_UserHome
 
