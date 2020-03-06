@@ -367,7 +367,8 @@ def kakaoView_OrderDetails(kakaoPayload):
     orderManager.orderPaidCheck()
     orderManager.orderPenddingCleanUp()
 
-    unavailableOrders = orderManager.getUnavailableOrders()[:ORDER_LIST_LENGTH]
+    unavailableOrders = orderManager.getUnavailableOrders().filter(
+        Q(ordersheet__user=user))[:ORDER_LIST_LENGTH]
 
     if unavailableOrders:
         for order in unavailableOrders:
