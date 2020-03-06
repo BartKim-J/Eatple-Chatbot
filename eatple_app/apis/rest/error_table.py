@@ -62,3 +62,9 @@ ORDER_206_SELLING_TIME_INVALID = ErrorCollection(
     status=status.HTTP_200_OK,
     message='현재 주문 가능시간이 아닙니다.'
 )
+
+PARAM_600_MERCHANT_UID_INVALID = ErrorCollection(
+    code=600,
+    status=status.HTTP_400_BAD_REQUEST,
+    message='\'merchant_uid\' is null'
+)

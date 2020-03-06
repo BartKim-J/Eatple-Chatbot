@@ -94,7 +94,10 @@ class OrderValidation(viewsets.ModelViewSet):
         }
 
         if(merchant_uid == None):
-            return Response(status=status.HTTP_400_BAD_REQUEST)
+            response['error_code'] = PARAM_600_MERCHANT_UID_INVALID.code
+            response['error_msg'] = PARAM_600_MERCHANT_UID_INVALID.message
+            
+            return Response(response, status=PARAM_600_MERCHANT_UID_INVALID.status)
 
         # Order Check
         try:
@@ -184,7 +187,10 @@ class OrderInformation(viewsets.ModelViewSet):
         }
 
         if(merchant_uid == None):
-            return Response(status=status.HTTP_400_BAD_REQUEST)
+            response['error_code'] = PARAM_600_MERCHANT_UID_INVALID.code
+            response['error_msg'] = PARAM_600_MERCHANT_UID_INVALID.message
+
+            return Response(response, status=PARAM_600_MERCHANT_UID_INVALID.status)
 
         # Order Check
         try:
