@@ -131,7 +131,7 @@ class OrderTimeSheet():
     # Lunch Order Pickup Time
     def GetLunchOrderPickupTimeStart(self):
         return self.currentDateWithoutTime + \
-            datetime.timedelta(hours=11, minutes=30)
+            datetime.timedelta(hours=11, minutes=0)
 
     def GetLunchOrderPickupTimeEnd(self):
         return self.currentDateWithoutTime + \
