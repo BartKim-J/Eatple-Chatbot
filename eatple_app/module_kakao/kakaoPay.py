@@ -10,7 +10,7 @@ from django.http import JsonResponse
 from eatple_app.models import *
 
 # Modules
-from eatple_app.module_kakao.reponseForm import *
+from eatple_app.module_kakao.responseForm import *
 from eatple_app.module_kakao.requestForm import *
 from eatple_app.module_kakao.kakaoPay import *
 from eatple_app.module_kakao.form import *
@@ -20,24 +20,24 @@ KAKAO_PAY_HOST_URL = 'kapi.kakao.com'
 
 
 class KakaoPay():
-    def PushOrderSheet(self, user, order=None):
+    def PushOrderSheet(self, user, order_id, menu_name, menu_id, total_amount=6000, quantity=1, order=None):
         headers = {
             'Authorization': 'KakaoAK {app_key}'.format(app_key=KAKAO_ADMIN_KEY),
         }
 
         data = {
-            'cid': 'CADONE0860',
-            # 'cid': 'TC0ONETIME',
+            # 'cid': 'CADONE0860',
+            'cid': 'TC0ONETIME',
 
-            'partner_order_id': 'EP0000',
+            'partner_order_id': order_id,
             'partner_user_id': user.app_user_id,
 
-            'item_name': '질할브로스',
-            'item_code': 'EP0401',
+            'item_name': menu_name,
+            'item_code': menu_id,
 
             'quantity': 1,
 
-            'total_amount': 6000,
+            'total_amount': total_amount,
             'vat_amount': 200,
 
             'tax_free_amount': 0,
@@ -61,29 +61,4 @@ class KakaoPay():
         print('STATUS : ', kakaoResponse.status_code)
         print('TEXT : ', kakaoResponse.text)
 
-        try:
-            andriodAppLink = json.loads(kakaoResponse.text)[
-                'android_app_scheme']
-            iosAppLink = json.loads(kakaoResponse.text)['ios_app_scheme']
-
-            print(andriodAppLink)
-            print(iosAppLink)
-
-            buttons = [
-                {
-                    'action': 'osLink',
-                    'label': '결제하기',
-                    'osLink': {
-                        'android': andriodAppLink,
-                        'ios': iosAppLink,
-                    }
-                },
-            ]
-
-            return KakaoInstantForm().Message(
-                '카카오 페이 테스트',
-                '결제 완료후 눌러주세요.',
-                buttons=buttons,
-            )
-        except:
-            pass
+        return kakaoResponse

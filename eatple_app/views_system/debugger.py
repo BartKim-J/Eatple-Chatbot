@@ -24,7 +24,7 @@ from eatple_app.models import Category, Tag
 from eatple_app.models import Store, Menu
 
 # View Modules
-from eatple_app.module_kakao.reponseForm import *
+from eatple_app.module_kakao.responseForm import *
 
 # SKill Log
 

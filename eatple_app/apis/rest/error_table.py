@@ -47,8 +47,7 @@ ORDER_203_ORDER_ID_INVALID = ErrorCollection(
 ORDER_204_ALREADY_PAID = ErrorCollection(
     code=204,
     status=status.HTTP_200_OK,
-    message='결제가 완료되었습니다.'
-    #message='이미 결제가 완료된 주문번호 입니다.'
+    message='이미 결제가 완료된 주문번호 입니다.'
 )
 
 ORDER_205_ALREADY_CANCELLED = ErrorCollection(

@@ -10,7 +10,7 @@ from eatple_app.models import *
 from eatple_app.define import *
 
 # Modules
-from eatple_app.module_kakao.reponseForm import *
+from eatple_app.module_kakao.responseForm import *
 from eatple_app.module_kakao.requestForm import *
 
 # View-System
@@ -156,8 +156,10 @@ def eatplePassValidation(user):
 
     orderManager.availableOrderStatusUpdate()
 
-    lunchPurchaed = orderManager.getAvailableLunchOrderPurchased().filter(ordersheet__user=user).exists()
-    dinnerPurchaced = orderManager.getAvailableDinnerOrderPurchased().filter(ordersheet__user=user).exists()
+    lunchPurchaed = orderManager.getAvailableLunchOrderPurchased().filter(
+        ordersheet__user=user).exists()
+    dinnerPurchaced = orderManager.getAvailableDinnerOrderPurchased().filter(
+        ordersheet__user=user).exists()
 
     kakaoForm = KakaoForm()
 

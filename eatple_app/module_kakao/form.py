@@ -12,7 +12,7 @@ from eatple_app.define import *
 from eatple_app.apis.slack.slack_logger import SlackLogSignUp
 
 # Modules
-from eatple_app.module_kakao.reponseForm import *
+from eatple_app.module_kakao.responseForm import *
 from eatple_app.module_kakao.requestForm import *
 from eatple_app.module_kakao.kakaoPay import *
 from eatple_app.module_kakao.validation import *
@@ -167,16 +167,25 @@ class KakaoInstantForm():
         if(kakaoForm == None):
             kakaoForm = KakaoForm()
 
-        kakaoForm.BasicCard_Push(
-            '{} - {}'.format(
+        profile = {
+            "nickname": '{} - {}'.format(
                 menu.store.name,
                 subText,
             ),
-            '{}'.format(
-                menu.description,
-            ),
+            "imageUrl": '{}{}'.format(HOST_URL, menu.store.logoImgURL()),
+        }
+
+        thumbnails = [
             thumbnail,
-            buttons
+        ]
+
+        kakaoForm.ComerceCard_Push(
+            _description=menu.description,
+            _price=menu.price,
+            _discount=None,
+            _thumbnails=thumbnails,
+            _profile=profile,
+            _buttons=buttons
         )
 
         return JsonResponse(kakaoForm.GetForm())

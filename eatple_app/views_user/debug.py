@@ -10,7 +10,7 @@ from eatple_app.models import *
 from eatple_app.define import *
 
 # Modules
-from eatple_app.module_kakao.reponseForm import *
+from eatple_app.module_kakao.responseForm import *
 from eatple_app.module_kakao.requestForm import *
 from eatple_app.module_kakao.kakaoPay import *
 from eatple_app.module_kakao.kakaoBiz import *
@@ -28,7 +28,7 @@ from eatple_app.views_system.debugger import *
 # # # # # # # # # # # # # # # # # # # # # # # # #
 
 
-def kakaoView_Debug(kakaoPayload):
+def kakaoView_DebugKakaoPay(kakaoPayload):
     """
         Default Variable Define
     """
@@ -37,13 +37,13 @@ def kakaoView_Debug(kakaoPayload):
     if (user == None):
         return errorView('잘못된 사용자 계정', '찾을 수 없는 사용자 계정 아이디입니다.')
 
-    """ 
-        Kakao API Test Bed
-    """
-    #message = "안녕하세요!! 잇플입니다.\n 오늘 잇플은 하루 쉬어 가겠습니다.\n내일은 주문 메시지로 만나게 되길!!"
-    #KakaoBiz().request(message, '+821057809397')
-
-    KakaoPay().PushOrderSheet(user)
+    kakaoResponse = KakaoPay().PushOrderSheet(
+        user,
+        'EP000D871E1673',
+        '오징어 덮밥',
+        '0032',
+        6000
+    )
 
     """
         KAKAO I Dev Test Bed
@@ -53,21 +53,81 @@ def kakaoView_Debug(kakaoPayload):
     QUICKREPLIES_MAP = [
         {
             'action': 'block',
-            'label': '🏠 홈',
+            'label': '새로고침',
             'messageText': KAKAO_EMOJI_LOADING,
-            'blockId': KAKAO_BLOCK_USER_HOME,
+            'blockId': KAKAO_BLOCK_USER_TEST_BED,
             'extra': {
-                KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_GET_MENU
+                KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_TEST_BED
             }
         },
     ]
 
-    thumbnail = {
-        'imageUrl': '',
-        'fixedRatio': 'true',
-        'width': 800,
-        'height': 800,
-    }
+    if(kakaoResponse.status_code == status.HTTP_400_BAD_REQUEST):
+        body = json.loads(kakaoResponse.text)
+
+        KakaoInstantForm().Message(
+            '카카오 페이 에러',
+            '코드 : {}\n메세지 : {}'.format(
+                body['code'],
+                body['msg']
+            ),
+            kakaoForm=kakaoForm
+        )
+    elif(kakaoResponse.status_code != status.HTTP_400_BAD_REQUEST):
+        body = json.loads(kakaoResponse.text)
+
+        redirect_url = body["next_redirect_app_url"]
+        buttons = [
+            {
+                'action': 'webLink',
+                'label': '원클릭 결제하기',
+                'messageText': KAKAO_EMOJI_LOADING,
+                'webLinkUrl': redirect_url,
+            },
+        ]
+
+        KakaoInstantForm().Message(
+            '메뉴 결정이 완료되었습니다.',
+            '',
+            buttons=buttons,
+            kakaoForm=kakaoForm
+        )
+    kakaoForm.QuickReplies_AddWithMap(QUICKREPLIES_MAP)
+
+    return JsonResponse(kakaoForm.GetForm())
+
+
+def kakaoView_Debug(kakaoPayload):
+    """
+        Default Variable Define
+    """
+    # User Validation
+    user = userValidation(kakaoPayload)
+    if (user == None):
+        return errorView('잘못된 사용자 계정', '찾을 수 없는 사용자 계정 아이디입니다.')
+
+    """
+        Kakao API Test Bed
+    """
+    # message = "안녕하세요!! 잇플입니다.\n 오늘 잇플은 하루 쉬어 가겠습니다.\n내일은 주문 메시지로 만나게 되길!!"
+    # KakaoBiz().request(message, '+821057809397')
+
+    """
+        KAKAO I Dev Test Bed
+    """
+    kakaoForm = KakaoForm()
+
+    QUICKREPLIES_MAP = [
+        {
+            'action': 'block',
+            'label': '새로고침',
+            'messageText': KAKAO_EMOJI_LOADING,
+            'blockId': KAKAO_BLOCK_USER_TEST_BED,
+            'extra': {
+                KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_TEST_BED
+            }
+        },
+    ]
 
     buttons = [
         {
@@ -91,7 +151,6 @@ def kakaoView_Debug(kakaoPayload):
     KakaoInstantForm().Message(
         '테스트 베드',
         '',
-        thumbnail=thumbnail,
         buttons=buttons,
         kakaoForm=kakaoForm
     )
@@ -116,7 +175,7 @@ def GET_Debug(request):
 
         user = userValidation(kakaoPayload)
 
-        return kakaoView_Debug(kakaoPayload)
+        return kakaoView_DebugKakaoPay(kakaoPayload)
 
     except (RuntimeError, TypeError, NameError, KeyError) as ex:
         return errorView('{}'.format(ex))

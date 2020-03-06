@@ -10,7 +10,7 @@ from eatple_app.models import *
 from eatple_app.define import *
 
 # Modules
-from eatple_app.module_kakao.reponseForm import *
+from eatple_app.module_kakao.responseForm import *
 from eatple_app.module_kakao.requestForm import *
 from eatple_app.module_kakao.validation import *
 
@@ -96,7 +96,7 @@ class OrderValidation(viewsets.ModelViewSet):
         if(merchant_uid == None):
             response['error_code'] = PARAM_600_MERCHANT_UID_INVALID.code
             response['error_msg'] = PARAM_600_MERCHANT_UID_INVALID.message
-            
+
             return Response(response, status=PARAM_600_MERCHANT_UID_INVALID.status)
 
         # Order Check
@@ -141,8 +141,8 @@ class OrderValidation(viewsets.ModelViewSet):
                     return Response(response)
                 else:
                     response['error_code'] = ORDER_204_ALREADY_PAID.code
-                    response['error_msg'] = ORDER_100_SUCCESS.message
                     # response['error_msg']  = 'ORDER_204_ALREADY_PAID.message
+                    response['error_msg'] = ORDER_100_SUCCESS.message
                     return Response(response)
 
         # Eatple Pass Check

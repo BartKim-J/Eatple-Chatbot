@@ -10,7 +10,7 @@ from eatple_app.models import *
 from eatple_app.define import *
 
 # Modules
-from eatple_app.module_kakao.reponseForm import *
+from eatple_app.module_kakao.responseForm import *
 from eatple_app.module_kakao.requestForm import *
 from eatple_app.module_kakao.kakaoPay import *
 from eatple_app.module_kakao.form import *
@@ -252,7 +252,7 @@ def kakaoView_MenuListup(kakaoPayload):
                     buttons,
                     kakaoForm
                 )
-        kakaoForm.BasicCard_Add()
+        kakaoForm.ComerceCard_Add()
 
     else:
         KakaoInstantForm().Message(
@@ -1061,7 +1061,7 @@ def kakaoView_B2B_MenuListup(kakaoPayload):
                     buttons,
                     kakaoForm
                 )
-        kakaoForm.BasicCard_Add()
+        kakaoForm.ComerceCard_Add()
 
     else:
         KakaoInstantForm().Message(
