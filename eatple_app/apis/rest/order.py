@@ -103,12 +103,12 @@ class OrderValidation(viewsets.ModelViewSet):
             order = None
 
         if(order == None or order.payment_status == IAMPORT_ORDER_STATUS_FAILED):
-            response['error_code'] = 203
-            response['error_msg'] = '잘못된 주문번호입니다. '
+            response['error_code'] = ORDER_203_ORDER_ID_INVALID.code
+            response['error_msg'] = ORDER_203_ORDER_ID_INVALID.message
             return Response(response)
         elif(order.payment_status == IAMPORT_ORDER_STATUS_CANCELLED):
-            response['error_code'] = 205
-            response['error_msg'] = '이미 환불 처리된 주문번호입니다.'
+            response['error_code'] = ORDER_205_ALREADY_CANCELLED.code
+            response['error_msg'] = ORDER_205_ALREADY_CANCELLED.message
             return Response(response)
         else:
             beforeOrderStatus = order.payment_status
@@ -122,8 +122,8 @@ class OrderValidation(viewsets.ModelViewSet):
         # Account Check
         user = userValidation(order.ordersheet.user.app_user_id)
         if(user == False):
-            response['error_code'] = 201
-            response['error_msg'] = '알수없는 사용자입니다.'
+            response['error_code'] = ORDER_201_USER_INVALID.code
+            response['error_msg'] = ORDER_201_USER_INVALID.message
             return Response(response)
 
         orderManager = UserOrderManager(user)
@@ -133,21 +133,21 @@ class OrderValidation(viewsets.ModelViewSet):
             if(order.payment_status == IAMPORT_ORDER_STATUS_PAID
                and order.order_id == eatplePass.order_id):
                 if(beforeOrderStatus != IAMPORT_ORDER_STATUS_PAID):
-                    response['error_code'] = 100
-                    response['error_msg'] = '결제가 완료되었습니다.'
+                    response['error_code'] = ORDER_100_SUCCESS.code
+                    response['error_msg'] = ORDER_100_SUCCESS.message
                     return Response(response)
                 else:
-                    response['error_code'] = 204
-                    response['error_msg'] = '결제가 완료되었습니다.'
-                    #response['error_msg']  = '이미 결제가 완료된 주문번호 입니다.'
+                    response['error_code'] = ORDER_204_ALREADY_PAID.code
+                    response['error_msg'] = ORDER_100_SUCCESS.message
+                    # response['error_msg']  = 'ORDER_204_ALREADY_PAID.message
                     return Response(response)
 
         # Eatple Pass Check
         eatplePassStatus = eatplePassValidation(user)
 
         if(eatplePassStatus == False):
-            response['error_code'] = 202
-            response['error_msg'] = '이미 잇플패스를 발급하셨습니다.'
+            response['error_code'] = ORDER_202_MULTI_ORDER.code
+            response['error_msg'] = ORDER_202_MULTI_ORDER.message
             return Response(response)
 
         # Time Check
@@ -155,18 +155,18 @@ class OrderValidation(viewsets.ModelViewSet):
         isClosedDay = weekendTimeCheck()
 
         if(currentSellingTime != order.menu.selling_time or isClosedDay == True):
-            response['error_code'] = 206
-            response['error_msg'] = '현재 주문 가능시간이 아닙니다.'
+            response['error_code'] = ORDER_206_SELLING_TIME_INVALID.code
+            response['error_msg'] = ORDER_206_SELLING_TIME_INVALID.message
             return Response(response)
 
         # Store Check
         if(order.store.status != OC_OPEN or order.menu.status != OC_OPEN):
-            response['error_code'] = 206
-            response['error_msg'] = '현재 주문 가능시간이 아닙니다.'
+            response['error_code'] = ORDER_206_SELLING_TIME_INVALID.code
+            response['error_msg'] = ORDER_206_SELLING_TIME_INVALID.message
             return Response(response)
 
-        response['error_code'] = 200
-        response['error_msg'] = '정상적인 주문입니다.'
+        response['error_code'] = ORDER_200_VALID.code
+        response['error_msg'] = ORDER_200_VALID.message
         return Response(response)
 
 
@@ -193,15 +193,15 @@ class OrderInformation(viewsets.ModelViewSet):
             order = None
 
         if(order == None or order.payment_status == IAMPORT_ORDER_STATUS_FAILED):
-            response['error_code'] = 203
-            response['error_msg'] = '잘못된 주문번호입니다. 홈으로가서 다시 메뉴를 선택해주세요.'
+            response['error_code'] = ORDER_203_ORDER_ID_INVALID.code
+            response['error_msg'] = ORDER_203_ORDER_ID_INVALID.message
             return Response(response)
 
         # Account Check
         user = userValidation(order.ordersheet.user.app_user_id)
         if(user == False):
-            response['error_code'] = 201
-            response['error_msg'] = '알수없는 사용자입니다. 앱으로 돌아가 다시 확인해주세요.'
+            response['error_code'] = ORDER_201_USER_INVALID.code
+            response['error_msg'] = ORDER_201_USER_INVALID.message
             return Response(response)
 
         response['store'] = order.store.name

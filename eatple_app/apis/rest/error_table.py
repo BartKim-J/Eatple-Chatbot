@@ -2,6 +2,7 @@ from rest_framework import status
 from rest_framework import viewsets
 from rest_framework import permissions
 
+
 class ErrorCollection(object):
     def __init__(self, code, status, message):
         self.code = code
@@ -12,6 +13,12 @@ class ErrorCollection(object):
         return '\n\n> **%s**\n\n```\n{\n\n\t"code": "%s"\n\n\t"message": "%s"\n\n}\n\n```' % \
                (self.message, self.code, self.message)
 
+
+ORDER_100_SUCCESS = ErrorCollection(
+    code=100,
+    status=status.HTTP_200_OK,
+    message='결제가 완료되었습니다.'
+)
 
 ORDER_200_VALID = ErrorCollection(
     code=200,
