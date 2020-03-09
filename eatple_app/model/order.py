@@ -67,8 +67,11 @@ def kakaoPayOrderValidation(order):
         if(order.payment_status != EATPLE_ORDER_STATUS_FAILED):
             order.payment_status = EATPLE_ORDER_STATUS_NOT_PUSHED
             order.save()
+        else:
+            order.payment_status = EATPLE_ORDER_STATUS_FAILED
+            order.save()
 
-            return order
+        return order
 
     kakaoPayStatus = json.loads(response.text)['status']
     print("카카오 주문 상태 : ", kakaoPayStatus)
@@ -81,7 +84,9 @@ def kakaoPayOrderValidation(order):
         kakaoPayStatus == 'AUTH_PASSWORD' or
         kakaoPayStatus == 'FAIL_AUTH_PASSWORD'
     ):
-        order.payment_status = EATPLE_ORDER_STATUS_NOT_PUSHED
+        if(order.payment_status != EATPLE_ORDER_STATUS_FAILED):
+            order.payment_status = EATPLE_ORDER_STATUS_NOT_PUSHED
+        
     elif(kakaoPayStatus == 'SUCCESS_PAYMENT'):
         order.payment_status = EATPLE_ORDER_STATUS_PAID
     elif(
@@ -424,7 +429,7 @@ class Order_KakaoPay(models.Model):
         self.pg_token = pg_token
         self.save()
 
-        return self
+        return self.order
 
 
 class Order(models.Model):

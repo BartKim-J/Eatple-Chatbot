@@ -685,8 +685,6 @@ def kakaoView_OrderPaymentCheck(kakaoPayload):
     dataActionExtra[KAKAO_PARAM_ORDER_ID] = order.order_id
     dataActionExtra[KAKAO_PARAM_PREV_BLOCK_ID] = KAKAO_BLOCK_USER_SET_ORDER_SHEET
 
-    order.orderStatusUpdate()
-
     if(order.payment_status == EATPLE_ORDER_STATUS_PAID):
         return kakaoView_EatplePassIssuance(kakaoPayload)
     else:
@@ -695,6 +693,11 @@ def kakaoView_OrderPaymentCheck(kakaoPayload):
         else:
             server_url = 'https://www.eatple.com'
 
+        oneclick_url = 'kakaotalk://bizplugin?plugin_id={api_id}&oneclick_id={order_id}'.format(
+            api_id=KAKAO_PAY_ONE_CLICK_API_ID,
+            order_id=order.order_id
+        )
+        
         buttons = [
             {
                 'action': 'osLink',
@@ -757,7 +760,8 @@ def kakaoView_EatplePassIssuance(kakaoPayload):
         if(order == None):
             return errorView('주문 상태 확인', '정상적이지 않은 경로거나 이미 발급이 완료되었어요!')
         else:
-            order.orderStatusUpdate()
+            pass
+            #order.orderStatusUpdate()
 
         store = storeValidation(kakaoPayload)
         menu = menuValidation(kakaoPayload)
