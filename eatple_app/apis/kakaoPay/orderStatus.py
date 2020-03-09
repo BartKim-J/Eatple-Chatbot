@@ -27,20 +27,18 @@ from eatple_app.views import *
 @csrf_exempt
 def GET_KAKAO_PAY_OrderStatus(request):
     print(request)
-
     try:
-        ordersheet_id = request.GET.get('ordersheet_id')
-        zip_code = request.GET.get('zip_code')
+        order_id = request.GET.get('order_id')
     except Exception as ex:
         print(ex)
         return JsonResponse({'status': 400, })
 
-
     data = {
-        "order_status": "F",
-        "message": "주문 상품이 품절되었습니다."
+        "order_status": "S",
+        "message": "주문 상품이 품절되었습니다.",
+        "order_id": order_id
     }
-    
+
     payload = {
         'status': 200,
         'data': data,

@@ -9,6 +9,8 @@ from eatple_app.apis.kakaoPay.orderApprove import GET_KAKAO_PAY_OrderApprove
 from eatple_app.apis.kakaoPay.orderSheet import GET_KAKAO_PAY_OrderSheet
 from eatple_app.apis.kakaoPay.orderStatus import GET_KAKAO_PAY_OrderStatus
 
+from eatple_app.apis.kakaoPay.paymentApprove import GET_KAKAO_PAY_PaymentApprove
+
 # Slack
 from eatple_app.apis.slack.slack_api import Events
 

@@ -27,84 +27,6 @@ from eatple_app.views_system.debugger import *
 #
 # # # # # # # # # # # # # # # # # # # # # # # # #
 
-
-def kakaoView_DebugKakaoPay(kakaoPayload):
-    """
-        Default Variable Define
-    """
-    # User Validation
-    user = userValidation(kakaoPayload)
-    if (user == None):
-        return errorView('잘못된 사용자 계정', '찾을 수 없는 사용자 계정 아이디입니다.')
-
-    kakaoResponse = KakaoPay().PushOrderSheet(
-        user,
-        'EP000D871E1673',
-        '오징어 덮밥',
-        '0032',
-        6000
-    )
-
-    """
-        KAKAO I Dev Test Bed
-    """
-    kakaoForm = KakaoForm()
-
-    QUICKREPLIES_MAP = [
-        {
-            'action': 'block',
-            'label': '새로고침',
-            'messageText': KAKAO_EMOJI_LOADING,
-            'blockId': KAKAO_BLOCK_USER_TEST_BED,
-            'extra': {
-                KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_TEST_BED
-            }
-        },
-    ]
-
-    if(kakaoResponse.status_code == status.HTTP_400_BAD_REQUEST):
-        body = json.loads(kakaoResponse.text)
-
-        KakaoInstantForm().Message(
-            '카카오 페이 에러',
-            '코드 : {}\n메세지 : {}'.format(
-                body['code'],
-                body['msg']
-            ),
-            kakaoForm=kakaoForm
-        )
-    elif(kakaoResponse.status_code != status.HTTP_400_BAD_REQUEST):
-        body = json.loads(kakaoResponse.text)
-
-        oneclick_url = 'kakaotalk://bizplugin?plugin_id={api_id}&oneclick_id={order_id}'.format(
-            api_id=KAKAO_PAY_ONE_CLICK_API_ID,
-            order_id=body["tid"]
-        )
-
-        buttons = [
-            {
-                'action': 'osLink',
-                'label': '원클릭 결제하기',
-                'messageText': KAKAO_EMOJI_LOADING,
-                'osLink': {
-                    'android': oneclick_url,
-                    'ios': oneclick_url,
-                },
-            },
-        ]
-
-        KakaoInstantForm().Message(
-            '메뉴 결정이 완료되었습니다.',
-            '',
-            buttons=buttons,
-            kakaoForm=kakaoForm
-        )
-
-    kakaoForm.QuickReplies_AddWithMap(QUICKREPLIES_MAP)
-
-    return JsonResponse(kakaoForm.GetForm())
-
-
 def kakaoView_Debug(kakaoPayload):
     """
         Default Variable Define
@@ -183,7 +105,7 @@ def GET_Debug(request):
 
         user = userValidation(kakaoPayload)
 
-        return kakaoView_DebugKakaoPay(kakaoPayload)
+        return kakaoView_Debug(kakaoPayload)
 
     except (RuntimeError, TypeError, NameError, KeyError) as ex:
         return errorView('{}'.format(ex))

@@ -26,11 +26,10 @@ from eatple_app.views import *
 
 @csrf_exempt
 def GET_KAKAO_PAY_OrderApprove(request):
+    print(request)
     try:
         json_str = ((request.body).decode('utf-8'))
         received_json_data = json.loads(json_str)
-
-        print(received_json_data)
 
         partner_order_id = received_json_data['partner_order_id']
         tid = received_json_data['tid']
@@ -50,10 +49,12 @@ def GET_KAKAO_PAY_OrderApprove(request):
 
     try:
         order.payment_type = ORDER_PAYMENT_KAKAO_PAY
-        if(order.order_kakaopay == None):
+        try:
+            order.order_kakaopay.approve(tid)
+        except Exception as ex:
             order.order_kakaopay = Order_KakaoPay(order=order)
-        
-        order.order_kakaopay.approve(tid)
+            order.order_kakaopay.approve(tid)
+
         order.save()
     except Exception as ex:
         print(ex)

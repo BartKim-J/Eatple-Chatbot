@@ -7,6 +7,8 @@ KAKAO_PAY_API_URLS = [
     path('order/approve', api.GET_KAKAO_PAY_OrderApprove),
     path('order/ordersheet', api.GET_KAKAO_PAY_OrderSheet),
     path('order/status', api.GET_KAKAO_PAY_OrderStatus),
+    
+    path('payment/approve', api.GET_KAKAO_PAY_PaymentApprove),
 ]
 
 KAKAO_API_URLS = [
