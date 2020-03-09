@@ -24,6 +24,16 @@ class TypeFilter(MultipleChoiceListFilter):
         return ORDER_TYPE
 
 
+class KakaoPayInline(admin.StackedInline):
+    verbose_name = "카카오 페이"
+    verbose_name_plural = "카카오 페이"
+
+    model = Order_KakaoPay
+    extra = 0
+
+    readonly_fields = ('tid', )
+
+
 class OrderShareFlagFilter(SimpleListFilter):
     title = '부탁하기'
     parameter_name = '부탁하기 플래그'
@@ -93,7 +103,7 @@ class OrderAdmin(ImportExportMixin, admin.ModelAdmin):
     def get_queryset(self, request):
         qs = super(OrderAdmin, self).get_queryset(request)
 
-        #return qs.exclude(Q(store=None) & Q(menu=None))
+        # return qs.exclude(Q(store=None) & Q(menu=None))
         return qs
 
     def make_enable(self, request, queryset):
@@ -138,7 +148,8 @@ class OrderAdmin(ImportExportMixin, admin.ModelAdmin):
         ('기본 정보',            {'fields': [
          'order_id', 'ordersheet', 'store', 'menu', 'type', ]}),
         ('구성',                 {'fields': ['totalPrice', 'count', ]}),
-        ('상태',                 {'fields': ['payment_status', 'status', ]}),
+        ('상태',                 {'fields': [
+         'payment_type', 'payment_status', 'status', ]}),
         ('부탁하기',             {'fields': ['delegate', ]}),
         ('시간',                 {'fields': [
          'order_date', 'payment_date', 'pickup_time', 'pickup_complete_date', 'update_date', ]}),
@@ -165,9 +176,6 @@ class OrderAdmin(ImportExportMixin, admin.ModelAdmin):
     actions = ['make_enable']
 
     list_display = ('order_id', 'owner', 'owner_id',  'store', 'menu', 'type', 'b2b_name',
-                    'payment_status', 'status', 'delegate_flag', 'pickup_time', 'payment_date', 'pickup_complete_date')
+                    'payment_type', 'payment_status', 'status', 'delegate_flag', 'pickup_time', 'payment_date', 'pickup_complete_date')
 
-    class Media:
-        js = (
-            '//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js',  # jquery
-        )
+    inlines = [KakaoPayInline]

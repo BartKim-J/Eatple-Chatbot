@@ -26,8 +26,11 @@ from eatple_app.views import *
 
 @csrf_exempt
 def GET_KAKAO_Oauth(request):
-    json_str = ((request.body).decode('utf-8'))
-    received_json_data = json.loads(json_str)
+    try:
+        json_str = ((request.body).decode('utf-8'))
+        received_json_data = json.loads(json_str)
+    except json.decoder.JSONDecodeError:
+        pass
 
     print(received_json_data)
 

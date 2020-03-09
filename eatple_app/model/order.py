@@ -327,6 +327,34 @@ def orderUpdate(order):
     return order
 
 
+class Order_KakaoPay(models.Model):
+    class Meta:
+        verbose_name = "카카오 페이"
+        verbose_name_plural = "카카오 페이"
+
+        ordering = ['-tid']
+
+    order = models.OneToOneField(
+        'Order',
+        on_delete=models.CASCADE,
+        null=True,
+        verbose_name="주문서"
+    )
+
+    tid = models.CharField(
+        max_length=MANAGEMENT_CODE_LENGTH,
+        blank=True,
+        null=True,
+        verbose_name="고유 주문 번호( TID )"
+    )
+
+    def approve(self, tid):
+        self.tid = tid
+        self.save()
+
+        return self
+
+
 class Order(models.Model):
     class Meta:
         verbose_name = "주문 내역"
@@ -395,6 +423,13 @@ class Order(models.Model):
         default=ORDER_TYPE_NORMAL,
         choices=ORDER_TYPE,
         verbose_name="주문 타입"
+    )
+
+    payment_type = models.CharField(
+        max_length=WORD_LENGTH,
+        default=ORDER_PAYMENT_INI_PAY,
+        choices=ORDER_PAYMENT_TYPE,
+        verbose_name="결제 타입"
     )
 
     delegate = models.ForeignKey(

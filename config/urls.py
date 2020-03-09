@@ -20,7 +20,7 @@ from eatple_app import templates
 from config.url.system import *
 from config.url.templates import TEMPLATES_URLS
 from config.url.api.rest import RESTFUL_API_URLS, RESTFUL_API_DOC_URLS
-from config.url.api.kakao import KAKAO_API_URLS
+from config.url.api.kakao import KAKAO_API_URLS, KAKAO_PAY_API_URLS
 from config.url.api.slack import SLACK_API_URLS
 from config.url.kakao_skill.user import KAKAO_SKILL_USER_URLS, KAKAO_SKILL_USER_EVENT_URLS
 from config.url.kakao_skill.partner import KAKAO_SKILL_PARTNER_URLS
@@ -43,6 +43,7 @@ urlpatterns += KAKAO_SKILL_PARTNER_URLS
 
 # KAKAO API
 urlpatterns += KAKAO_API_URLS
+urlpatterns += KAKAO_PAY_API_URLS
 
 # SLACK API
 urlpatterns += SLACK_API_URLS

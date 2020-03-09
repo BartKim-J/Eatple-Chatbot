@@ -17,6 +17,10 @@ from eatple_app.module_kakao.form import *
 from eatple_app.module_kakao.validation import *
 
 KAKAO_PAY_HOST_URL = 'kapi.kakao.com'
+KAKAO_PAY_ONE_CLICK_API_ID = '5e5e74aa296f014f20f49d97'
+
+#KAKAO_PAY_CID = 'TC0ONETIME'
+KAKAO_PAY_CID = 'CADONE0860'
 
 
 class KakaoPay():
@@ -26,8 +30,7 @@ class KakaoPay():
         }
 
         data = {
-            # 'cid': 'CADONE0860',
-            'cid': 'TC0ONETIME',
+            'cid': KAKAO_PAY_CID,
 
             'partner_order_id': order_id,
             'partner_user_id': user.app_user_id,
@@ -55,10 +58,5 @@ class KakaoPay():
             shcme='https://', host=KAKAO_PAY_HOST_URL, url='/v1/payment/ready')
 
         kakaoResponse = requests.post(apiURL, data=data, headers=headers)
-
-        print('Header : ', kakaoResponse.headers)
-        print('URL : ', kakaoResponse.url)
-        print('STATUS : ', kakaoResponse.status_code)
-        print('TEXT : ', kakaoResponse.text)
 
         return kakaoResponse

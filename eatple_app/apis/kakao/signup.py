@@ -87,8 +87,11 @@ def isSignUpDone(app_user_id):
 
 @csrf_exempt
 def GET_KAKAO_Signup(request):
-    json_str = ((request.body).decode('utf-8'))
-    received_json_data = json.loads(json_str)
+    try:
+        json_str = ((request.body).decode('utf-8'))
+        received_json_data = json.loads(json_str)
+    except json.decoder.JSONDecodeError:
+        pass
 
     if(isSignUpDone(int(received_json_data['app_user_id'])) != None):
         terms_groups = None

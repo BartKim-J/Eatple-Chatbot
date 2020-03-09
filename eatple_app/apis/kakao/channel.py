@@ -26,8 +26,11 @@ from eatple_app.views import *
 
 @csrf_exempt
 def POST_KAKAO_ChannelLog(request):
-    json_str = ((request.body).decode('utf-8'))
-    received_json_data = json.loads(json_str)
+    try:
+        json_str = ((request.body).decode('utf-8'))
+        received_json_data = json.loads(json_str)
+    except json.decoder.JSONDecodeError:
+        pass
 
     event = received_json_data['event']
 

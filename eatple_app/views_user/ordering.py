@@ -482,6 +482,8 @@ def kakaoView_OrderPayment(kakaoPayload):
         order.totalPrice = menu.price
         order.count = 1
         order.type = ORDER_TYPE_NORMAL
+        # @TODO: NOW KAKAO PAY ONLY
+        order.payment_type = ORDER_PAYMENT_KAKAO_PAY
         order.save()
 
     # Order Record
@@ -557,17 +559,20 @@ def kakaoView_OrderPayment(kakaoPayload):
     else:
         server_url = 'https://www.eatple.com'
 
+    oneclick_url = 'kakaotalk://bizplugin?plugin_id={api_id}&oneclick_id={order_id}'.format(
+        api_id=KAKAO_PAY_ONE_CLICK_API_ID,
+        order_id=order.order_id
+    )
+
     buttons = [
         {
-            'action': 'webLink',
-            'label': '결제하러 가기   ➔',
+            'action': 'osLink',
+            'label': '원클릭 결제하기',
             'messageText': KAKAO_EMOJI_LOADING,
-            'extra': dataActionExtra,
-
-            'webLinkUrl': '{server_url}/payment?merchant_uid={merchant_uid}'.format(
-                server_url=server_url,
-                merchant_uid=order.order_id,
-            )
+            'osLink': {
+                'android': oneclick_url,
+                'ios': oneclick_url,
+            },
         },
     ]
 

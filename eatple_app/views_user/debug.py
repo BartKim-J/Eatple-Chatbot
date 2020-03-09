@@ -76,13 +76,20 @@ def kakaoView_DebugKakaoPay(kakaoPayload):
     elif(kakaoResponse.status_code != status.HTTP_400_BAD_REQUEST):
         body = json.loads(kakaoResponse.text)
 
-        redirect_url = body["next_redirect_app_url"]
+        oneclick_url = 'kakaotalk://bizplugin?plugin_id={api_id}&oneclick_id={order_id}'.format(
+            api_id=KAKAO_PAY_ONE_CLICK_API_ID,
+            order_id=body["tid"]
+        )
+
         buttons = [
             {
-                'action': 'webLink',
+                'action': 'osLink',
                 'label': '원클릭 결제하기',
                 'messageText': KAKAO_EMOJI_LOADING,
-                'webLinkUrl': redirect_url,
+                'osLink': {
+                    'android': oneclick_url,
+                    'ios': oneclick_url,
+                },
             },
         ]
 
@@ -92,6 +99,7 @@ def kakaoView_DebugKakaoPay(kakaoPayload):
             buttons=buttons,
             kakaoForm=kakaoForm
         )
+
     kakaoForm.QuickReplies_AddWithMap(QUICKREPLIES_MAP)
 
     return JsonResponse(kakaoForm.GetForm())
