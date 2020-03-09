@@ -56,7 +56,7 @@ class KakaoPay():
 
         return kakaoResponse
 
-    def PaymentApprove(self, tid, order_id, user_id, pg_token, cid_secret=None, payload=None, total_amount=0):
+    def OrderApprove(self, tid, order_id, user_id, pg_token, cid_secret=None, payload=None, total_amount=0):
         headers = {
             'Authorization': 'KakaoAK {app_key}'.format(app_key=KAKAO_ADMIN_KEY),
         }
@@ -75,7 +75,45 @@ class KakaoPay():
             'total_amount': total_amount,
         }
 
-        print(data)
+        kakaoResponse = requests.post(apiURL, data=data, headers=headers)
+
+        return kakaoResponse
+
+    def OrderCancel(self, tid, cancel_amount, cancel_tax_free_amount, cancel_vat_amount=0, cancel_available_amount=0, cid_secret=None, payload=None):
+        headers = {
+            'Authorization': 'KakaoAK {app_key}'.format(app_key=KAKAO_ADMIN_KEY),
+        }
+
+        apiURL = '{shcme}{host}{url}'.format(
+            shcme='https://', host=KAKAO_PAY_HOST_URL, url='/v1/payment/cancel')
+
+        data = {
+            'cid': KAKAO_PAY_CID,
+            'tid': tid,
+
+            'cancel_amount': cancel_amount,
+            'cancel_tax_free_amount': cancel_tax_free_amount,
+
+            # 'cancel_vat_amount': cancel_vat_amount,
+            # 'cancel_available_amount': cancel_available_amount,
+        }
+
+        kakaoResponse = requests.post(apiURL, data=data, headers=headers)
+
+        return kakaoResponse
+
+    def OrderStatus(self, tid, cid_secret=None, payload=None):
+        headers = {
+            'Authorization': 'KakaoAK {app_key}'.format(app_key=KAKAO_ADMIN_KEY),
+        }
+
+        apiURL = '{shcme}{host}{url}'.format(
+            shcme='https://', host=KAKAO_PAY_HOST_URL, url='/v1/payment/order')
+
+        data = {
+            'cid': KAKAO_PAY_CID,
+            'tid': tid,
+        }
 
         kakaoResponse = requests.post(apiURL, data=data, headers=headers)
 

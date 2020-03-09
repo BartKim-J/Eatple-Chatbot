@@ -39,8 +39,9 @@ def GET_KAKAO_PAY_OrderSheet(request):
         order = Order.objects.get(order_id=ordersheet_id)
     except:
         # @TODO: Error Case
-        # order = None
-        order = Order.objects.filter(~Q(menu=None)).first()
+        #order = None
+        order = Order.objects.filter(
+            ~Q(menu=None) & Q(totalPrice__lte=1000) & Q(totalPrice__gte=100)).first()
 
     if(order == None):
         return JsonResponse({'status': 300, })
