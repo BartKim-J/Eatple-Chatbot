@@ -423,7 +423,7 @@ def kakaoView_OrderPaymentCheck(kakaoPayload):
 
     order.orderStatusUpdate()
 
-    if(order.payment_status == IAMPORT_ORDER_STATUS_PAID):
+    if(order.payment_status == EATPLE_ORDER_STATUS_PAID):
         return kakaoView_EatplePassIssuance(kakaoPayload)
     else:
         kakaoForm = KakaoForm()

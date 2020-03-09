@@ -12,15 +12,15 @@ from eatple_app.model.orderRecord import OrderRecordSheet, OrderRecord
 
 
 def iamportOrderValidation(order):
-    iamport = Iamport(imp_key=IAMPORT_API_KEY,
-                      imp_secret=IAMPORT_API_SECRET_KEY)
+    iamport = Iamport(imp_key=EATPLE_API_KEY,
+                      imp_secret=EATPLE_API_SECRET_KEY)
     try:
         response = iamport.find(merchant_uid=order.order_id)
     except KeyError:
         return order
 
     except Iamport.ResponseError as e:
-        order.payment_status = IAMPORT_ORDER_STATUS_FAILED
+        order.payment_status = EATPLE_ORDER_STATUS_FAILED
         order.save()
         # print(e.code)
         # print(e.message)
@@ -31,8 +31,8 @@ def iamportOrderValidation(order):
         # print(http_error.code)
         # print(http_error.reason)
 
-        if(order.payment_status != IAMPORT_ORDER_STATUS_FAILED):
-            order.payment_status = IAMPORT_ORDER_STATUS_NOT_PUSHED
+        if(order.payment_status != EATPLE_ORDER_STATUS_FAILED):
+            order.payment_status = EATPLE_ORDER_STATUS_NOT_PUSHED
             order.save()
 
         return order
@@ -44,8 +44,8 @@ def iamportOrderValidation(order):
 
 
 def iamportOrderCancel(order, description='주문취소'):
-    iamport = Iamport(imp_key=IAMPORT_API_KEY,
-                      imp_secret=IAMPORT_API_SECRET_KEY)
+    iamport = Iamport(imp_key=EATPLE_API_KEY,
+                      imp_secret=EATPLE_API_SECRET_KEY)
 
     try:
         response = iamport.cancel(description, merchant_uid=order.order_id)
@@ -57,9 +57,14 @@ def iamportOrderCancel(order, description='주문취소'):
 
     return True
 
+
+def kakaoPayOrderValidation(order):
+    return None
+
+def kakaoPayOrderCancel(order):
+    return False
+
 # @PROMOTION
-
-
 def promotionOrderUpdate(order):
     paymentDate = dateByTimeZone(order.payment_date)
     paymentDateWithoutTime = paymentDate.replace(
@@ -138,13 +143,16 @@ def orderUpdate(order):
     # Normal User Pass
     else:
         if(order.menu == None or order.store == None):
-            order.payment_status = IAMPORT_ORDER_STATUS_NOT_PUSHED
+            order.payment_status = EATPLE_ORDER_STATUS_NOT_PUSHED
             order.save()
         else:
-            order = iamportOrderValidation(order)
+            if(order.payment_type == ORDER_PAYMENT_INI_PAY):
+                order = iamportOrderValidation(order)
+            else:
+                order = kakaoPayOrderValidation(order)
 
     # Payment State Update
-    if(order.payment_status == IAMPORT_ORDER_STATUS_CANCELLED):
+    if(order.payment_status == EATPLE_ORDER_STATUS_CANCELLED):
         # @PROMOTION
         if(order.type == ORDER_TYPE_PROMOTION):
             order.ordersheet.user.cancelPromotion()
@@ -153,20 +161,20 @@ def orderUpdate(order):
         order.save()
         print('주문 취소됨')
 
-    if(order.payment_status == IAMPORT_ORDER_STATUS_READY):
+    if(order.payment_status == EATPLE_ORDER_STATUS_READY):
         print('주문 미결제 또는 진행중')
 
-    if(order.payment_status == IAMPORT_ORDER_STATUS_FAILED):
+    if(order.payment_status == EATPLE_ORDER_STATUS_FAILED):
         order.status = order.status
         order.save()
         print('주문 실패')
 
-    if(order.payment_status == IAMPORT_ORDER_STATUS_NOT_PUSHED):
+    if(order.payment_status == EATPLE_ORDER_STATUS_NOT_PUSHED):
         order.status = ORDER_STATUS_MENU_CHOCIED
         order.save()
         print('메뉴 선택중')
 
-    if(order.payment_status == IAMPORT_ORDER_STATUS_PAID):
+    if(order.payment_status == EATPLE_ORDER_STATUS_PAID):
         if(order.status == ORDER_STATUS_MENU_CHOCIED):
             order.status = ORDER_STATUS_ORDER_CONFIRM_WAIT
             order.save()
@@ -180,7 +188,7 @@ def orderUpdate(order):
 
         print('주문 결제됨')
 
-    if(order.payment_status != IAMPORT_ORDER_STATUS_PAID):
+    if(order.payment_status != EATPLE_ORDER_STATUS_PAID):
         return order
 
     if(order.status == ORDER_STATUS_PICKUP_COMPLETED or order.status == ORDER_STATUS_ORDER_EXPIRED):
@@ -407,8 +415,8 @@ class Order(models.Model):
 
     payment_status = models.CharField(
         max_length=10,
-        choices=IAMPORT_ORDER_STATUS,
-        default=IAMPORT_ORDER_STATUS_NOT_PUSHED,
+        choices=EATPLE_ORDER_STATUS,
+        default=EATPLE_ORDER_STATUS_NOT_PUSHED,
         verbose_name="결제 상태"
     )
 
@@ -493,13 +501,16 @@ class Order(models.Model):
         if(self.ordersheet.user.type == USER_TYPE_B2B and
            self.ordersheet.user.company != None and
            self.ordersheet.user.company.status != OC_CLOSE):
-            self.payment_status = IAMPORT_ORDER_STATUS_CANCELLED
+            self.payment_status = EATPLE_ORDER_STATUS_CANCELLED
             self.save()
 
             isCancelled = True
         else:
-            isCancelled = iamportOrderCancel(self)
-
+            if(order.payment_type == ORDER_PAYMENT_INI_PAY):
+                isCancelled = iamportOrderCancel(self)
+            else:
+                isCancelled = kakaoPayOrderCancel(self)
+                
         if(isCancelled):
             # Order Record
             try:
@@ -575,7 +586,7 @@ class OrderManager():
         expireDate = orderTimeSheet.GetOrderExpireDate()
 
         readyPayOrders = Order.objects.filter(
-            Q(payment_status=IAMPORT_ORDER_STATUS_NOT_PUSHED) &
+            Q(payment_status=EATPLE_ORDER_STATUS_NOT_PUSHED) &
             Q(payment_date__gte=expireDate) &
             ~Q(store=None) &
             ~Q(menu=None)
@@ -584,8 +595,8 @@ class OrderManager():
         # Order Status Update
         for order in readyPayOrders:
             orderUpdate(order)
-            if(order.payment_status != IAMPORT_ORDER_STATUS_PAID):
-                order.payment_status = IAMPORT_ORDER_STATUS_FAILED
+            if(order.payment_status != EATPLE_ORDER_STATUS_PAID):
+                order.payment_status = EATPLE_ORDER_STATUS_FAILED
                 order.status = ORDER_STATUS_MENU_CHOCIED
                 order.save()
 
@@ -595,7 +606,7 @@ class OrderManager():
         expireDate = orderTimeSheet.GetOrderExpireDate()
 
         readyPayOrders = Order.objects.filter(
-            Q(payment_status=IAMPORT_ORDER_STATUS_NOT_PUSHED) &
+            Q(payment_status=EATPLE_ORDER_STATUS_NOT_PUSHED) &
             Q(payment_date__gte=expireDate) &
             ~Q(store=None) &
             ~Q(menu=None)

@@ -670,7 +670,7 @@ def kakaoView_OrderPaymentCheck(kakaoPayload):
     orderRecordSheet.order = order
     orderRecordSheet.recordUpdate(ORDER_RECORD_PAYMENT_CONFIRM)
 
-    if(order.payment_status == IAMPORT_ORDER_STATUS_CANCELLED):
+    if(order.payment_status == EATPLE_ORDER_STATUS_CANCELLED):
         KakaoInstantForm().Message(
             '이 잇플 패스는 이미 취소된 잇플 패스입니다.',
             '다시 주문을 확인해주세요.',
@@ -687,7 +687,7 @@ def kakaoView_OrderPaymentCheck(kakaoPayload):
 
     order.orderStatusUpdate()
 
-    if(order.payment_status == IAMPORT_ORDER_STATUS_PAID):
+    if(order.payment_status == EATPLE_ORDER_STATUS_PAID):
         return kakaoView_EatplePassIssuance(kakaoPayload)
     else:
         if(ORDERING_DEBUG_MODE):
@@ -766,7 +766,7 @@ def kakaoView_EatplePassIssuance(kakaoPayload):
         if(store == None or menu == None):
             return errorView('결제 실패', '주문을 도중에 중단한 주문 번호 입니다.')
 
-        if(order.payment_status != IAMPORT_ORDER_STATUS_PAID):
+        if(order.payment_status != EATPLE_ORDER_STATUS_PAID):
             KakaoInstantForm().Message(
                 '주문에 실패하였습니다.',
                 '죄송하지만 처음부터 다시 주문해주세요..',
@@ -1327,7 +1327,7 @@ def kakaoView_B2B_OrderPaymentCheck(kakaoPayload):
     orderRecordSheet.order = order
     orderRecordSheet.recordUpdate(ORDER_RECORD_PAYMENT_CONFIRM)
 
-    if(order.payment_status == IAMPORT_ORDER_STATUS_CANCELLED):
+    if(order.payment_status == EATPLE_ORDER_STATUS_CANCELLED):
         KakaoInstantForm().Message(
             '이 잇플 패스는 이미 취소된 잇플 패스입니다.',
             '다시 주문을 확인해주세요.',
@@ -1380,10 +1380,10 @@ def kakaoView_B2B_OrderPaymentCheck(kakaoPayload):
 
         return JsonResponse(kakaoForm.GetForm())
 
-    order.payment_status = IAMPORT_ORDER_STATUS_PAID
+    order.payment_status = EATPLE_ORDER_STATUS_PAID
     order.save()
 
-    if(order.payment_status != IAMPORT_ORDER_STATUS_PAID):
+    if(order.payment_status != EATPLE_ORDER_STATUS_PAID):
         KakaoInstantForm().Message(
             '주문에 실패하였습니다.',
             '죄송하지만 처음부터 다시 주문해주세요.',

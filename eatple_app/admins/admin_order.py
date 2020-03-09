@@ -69,7 +69,7 @@ class OrderResource(resources.ModelResource):
         return dict(ORDER_TYPE)[obj.type]
 
     def dehydrate_payment_status(self, obj):
-        return dict(IAMPORT_ORDER_STATUS)[obj.payment_status]
+        return dict(EATPLE_ORDER_STATUS)[obj.payment_status]
 
     def dehydrate_order_date(self, obj):
         return dateByTimeZone(obj.order_date).strftime(
@@ -108,7 +108,7 @@ class OrderAdmin(ImportExportMixin, admin.ModelAdmin):
 
     def make_enable(self, request, queryset):
         updated_count = queryset.update(
-            status=ORDER_STATUS_ORDER_CONFIRMED, payment_status=IAMPORT_ORDER_STATUS_PAID)  # queryset.update
+            status=ORDER_STATUS_ORDER_CONFIRMED, payment_status=EATPLE_ORDER_STATUS_PAID)  # queryset.update
         self.message_user(request, '{}건의 주문을 Enable 상태로 변경'.format(
             updated_count))  # django message framework 활용
 

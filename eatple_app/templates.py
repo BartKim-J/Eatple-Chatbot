@@ -67,7 +67,7 @@ def getOrderChart(orderTimeSheet):
                 Order.objects.filter(
                     Q(payment_date__gte=prevLunchOrderEditTimeStart) &
                     Q(payment_date__lt=nextLunchOrderEditTimeStart) &
-                    Q(payment_status=IAMPORT_ORDER_STATUS_PAID)
+                    Q(payment_status=EATPLE_ORDER_STATUS_PAID)
                 ).count())
             )
 
@@ -119,7 +119,7 @@ def getPickupTimeChart(orderTimeSheet):
             Order.objects.filter(
                 Q(pickup_complete_date__gte=startTime) &
                 Q(pickup_complete_date__lt=endTime) &
-                Q(payment_status=IAMPORT_ORDER_STATUS_PAID) &
+                Q(payment_status=EATPLE_ORDER_STATUS_PAID) &
                 Q(status=ORDER_STATUS_PICKUP_COMPLETED)
             ).count())
         )
@@ -158,7 +158,7 @@ def getDailyOrderChart(orderTimeSheet):
             Order.objects.filter(
                 Q(payment_date__gte=checkStartTime) &
                 Q(payment_date__lt=cehckEndTime) &
-                Q(payment_status=IAMPORT_ORDER_STATUS_PAID)
+                Q(payment_status=EATPLE_ORDER_STATUS_PAID)
             ).count())
         )
 
@@ -209,7 +209,7 @@ def getTotalPickuped(orderTimeSheet):
         datetime.timedelta(hours=16, minutes=30)
 
     totalPickuped = Order.objects.filter(
-        Q(payment_status=IAMPORT_ORDER_STATUS_PAID) &
+        Q(payment_status=EATPLE_ORDER_STATUS_PAID) &
         Q(status=ORDER_STATUS_PICKUP_COMPLETED) &
         Q(payment_date__gte=prevLunchOrderEditTimeStart) &
         Q(payment_date__lt=nextLunchOrderEditTimeStart)
@@ -236,7 +236,7 @@ def getOrderFailed(orderTimeSheet):
         datetime.timedelta(hours=16, minutes=30)
 
     orderFailed = Order.objects.filter(
-        Q(payment_status=IAMPORT_ORDER_STATUS_FAILED) &
+        Q(payment_status=EATPLE_ORDER_STATUS_FAILED) &
         Q(payment_date__gte=prevLunchOrderEditTimeStart) &
         Q(payment_date__lt=nextLunchOrderEditTimeStart)
     ).count()
@@ -255,11 +255,11 @@ def getDAU(orderTimeSheet):
         Q(payment_date__gte=DAUStartDate) &
         Q(payment_date__lt=DAUEndDate) &
         (
-            Q(payment_status=IAMPORT_ORDER_STATUS_PAID) |
-            Q(payment_status=IAMPORT_ORDER_STATUS_CANCELLED) |
-            Q(payment_status=IAMPORT_ORDER_STATUS_FAILED) |
-            Q(payment_status=IAMPORT_ORDER_STATUS_NOT_PUSHED) |
-            Q(payment_status=IAMPORT_ORDER_STATUS_READY)
+            Q(payment_status=EATPLE_ORDER_STATUS_PAID) |
+            Q(payment_status=EATPLE_ORDER_STATUS_CANCELLED) |
+            Q(payment_status=EATPLE_ORDER_STATUS_FAILED) |
+            Q(payment_status=EATPLE_ORDER_STATUS_NOT_PUSHED) |
+            Q(payment_status=EATPLE_ORDER_STATUS_READY)
         )
     ).values_list("ordersheet__user__app_user_id")
 
@@ -279,11 +279,11 @@ def getWAU(orderTimeSheet):
         Q(payment_date__gte=WAUStartDate) &
         Q(payment_date__lt=WAUEndDate) &
         (
-            Q(payment_status=IAMPORT_ORDER_STATUS_PAID) |
-            Q(payment_status=IAMPORT_ORDER_STATUS_CANCELLED) |
-            Q(payment_status=IAMPORT_ORDER_STATUS_FAILED) |
-            Q(payment_status=IAMPORT_ORDER_STATUS_NOT_PUSHED) |
-            Q(payment_status=IAMPORT_ORDER_STATUS_READY)
+            Q(payment_status=EATPLE_ORDER_STATUS_PAID) |
+            Q(payment_status=EATPLE_ORDER_STATUS_CANCELLED) |
+            Q(payment_status=EATPLE_ORDER_STATUS_FAILED) |
+            Q(payment_status=EATPLE_ORDER_STATUS_NOT_PUSHED) |
+            Q(payment_status=EATPLE_ORDER_STATUS_READY)
         )
     ).values_list("ordersheet__user__app_user_id")
 
@@ -303,11 +303,11 @@ def getMAU(orderTimeSheet):
         Q(payment_date__gte=MAUStartDate) &
         Q(payment_date__lt=MAUEndDate) &
         (
-            Q(payment_status=IAMPORT_ORDER_STATUS_PAID) |
-            Q(payment_status=IAMPORT_ORDER_STATUS_CANCELLED) |
-            Q(payment_status=IAMPORT_ORDER_STATUS_FAILED) |
-            Q(payment_status=IAMPORT_ORDER_STATUS_NOT_PUSHED) |
-            Q(payment_status=IAMPORT_ORDER_STATUS_READY)
+            Q(payment_status=EATPLE_ORDER_STATUS_PAID) |
+            Q(payment_status=EATPLE_ORDER_STATUS_CANCELLED) |
+            Q(payment_status=EATPLE_ORDER_STATUS_FAILED) |
+            Q(payment_status=EATPLE_ORDER_STATUS_NOT_PUSHED) |
+            Q(payment_status=EATPLE_ORDER_STATUS_READY)
         )
     ).values_list("ordersheet__user__app_user_id")
 
@@ -327,11 +327,11 @@ def getWAS(orderTimeSheet):
         Q(payment_date__gte=WAUStartDate) &
         Q(payment_date__lt=WAUEndDate) &
         (
-            Q(payment_status=IAMPORT_ORDER_STATUS_PAID) |
-            Q(payment_status=IAMPORT_ORDER_STATUS_CANCELLED) |
-            Q(payment_status=IAMPORT_ORDER_STATUS_FAILED) |
-            Q(payment_status=IAMPORT_ORDER_STATUS_NOT_PUSHED) |
-            Q(payment_status=IAMPORT_ORDER_STATUS_READY)
+            Q(payment_status=EATPLE_ORDER_STATUS_PAID) |
+            Q(payment_status=EATPLE_ORDER_STATUS_CANCELLED) |
+            Q(payment_status=EATPLE_ORDER_STATUS_FAILED) |
+            Q(payment_status=EATPLE_ORDER_STATUS_NOT_PUSHED) |
+            Q(payment_status=EATPLE_ORDER_STATUS_READY)
         )
     ).values_list("store_id")
 
@@ -375,8 +375,8 @@ def getUserActive():
     for user in userList:
         orderList = Order.objects.filter(
             (
-                Q(payment_status=IAMPORT_ORDER_STATUS_PAID) |
-                Q(payment_status=IAMPORT_ORDER_STATUS_CANCELLED)
+                Q(payment_status=EATPLE_ORDER_STATUS_PAID) |
+                Q(payment_status=EATPLE_ORDER_STATUS_CANCELLED)
             )
             &
             Q(ordersheet__user=user)
@@ -425,8 +425,8 @@ def dashboard(request):
         create_date__gte=currentDateWithoutTime).count()
 
     totalOrder = Order.objects.filter(
-        Q(payment_status=IAMPORT_ORDER_STATUS_PAID) |
-        Q(payment_status=IAMPORT_ORDER_STATUS_CANCELLED)).count()
+        Q(payment_status=EATPLE_ORDER_STATUS_PAID) |
+        Q(payment_status=EATPLE_ORDER_STATUS_CANCELLED)).count()
 
     totalOrderIncrease = totalUser.filter(
         create_date__gte=currentDateWithoutTime).count()
@@ -517,8 +517,8 @@ def sales_dashboard(request):
         create_date__gte=currentDateWithoutTime).count()
 
     totalOrder = Order.objects.filter(
-        Q(payment_status=IAMPORT_ORDER_STATUS_PAID) |
-        Q(payment_status=IAMPORT_ORDER_STATUS_CANCELLED)).count()
+        Q(payment_status=EATPLE_ORDER_STATUS_PAID) |
+        Q(payment_status=EATPLE_ORDER_STATUS_CANCELLED)).count()
 
     totalOrderIncrease = totalUser.filter(
         create_date__gte=currentDateWithoutTime).count()
@@ -572,8 +572,8 @@ def sales_menulist(request):
         create_date__gte=currentDateWithoutTime).count()
 
     totalOrder = Order.objects.filter(
-        Q(payment_status=IAMPORT_ORDER_STATUS_PAID) |
-        Q(payment_status=IAMPORT_ORDER_STATUS_CANCELLED)).count()
+        Q(payment_status=EATPLE_ORDER_STATUS_PAID) |
+        Q(payment_status=EATPLE_ORDER_STATUS_CANCELLED)).count()
 
     totalOrderIncrease = totalUser.filter(
         create_date__gte=currentDateWithoutTime).count()

@@ -105,11 +105,11 @@ class OrderValidation(viewsets.ModelViewSet):
         except Order.DoesNotExist:
             order = None
 
-        if(order == None or order.payment_status == IAMPORT_ORDER_STATUS_FAILED):
+        if(order == None or order.payment_status == EATPLE_ORDER_STATUS_FAILED):
             response['error_code'] = ORDER_203_ORDER_ID_INVALID.code
             response['error_msg'] = ORDER_203_ORDER_ID_INVALID.message
             return Response(response)
-        elif(order.payment_status == IAMPORT_ORDER_STATUS_CANCELLED):
+        elif(order.payment_status == EATPLE_ORDER_STATUS_CANCELLED):
             response['error_code'] = ORDER_205_ALREADY_CANCELLED.code
             response['error_msg'] = ORDER_205_ALREADY_CANCELLED.message
             return Response(response)
@@ -117,8 +117,8 @@ class OrderValidation(viewsets.ModelViewSet):
             beforeOrderStatus = order.payment_status
             order.orderStatusUpdate()
 
-            if(beforeOrderStatus != IAMPORT_ORDER_STATUS_PAID and
-               order.payment_status == IAMPORT_ORDER_STATUS_PAID):
+            if(beforeOrderStatus != EATPLE_ORDER_STATUS_PAID and
+               order.payment_status == EATPLE_ORDER_STATUS_PAID):
                 order.payment_date = dateNowByTimeZone()
                 order.save()
 
@@ -133,9 +133,9 @@ class OrderValidation(viewsets.ModelViewSet):
         eatplePass = orderManager.getAvailableOrders().first()
 
         if(eatplePass != None):
-            if(order.payment_status == IAMPORT_ORDER_STATUS_PAID
+            if(order.payment_status == EATPLE_ORDER_STATUS_PAID
                and order.order_id == eatplePass.order_id):
-                if(beforeOrderStatus != IAMPORT_ORDER_STATUS_PAID):
+                if(beforeOrderStatus != EATPLE_ORDER_STATUS_PAID):
                     response['error_code'] = ORDER_100_SUCCESS.code
                     response['error_msg'] = ORDER_100_SUCCESS.message
                     return Response(response)
@@ -198,7 +198,7 @@ class OrderInformation(viewsets.ModelViewSet):
         except Order.DoesNotExist:
             order = None
 
-        if(order == None or order.payment_status == IAMPORT_ORDER_STATUS_FAILED):
+        if(order == None or order.payment_status == EATPLE_ORDER_STATUS_FAILED):
             response['error_code'] = ORDER_203_ORDER_ID_INVALID.code
             response['error_msg'] = ORDER_203_ORDER_ID_INVALID.message
             return Response(response)
