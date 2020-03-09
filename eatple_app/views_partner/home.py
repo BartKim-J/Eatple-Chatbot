@@ -12,6 +12,7 @@ from eatple_app.define import *
 # Modules
 from eatple_app.module_kakao.responseForm import *
 from eatple_app.module_kakao.requestForm import *
+from eatple_app.module_kakao.kakaoPay import *
 from eatple_app.module_kakao.validation import *
 
 # View-System

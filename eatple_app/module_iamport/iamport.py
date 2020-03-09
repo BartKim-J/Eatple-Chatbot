@@ -2,13 +2,17 @@ import json
 
 import requests
 
-__all__ = ['EATPLE_API_URL', 'Iamport']
+__all__ = ['IAMPORT_API_URL', 'Iamport']
 
-EATPLE_API_URL = 'https://api.iamport.kr/'
+IAMPORT_API_URL = 'https://api.iamport.kr/'
+
+# IAMPORT
+IAMPORT_API_KEY = '8060686596108918'
+IAMPORT_API_SECRET_KEY = 'Ag2i32vX2b0H4Cc4hl76jdZI8fYaMqOnHRGKTbIWnIDslPwDbDJvQJdZZcaMCY9kPP5I1NEpvhRQ7nui'
 
 
 class Iamport(object):
-    def __init__(self, imp_key, imp_secret, imp_url=EATPLE_API_URL):
+    def __init__(self, imp_key=IAMPORT_API_KEY, imp_secret=IAMPORT_API_SECRET_KEY, imp_url=IAMPORT_API_URL):
         self.imp_key = imp_key
         self.imp_secret = imp_secret
         self.imp_url = imp_url

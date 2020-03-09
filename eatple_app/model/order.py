@@ -2,6 +2,7 @@
 from eatple_app.define import *
 
 from eatple_app.apis.slack.slack_logger import SlackLogPayOrder, SlackLogCancelOrder
+
 # Django Library
 from django.urls import reverse
 from django.db import models
@@ -10,10 +11,12 @@ from django_mysql.models import Model
 
 from eatple_app.model.orderRecord import OrderRecordSheet, OrderRecord
 
+from eatple_app.module_kakao.kakaoPay import *
+from eatple_app.module_iamport.iamport import *
+
 
 def iamportOrderValidation(order):
-    iamport = Iamport(imp_key=EATPLE_API_KEY,
-                      imp_secret=EATPLE_API_SECRET_KEY)
+    iamport = Iamport()
     try:
         response = iamport.find(merchant_uid=order.order_id)
     except KeyError:
@@ -44,8 +47,7 @@ def iamportOrderValidation(order):
 
 
 def iamportOrderCancel(order, description='주문취소'):
-    iamport = Iamport(imp_key=EATPLE_API_KEY,
-                      imp_secret=EATPLE_API_SECRET_KEY)
+    iamport = Iamport()
 
     try:
         response = iamport.cancel(description, merchant_uid=order.order_id)
@@ -59,12 +61,24 @@ def iamportOrderCancel(order, description='주문취소'):
 
 
 def kakaoPayOrderValidation(order):
-    return None
+    try:
+        response = KakaoPay().OrderStatus(tid=order.order_kakaopay.tid)
+    except Order.order_kakaopay.RelatedObjectDoesNotExist as ex:
+        if(order.payment_status != EATPLE_ORDER_STATUS_FAILED):
+            order.payment_status = EATPLE_ORDER_STATUS_NOT_PUSHED
+            order.save()
+
+            return order
+
+    return order
+
 
 def kakaoPayOrderCancel(order):
     return False
 
 # @PROMOTION
+
+
 def promotionOrderUpdate(order):
     paymentDate = dateByTimeZone(order.payment_date)
     paymentDateWithoutTime = paymentDate.replace(
@@ -510,7 +524,7 @@ class Order(models.Model):
                 isCancelled = iamportOrderCancel(self)
             else:
                 isCancelled = kakaoPayOrderCancel(self)
-                
+
         if(isCancelled):
             # Order Record
             try:

@@ -26,8 +26,6 @@ from eatple_app.views import *
 
 @csrf_exempt
 def GET_KAKAO_PAY_OrderSheet(request):
-    print(request)
-
     try:
         ordersheet_id = request.GET.get('ordersheet_id')
         zip_code = request.GET.get('zip_code')
@@ -49,7 +47,7 @@ def GET_KAKAO_PAY_OrderSheet(request):
     try:
         approval_url = 'https://admin.eatple.com/payment/approve'
         encoded_approval_url = urllib.parse.quote(approval_url)
-        
+
         data = {
             'rest_api_key': KAKAO_REST_API_KEY,
             'cid': KAKAO_PAY_CID,

@@ -22,7 +22,6 @@ from eatple_app.system.model_type import *
 from eatple_app.system.timeSheet import *
 from eatple_app.system.slack import *
 from eatple_app.system.kakao import *
-from eatple_app.system.iamport import *
 
 ###########################################################################################
 # System Variable

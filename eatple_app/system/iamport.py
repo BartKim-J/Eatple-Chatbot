@@ -1,5 +1,0 @@
-from eatple_app.module_iamport.Iamport import Iamport
-
-# IAMPORT
-EATPLE_API_KEY = '8060686596108918'
-EATPLE_API_SECRET_KEY = 'Ag2i32vX2b0H4Cc4hl76jdZI8fYaMqOnHRGKTbIWnIDslPwDbDJvQJdZZcaMCY9kPP5I1NEpvhRQ7nui'

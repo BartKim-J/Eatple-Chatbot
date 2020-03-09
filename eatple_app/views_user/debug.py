@@ -27,6 +27,7 @@ from eatple_app.views_system.debugger import *
 #
 # # # # # # # # # # # # # # # # # # # # # # # # #
 
+
 def kakaoView_Debug(kakaoPayload):
     """
         Default Variable Define

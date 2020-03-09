@@ -26,7 +26,6 @@ from eatple_app.views import *
 
 @csrf_exempt
 def GET_KAKAO_PAY_OrderStatus(request):
-    print(request)
     try:
         order_id = request.GET.get('order_id')
     except Exception as ex:
