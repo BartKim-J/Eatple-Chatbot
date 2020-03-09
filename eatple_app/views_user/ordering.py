@@ -697,15 +697,13 @@ def kakaoView_OrderPaymentCheck(kakaoPayload):
 
         buttons = [
             {
-                'action': 'webLink',
-                'label': '결제하러 가기   ➔',
+                'action': 'osLink',
+                'label': '원클릭 결제하기',
                 'messageText': KAKAO_EMOJI_LOADING,
-                'extra': dataActionExtra,
-
-                'webLinkUrl': '{server_url}/payment?merchant_uid={merchant_uid}'.format(
-                    server_url=server_url,
-                    merchant_uid=order.order_id,
-                )
+                'osLink': {
+                    'android': oneclick_url,
+                    'ios': oneclick_url,
+                },
             },
             {
                 'action': 'block',

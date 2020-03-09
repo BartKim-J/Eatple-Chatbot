@@ -71,7 +71,7 @@ def kakaoPayOrderValidation(order):
             return order
 
     kakaoPayStatus = json.loads(response.text)['status']
-
+    print("카카오 주문 상태 : ", kakaoPayStatus)
     if(
         kakaoPayStatus == 'READY' or
         kakaoPayStatus == 'SEND_TMS' or
@@ -83,7 +83,7 @@ def kakaoPayOrderValidation(order):
     ):
         order.payment_status = EATPLE_ORDER_STATUS_NOT_PUSHED
     elif(kakaoPayStatus == 'SUCCESS_PAYMENT'):
-        order.payment_status = EATPLE_ORDER_STATUS_NOT_PUSHED
+        order.payment_status = EATPLE_ORDER_STATUS_PAID
     elif(
         kakaoPayStatus == 'CANCEL_PAYMENT' or
         kakaoPayStatus == 'PART_CANCEL_PAYMENT'
@@ -103,7 +103,20 @@ def kakaoPayOrderValidation(order):
 
 
 def kakaoPayOrderCancel(order):
-    return False
+    try:
+        response = KakaoPay().OrderCancel(
+            tid=order.order_kakaopay.tid,
+            cancel_amount=order.totalPrice,
+            cancel_tax_free_amount=0,
+        )
+        print(response)
+    except Order.order_kakaopay.RelatedObjectDoesNotExist as ex:
+        if(order.payment_status != EATPLE_ORDER_STATUS_FAILED):
+            order.payment_status = EATPLE_ORDER_STATUS_NOT_PUSHED
+            order.save()
+
+            return order
+
 
 # @PROMOTION
 
@@ -557,7 +570,7 @@ class Order(models.Model):
 
             isCancelled = True
         else:
-            if(order.payment_type == ORDER_PAYMENT_INI_PAY):
+            if(self.payment_type == ORDER_PAYMENT_INI_PAY):
                 isCancelled = iamportOrderCancel(self)
             else:
                 isCancelled = kakaoPayOrderCancel(self)
