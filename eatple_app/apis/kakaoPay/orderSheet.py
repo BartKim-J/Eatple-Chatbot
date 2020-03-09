@@ -36,10 +36,7 @@ def GET_KAKAO_PAY_OrderSheet(request):
     try:
         order = Order.objects.get(order_id=ordersheet_id)
     except:
-        # @TODO: Error Case
-        #order = None
-        order = Order.objects.filter(
-            ~Q(menu=None) & Q(totalPrice__lte=1000) & Q(totalPrice__gte=100)).first()
+        order = None
 
     if(order == None):
         return JsonResponse({'status': 300, })
@@ -63,11 +60,15 @@ def GET_KAKAO_PAY_OrderSheet(request):
             'total_amount': order.totalPrice,
             'tax_free_amount': 0,
 
-            'approval_url':  "https://talk-plugin.kakao.com/kakaopay/callback?approval_url={encoded_approval_url}".format(
+            'approval_url':  'https://talk-plugin.kakao.com/kakaopay/callback?approval_url={encoded_approval_url}'.format(
                 encoded_approval_url=encoded_approval_url
             ),
-            # 'cancel_url':  "https://plus.kakao.com/talk/bot/@eatple/잇플패스%20확인",
-            # 'fail_url':  "https://plus.kakao.com/talk/bot/@eatple/잇플패스%20확인",
+            'cancel_url':  'https://talk-plugin.kakao.com/kakaopay/callback?approval_url={encoded_approval_url}'.format(
+                encoded_approval_url=encoded_approval_url
+            ),
+            'fail_url':  'https://talk-plugin.kakao.com/kakaopay/callback?approval_url={encoded_approval_url}'.format(
+                encoded_approval_url=encoded_approval_url
+            ),
 
             'use_shipping': False,
 

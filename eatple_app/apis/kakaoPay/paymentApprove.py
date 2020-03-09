@@ -36,14 +36,18 @@ def GET_KAKAO_PAY_PaymentApprove(request):
         return JsonResponse({'status': 400, })
 
     try:
-        order = Order.objects.get(order_id=partner_order_id)
+        order = Order.objects.get(order_id=order_id)
     except:
-        # @TODO: Error Case
-        #order = None
-        order = Order.objects.filter(
-            ~Q(menu=None) & Q(totalPrice__lte=1000) & Q(totalPrice__gte=100)).first()
+        order = None
 
     if(order == None):
+        return JsonResponse({'status': 400, })
+
+    try:
+        order = order.order_kakaopay.approve(
+            order.order_kakaopay.tid, pg_token)
+    except Exception as ex:
+        print(ex)
         return JsonResponse({'status': 400, })
 
     try:
@@ -51,10 +55,9 @@ def GET_KAKAO_PAY_PaymentApprove(request):
             tid=order.order_kakaopay.tid,
             order_id=order.order_id,
             user_id=order.ordersheet.user.app_user_id,
-            pg_token=pg_token,
+            pg_token=order.order_kakaopay.pg_token,
             total_amount=order.totalPrice,
         )
-        print(kakaoResponse.text)
     except Exception as ex:
         print(ex)
         return JsonResponse({'status': 400, })

@@ -31,7 +31,7 @@ class KakaoPayInline(admin.StackedInline):
     model = Order_KakaoPay
     extra = 0
 
-    readonly_fields = ('tid', )
+    readonly_fields = ('tid', 'pg_token', )
 
 
 class OrderShareFlagFilter(SimpleListFilter):

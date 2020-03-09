@@ -70,6 +70,35 @@ def kakaoPayOrderValidation(order):
 
             return order
 
+    kakaoPayStatus = json.loads(response.text)['status']
+
+    if(
+        kakaoPayStatus == 'READY' or
+        kakaoPayStatus == 'SEND_TMS' or
+        kakaoPayStatus == 'OPEN_PAYMENT' or
+        kakaoPayStatus == 'SELECT_METHOD' or
+        kakaoPayStatus == 'ARS_WAITING' or
+        kakaoPayStatus == 'AUTH_PASSWORD' or
+        kakaoPayStatus == 'FAIL_AUTH_PASSWORD'
+    ):
+        order.payment_status = EATPLE_ORDER_STATUS_NOT_PUSHED
+    elif(kakaoPayStatus == 'SUCCESS_PAYMENT'):
+        order.payment_status = EATPLE_ORDER_STATUS_NOT_PUSHED
+    elif(
+        kakaoPayStatus == 'CANCEL_PAYMENT' or
+        kakaoPayStatus == 'PART_CANCEL_PAYMENT'
+    ):
+        order.payment_status = EATPLE_ORDER_STATUS_CANCELLED
+    elif(
+        kakaoPayStatus == 'QUIT_PAYMENT' or
+        kakaoPayStatus == 'FAIL_PAYMENT'
+    ):
+        order.payment_status = EATPLE_ORDER_STATUS_FAILED
+    else:
+        order.payment_status = EATPLE_ORDER_STATUS_FAILED
+
+    order.save()
+
     return order
 
 
@@ -370,8 +399,16 @@ class Order_KakaoPay(models.Model):
         verbose_name="고유 주문 번호( TID )"
     )
 
-    def approve(self, tid):
+    pg_token = models.CharField(
+        max_length=MANAGEMENT_CODE_LENGTH,
+        blank=True,
+        null=True,
+        verbose_name="PG사 주문별 토큰"
+    )
+
+    def approve(self, tid, pg_token=None):
         self.tid = tid
+        self.pg_token = pg_token
         self.save()
 
         return self

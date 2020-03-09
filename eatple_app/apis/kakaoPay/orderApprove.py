@@ -39,10 +39,7 @@ def GET_KAKAO_PAY_OrderApprove(request):
     try:
         order = Order.objects.get(order_id=partner_order_id)
     except:
-        # @TODO: Error Case
-        #order = None
-        order = Order.objects.filter(
-            ~Q(menu=None) & Q(totalPrice__lte=1000) & Q(totalPrice__gte=100)).first()
+        order = None
 
     if(order == None):
         return JsonResponse({'status': 400, })
