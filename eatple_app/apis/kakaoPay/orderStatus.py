@@ -126,7 +126,7 @@ def GET_KAKAO_PAY_OrderStatus(request):
         elif(
             kakaoPayStatus == 'ZID_CERTIFICATE'
         ):
-            order_status = 'F'
+            order_status = 'W'
             message = '카카오 서버로부터 응답이 없습니다.'
             order.payment_status = EATPLE_ORDER_STATUS_FAILED
         else:

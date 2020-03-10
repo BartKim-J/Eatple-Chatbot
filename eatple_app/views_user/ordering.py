@@ -32,6 +32,7 @@ DEFAULT_DISTANCE_UNDER_FLAG = True
 #
 # # # # # # # # # # # # # # # # # # # # # # # # #
 
+
 def kakaoView_TimeOut(blockId):
     kakaoForm = KakaoForm()
 
@@ -54,7 +55,7 @@ def kakaoView_TimeOut(blockId):
     )
 
     return JsonResponse(kakaoForm.GetForm())
-    
+
 # B2C
 
 
@@ -149,8 +150,12 @@ def kakaoView_MenuListup(kakaoPayload):
     if(distance_under_flag):
         menuList = menuList.filter(
             Q(distance__lt=distance_condition) |
-            Q(tag__name="픽업존")
+            (
+                ~Q(distance__lt=distance_condition) &
+                ~Q(tag__name="픽업존")
+            )
         )
+
     else:
         menuList = menuList.filter(
             Q(distance__gte=distance_condition) &
@@ -167,6 +172,7 @@ def kakaoView_MenuListup(kakaoPayload):
 
         # Menu Carousel Card Add
         for menu in menuList:
+            print(menu.menu_id, menu.name)
             currentStock = menu.getCurrentStock()
 
             if(menu.max_stock > menu.current_stock and menu.store.status == STORE_OC_OPEN):
