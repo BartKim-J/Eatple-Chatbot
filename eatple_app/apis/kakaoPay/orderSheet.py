@@ -45,10 +45,7 @@ def GET_KAKAO_PAY_OrderSheet(request):
     elif(order.payment_status == EATPLE_ORDER_STATUS_CANCELLED):
         message = '이미 환불한 주문번호입니다.'
         return JsonResponse({'status': 300, })
-    elif(order.payment_status == EATPLE_ORDER_STATUS_FAILED):
-        message = '이미 실패한 주문번호입니다.'
-        return JsonResponse({'status': 300, })
-        
+
     order.payment_type = ORDER_PAYMENT_KAKAO_PAY
     order.save()
 

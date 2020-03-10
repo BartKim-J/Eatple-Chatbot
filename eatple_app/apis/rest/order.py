@@ -106,19 +106,25 @@ class OrderValidation(viewsets.ModelViewSet):
         except Order.DoesNotExist:
             order = None
 
-        # Order Payment Type Setup to INI Pay
-        order.payment_type = ORDER_PAYMENT_INI_PAY
-        order.save()
-
+        print(order.payment_status)
+        print(order.payment_type)
         if(order == None or order.payment_status == EATPLE_ORDER_STATUS_FAILED):
             response['error_code'] = ORDER_203_ORDER_ID_INVALID.code
             response['error_msg'] = ORDER_203_ORDER_ID_INVALID.message
+            return Response(response)
+        elif(order.payment_status == EATPLE_ORDER_STATUS_PAID):
+            response['error_code'] = ORDER_204_ALREADY_PAID.code
+            response['error_msg'] = ORDER_204_ALREADY_PAID.message
             return Response(response)
         elif(order.payment_status == EATPLE_ORDER_STATUS_CANCELLED):
             response['error_code'] = ORDER_205_ALREADY_CANCELLED.code
             response['error_msg'] = ORDER_205_ALREADY_CANCELLED.message
             return Response(response)
         else:
+            # Order Payment Type Setup to INI Pay
+            order.payment_type = ORDER_PAYMENT_INI_PAY
+            order.save()
+
             beforeOrderStatus = order.payment_status
             order.orderStatusUpdate()
 
@@ -206,6 +212,16 @@ class OrderInformation(viewsets.ModelViewSet):
         if(order == None or order.payment_status == EATPLE_ORDER_STATUS_FAILED):
             response['error_code'] = ORDER_203_ORDER_ID_INVALID.code
             response['error_msg'] = ORDER_203_ORDER_ID_INVALID.message
+            return Response(response)
+
+        if(order.payment_status == EATPLE_ORDER_STATUS_PAID):
+            response['error_code'] = ORDER_204_ALREADY_PAID.code
+            response['error_msg'] = ORDER_204_ALREADY_PAID.message
+            return Response(response)
+
+        if(order.payment_status == EATPLE_ORDER_STATUS_CANCELLED):
+            response['error_code'] = ORDER_205_ALREADY_CANCELLED.code
+            response['error_msg'] = ORDER_205_ALREADY_CANCELLED.message
             return Response(response)
 
         # Account Check

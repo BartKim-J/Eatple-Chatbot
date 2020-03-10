@@ -111,9 +111,10 @@ def GET_KAKAO_PAY_OrderStatus(request):
 
                 ):
                     order.payment_status = EATPLE_ORDER_STATUS_NOT_PUSHED
-                elif(
-                    int(approveResponse['code']) == -702
-                ):
+                elif(approveResponse['extras']['method_result_code'] == '9999'):
+                    order.payment_status = EATPLE_ORDER_STATUS_NOT_PUSHED
+                    message = "계좌에 잔액이 부족하거나, 한도가 초과되었습니다."
+                elif(int(approveResponse['code']) == -702):
                     order_status = 'S'
                     message = "이미 결제가 완료되었습니다."
                     order.payment_status = EATPLE_ORDER_STATUS_PAID
@@ -126,7 +127,7 @@ def GET_KAKAO_PAY_OrderStatus(request):
             kakaoPayStatus == 'ZID_CERTIFICATE'
         ):
             order_status = 'F'
-            message = '카카코 서버로부터 응답이 없습니다.'
+            message = '카카오 서버로부터 응답이 없습니다.'
             order.payment_status = EATPLE_ORDER_STATUS_FAILED
         else:
             order_status = 'F'
