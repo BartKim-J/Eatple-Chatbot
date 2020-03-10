@@ -36,10 +36,10 @@ def GET_KAKAO_PAY_OrderSheet(request):
     try:
         order = Order.objects.get(order_id=ordersheet_id)
     except:
-        order = None
-
-    if(order == None):
         return JsonResponse({'status': 300, })
+
+    order.payment_type = ORDER_PAYMENT_KAKAO_PAY
+    order.save()
 
     try:
         approval_url = 'https://admin.eatple.com/payment/approve'

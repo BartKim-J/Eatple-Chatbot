@@ -574,6 +574,16 @@ def kakaoView_OrderPayment(kakaoPayload):
                 'ios': oneclick_url,
             },
         },
+        {
+            'action': 'webLink',
+            'label': '웹으로 결제하기',
+            'messageText': KAKAO_EMOJI_LOADING,
+            'extra': dataActionExtra,
+            'webLinkUrl': '{server_url}/payment?merchant_uid={merchant_uid}'.format(
+                server_url=server_url,
+                merchant_uid=order.order_id,
+            )
+        },
     ]
 
     kakaoForm.ComerceCard_Push(
@@ -697,7 +707,7 @@ def kakaoView_OrderPaymentCheck(kakaoPayload):
             api_id=KAKAO_PAY_ONE_CLICK_API_ID,
             order_id=order.order_id
         )
-        
+
         buttons = [
             {
                 'action': 'osLink',
@@ -707,6 +717,16 @@ def kakaoView_OrderPaymentCheck(kakaoPayload):
                     'android': oneclick_url,
                     'ios': oneclick_url,
                 },
+            },
+            {
+                'action': 'webLink',
+                'label': '웹으로 결제하기',
+                'messageText': KAKAO_EMOJI_LOADING,
+                'extra': dataActionExtra,
+                'webLinkUrl': '{server_url}/payment?merchant_uid={merchant_uid}'.format(
+                    server_url=server_url,
+                    merchant_uid=order.order_id,
+                )
             },
             {
                 'action': 'block',
@@ -761,7 +781,7 @@ def kakaoView_EatplePassIssuance(kakaoPayload):
             return errorView('주문 상태 확인', '정상적이지 않은 경로거나 이미 발급이 완료되었어요!')
         else:
             pass
-            #order.orderStatusUpdate()
+            # order.orderStatusUpdate()
 
         store = storeValidation(kakaoPayload)
         menu = menuValidation(kakaoPayload)
