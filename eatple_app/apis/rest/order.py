@@ -106,7 +106,9 @@ class OrderValidation(viewsets.ModelViewSet):
         except Order.DoesNotExist:
             order = None
 
+        # Order Payment Type Setup to INI Pay
         order.payment_type = ORDER_PAYMENT_INI_PAY
+        order.save()
 
         if(order == None or order.payment_status == EATPLE_ORDER_STATUS_FAILED):
             response['error_code'] = ORDER_203_ORDER_ID_INVALID.code

@@ -99,12 +99,34 @@ def eatplePass(order, ownEatplePass, delegatedEatplePassCount, delegatedEatplePa
             # @TODO
             pass
 
+        menuList = Menu.objects.filter(
+            Q(store=order.store) &
+            Q(status=OC_OPEN)
+        )
+
+        orderMenuStatus = []
+        menuNameList = ''
+
+        for menu in menuList:
+            orderMenuStatus.append(dict({
+                'name': menu.name,
+                'count': delegatedEatplePass.filter(Q(menu=menu)).count() + ownEatplePass.filter(Q(menu=menu)).count()
+            }))
+
+        for status in orderMenuStatus:
+            if(status['count'] > 0):
+                menuNameList += ' - {} {}개\n'.format(
+                    status['name'], status['count'])
+            else:
+                pass
+
         kakaoForm.BasicCard_Push(
-            '{}'.format(order.menu.name),
-            '주문번호: {}\n - 주문자: {}\n - 총 잇플패스 : {}개\n\n - 매장: {}\n - 주문 상태: {}\n\n - 픽업 시간: {}'.format(
+            '총 잇플패스 : {}개'.format(
+                delegatedEatplePass.count() + ownEatplePass.count()),
+            '주문번호: {}\n - 주문자: {}\n\n메뉴 내역\n{}\n - 주문 상태: {}\n\n - 픽업 시간: {}'.format(
                 order.order_id,
                 nicknameList,
-                delegatedEatplePass.count() + ownEatplePass.count(),
+                menuNameList,
                 order.store.addr,
                 pickupTimeStr,
                 dict(ORDER_STATUS)[order.status]

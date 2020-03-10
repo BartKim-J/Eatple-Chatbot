@@ -86,7 +86,7 @@ def kakaoPayOrderValidation(order):
     ):
         if(order.payment_status != EATPLE_ORDER_STATUS_FAILED):
             order.payment_status = EATPLE_ORDER_STATUS_NOT_PUSHED
-        
+
     elif(kakaoPayStatus == 'SUCCESS_PAYMENT'):
         order.payment_status = EATPLE_ORDER_STATUS_PAID
     elif(
@@ -209,8 +209,10 @@ def orderUpdate(order):
         else:
             if(order.payment_type == ORDER_PAYMENT_INI_PAY):
                 order = iamportOrderValidation(order)
-            else:
+            elif(order.payment_type == ORDER_PAYMENT_KAKAO_PAY):
                 order = kakaoPayOrderValidation(order)
+            else:
+                order = iamportOrderValidation(order)
 
     # Payment State Update
     if(order.payment_status == EATPLE_ORDER_STATUS_CANCELLED):
@@ -391,8 +393,6 @@ def orderUpdate(order):
         order.status = ORDER_STATUS_ORDER_EXPIRED
 
     order.save()
-
-    print("주문 ID : {}".format(order.order_id))
     return order
 
 
@@ -616,8 +616,7 @@ class Order(models.Model):
         if(self.delegate != None):
             return None
 
-        if(self.menu == order.menu and
-           self.store == order.store and
+        if(self.store == order.store and
            self.pickup_time == order.pickup_time):
 
             self.delegate = order.ordersheet.user
