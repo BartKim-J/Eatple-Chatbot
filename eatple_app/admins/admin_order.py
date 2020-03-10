@@ -70,9 +70,19 @@ class OrderResource(resources.ModelResource):
 
     def dehydrate_payment_status(self, obj):
         return dict(EATPLE_ORDER_STATUS)[obj.payment_status]
+    
+    def dehydrate_payment_type(self, obj):
+        return dict(ORDER_PAYMENT_TYPE)[obj.payment_type]
+    
+    def dehydrate_user_name(self, obj):
+        return obj.ordersheet.user.nickname
 
     def dehydrate_order_date(self, obj):
         return dateByTimeZone(obj.order_date).strftime(
+            '%Y년 %-m월 %-d일')
+
+    def dehydrate_pickup_complete_date(self, obj):
+        return dateByTimeZone(obj.pickup_complete_date).strftime(
             '%Y년 %-m월 %-d일')
 
     def dehydrate_payment_date(self, obj):
@@ -80,6 +90,8 @@ class OrderResource(resources.ModelResource):
             '%Y년 %-m월 %-d일')
 
     order_id = Field(attribute='order_id', column_name='주문번호')
+    user_name = Field(attribute='ordersheet__user__nickname',
+                      column_name='주문자')
     store = Field(attribute='store__name', column_name='상점')
     menu = Field(attribute='menu__name', column_name='메뉴')
     type = Field(column_name='주문 타입')
@@ -89,6 +101,9 @@ class OrderResource(resources.ModelResource):
     phone_number = Field(column_name='전화번호')
     order_date = Field(column_name='주문 시간')
     payment_date = Field(column_name='결제 완료 시간')
+    pickup_complete_date = Field(column_name='픽업 완료 시간')
+    payment_type = Field(column_name='결제 타입')
+    tid = Field(attribute='order_kakaopay__tid', column_name='카카오 고유 주문번호')
 
     class Meta:
         model = Order

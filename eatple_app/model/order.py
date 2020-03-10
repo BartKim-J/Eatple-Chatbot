@@ -228,7 +228,7 @@ def orderUpdate(order):
         print('주문 미결제 또는 진행중')
 
     if(order.payment_status == EATPLE_ORDER_STATUS_FAILED):
-        order.status = order.status
+        order.status = ORDER_STATUS_ORDER_FAILED
         order.save()
         print('주문 실패')
 

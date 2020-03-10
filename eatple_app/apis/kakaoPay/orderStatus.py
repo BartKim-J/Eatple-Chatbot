@@ -41,10 +41,7 @@ def GET_KAKAO_PAY_OrderStatus(request):
     if(order == None):
         return JsonResponse({'status': 300, })
 
-    if(
-        order.payment_status == EATPLE_ORDER_STATUS_NOT_PUSHED and
-        order.order_kakaopay.pg_token != None
-    ):
+    if(order.order_kakaopay.pg_token != None):
         try:
             response = KakaoPay().OrderApprove(
                 tid=order.order_kakaopay.tid,
@@ -68,7 +65,7 @@ def GET_KAKAO_PAY_OrderStatus(request):
 
     try:
         kakaoPayStatus = json.loads(response.text)['status']
-        print(kakaoPayStatus)
+        print(json.loads(response.text))
 
         if(
             kakaoPayStatus == 'READY' or
@@ -80,18 +77,8 @@ def GET_KAKAO_PAY_OrderStatus(request):
             order_status = 'W'
             message = '결제가 진행중입니다.'
         elif(kakaoPayStatus == 'AUTH_PASSWORD'):
-            if(order.payment_status == EATPLE_ORDER_STATUS_PAID):
-                order_status = 'S'
-                message = '이미 결제가 완료되었습니다.'
-            elif(order.payment_status == EATPLE_ORDER_STATUS_CANCELLED):
-                order_status = 'S'
-                message = '이미 환불한 주문번호입니다.'
-            elif(order.payment_status == EATPLE_ORDER_STATUS_FAILED):
-                order_status = 'S'
-                message = '이미 실패한 주문번호입니다.'
-            else:
-                order_status = 'W'
-                message = '유저 인증이 완료되었습니다.'
+            order_status = 'W'
+            message = '유저 인증이 완료되었습니다.'
         elif(
             kakaoPayStatus == 'SUCCESS_PAYMENT'
         ):
@@ -117,8 +104,11 @@ def GET_KAKAO_PAY_OrderStatus(request):
             if(order.order_kakaopay.pg_token != None):
                 message = approveResponse['extras']['method_result_message']
                 if(
+                    # 계좌 잔액부족
                     approveResponse['extras']['method_result_code'] == 'LACK_BALANCE' or
-                    approveResponse['extras']['method_result_code'] =='8326'#사용한도초과
+                    # 사용한도초과
+                    approveResponse['extras']['method_result_code'] == '8326'
+
                 ):
                     order.payment_status = EATPLE_ORDER_STATUS_NOT_PUSHED
                 elif(
@@ -132,11 +122,17 @@ def GET_KAKAO_PAY_OrderStatus(request):
             else:
                 message = '결제에 실패했습니다.'
                 order.payment_status = EATPLE_ORDER_STATUS_FAILED
+        elif(
+            kakaoPayStatus == 'ZID_CERTIFICATE'
+        ):
+            order_status = 'F'
+            message = '카카코 서버로부터 응답이 없습니다.'
+            order.payment_status = EATPLE_ORDER_STATUS_FAILED
         else:
             order_status = 'F'
             message = '잘못된 경로에 진입했습니다.'
             order.payment_status = EATPLE_ORDER_STATUS_FAILED
-        
+
         order.save()
     except Exception as ex:
         print(ex)

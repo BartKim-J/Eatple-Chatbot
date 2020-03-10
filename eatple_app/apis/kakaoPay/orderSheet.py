@@ -26,6 +26,7 @@ from eatple_app.views import *
 
 @csrf_exempt
 def GET_KAKAO_PAY_OrderSheet(request):
+    print(request)
     try:
         ordersheet_id = request.GET.get('ordersheet_id')
         zip_code = request.GET.get('zip_code')
@@ -38,6 +39,16 @@ def GET_KAKAO_PAY_OrderSheet(request):
     except:
         return JsonResponse({'status': 300, })
 
+    if(order.payment_status == EATPLE_ORDER_STATUS_PAID):
+        message = '이미 결제가 완료되었습니다.'
+        return JsonResponse({'status': 300, })
+    elif(order.payment_status == EATPLE_ORDER_STATUS_CANCELLED):
+        message = '이미 환불한 주문번호입니다.'
+        return JsonResponse({'status': 300, })
+    elif(order.payment_status == EATPLE_ORDER_STATUS_FAILED):
+        message = '이미 실패한 주문번호입니다.'
+        return JsonResponse({'status': 300, })
+        
     order.payment_type = ORDER_PAYMENT_KAKAO_PAY
     order.save()
 

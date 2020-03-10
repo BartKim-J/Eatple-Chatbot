@@ -32,6 +32,29 @@ DEFAULT_DISTANCE_UNDER_FLAG = True
 #
 # # # # # # # # # # # # # # # # # # # # # # # # #
 
+def kakaoView_TimeOut(blockId):
+    kakaoForm = KakaoForm()
+
+    QUICKREPLIES_MAP = [
+        {
+            'action': 'block',
+            'label': '🏠 홈',
+            'messageText': KAKAO_EMOJI_LOADING,
+            'blockId': KAKAO_BLOCK_USER_HOME,
+            'extra': {
+                KAKAO_PARAM_PREV_BLOCK_ID: blockId
+            }
+        },
+    ]
+
+    kakaoForm.QuickReplies_AddWithMap(QUICKREPLIES_MAP)
+
+    kakaoForm.SimpleText_Add(
+        '주문시간이 초과되었습니다.'
+    )
+
+    return JsonResponse(kakaoForm.GetForm())
+    
 # B2C
 
 
