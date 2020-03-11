@@ -18,6 +18,8 @@ from eatple_app.module_kakao.kakaoPay import *
 from eatple_app.module_kakao.form import *
 from eatple_app.module_kakao.validation import *
 
+from eatple_app.apis.rest.validation import *
+
 # View-System
 from eatple_app.views_system.debugger import *
 

@@ -30,6 +30,7 @@ from rest_framework import permissions
 
 from eatple_app.apis.rest.serializer import OrderSerializer
 
+
 class OrderValidation(viewsets.ModelViewSet):
     queryset = Order.objects.all()
     serializer_class = OrderSerializer
@@ -100,19 +101,16 @@ class OrderValidation(viewsets.ModelViewSet):
 
         # Eatple Pass Check
         eatplePassStatus = eatplePassValidation(user)
-
         if(eatplePassStatus):
-            if(
-                order.payment_status == EATPLE_ORDER_STATUS_PAID and
-                order.order_id == eatplePass.order_id
-            ):
+            if(order.payment_status == EATPLE_ORDER_STATUS_PAID):
                 if(beforeOrderStatus != EATPLE_ORDER_STATUS_PAID):
                     response['error_code'] = ORDER_100_SUCCESS.code
                     response['error_msg'] = ORDER_100_SUCCESS.message
                     return Response(response)
                 else:
-                    response['error_code'] = ORDER_204_ALREADY_PAID.code
+                    #response['error_code'] = ORDER_204_ALREADY_PAID.code
                     # response['error_msg']  = 'ORDER_204_ALREADY_PAID.message
+                    response['error_code'] = ORDER_100_SUCCESS.code
                     response['error_msg'] = ORDER_100_SUCCESS.message
                     return Response(response)
         else:
@@ -121,12 +119,9 @@ class OrderValidation(viewsets.ModelViewSet):
             return Response(response)
 
         # Time Check
-        if(ORDER_TIME_CHECK_DEBUG_MODE):
-            currentSellingTime = order.menu.selling_time
-            isClosedDay = False
-        else:
-            currentSellingTime = sellingTimeCheck()
-            isClosedDay = weekendTimeCheck()
+        """
+        currentSellingTime = sellingTimeCheck()
+        isClosedDay = weekendTimeCheck()
 
         if(currentSellingTime != order.menu.selling_time or isClosedDay == True):
             response['error_code'] = ORDER_206_SELLING_TIME_INVALID.code
@@ -138,6 +133,7 @@ class OrderValidation(viewsets.ModelViewSet):
             response['error_code'] = ORDER_206_SELLING_TIME_INVALID.code
             response['error_msg'] = ORDER_206_SELLING_TIME_INVALID.message
             return Response(response)
+        """
 
         response['error_code'] = ORDER_200_VALID.code
         response['error_msg'] = ORDER_200_VALID.message

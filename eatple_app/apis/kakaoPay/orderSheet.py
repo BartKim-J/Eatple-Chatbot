@@ -47,28 +47,26 @@ def GET_KAKAO_PAY_OrderSheet(request):
             message = '유효하지 않는 유저입니다.'
             return JsonResponse({'status': 400, 'message': message})
 
+        if(order.payment_status == EATPLE_ORDER_STATUS_PAID):
+            message = '이미 결제가 완료되었습니다.'
+            return JsonResponse({'status': 300, 'message': message})
+        elif(order.payment_status == EATPLE_ORDER_STATUS_CANCELLED):
+            message = '이미 환불한 주문번호입니다.'
+            return JsonResponse({'status': 300, 'message': message})
+
         # Eatple Pass Check
         eatplePassStatus = eatplePassValidation(user)
-
         if(eatplePassStatus):
-            if(order.payment_status == EATPLE_ORDER_STATUS_PAID):
-                message = '이미 결제가 완료되었습니다.'
-                return JsonResponse({'status': 300, 'message': message})
-            elif(order.payment_status == EATPLE_ORDER_STATUS_CANCELLED):
-                message = '이미 환불한 주문번호입니다.'
-                return JsonResponse({'status': 300, 'message': message})
+            pass
         else:
             message = '이미 다른 주문을 하셨습니다.'
             return JsonResponse({'status': 300, 'message': message})
 
         # Time Check
-        if(ORDER_TIME_CHECK_DEBUG_MODE):
-            currentSellingTime = order.menu.selling_time
-            isClosedDay = False
-        else:
-            currentSellingTime = sellingTimeCheck()
-            isClosedDay = weekendTimeCheck()
+        currentSellingTime = sellingTimeCheck()
+        isClosedDay = weekendTimeCheck()
 
+        """
         if(currentSellingTime != order.menu.selling_time or isClosedDay == True):
             message = '현재 주문 가능시간이 아닙니다.'
             return JsonResponse({'status': 301, 'message': message})
@@ -76,6 +74,7 @@ def GET_KAKAO_PAY_OrderSheet(request):
         if(order.store.status != OC_OPEN or order.menu.status != OC_OPEN):
             message = '현재 주문 가능시간이 아닙니다.'
             return JsonResponse({'status': 301, 'message': message})
+        """
 
         order.payment_type = ORDER_PAYMENT_KAKAO_PAY
         order.save()
