@@ -114,7 +114,6 @@ class OrderValidation(viewsets.ModelViewSet):
         currentSellingTime = sellingTimeCheck()
         isClosedDay = weekendTimeCheck()
 
-        """
         if(currentSellingTime != order.menu.selling_time or isClosedDay == True):
             response['error_code'] = ORDER_206_SELLING_TIME_INVALID.code
             response['error_msg'] = ORDER_206_SELLING_TIME_INVALID.message
@@ -125,7 +124,6 @@ class OrderValidation(viewsets.ModelViewSet):
             response['error_code'] = ORDER_206_SELLING_TIME_INVALID.code
             response['error_msg'] = ORDER_206_SELLING_TIME_INVALID.message
             return Response(response)
-        """
 
         response['error_code'] = ORDER_200_VALID.code
         response['error_msg'] = ORDER_200_VALID.message

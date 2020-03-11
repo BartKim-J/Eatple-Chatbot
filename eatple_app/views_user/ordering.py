@@ -614,10 +614,12 @@ def kakaoView_OrderPayment(kakaoPayload):
         },
     ]
 
+    discount = 500
+    
     kakaoForm.ComerceCard_Push(
         menu.description,
-        menu.price,
-        None,
+        menu.price + discount,
+        discount,
         thumbnails,
         profile,
         buttons
