@@ -25,15 +25,10 @@ def iamportOrderValidation(order):
     except Iamport.ResponseError as e:
         order.payment_status = EATPLE_ORDER_STATUS_FAILED
         order.save()
-        # print(e.code)
-        # print(e.message)
 
         return order
 
     except Iamport.HttpError as http_error:
-        # print(http_error.code)
-        # print(http_error.reason)
-
         if(order.payment_status != EATPLE_ORDER_STATUS_FAILED):
             order.payment_status = EATPLE_ORDER_STATUS_NOT_PUSHED
             order.save()

@@ -11,6 +11,7 @@ from django.utils.safestring import mark_safe
 from import_export.admin import ExportActionModelAdmin, ImportExportMixin, ImportMixin
 from import_export import resources
 
+from eatple_app.admins.admin_survey import SurveyAdmin
 from eatple_app.admins.admin_company import CompanyAdmin
 from eatple_app.admins.admin_user import UserAdmin
 from eatple_app.admins.admin_userB2B import UserB2BAdmin
@@ -51,3 +52,5 @@ admin.site.register(User, UserAdmin)
 admin.site.register(UserB2B, UserB2BAdmin)
 
 admin.site.register(Partner, PartnerAdmin)
+
+admin.site.register(Survey, SurveyAdmin)

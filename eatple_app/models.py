@@ -1,3 +1,4 @@
+from eatple_app.model.survey import Survey
 from eatple_app.model.utils import DefaultImage
 
 from eatple_app.model.company import Company, CompanyPlace, CompanyCRN

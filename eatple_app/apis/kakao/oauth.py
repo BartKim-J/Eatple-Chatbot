@@ -32,8 +32,6 @@ def GET_KAKAO_Oauth(request):
     except json.decoder.JSONDecodeError:
         pass
 
-    print(received_json_data)
-
     data = {
         'status': 200
     }

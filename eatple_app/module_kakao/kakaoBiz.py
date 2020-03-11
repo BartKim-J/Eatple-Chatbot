@@ -32,6 +32,7 @@ class KakaoBiz():
             'serverName': LG_CNS_API_ID,
             'paymentType': 'P',
         }
+
         data = {
             'service': LG_CNS_SERVICE_ID,
 
@@ -40,8 +41,6 @@ class KakaoBiz():
 
             'template': '10008',
         }
-
-        print(data)
 
         apiURL = '{shcme}{host}{url}'.format(
             shcme='https://', host=KAKAO_BIZ_HOST_URL, url='/request/kakao.json')

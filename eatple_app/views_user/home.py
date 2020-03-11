@@ -27,9 +27,68 @@ from eatple_app.views_system.debugger import *
 # # # # # # # # # # # # # # # # # # # # # # # # #
 
 
+def surveyForm(kakaoForm):
+    # HEADER
+    if(settings.SETTING_ID == 'DEPLOY'):
+        homeImg = '{}{}'.format(HOST_URL, HOME_HEAD_IMG_URL)
+    else:
+        homeImg = '{}{}'.format(HOST_URL, HOME_HEAD_BLACK_IMG_URL)
+
+    thumbnail = {
+        'imageUrl': homeImg,
+        'fixedRatio': 'false',
+        'width': 800,
+        'height': 800,
+    }
+
+    buttons = [
+        {
+            'action': 'block',
+            'label': '원하는 점포가 없어요',
+            'messageText': KAKAO_EMOJI_LOADING,
+            'blockId': KAKAO_BLOCK_USER_SURVEY_STORE,
+            'extra': {
+                KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_HOME
+            }
+        },
+        {
+            'action': 'block',
+            'label': '음식 종류가 부족해요',
+            'messageText': KAKAO_EMOJI_LOADING,
+            'blockId': KAKAO_BLOCK_USER_SURVEY_CATEGORY,
+            'extra': {
+                KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_HOME
+            }
+        },
+    ]
+
+    kakaoForm.BasicCard_Push(
+        '사용하시는데 불편함이 있으신가요?',
+        '알려주시면 반영해드릴게요!',
+        thumbnail,
+        buttons
+    )
+
+
 def isLocationParam(kakaoPayload):
     try:
         param = kakaoPayload.dataActionParams['location']['origin']
+        return True
+    except (TypeError, AttributeError, KeyError):
+        return False
+
+
+def isSurveyStoreParam(kakaoPayload):
+    try:
+        param = kakaoPayload.dataActionParams['survey_store']['origin']
+        return True
+    except (TypeError, AttributeError, KeyError):
+        return False
+
+
+def isSurveyCategoryParam(kakaoPayload):
+    try:
+        param = kakaoPayload.dataActionParams['survey_category']['origin']
         return True
     except (TypeError, AttributeError, KeyError):
         return False
@@ -121,6 +180,36 @@ def kakaoView_LocationRegistration():
     )
 
 
+def kakaoView_SurveyApply(user, type, answer):
+    EatplusSkillLog('Survey Apply')
+
+    kakaoForm = KakaoForm()
+
+    buttons = [
+        {
+            'action': 'block',
+            'label': '확인',
+            'messageText': KAKAO_EMOJI_LOADING,
+            'blockId': KAKAO_BLOCK_USER_HOME,
+            'extra': {
+                KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_HOME
+            }
+        },
+    ]
+
+    if(Survey().apply(user, type, answer)):
+        KakaoInstantForm().Message(
+            '응답해주셔서 감사합니다.\n전달된 내용은 빠른 시일 내에 반영할게요!',
+            '전달된 내용 - 「 {} 」'.format(answer),
+            buttons=buttons,
+            kakaoForm=kakaoForm,
+        )
+    else:
+        pass
+
+    return JsonResponse(kakaoForm.GetForm())
+
+
 def kakaoView_Home(user, address):
     EatplusSkillLog('Home')
 
@@ -210,6 +299,9 @@ def kakaoView_Home(user, address):
         thumbnail,
         buttons
     )
+
+    surveyForm(kakaoForm)
+
     kakaoForm.BasicCard_Add()
 
     kakaoForm.QuickReplies_AddWithMap(QUICKREPLIES_MAP)
@@ -311,7 +403,7 @@ def kakaoView_B2B_Home(user, address):
     return JsonResponse(kakaoForm.GetForm())
 
 
-def kakaoView_order_Home(user, order, address):
+def kakaoView_Order_Home(user, order, address):
     EatplusSkillLog('Home')
 
     kakaoForm = KakaoForm()
@@ -463,7 +555,7 @@ def kakaoView_Route_Home(user):
     isOrderEnable = (orderCount != 0)
 
     if(isOrderEnable):
-        return kakaoView_order_Home(user, order, address)
+        return kakaoView_Order_Home(user, order, address)
     else:
         if(isB2BUser(user)):
             return kakaoView_B2B_Home(user, address)
@@ -487,9 +579,6 @@ def GET_UserHome(request):
         user = userValidation(kakaoPayload)
         location = userLocationValidation(user)
 
-        #kakaoPay = KakaoPay()
-        # return kakaoPay.PushOrderSheet(user)
-
         # Sign Up
         if(user == None):
             return kakaoView_SignUp()
@@ -510,6 +599,13 @@ def GET_UserHome(request):
             except (RuntimeError, TypeError, NameError, KeyError) as ex:
                 print(ex)
                 return kakaoView_LocationRegistration()
+        # Survey
+        elif(isSurveyStoreParam(kakaoPayload)):
+            answer = kakaoPayload.dataActionParams['survey_store']['origin']
+            return kakaoView_SurveyApply(user, SURVEY_TYPE_STORE, answer)
+        elif(isSurveyCategoryParam(kakaoPayload)):
+            answer = kakaoPayload.dataActionParams['survey_category']['origin']
+            return kakaoView_SurveyApply(user, SURVEY_TYPE_CATEGORY, answer)
         else:
             # Get user profile data from Kakao server
             kakao = Kakao()

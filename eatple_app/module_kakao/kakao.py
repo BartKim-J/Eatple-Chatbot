@@ -31,12 +31,7 @@ class Kakao():
             'target_id': user.app_user_id
         }
 
-        try:
-            kakaoResponse = requests.post(apiURL, data=data, headers=headers)
-
-        except kakaoResponse.HttpError as http_error:
-            print(http_error.code)
-            print(http_error.reason)
+        kakaoResponse = requests.post(apiURL, data=data, headers=headers)
 
         try:
             user.nickname = kakaoResponse.json(
@@ -65,17 +60,7 @@ def getPFriendList(self, user):
         'target_id': user.app_user_id
     }
 
-    try:
-        kakaoResponse = requests.post(apiURL, data=data, headers=headers)
-
-    except kakaoResponse.HttpError as http_error:
-        print(http_error.code)
-        print(http_error.reason)
-
-    #print('Header : ', kakaoResponse.headers)
-    #print('URL : ', kakaoResponse.url)
-    #print('STATUS : ', kakaoResponse.status_code)
-    #print('TEXT : ', kakaoResponse.json()['kakao_account'])
+    kakaoResponse = requests.post(apiURL, data=data, headers=headers)
 
     user.nickname = kakaoResponse.json(
     )['kakao_account']['profile']['nickname']

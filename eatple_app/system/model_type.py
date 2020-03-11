@@ -232,6 +232,17 @@ STORE_AREA = [
     (STORE_AREA_Z_1, '기타 지역'),
 ]
 
+# SURVEY
+SURVEY_TYPE_REQUEST = 'request'
+SURVEY_TYPE_STORE = 'store'
+SURVEY_TYPE_CATEGORY = 'category'
+SURVEY_TYPE_IMPORVEMENTS = 'improvements'
+SURVEY_TYPE = [
+    (SURVEY_TYPE_REQUEST, '요청사항'),
+    (SURVEY_TYPE_IMPORVEMENTS, '개선사항'),
+    (SURVEY_TYPE_STORE, '점포'),
+    (SURVEY_TYPE_CATEGORY, '카테고리'),
+]
 ###########################################################################################
 # Default Value
 # Location
