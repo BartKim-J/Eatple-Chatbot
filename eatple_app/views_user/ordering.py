@@ -182,7 +182,7 @@ def kakaoView_MenuListup(kakaoPayload):
                 if(distance <= distance_condition):
                     walkTime = '약 도보 {} 분'.format(walkTime)
                 elif(delivery):
-                    walkTime = '배달'
+                    walkTime = '픽업존'
                 else:
                     walkTime = '1 ㎞ 이상'
 

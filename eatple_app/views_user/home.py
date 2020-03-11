@@ -192,7 +192,7 @@ def kakaoView_LocationRegistration():
 
     return KakaoInstantForm().Message(
         '잇플은 위치 기반으로 주변 맛집을 추천해드리고 있습니다.',
-        '자주 사용할 위치를 한 번만 등록해주세요!',
+        '자주 사용할 위치를 등록해주세요!\n(패스트파이브 신사점의 경우, 인우빌딩으로 등록해주세요)',
         buttons=buttons,
     )
 
