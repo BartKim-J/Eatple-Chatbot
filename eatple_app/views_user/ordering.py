@@ -235,6 +235,13 @@ def kakaoView_MenuListup(kakaoPayload):
                 sellingOutList.extend(list(Menu.objects.filter(id=menu.id)))
 
         for menu in sellingOutList:
+            delivery = menu.tag.filter(name="픽업존").exists()
+
+            if(delivery):
+                status = '픽업존'
+            else:
+                status = '매진'
+
             kakaoMapUrl = 'https://map.kakao.com/link/map/{name},{place}'.format(
                 name=menu.store.name,
                 place=menu.store.place
@@ -279,7 +286,7 @@ def kakaoView_MenuListup(kakaoPayload):
 
                 KakaoInstantForm().MenuList(
                     menu,
-                    '매진',
+                    status,
                     thumbnail,
                     buttons,
                     kakaoForm
