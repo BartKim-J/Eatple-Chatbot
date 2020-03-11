@@ -150,7 +150,7 @@ def kakaoView_MenuListup(kakaoPayload):
     if(distance_under_flag):
         # @PROMOTION
         addressMap = user.location.address.split()
-        if(addressMap[3] == "신사동"):
+        if(addressMap[2] == "신사동"):
             menuList = menuList.filter(
                 Q(distance__lt=distance_condition) |
                 (
@@ -235,12 +235,11 @@ def kakaoView_MenuListup(kakaoPayload):
                 sellingOutList.extend(list(Menu.objects.filter(id=menu.id)))
 
         for menu in sellingOutList:
+            kakaoMapUrl = 'https://map.kakao.com/link/map/{name},{place}'.format(
+                name=menu.store.name,
+                place=menu.store.place
+            )
             if(menu.store.status == STORE_OC_VACATION):
-                kakaoMapUrl = 'https://map.kakao.com/link/map/{name},{place}'.format(
-                    name=menu.store.name,
-                    place=menu.store.place
-                )
-
                 thumbnail = {
                     'imageUrl': '{}{}'.format(HOST_URL, menu.imgURL()),
                     'fixedRatio': 'true',
