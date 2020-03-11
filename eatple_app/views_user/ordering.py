@@ -152,7 +152,7 @@ def kakaoView_MenuListup(kakaoPayload):
             Q(distance__lt=distance_condition) |
             (
                 ~Q(distance__lt=distance_condition) &
-                ~Q(tag__name="픽업존")
+                Q(tag__name="픽업존")
             )
         )
 
@@ -172,7 +172,6 @@ def kakaoView_MenuListup(kakaoPayload):
 
         # Menu Carousel Card Add
         for menu in menuList:
-            print(menu.menu_id, menu.name)
             currentStock = menu.getCurrentStock()
 
             if(menu.max_stock > menu.current_stock and menu.store.status == STORE_OC_OPEN):
