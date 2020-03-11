@@ -72,8 +72,8 @@ class OrderValidation(viewsets.ModelViewSet):
             response['error_msg'] = ORDER_203_ORDER_ID_INVALID.message
             return Response(response)
         elif(order.payment_status == EATPLE_ORDER_STATUS_PAID):
-            response['error_code'] = ORDER_204_ALREADY_PAID.code
-            response['error_msg'] = ORDER_204_ALREADY_PAID.message
+            response['error_code'] = ORDER_100_SUCCESS.code
+            response['error_msg'] = ORDER_100_SUCCESS.message
             return Response(response)
         elif(order.payment_status == EATPLE_ORDER_STATUS_CANCELLED):
             response['error_code'] = ORDER_205_ALREADY_CANCELLED.code
@@ -92,6 +92,10 @@ class OrderValidation(viewsets.ModelViewSet):
                 order.payment_date = dateNowByTimeZone()
                 order.save()
 
+                response['error_code'] = ORDER_100_SUCCESS.code
+                response['error_msg'] = ORDER_100_SUCCESS.message
+                return Response(response)
+
         # Account Check
         user = userValidation(order.ordersheet.user.app_user_id)
         if(user == None):
@@ -101,28 +105,16 @@ class OrderValidation(viewsets.ModelViewSet):
 
         # Eatple Pass Check
         eatplePassStatus = eatplePassValidation(user)
-        if(eatplePassStatus):
-            if(order.payment_status == EATPLE_ORDER_STATUS_PAID):
-                if(beforeOrderStatus != EATPLE_ORDER_STATUS_PAID):
-                    response['error_code'] = ORDER_100_SUCCESS.code
-                    response['error_msg'] = ORDER_100_SUCCESS.message
-                    return Response(response)
-                else:
-                    #response['error_code'] = ORDER_204_ALREADY_PAID.code
-                    # response['error_msg']  = 'ORDER_204_ALREADY_PAID.message
-                    response['error_code'] = ORDER_100_SUCCESS.code
-                    response['error_msg'] = ORDER_100_SUCCESS.message
-                    return Response(response)
-        else:
+        if(eatplePassStatus == False):
             response['error_code'] = ORDER_202_MULTI_ORDER.code
             response['error_msg'] = ORDER_202_MULTI_ORDER.message
             return Response(response)
 
         # Time Check
-        """
         currentSellingTime = sellingTimeCheck()
         isClosedDay = weekendTimeCheck()
 
+        """
         if(currentSellingTime != order.menu.selling_time or isClosedDay == True):
             response['error_code'] = ORDER_206_SELLING_TIME_INVALID.code
             response['error_msg'] = ORDER_206_SELLING_TIME_INVALID.message

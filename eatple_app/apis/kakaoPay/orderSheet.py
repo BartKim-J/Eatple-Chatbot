@@ -40,26 +40,29 @@ def GET_KAKAO_PAY_OrderSheet(request):
         order = orderValidation(ordersheet_id)
         if(order == None):
             message = '주문번호를 찾을 수 없습니다.'
+            print(message)
             return JsonResponse({'status': 300, 'message': message})
 
         user = userValidation(order.ordersheet.user.app_user_id)
         if(user == None):
             message = '유효하지 않는 유저입니다.'
+            print(message)
             return JsonResponse({'status': 400, 'message': message})
 
         if(order.payment_status == EATPLE_ORDER_STATUS_PAID):
             message = '이미 결제가 완료되었습니다.'
+            print(message)
             return JsonResponse({'status': 300, 'message': message})
         elif(order.payment_status == EATPLE_ORDER_STATUS_CANCELLED):
             message = '이미 환불한 주문번호입니다.'
+            print(message)
             return JsonResponse({'status': 300, 'message': message})
 
         # Eatple Pass Check
         eatplePassStatus = eatplePassValidation(user)
-        if(eatplePassStatus):
-            pass
-        else:
+        if(eatplePassStatus == False):
             message = '이미 다른 주문을 하셨습니다.'
+            print(message)
             return JsonResponse({'status': 300, 'message': message})
 
         # Time Check
