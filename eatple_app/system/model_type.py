@@ -212,6 +212,7 @@ STORE_AREA_C_1 = 'C1'
 STORE_AREA_C_2 = 'C2'
 STORE_AREA_C_3 = 'C3'
 STORE_AREA_C_4 = 'C4'
+STORE_AREA_C_5 = 'C5'
 
 STORE_AREA_Z_1 = 'Z1'
 
@@ -228,6 +229,7 @@ STORE_AREA = [
     (STORE_AREA_C_2, '역삼역'),
     (STORE_AREA_C_3, '삼성역'),
     (STORE_AREA_C_4, '선릉역'),
+    (STORE_AREA_C_5, '신사역'),
 
     (STORE_AREA_Z_1, '기타 지역'),
 ]

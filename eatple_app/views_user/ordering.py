@@ -148,15 +148,20 @@ def kakaoView_MenuListup(kakaoPayload):
     ).order_by(F'distance')
 
     if(distance_under_flag):
-        menuList = menuList.filter(
-            Q(distance__lt=distance_condition) |
-            (
-                ~Q(distance__lt=distance_condition) &
-                Q(tag__name="픽업존")
+        # @PROMOTION
+        addressMap = user.location.address.split()
+        if(addressMap[3] == "신사동"):
+            menuList = menuList.filter(
+                Q(distance__lt=distance_condition) |
+                (
+                    ~Q(distance__lt=distance_condition) &
+                    Q(tag__name="픽업존")
+                )
             )
-        )
-
+        else:
+            menuList = menuList.filter(Q(distance__lt=distance_condition))
     else:
+        # @PROMOTION
         menuList = menuList.filter(
             Q(distance__gte=distance_condition) &
             ~Q(tag__name="픽업존")
@@ -280,6 +285,94 @@ def kakaoView_MenuListup(kakaoPayload):
                     buttons,
                     kakaoForm
                 )
+        kakaoForm.ComerceCard_Add()
+
+    else:
+        KakaoInstantForm().Message(
+            '판매중인 메뉴가 없습니다.',
+            '빠른 시일안에 이 지역 점포를 늘려볼게요!',
+            kakaoForm=kakaoForm
+        )
+
+    kakaoForm.QuickReplies_AddWithMap(QUICKREPLIES_MAP)
+
+    return JsonResponse(kakaoForm.GetForm())
+
+
+def kakaoView_MenuListupWithAreaOut(kakaoPayload):
+    kakaoForm = KakaoForm()
+
+    QUICKREPLIES_MAP = [
+        {
+            'action': 'block',
+            'label': '🏠 홈',
+            'messageText': KAKAO_EMOJI_LOADING,
+            'blockId': KAKAO_BLOCK_USER_HOME,
+            'extra': {
+                KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_GET_MENU
+            }
+        },
+    ]
+
+    # User Validation
+    user = userValidation(kakaoPayload)
+    if (user == None):
+        return errorView('잘못된 사용자 계정', '찾을 수 없는 사용자 계정 아이디입니다.')
+
+    # @BETA alway show lunch menu
+    # currentSellingTime = sellingTimeCheck()
+    currentSellingTime = SELLING_TIME_LUNCH
+
+    menuList = Menu.objects.annotate(
+        distance=Distance(F('store__place__point'),
+                          user.location.point) * 100 * 1000,
+    ).filter(
+        Q(selling_time=currentSellingTime) &
+        (
+            Q(store__type=STORE_TYPE_B2B_AND_NORMAL) |
+            Q(store__type=STORE_TYPE_NORMAL)
+        ) &
+        (
+            Q(type=MENU_TYPE_B2B_AND_NORMAL) |
+            Q(type=MENU_TYPE_NORMAL)
+        ) &
+        Q(status=OC_OPEN) &
+        (
+            Q(store__status=OC_OPEN) |
+            Q(store__status=STORE_OC_VACATION)
+        )
+    ).order_by(F'distance')
+
+    if menuList:
+        KakaoInstantForm().Message(
+            '설정한 지역은 서비스 지역이 아닙니다.',
+            '서비스 지역 - 강남, 역삼, 삼성, 신사',
+            kakaoForm=kakaoForm
+        )
+
+        # Menu Carousel Card Add
+        for menu in menuList:
+            currentStock = menu.getCurrentStock()
+
+            if(menu.store.status == STORE_OC_OPEN):
+                thumbnail = {
+                    'imageUrl': '{}{}'.format(HOST_URL, menu.imgURL()),
+                    'fixedRatio': 'true',
+                    'width': 800,
+                    'height': 800,
+                }
+
+                buttons = [
+                ]
+
+                KakaoInstantForm().MenuList(
+                    menu,
+                    "서비스 지역 아님",
+                    thumbnail,
+                    buttons,
+                    kakaoForm
+                )
+
         kakaoForm.ComerceCard_Add()
 
     else:
@@ -615,7 +708,7 @@ def kakaoView_OrderPayment(kakaoPayload):
     ]
 
     discount = 500
-    
+
     kakaoForm.ComerceCard_Push(
         menu.description,
         menu.price + discount,
@@ -1477,7 +1570,11 @@ def GET_Menu(request):
     if(isB2BUser(user)):
         return kakaoView_B2B_MenuListup(kakaoPayload)
     else:
-        return kakaoView_MenuListup(kakaoPayload)
+        addressMap = user.location.address.split()
+        if(addressMap[0] == "서울"):
+            return kakaoView_MenuListup(kakaoPayload)
+        else:
+            return kakaoView_MenuListupWithAreaOut(kakaoPayload)
 
 
 @csrf_exempt
