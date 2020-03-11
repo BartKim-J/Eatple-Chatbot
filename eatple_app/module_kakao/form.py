@@ -178,11 +178,13 @@ class KakaoInstantForm():
         thumbnails = [
             thumbnail,
         ]
+        
+        discount = 500
 
         kakaoForm.ComerceCard_Push(
             _description=menu.description,
-            _price=menu.price,
-            _discount=None,
+            _price=menu.price + discount,
+            _discount=discount,
             _thumbnails=thumbnails,
             _profile=profile,
             _buttons=buttons

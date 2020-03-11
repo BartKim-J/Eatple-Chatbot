@@ -33,13 +33,10 @@ def GET_KAKAO_PAY_OrderStatus(request):
         print(ex)
         return JsonResponse({'status': 400, })
 
-    try:
-        order = Order.objects.get(order_id=order_id)
-    except:
-        order = None
-
+    order = orderValidation(order_id)
     if(order == None):
-        return JsonResponse({'status': 300, })
+        message = '주문번호를 찾을 수 없습니다.'
+        return JsonResponse({'status': 400, 'message': message})
 
     if(order.order_kakaopay.pg_token != None):
         try:

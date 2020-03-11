@@ -37,13 +37,10 @@ def GET_KAKAO_PAY_OrderApprove(request):
         print(ex)
         return JsonResponse({'status': 400, })
 
-    try:
-        order = Order.objects.get(order_id=partner_order_id)
-    except:
-        order = None
-
+    order = orderValidation(partner_order_id)
     if(order == None):
-        return JsonResponse({'status': 400, })
+        message = '주문번호를 찾을 수 없습니다.'
+        return JsonResponse({'status': 300, 'message': message})
 
     try:
         order.payment_type = ORDER_PAYMENT_KAKAO_PAY

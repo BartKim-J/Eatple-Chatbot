@@ -15,6 +15,8 @@ from eatple_app.module_kakao.requestForm import *
 from eatple_app.module_kakao.kakaoPay import *
 from eatple_app.module_kakao.validation import *
 
+from eatple_app.apis.rest.validation import *
+
 # View-System
 from eatple_app.views_system.debugger import *
 
@@ -27,45 +29,6 @@ from rest_framework import viewsets
 from rest_framework import permissions
 
 from eatple_app.apis.rest.serializer import OrderSerializer
-from eatple_app.models import Order
-
-
-def eatplePassValidation(user):
-    orderManager = UserOrderManager(user)
-    orderManager.orderPaidCheck()
-
-    orderManager.availableOrderStatusUpdate()
-
-    lunchPurchaed = orderManager.getAvailableLunchOrderPurchased().exists()
-    dinnerPurchaced = orderManager.getAvailableDinnerOrderPurchased().exists()
-
-    if (lunchPurchaed and dinnerPurchaced):
-        return False
-
-    elif (lunchPurchaed):
-        return False
-
-    elif (dinnerPurchaced):
-        return False
-
-    return True
-
-
-def userValidation(user_id):
-    try:
-        user = User.objects.get(app_user_id=user_id)
-        return user
-    except User.DoesNotExist:
-        return None
-
-
-def orderValidation(order_id):
-    try:
-        order = Order.objects.get(order_id=order_id)
-        return order
-    except Order.DoesNotExist:
-        return None
-
 
 class OrderValidation(viewsets.ModelViewSet):
     queryset = Order.objects.all()
@@ -101,13 +64,8 @@ class OrderValidation(viewsets.ModelViewSet):
             return Response(response, status=PARAM_600_MERCHANT_UID_INVALID.status)
 
         # Order Check
-        try:
-            order = Order.objects.get(order_id=merchant_uid)
-        except Order.DoesNotExist:
-            order = None
+        order = orderValidation(merchant_uid)
 
-        print(order.payment_status)
-        print(order.payment_type)
         if(order == None or order.payment_status == EATPLE_ORDER_STATUS_FAILED):
             response['error_code'] = ORDER_203_ORDER_ID_INVALID.code
             response['error_msg'] = ORDER_203_ORDER_ID_INVALID.message
@@ -135,17 +93,19 @@ class OrderValidation(viewsets.ModelViewSet):
 
         # Account Check
         user = userValidation(order.ordersheet.user.app_user_id)
-        if(user == False):
+        if(user == None):
             response['error_code'] = ORDER_201_USER_INVALID.code
             response['error_msg'] = ORDER_201_USER_INVALID.message
             return Response(response)
 
-        orderManager = UserOrderManager(user)
-        eatplePass = orderManager.getAvailableOrders().first()
+        # Eatple Pass Check
+        eatplePassStatus = eatplePassValidation(user)
 
-        if(eatplePass != None):
-            if(order.payment_status == EATPLE_ORDER_STATUS_PAID
-               and order.order_id == eatplePass.order_id):
+        if(eatplePassStatus):
+            if(
+                order.payment_status == EATPLE_ORDER_STATUS_PAID and
+                order.order_id == eatplePass.order_id
+            ):
                 if(beforeOrderStatus != EATPLE_ORDER_STATUS_PAID):
                     response['error_code'] = ORDER_100_SUCCESS.code
                     response['error_msg'] = ORDER_100_SUCCESS.message
@@ -155,18 +115,18 @@ class OrderValidation(viewsets.ModelViewSet):
                     # response['error_msg']  = 'ORDER_204_ALREADY_PAID.message
                     response['error_msg'] = ORDER_100_SUCCESS.message
                     return Response(response)
-
-        # Eatple Pass Check
-        eatplePassStatus = eatplePassValidation(user)
-
-        if(eatplePassStatus == False):
+        else:
             response['error_code'] = ORDER_202_MULTI_ORDER.code
             response['error_msg'] = ORDER_202_MULTI_ORDER.message
             return Response(response)
 
         # Time Check
-        currentSellingTime = sellingTimeCheck()
-        isClosedDay = weekendTimeCheck()
+        if(ORDER_TIME_CHECK_DEBUG_MODE):
+            currentSellingTime = order.menu.selling_time
+            isClosedDay = False
+        else:
+            currentSellingTime = sellingTimeCheck()
+            isClosedDay = weekendTimeCheck()
 
         if(currentSellingTime != order.menu.selling_time or isClosedDay == True):
             response['error_code'] = ORDER_206_SELLING_TIME_INVALID.code
@@ -204,10 +164,7 @@ class OrderInformation(viewsets.ModelViewSet):
             return Response(response, status=PARAM_600_MERCHANT_UID_INVALID.status)
 
         # Order Check
-        try:
-            order = Order.objects.get(order_id=merchant_uid)
-        except Order.DoesNotExist:
-            order = None
+        order = orderValidation(merchant_uid)
 
         if(order == None or order.payment_status == EATPLE_ORDER_STATUS_FAILED):
             response['error_code'] = ORDER_203_ORDER_ID_INVALID.code
@@ -226,7 +183,7 @@ class OrderInformation(viewsets.ModelViewSet):
 
         # Account Check
         user = userValidation(order.ordersheet.user.app_user_id)
-        if(user == False):
+        if(user == None):
             response['error_code'] = ORDER_201_USER_INVALID.code
             response['error_msg'] = ORDER_201_USER_INVALID.message
             return Response(response)

@@ -18,6 +18,8 @@ from eatple_app.module_kakao.kakaoPay import *
 from eatple_app.module_kakao.form import *
 from eatple_app.module_kakao.validation import *
 
+from eatple_app.apis.rest.validation import *
+
 # View-System
 from eatple_app.views_system.debugger import *
 
@@ -35,19 +37,51 @@ def GET_KAKAO_PAY_OrderSheet(request):
         return JsonResponse({'status': 400, })
 
     try:
-        order = Order.objects.get(order_id=ordersheet_id)
-    except:
-        return JsonResponse({'status': 300, })
+        order = orderValidation(ordersheet_id)
+        if(order == None):
+            message = '주문번호를 찾을 수 없습니다.'
+            return JsonResponse({'status': 300, 'message': message})
 
-    if(order.payment_status == EATPLE_ORDER_STATUS_PAID):
-        message = '이미 결제가 완료되었습니다.'
-        return JsonResponse({'status': 300, })
-    elif(order.payment_status == EATPLE_ORDER_STATUS_CANCELLED):
-        message = '이미 환불한 주문번호입니다.'
-        return JsonResponse({'status': 300, })
+        user = userValidation(order.ordersheet.user.app_user_id)
+        if(user == None):
+            message = '유효하지 않는 유저입니다.'
+            return JsonResponse({'status': 400, 'message': message})
 
-    order.payment_type = ORDER_PAYMENT_KAKAO_PAY
-    order.save()
+        # Eatple Pass Check
+        eatplePassStatus = eatplePassValidation(user)
+
+        if(eatplePassStatus):
+            if(order.payment_status == EATPLE_ORDER_STATUS_PAID):
+                message = '이미 결제가 완료되었습니다.'
+                return JsonResponse({'status': 300, 'message': message})
+            elif(order.payment_status == EATPLE_ORDER_STATUS_CANCELLED):
+                message = '이미 환불한 주문번호입니다.'
+                return JsonResponse({'status': 300, 'message': message})
+        else:
+            message = '이미 다른 주문을 하셨습니다.'
+            return JsonResponse({'status': 300, 'message': message})
+
+        # Time Check
+        if(ORDER_TIME_CHECK_DEBUG_MODE):
+            currentSellingTime = order.menu.selling_time
+            isClosedDay = False
+        else:
+            currentSellingTime = sellingTimeCheck()
+            isClosedDay = weekendTimeCheck()
+
+        if(currentSellingTime != order.menu.selling_time or isClosedDay == True):
+            message = '현재 주문 가능시간이 아닙니다.'
+            return JsonResponse({'status': 301, 'message': message})
+
+        if(order.store.status != OC_OPEN or order.menu.status != OC_OPEN):
+            message = '현재 주문 가능시간이 아닙니다.'
+            return JsonResponse({'status': 301, 'message': message})
+
+        order.payment_type = ORDER_PAYMENT_KAKAO_PAY
+        order.save()
+    except Exception as ex:
+        print(ex)
+        pass
 
     try:
         approval_url = 'https://admin.eatple.com/payment/approve'
