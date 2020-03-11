@@ -44,7 +44,16 @@ def surveyForm(kakaoForm):
     buttons = [
         {
             'action': 'block',
-            'label': '원하는 점포가 없어요',
+            'label': '😔 이런 점이 불편해요',
+            'messageText': KAKAO_EMOJI_LOADING,
+            'blockId': KAKAO_BLOCK_USER_SURVEY_IMPROVEMENTS,
+            'extra': {
+                KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_HOME
+            }
+        },
+        {
+            'action': 'block',
+            'label': '🥄 원하는 점포가 없어요',
             'messageText': KAKAO_EMOJI_LOADING,
             'blockId': KAKAO_BLOCK_USER_SURVEY_STORE,
             'extra': {
@@ -53,7 +62,7 @@ def surveyForm(kakaoForm):
         },
         {
             'action': 'block',
-            'label': '음식 종류가 부족해요',
+            'label': '🥡 음식 종류가 부족해요',
             'messageText': KAKAO_EMOJI_LOADING,
             'blockId': KAKAO_BLOCK_USER_SURVEY_CATEGORY,
             'extra': {
@@ -64,7 +73,7 @@ def surveyForm(kakaoForm):
 
     kakaoForm.BasicCard_Push(
         '사용하시는데 불편함이 있으신가요?',
-        '알려주시면 반영해드릴게요!',
+        '알려주시면 빠른 시일 내에 반영하겠습니다!',
         thumbnail,
         buttons
     )
@@ -89,6 +98,14 @@ def isSurveyStoreParam(kakaoPayload):
 def isSurveyCategoryParam(kakaoPayload):
     try:
         param = kakaoPayload.dataActionParams['survey_category']['origin']
+        return True
+    except (TypeError, AttributeError, KeyError):
+        return False
+
+
+def isSurveyImprovementsParam(kakaoPayload):
+    try:
+        param = kakaoPayload.dataActionParams['survey_improvements']['origin']
         return True
     except (TypeError, AttributeError, KeyError):
         return False
@@ -239,7 +256,7 @@ def kakaoView_Home(user, address):
         },
         {
             'action': 'block',
-            'label': '📗 메뉴얼',
+            'label': '📗  메뉴얼',
             'messageText': KAKAO_EMOJI_LOADING,
             'blockId': KAKAO_BLOCK_USER_MANUAL,
             'extra': {
@@ -423,7 +440,7 @@ def kakaoView_Order_Home(user, order, address):
     buttons = [
         {
             'action': 'block',
-            'label': '주문하러 가기',
+            'label': '🍽  주문하기',
             'messageText': KAKAO_EMOJI_LOADING,
             'blockId': KAKAO_BLOCK_USER_GET_MENU,
             'extra': {
@@ -432,7 +449,7 @@ def kakaoView_Order_Home(user, order, address):
         },
         {
             'action': 'block',
-            'label': '사용 메뉴얼',
+            'label': '📗 메뉴얼',
             'messageText': KAKAO_EMOJI_LOADING,
             'blockId': KAKAO_BLOCK_USER_MANUAL,
             'extra': {
@@ -606,6 +623,9 @@ def GET_UserHome(request):
         elif(isSurveyCategoryParam(kakaoPayload)):
             answer = kakaoPayload.dataActionParams['survey_category']['origin']
             return kakaoView_SurveyApply(user, SURVEY_TYPE_CATEGORY, answer)
+        elif(isSurveyImprovementsParam(kakaoPayload)):
+            answer = kakaoPayload.dataActionParams['survey_improvements']['origin']
+            return kakaoView_SurveyApply(user, SURVEY_TYPE_IMPROVEMENTS, answer)
         else:
             # Get user profile data from Kakao server
             kakao = Kakao()

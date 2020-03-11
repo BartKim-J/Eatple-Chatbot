@@ -58,7 +58,7 @@ def errorView(error_log='error message', view_log='진행하는 도중 문제가
     ]
 
     kakaoForm.BasicCard_Push(
-        '🐞 {}'.format(view_log),
+        '⛑ {}'.format(view_log),
         '{}\n\n문제 이유 : {}'.format(
             view_sub_log,
             error_log
