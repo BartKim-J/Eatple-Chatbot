@@ -137,7 +137,19 @@ def kakaoView_MenuListup(kakaoPayload):
         distance_condition = kakaoPayload.dataActionExtra['distance_condition']
         area_in_flag = kakaoPayload.dataActionExtra['area_in_flag']
         area_code = kakaoPayload.dataActionExtra['area']
-    except:
+
+        QUICKREPLIES_MAP.insert(0, {
+            'action': 'block',
+            'label': '내 지역',
+            'messageText': KAKAO_EMOJI_LOADING,
+            'blockId': KAKAO_BLOCK_USER_GET_MENU,
+            'extra': {
+                KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_GET_MENU,
+                'distance_condition': DEFAULT_DISTANCE_CONDITION,
+                'area_in_flag': True,
+            }
+        })
+    except Exception as ex:
         for code, area in SERVICE_AREAS.items():
             QUICKREPLIES_MAP.insert(0, {
                 'action': 'block',
@@ -207,8 +219,6 @@ def kakaoView_MenuListup(kakaoPayload):
             ~Q(tag__name="픽업존")
         )
 
-        for menu in menuList:
-            print(menu.store.area)
         header = None
 
     sellingOutList = []
