@@ -69,7 +69,6 @@ def GET_KAKAO_PAY_OrderSheet(request):
         currentSellingTime = sellingTimeCheck()
         isClosedDay = weekendTimeCheck()
 
-        """
         if(currentSellingTime != order.menu.selling_time or isClosedDay == True):
             message = '현재 주문 가능시간이 아닙니다.'
             return JsonResponse({'status': 301, 'message': message})
@@ -77,7 +76,6 @@ def GET_KAKAO_PAY_OrderSheet(request):
         if(order.store.status != OC_OPEN or order.menu.status != OC_OPEN):
             message = '현재 주문 가능시간이 아닙니다.'
             return JsonResponse({'status': 301, 'message': message})
-        """
 
         order.payment_type = ORDER_PAYMENT_KAKAO_PAY
         order.save()

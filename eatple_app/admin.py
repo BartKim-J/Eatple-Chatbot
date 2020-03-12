@@ -32,7 +32,7 @@ class HideAdmin(admin.ModelAdmin):
         return {}
 
 
-admin.site.register(PickupTime, HideAdmin)
+admin.site.register(PickupTime)
 admin.site.register(Category, HideAdmin)
 admin.site.register(Tag, HideAdmin)
 admin.site.register(OrderSheet, HideAdmin)
