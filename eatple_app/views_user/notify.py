@@ -64,16 +64,15 @@ def kakaoView_notifiy(kakaoPayload):
         'title': '공지사항',
         'imageUrl': '{}{}'.format(HOST_URL, PARTNER_ORDER_SHEET_IMG),
     }
-
     kakaoForm.ListCard_Push(
-        '카페 메뉴 픽업 가능시간이 상시로 변경되었습니다.',
-        '2020.02.10',
+        '신사 지역 점포들이 오픈되었습니다.',
+        '2020.03.11',
         None,
         None
     )
     kakaoForm.ListCard_Push(
-        '설날 연휴 (01.24-27)동안 운영하지 않습니다.',
-        '2020.01.20',
+        '카카오 페이 결제가 추가되었습니다.',
+        '2020.03.10',
         None,
         None
     )

@@ -27,25 +27,25 @@ DEFAULT_DISTANCE_CONDITION = 800
 DEFAULT_AREA_IN_FLAG = True
 
 SERVICE_AREAS = {
-    'sinsa': {
-        'name': '신사',
-        'y': 37.516433,
-        'x': 127.020389
-    },
-    'gangnam': {
-        'name': '강남',
-        'y': 37.497899,
-        'x': 127.027670
-    },
     'yeoksam': {
         'name': '역삼',
         'y': 37.500682,
         'x': 127.036598
     },
+    'sinsa': {
+        'name': '신사',
+        'y': 37.516433,
+        'x': 127.020389
+    },
     'samsung': {
         'name': '삼성',
         'y': 37.508845,
         'x': 127.063132
+    },
+    'gangnam': {
+        'name': '강남',
+        'y': 37.497899,
+        'x': 127.027670
     },
 }
 
@@ -252,7 +252,7 @@ def kakaoView_MenuListup(kakaoPayload):
                 thumbnail = {
                     'imageUrl': '{}{}'.format(HOST_URL, menu.imgURL()),
                     'fixedRatio': 'true',
-                    'width': 800,
+                    'width': 80,
                     'height': 800,
                 }
 
