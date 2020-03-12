@@ -24,7 +24,30 @@ from eatple_app.views import *
 # STATIC CONFIG
 MENU_LIST_LENGTH = 20
 DEFAULT_DISTANCE_CONDITION = 800
-DEFAULT_DISTANCE_UNDER_FLAG = True
+DEFAULT_AREA_IN_FLAG = True
+
+SERVICE_AREAS = {
+    'sinsa': {
+        'name': '신사',
+        'y': 37.516433,
+        'x': 127.020389
+    },
+    'gangnam': {
+        'name': '강남',
+        'y': 37.497899,
+        'x': 127.027670
+    },
+    'yeoksam': {
+        'name': '역삼',
+        'y': 37.500682,
+        'x': 127.036598
+    },
+    'samsung': {
+        'name': '삼성',
+        'y': 37.508845,
+        'x': 127.063132
+    },
+}
 
 # # # # # # # # # # # # # # # # # # # # # # # # #
 #
@@ -108,24 +131,26 @@ def kakaoView_MenuListup(kakaoPayload):
     currentSellingTime = SELLING_TIME_LUNCH
 
     distance_condition = DEFAULT_DISTANCE_CONDITION
-    distance_under_flag = DEFAULT_DISTANCE_UNDER_FLAG
+    area_in_flag = DEFAULT_AREA_IN_FLAG
 
     try:
         distance_condition = kakaoPayload.dataActionExtra['distance_condition']
-        distance_under_flag = kakaoPayload.dataActionExtra['distance_under_flag']
+        area_in_flag = kakaoPayload.dataActionExtra['area_in_flag']
+        area_code = kakaoPayload.dataActionExtra['area']
     except:
-        QUICKREPLIES_MAP.insert(0, {
-            'action': 'block',
-            'label': '그 외 지역',
-            'messageText': KAKAO_EMOJI_LOADING,
-            'blockId': KAKAO_BLOCK_USER_GET_MENU,
-            'extra': {
-                KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_GET_MENU,
-                'distance_condition': DEFAULT_DISTANCE_CONDITION,
-                'distance_under_flag': False,
-            }
-        })
-        pass
+        for code, area in SERVICE_AREAS.items():
+            QUICKREPLIES_MAP.insert(0, {
+                'action': 'block',
+                'label': '{}역'.format(area['name']),
+                'messageText': KAKAO_EMOJI_LOADING,
+                'blockId': KAKAO_BLOCK_USER_GET_MENU,
+                'extra': {
+                    KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_GET_MENU,
+                    'distance_condition': DEFAULT_DISTANCE_CONDITION,
+                    'area_in_flag': False,
+                    'area': code
+                }
+            })
 
     menuList = Menu.objects.annotate(
         distance=Distance(F('store__place__point'),
@@ -147,7 +172,7 @@ def kakaoView_MenuListup(kakaoPayload):
         )
     ).order_by(F'distance')
 
-    if(distance_under_flag):
+    if(area_in_flag):
         # @PROMOTION
         addressMap = user.location.address.split()
         if(addressMap[2] == "신사동"):
@@ -172,10 +197,18 @@ def kakaoView_MenuListup(kakaoPayload):
             header = None
     else:
         # @PROMOTION
+        menuList = menuList.annotate(
+            distance=Distance(
+                F('store__place__point'),
+                Point(y=SERVICE_AREAS[area_code]['y'], x=SERVICE_AREAS[area_code]['x'], srid=4326)) * 100 * 1000,
+        )
         menuList = menuList.filter(
-            Q(distance__gte=distance_condition) &
+            Q(distance__lte=distance_condition) &
             ~Q(tag__name="픽업존")
         )
+
+        for menu in menuList:
+            print(menu.store.area)
         header = None
 
     sellingOutList = []
@@ -196,7 +229,11 @@ def kakaoView_MenuListup(kakaoPayload):
                 walkTime = round((distance / 100) * 2.1)
 
                 if(distance <= distance_condition):
-                    walkTime = '약 도보 {} 분'.format(walkTime)
+                    if(area_in_flag):
+                        walkTime = '약 도보 {} 분'.format(walkTime)
+                    else:
+                        walkTime = '약 도보 {} 분( {}역 )'.format(
+                            walkTime, SERVICE_AREAS[area_code]['name'])
                 elif(delivery):
                     walkTime = '픽업존'
                 else:
@@ -1032,11 +1069,11 @@ def kakaoView_B2B_MenuListup(kakaoPayload):
     currentSellingTime = SELLING_TIME_LUNCH
 
     distance_condition = DEFAULT_DISTANCE_CONDITION
-    distance_under_flag = DEFAULT_DISTANCE_UNDER_FLAG
+    area_in_flag = DEFAULT_AREA_IN_FLAG
 
     try:
         distance_condition = kakaoPayload.dataActionExtra['distance_condition']
-        distance_under_flag = kakaoPayload.dataActionExtra['distance_under_flag']
+        area_in_flag = kakaoPayload.dataActionExtra['area_in_flag']
     except:
         QUICKREPLIES_MAP.insert(0, {
             'action': 'block',
@@ -1046,7 +1083,7 @@ def kakaoView_B2B_MenuListup(kakaoPayload):
             'extra': {
                 KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_GET_MENU,
                 'distance_condition': DEFAULT_DISTANCE_CONDITION,
-                'distance_under_flag': False,
+                'area_in_flag': False,
             }
         })
         pass
@@ -1072,7 +1109,7 @@ def kakaoView_B2B_MenuListup(kakaoPayload):
         )
     ).order_by(F'distance')
 
-    if(distance_under_flag):
+    if(area_in_flag):
         menuList = menuList.filter(
             Q(distance__lt=distance_condition) |
             Q(tag__name="픽업존")
@@ -1105,7 +1142,11 @@ def kakaoView_B2B_MenuListup(kakaoPayload):
                 walkTime = round((distance / 100) * 2.1)
 
                 if(distance <= distance_condition):
-                    walkTime = '약 도보 {} 분'.format(walkTime)
+                    if(area_in_flag):
+                        walkTime = '약 도보 {} 분'.format(walkTime)
+                    else:
+                        walkTime = '약 도보 {} 분( {}역 )'.format(
+                            walkTime, SERVICE_AREAS[area_code]['name'])
                 elif(delivery):
                     walkTime = '배달'
                 else:
