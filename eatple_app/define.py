@@ -26,8 +26,8 @@ from eatple_app.system.kakao import *
 ###########################################################################################
 # System Variable
 
-VERSION_CODE = "동그랑땡"
+VERSION_CODE = "감자튀김"
 VERSION_LEVEL = "Beta"
-MAJOR_VERSION = 1
-MINOR_VERSION = 1
-BUILD_VERSION = 2
+MAJOR_VERSION = 2
+MINOR_VERSION = 0
+BUILD_VERSION = 0
