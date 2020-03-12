@@ -158,14 +158,24 @@ def kakaoView_MenuListup(kakaoPayload):
                     Q(tag__name="픽업존")
                 )
             )
+
+            header = {
+                "title": None,
+                "description": None,
+                "thumbnail": {
+                    "imageUrl": "https://admin.eatple.com/media/STORE_DB/images/default/sinsaFF.png"
+                }
+            }
         else:
             menuList = menuList.filter(Q(distance__lt=distance_condition))
+            header = None
     else:
         # @PROMOTION
         menuList = menuList.filter(
             Q(distance__gte=distance_condition) &
             ~Q(tag__name="픽업존")
         )
+        header = None
 
     sellingOutList = []
 
@@ -291,7 +301,8 @@ def kakaoView_MenuListup(kakaoPayload):
                     buttons,
                     kakaoForm
                 )
-        kakaoForm.ComerceCard_Add()
+
+        kakaoForm.ComerceCard_Add(header)
 
     else:
         KakaoInstantForm().Message(
