@@ -61,7 +61,8 @@ def surveyForm(kakaoForm):
 
     kakaoForm.BasicCard_Push(
         '사용하시는데 불편함이 있으신가요?',
-        '알려주시면 빠른 시일 내에 반영하겠습니다!',
+        #'알려주시면 빠른 시일 내에 반영하겠습니다!',
+        '',
         thumbnail,
         buttons
     )
@@ -282,8 +283,8 @@ def kakaoView_Home(user, address):
         [],
     )
     kakaoForm.BasicCard_Push(
-        '🔗 \'챗봇 리뉴얼\'',
-        '잇플 챗봇이 리뉴얼 되었어요!',
+        '🔗 \'챗봇 UI 리뉴얼\'',
+        '잇플 챗봇 UI가 리뉴얼 되었어요!',
         {},
         [],
     )
@@ -299,11 +300,9 @@ def kakaoView_Home(user, address):
         'height': 800,
     }
 
-    description = '\'주변 맛집에서 갓 만든 도시락, 잇플\' 입니다.'
-
     kakaoForm.BasicCard_Push(
-        '안녕하세요!! {}님'.format(user.nickname),
-        '{}'.format(description),
+        '',
+        '',
         thumbnail,
         buttons
     )
@@ -346,7 +345,7 @@ def kakaoView_B2B_Home(user, address):
         },
         {
             'action': 'block',
-            'label': '📗 메뉴얼',
+            'label': '📗  메뉴얼',
             'messageText': KAKAO_EMOJI_LOADING,
             'blockId': KAKAO_BLOCK_USER_MANUAL,
             'extra': {
@@ -383,8 +382,8 @@ def kakaoView_B2B_Home(user, address):
         [],
     )
     kakaoForm.BasicCard_Push(
-        '🔗 \'챗봇 리뉴얼\'',
-        '잇플 챗봇이 리뉴얼 되었어요!',
+        '🔗 \'챗봇 UI 리뉴얼\'',
+        '잇플 챗봇 UI가 리뉴얼 되었어요!',
         {},
         [],
     )
@@ -418,6 +417,20 @@ def kakaoView_Order_Home(user, order, address):
 
     kakaoForm = KakaoForm()
 
+    # MAP
+    kakaoMapUrl = 'https://map.kakao.com/link/map/{name},{place}'.format(
+        name=order.store.name,
+        place=order.store.place
+    )
+
+    kakaoMapUrlAndriod = 'http://m.map.kakao.com/scheme/route?ep={place}&by=FOOT'.format(
+        place=order.store.place
+    )
+
+    kakaoMapUrlIOS = 'http://m.map.kakao.com/scheme/route?ep={place}&by=FOOT'.format(
+        place=order.store.place
+    )
+
     QUICKREPLIES_MAP = [
         {
             'action': 'block',
@@ -433,20 +446,20 @@ def kakaoView_Order_Home(user, order, address):
     buttons = [
         {
             'action': 'block',
-            'label': '🍽  주문하기',
+            'label': '잇플패스 확인',
             'messageText': KAKAO_EMOJI_LOADING,
-            'blockId': KAKAO_BLOCK_USER_GET_MENU,
+            'blockId': KAKAO_BLOCK_USER_EATPLE_PASS,
             'extra': {
                 KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_HOME
             }
         },
         {
-            'action': 'block',
-            'label': '📗 메뉴얼',
-            'messageText': KAKAO_EMOJI_LOADING,
-            'blockId': KAKAO_BLOCK_USER_MANUAL,
-            'extra': {
-                KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_HOME
+            'action': 'osLink',
+            'label': '길찾기',
+            'osLink': {
+                'android': kakaoMapUrlAndriod,
+                'ios': kakaoMapUrlIOS,
+                'pc': kakaoMapUrl,
             }
         },
     ]
@@ -467,37 +480,11 @@ def kakaoView_Order_Home(user, order, address):
         'height': 800,
     }
 
-    buttons[0] = {
-        'action': 'block',
-        'label': '잇플패스 확인',
-        'messageText': KAKAO_EMOJI_LOADING,
-        'blockId': KAKAO_BLOCK_USER_EATPLE_PASS,
-        'extra': {
-            KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_HOME
-        }
-    }
-
-    description = '픽업은 {} 입니다'.format(pickupTimeStr,)
-
     kakaoForm.BasicCard_Push(
-        '안녕하세요!! {}님'.format(user.nickname),
-        '{}'.format(description),
+        '',
+        '',
         thumbnail,
         buttons
-    )
-
-    # MAP
-    kakaoMapUrl = 'https://map.kakao.com/link/map/{name},{place}'.format(
-        name=order.store.name,
-        place=order.store.place
-    )
-
-    kakaoMapUrlAndriod = 'http://m.map.kakao.com/scheme/route?ep={place}&by=FOOT'.format(
-        place=order.store.place
-    )
-
-    kakaoMapUrlIOS = 'http://m.map.kakao.com/scheme/route?ep={place}&by=FOOT'.format(
-        place=order.store.place
     )
 
     thumbnail = {
@@ -511,23 +498,13 @@ def kakaoView_Order_Home(user, order, address):
         'width': 800,
         'height': 800,
     }
-    buttons = [
-        {
-            'action': 'osLink',
-            'label': '길찾기',
-            'osLink': {
-                'android': kakaoMapUrlAndriod,
-                'ios': kakaoMapUrlIOS,
-                'pc': kakaoMapUrl,
-            }
-        },
-    ]
 
     KakaoInstantForm().Message(
-        '{}'.format(order.store.name),
-        '{}'.format(order.store.addr),
+        order.store.addr,
+        '픽업 시간 - {}'.format(dateByTimeZone(order.pickup_time).strftime(
+            '%p %-I시 %-M분').replace('AM', '오전').replace('PM', '오후')),
         thumbnail=thumbnail,
-        buttons=buttons,
+        buttons=[],
         kakaoForm=kakaoForm
     )
 

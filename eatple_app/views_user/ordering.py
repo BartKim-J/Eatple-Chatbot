@@ -722,7 +722,7 @@ def kakaoView_OrderPayment(kakaoPayload):
         }
     else:
         profile = {
-            'nickname': '픽업 시간 : {pickup_time}'.format(pickup_time=order.pickup_time.strftime(
+            'nickname': '픽업 시간 : {pickup_time}'.format(pickup_time=dateByTimeZone(order.pickup_time).strftime(
                 '%p %-I시 %-M분').replace('AM', '오전').replace('PM', '오후'),),
             'imageUrl': '{}{}'.format(HOST_URL, store.logoImgURL()),
         }
