@@ -75,6 +75,26 @@ class KakaoInstantForm():
                     KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_EATPLE_PASS
                 }
             },
+            {
+                'action': 'block',
+                'label': '주문취소',
+                'messageText': KAKAO_EMOJI_LOADING,
+                'blockId': KAKAO_BLOCK_USER_POST_ORDER_CANCEL,
+                'extra': {
+                    KAKAO_PARAM_ORDER_ID: order.order_id,
+                    KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_EATPLE_PASS
+                }
+            }
+        ]
+
+        ORDER_LIST_QUICKREPLIES_MAP = [
+            {
+                'action': 'block',
+                'label': '🏠 홈',
+                'messageText': KAKAO_EMOJI_LOADING,
+                'blockId': KAKAO_BLOCK_USER_HOME,
+                'extra': {}
+            },
         ]
 
         isCafe = order.store.category.filter(name="카페").exists()
@@ -82,18 +102,23 @@ class KakaoInstantForm():
             pickupTimeStr = dateByTimeZone(order.pickup_time).strftime(
                 '%-m월 %-d일 오전 11시 30분 ~ 오후 4시')
         else:
-            buttons.append({
-                'action': 'block',
-                'label': '픽업 시간 변경',
-                'messageText': KAKAO_EMOJI_LOADING,
-                'blockId': KAKAO_BLOCK_USER_EDIT_PICKUP_TIME,
-                'extra': {
-                    KAKAO_PARAM_ORDER_ID: order.order_id,
-                    KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_EATPLE_PASS
-                }
-            })
             pickupTimeStr = dateByTimeZone(order.pickup_time).strftime(
                 '%-m월 %-d일 %p %-I시 %-M분').replace('AM', '오전').replace('PM', '오후')
+
+            pickupTimes = order.menu.pickup_time.filter(
+                selling_time=order.menu.selling_time)
+
+            if(pickupTimes.count() > 1):
+                ORDER_LIST_QUICKREPLIES_MAP.append({
+                    'action': 'block',
+                    'label': '픽업 시간 변경',
+                    'messageText': KAKAO_EMOJI_LOADING,
+                    'blockId': KAKAO_BLOCK_USER_EDIT_PICKUP_TIME,
+                    'extra': {
+                        KAKAO_PARAM_ORDER_ID: order.order_id,
+                        KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_EATPLE_PASS
+                    }
+                })
 
         kakaoForm.BasicCard_Push(
             '{}'.format(order.menu.name),
@@ -127,6 +152,8 @@ class KakaoInstantForm():
             ]
         )
         kakaoForm.BasicCard_Add()
+
+        kakaoForm.QuickReplies_AddWithMap(ORDER_LIST_QUICKREPLIES_MAP)
 
         return JsonResponse(kakaoForm.GetForm())
 
@@ -178,7 +205,7 @@ class KakaoInstantForm():
         thumbnails = [
             thumbnail,
         ]
-        
+
         discount = 500
 
         kakaoForm.ComerceCard_Push(

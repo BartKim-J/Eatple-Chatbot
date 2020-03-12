@@ -176,18 +176,22 @@ def eatplePass(order, ownEatplePass, delegatedEatplePassCount, delegatedEatplePa
                 }
             )
             if(isCafe == False):
-                ORDER_LIST_QUICKREPLIES_MAP.append(
-                    {
-                        'action': 'block',
-                        'label': '픽업 시간 변경',
-                        'messageText': KAKAO_EMOJI_LOADING,
-                        'blockId': KAKAO_BLOCK_USER_EDIT_PICKUP_TIME,
-                        'extra': {
-                            KAKAO_PARAM_ORDER_ID: order.order_id,
-                            KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_EATPLE_PASS
+                pickupTimes = order.menu.pickup_time.filter(
+                    selling_time=order.menu.selling_time)
+
+                if(pickupTimes.count() > 1):
+                    ORDER_LIST_QUICKREPLIES_MAP.append(
+                        {
+                            'action': 'block',
+                            'label': '픽업 시간 변경',
+                            'messageText': KAKAO_EMOJI_LOADING,
+                            'blockId': KAKAO_BLOCK_USER_EDIT_PICKUP_TIME,
+                            'extra': {
+                                KAKAO_PARAM_ORDER_ID: order.order_id,
+                                KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_EATPLE_PASS
+                            }
                         }
-                    }
-                )
+                    )
 
         kakaoForm.BasicCard_Push(
             '{}'.format(order.menu.name),

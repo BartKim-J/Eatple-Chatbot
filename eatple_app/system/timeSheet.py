@@ -22,7 +22,7 @@ def dateNowByTimeZone():
     '''
     # Time QA DEBUG
     if(ORDER_TIME_CHECK_DEBUG_MODE):
-        DEBUG_DAYS = 11
+        DEBUG_DAYS = int(datetime.datetime.now().strftime("%d"))
         DEBUG_HOUR = 10
         DEBUG_MIN = 20
         DEBUG_SEC = 0

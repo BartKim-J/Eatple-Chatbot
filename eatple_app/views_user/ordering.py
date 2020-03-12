@@ -975,30 +975,6 @@ def kakaoView_EatplePassIssuance(kakaoPayload):
             kakaoForm,
         )
 
-        QUICKREPLIES_MAP = [
-            {
-                'action': 'block',
-                'label': '🏠 홈',
-                'messageText': KAKAO_EMOJI_LOADING,
-                'blockId': KAKAO_BLOCK_USER_HOME,
-                'extra': {
-                    KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_SET_ORDER_SHEET
-                }
-            },
-            {
-                'action': 'block',
-                'label': '주문취소',
-                'messageText': KAKAO_EMOJI_LOADING,
-                'blockId': KAKAO_BLOCK_USER_POST_ORDER_CANCEL,
-                'extra': {
-                    KAKAO_PARAM_ORDER_ID: order.order_id,
-                    KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_EATPLE_PASS
-                }
-            }
-        ]
-
-        kakaoForm.QuickReplies_AddWithMap(QUICKREPLIES_MAP)
-
         return JsonResponse(kakaoForm.GetForm())
 
     except (RuntimeError, TypeError, NameError, KeyError) as ex:
