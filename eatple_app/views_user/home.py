@@ -29,14 +29,11 @@ from eatple_app.views_system.debugger import *
 
 def surveyForm(kakaoForm):
     # HEADER
-    if(settings.SETTING_ID == 'DEPLOY'):
-        homeImg = '{}{}'.format(HOST_URL, HOME_HEAD_IMG_URL)
-    else:
-        homeImg = '{}{}'.format(HOST_URL, HOME_HEAD_BLACK_IMG_URL)
+    surveyImg = '{}{}'.format(HOST_URL, EATPLE_SURVEY_IMG)
 
     thumbnail = {
-        'imageUrl': homeImg,
-        'fixedRatio': 'false',
+        'imageUrl': surveyImg,
+        'fixedRatio': 'true',
         'width': 800,
         'height': 800,
     }
@@ -44,7 +41,7 @@ def surveyForm(kakaoForm):
     buttons = [
         {
             'action': 'block',
-            'label': '😔 이런 점이 불편해요',
+            'label': '잇플 불편사항',
             'messageText': KAKAO_EMOJI_LOADING,
             'blockId': KAKAO_BLOCK_USER_SURVEY_IMPROVEMENTS,
             'extra': {
@@ -53,18 +50,9 @@ def surveyForm(kakaoForm):
         },
         {
             'action': 'block',
-            'label': '🥄 원하는 점포가 없어요',
+            'label': '주변식당 추천',
             'messageText': KAKAO_EMOJI_LOADING,
             'blockId': KAKAO_BLOCK_USER_SURVEY_STORE,
-            'extra': {
-                KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_HOME
-            }
-        },
-        {
-            'action': 'block',
-            'label': '🥡 음식 종류가 부족해요',
-            'messageText': KAKAO_EMOJI_LOADING,
-            'blockId': KAKAO_BLOCK_USER_SURVEY_CATEGORY,
             'extra': {
                 KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_HOME
             }
@@ -296,10 +284,7 @@ def kakaoView_Home(user, address):
     kakaoForm.BasicCard_Add()
 
     # HEADER
-    if(settings.SETTING_ID == 'DEPLOY'):
-        homeImg = '{}{}'.format(HOST_URL, HOME_HEAD_IMG_URL)
-    else:
-        homeImg = '{}{}'.format(HOST_URL, HOME_HEAD_BLACK_IMG_URL)
+    homeImg = '{}{}'.format(HOST_URL, EATPLE_HOME_IMG)
 
     thumbnail = {
         'imageUrl': homeImg,
@@ -394,14 +379,10 @@ def kakaoView_B2B_Home(user, address):
     kakaoForm.BasicCard_Add()
 
     # HEADER
-    if(settings.SETTING_ID == 'DEPLOY'):
-        logoImg = '{}{}'.format(HOST_URL, user.company.logoImgURL())
-    else:
-        logoImg = '{}{}'.format(HOST_URL, user.company.logoImgURL())
-        # logoImg = '{}{}'.format(HOST_URL, HO
+    homeImg = '{}{}'.format(HOST_URL, EATPLE_HOME_IMG)
 
     thumbnail = {
-        'imageUrl': logoImg,
+        'imageUrl': homeImg,
         'fixedRatio': 'true',
         'width': 800,
         'height': 800,

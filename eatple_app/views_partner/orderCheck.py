@@ -83,18 +83,6 @@ def kakaoView_OrderDetails(kakaoPayload):
 
         currentTime = dateNowByTimeZone()
 
-        """
-        kakaoForm.BasicCard_Push(
-            '{}'.format(currentTime.strftime(
-                '%Y년 %-m월 %-d일').replace('AM', '오전').replace('PM', '오후')),
-            '조회시간 : {}'.format(currentTime.strftime(
-                '%p %-I시 %-M분').replace('AM', '오전').replace('PM', '오후')),
-            {},
-            []
-        )
-        kakaoForm.BasicCard_Add()
-        """
-
         if availableOrders:
             isCafe = partner.store.category.filter(name="카페").exists()
 
@@ -132,7 +120,6 @@ def kakaoView_OrderDetails(kakaoPayload):
                     )
                     kakaoForm.ListCard_Add(header)
             else:
-                print(pickupTimes)
                 for pickupTime in pickupTimes:
                     menuList = Menu.objects.filter(
                         store=partner.store, pickup_time=pickupTime, status=OC_OPEN)
@@ -149,7 +136,7 @@ def kakaoView_OrderDetails(kakaoPayload):
                     header = {
                         'title': '{pickupTime}'.format(
                             pickupTime=datetime_pickup_time.strftime(
-                                '%p %-I시 %-M분').replace('AM', '오전').replace('PM', '오후'),
+                                '%-m월 %-d일 %p %-I시 %-M분').replace('AM', '오전').replace('PM', '오후'),
                         ),
                         'imageUrl': '{}{}'.format(HOST_URL, PARTNER_ORDER_SHEET_IMG),
                     }
