@@ -81,23 +81,32 @@ def eatplePass(order, ownEatplePass, delegatedEatplePassCount, delegatedEatplePa
     if(delegatedEatplePass.count() > 0):
         # CAN EDIT COUPONS
         if (order.status == ORDER_STATUS_ORDER_CONFIRM_WAIT or
-            order.status == ORDER_STATUS_ORDER_CONFIRMED or
-                order.status == ORDER_STATUS_PICKUP_PREPARE):
-            ORDER_LIST_QUICKREPLIES_MAP.append(
+                order.status == ORDER_STATUS_ORDER_CONFIRMED):
+            if(order.status == ORDER_STATUS_PICKUP_PREPARE):
+                buttons.append(
+                    {
+                        'action': 'block',
+                        'label': '부탁하기 전체취소',
+                        'messageText': KAKAO_EMOJI_LOADING,
+                        'blockId': KAKAO_BLOCK_USER_ORDER_SHARING_CANCEL_ALL,
+                        'extra': {
+                            KAKAO_PARAM_ORDER_ID: order.order_id,
+                            KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_EATPLE_PASS
+                        }
+                    }
+                )
+            buttons.append(
                 {
                     'action': 'block',
-                    'label': '부탁하기 전체취소',
+                    'label': '주문취소',
                     'messageText': KAKAO_EMOJI_LOADING,
-                    'blockId': KAKAO_BLOCK_USER_ORDER_SHARING_CANCEL_ALL,
+                    'blockId': KAKAO_BLOCK_USER_POST_ORDER_CANCEL,
                     'extra': {
                         KAKAO_PARAM_ORDER_ID: order.order_id,
                         KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_EATPLE_PASS
                     }
                 }
             )
-        else:
-            # @TODO
-            pass
 
         menuList = Menu.objects.filter(
             Q(store=order.store) &
@@ -154,7 +163,7 @@ def eatplePass(order, ownEatplePass, delegatedEatplePassCount, delegatedEatplePa
 
         if(order.status == ORDER_STATUS_ORDER_CONFIRM_WAIT or
                 order.status == ORDER_STATUS_ORDER_CONFIRMED):
-            ORDER_LIST_QUICKREPLIES_MAP.append(
+            buttons.append(
                 {
                     'action': 'block',
                     'label': '주문취소',
@@ -167,7 +176,7 @@ def eatplePass(order, ownEatplePass, delegatedEatplePassCount, delegatedEatplePa
                 }
             )
             if(isCafe == False):
-                buttons.append(
+                ORDER_LIST_QUICKREPLIES_MAP.append(
                     {
                         'action': 'block',
                         'label': '픽업 시간 변경',
@@ -212,23 +221,32 @@ def eatplePassDelegated(order, ownEatplePass, delegatedEatplePassCount, delegate
 
     # CAN EDIT COUPONS
     if (order.status == ORDER_STATUS_ORDER_CONFIRM_WAIT or
-        order.status == ORDER_STATUS_ORDER_CONFIRMED or
-            order.status == ORDER_STATUS_PICKUP_PREPARE):
+            order.status == ORDER_STATUS_ORDER_CONFIRMED):
+        if(order.status == ORDER_STATUS_PICKUP_PREPARE):
+            buttons.append(
+                {
+                    'action': 'block',
+                    'label': '부탁하기 취소',
+                    'messageText': KAKAO_EMOJI_LOADING,
+                    'blockId': KAKAO_BLOCK_USER_ORDER_SHARING_CANCEL,
+                    'extra': {
+                        KAKAO_PARAM_ORDER_ID: order.order_id,
+                        KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_EATPLE_PASS
+                    }
+                }
+            )
         buttons.append(
             {
                 'action': 'block',
-                'label': '부탁하기 취소',
+                'label': '주문취소',
                 'messageText': KAKAO_EMOJI_LOADING,
-                'blockId': KAKAO_BLOCK_USER_ORDER_SHARING_CANCEL,
+                'blockId': KAKAO_BLOCK_USER_POST_ORDER_CANCEL,
                 'extra': {
                     KAKAO_PARAM_ORDER_ID: order.order_id,
                     KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_EATPLE_PASS
                 }
             }
         )
-    else:
-        # @TODO
-        pass
 
     kakaoForm.BasicCard_Push(
         '{}님에게 부탁된 잇플패스 입니다.'.format(order.delegate.nickname),
