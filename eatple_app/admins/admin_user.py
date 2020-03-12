@@ -24,6 +24,7 @@ class UserServiceLocationFilter(SimpleListFilter):
         return [
             ('all', '전체 지역'),
             ('service', '서비스 지역'),
+            ('fastfive_sinsa_1', '패파 신사점'),
             ('fastfive_gangnam_1', '패파 강남 1호점'),
             ('fastfive_gangnam_2', '패파 강남 2호점'),
             ('fastfive_gangnam_3', '패파 강남 3호점'),
@@ -38,6 +39,7 @@ class UserServiceLocationFilter(SimpleListFilter):
             ref_gangnam = Point(y=37.497907, x=127.027635, srid=4326)
             ref_yeoksam = Point(y=37.500787, x=127.036919, srid=4326)
             ref_samsung = Point(y=37.508852, x=127.063145, srid=4326)
+            ref_sinsa = Point(y=37.518487, x=127.024381, srid=4326)
 
             queryset = queryset.annotate(
                 distance_gangnam=Distance(
@@ -46,11 +48,26 @@ class UserServiceLocationFilter(SimpleListFilter):
                     F('location__point'), ref_yeoksam) * 100 * 1000,
                 distance_samsung=Distance(
                     F('location__point'), ref_samsung) * 100 * 1000,
+                distance_sinsa=Distance(
+                    F('location__point'), ref_sinsa) * 100 * 1000,
             ).filter(
                 (Q(distance_gangnam__lte=distance) &
                  Q(distance_gangnam__gte=0)) |
                 Q(distance_yeoksam__lte=distance) |
-                Q(distance_samsung__lte=distance)
+                Q(distance_samsung__lte=distance) |
+                Q(distance_sinsa__lte=distance)
+            )
+            return queryset
+
+        if self.value() == 'fastfive_sinsa_1':
+            distance = 50
+            ref_location = Point(y=37.518487, x=127.024381, srid=4326)
+
+            queryset = queryset.annotate(
+                distance=Distance(
+                    F('location__point'), ref_location) * 100 * 1000,
+            ).filter(
+                Q(distance__lte=distance)
             )
             return queryset
 

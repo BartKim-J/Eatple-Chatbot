@@ -163,7 +163,8 @@ def kakaoView_MenuListup(kakaoPayload):
                 "title": None,
                 "description": None,
                 "thumbnail": {
-                    "imageUrl": "https://admin.eatple.com/media/STORE_DB/images/default/sinsaFF.png"
+                    "imageUrl": '{}{}'.format(HOST_URL, EATPLE_MENU_HEADER_FF_IMG)
+
                 }
             }
         else:
