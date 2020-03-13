@@ -218,7 +218,7 @@ def kakaoView_Home(user, address):
         {
             'action': 'block',
             'label': '🍽  주문하기',
-            'messageText': KAKAO_EMOJI_LOADING,
+            'messageText': '🍽  주문하기',
             'blockId': KAKAO_BLOCK_USER_GET_MENU,
             'extra': {
                 KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_HOME
@@ -227,7 +227,7 @@ def kakaoView_Home(user, address):
         {
             'action': 'block',
             'label': '📗  메뉴얼',
-            'messageText': KAKAO_EMOJI_LOADING,
+            'messageText': '📗  메뉴얼',
             'blockId': KAKAO_BLOCK_USER_MANUAL,
             'extra': {
                 KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_HOME

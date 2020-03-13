@@ -6,6 +6,7 @@ from eatple_app.views_system.debugger import *
 MENU_LIST_LENGTH = 20
 DEFAULT_DISTANCE_CONDITION = 800
 DEFAULT_AREA_IN_FLAG = True
+DEFAULT_AREA_CODE = None
 
 SERVICE_AREAS = {
     'yeoksam': {
@@ -111,6 +112,7 @@ def kakaoView_MenuListup(kakaoPayload):
 
     distance_condition = DEFAULT_DISTANCE_CONDITION
     area_in_flag = DEFAULT_AREA_IN_FLAG
+    area_code = DEFAULT_AREA_CODE
 
     try:
         distance_condition = kakaoPayload.dataActionExtra['distance_condition']
