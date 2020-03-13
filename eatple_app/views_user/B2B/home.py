@@ -215,8 +215,7 @@ def kakaoView_SurveyApply(user, type, answer):
 
     return JsonResponse(kakaoForm.GetForm())
 
-
-def kakaoView_Home(user, address):
+def kakaoView_B2B_Home(user, address):
     EatplusSkillLog('Home')
 
     kakaoForm = KakaoForm()
@@ -257,13 +256,12 @@ def kakaoView_Home(user, address):
     # MAP
     addressMap = address.split()
 
-    kakaoForm.BasicCard_Push(
-        '🗺️  나의 \'잇플\'레이스',
-        '[{} {} {}]  인근'.format(
-            addressMap[0], addressMap[1], addressMap[2]),
-        {},
-        []
-    )
+    kakaoForm.BasicCard_Push('🗺️  나의 \'잇플\'레이스',
+                             '[{} {} {}]  인근'.format(
+                                 addressMap[0], addressMap[1], addressMap[2]),
+                             {},
+                             []
+                             )
     # UPDATE
     kakaoForm.BasicCard_Push(
         '📌 「{}」 v{}.{}.{}({})'.format(
@@ -301,19 +299,17 @@ def kakaoView_Home(user, address):
     }
 
     kakaoForm.BasicCard_Push(
-        '',
-        '',
+        '🏢  「{}」 전용 카드입니다.'.format(user.company.name, user.nickname),
+        '반갑습니다. {}님'.format(user.nickname),
         thumbnail,
         buttons
     )
-
-    surveyForm(kakaoForm)
-
     kakaoForm.BasicCard_Add()
 
     kakaoForm.QuickReplies_AddWithMap(QUICKREPLIES_MAP)
 
     return JsonResponse(kakaoForm.GetForm())
+
 
 def kakaoView_Order_Home(user, order, address):
     EatplusSkillLog('Home')
@@ -447,7 +443,7 @@ def kakaoView_Route_Home(user):
     if(isOrderEnable):
         return kakaoView_Order_Home(user, order, address)
     else:
-        return kakaoView_Home(user, address)
+        return kakaoView_B2B_Home(user, address)
 
 # # # # # # # # # # # # # # # # # # # # # # # # #
 #
