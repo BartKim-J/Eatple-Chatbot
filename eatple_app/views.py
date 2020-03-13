@@ -31,10 +31,6 @@ from eatple_app.views_user.orderEdit import SET_ConfirmEditPickupTime
 # Notify
 from eatple_app.views_user.notify import GET_UserNotify
 
-# User Promotion
-# Home
-from eatple_app.views_user_promotion.home import GET_ProMotionHome
-
 # Partner
 from eatple_app.views_partner.home import GET_PartnerHome
 

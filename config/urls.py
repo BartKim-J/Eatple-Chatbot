@@ -36,7 +36,6 @@ urlpatterns += TEMPLATES_URLS
 
 # User App
 urlpatterns += KAKAO_SKILL_USER_URLS
-urlpatterns += KAKAO_SKILL_USER_EVENT_URLS
 
 # Partner App
 urlpatterns += KAKAO_SKILL_PARTNER_URLS

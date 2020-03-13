@@ -45,8 +45,3 @@ KAKAO_SKILL_USER_URLS = [
     # Notify
     path('skill/user/etc/get_notify', views.GET_UserNotify),
 ]
-
-KAKAO_SKILL_USER_EVENT_URLS = [
-    # Home
-    path('skill/promotion/home', views.GET_ProMotionHome),
-]
