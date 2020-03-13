@@ -184,7 +184,21 @@ def kakaoView_SurveyApply(user, type, answer):
         },
     ]
 
-    if(Survey().apply(user, type, answer)):
+    if(
+        answer.find('⌛️') != -1 or
+        answer.find('🍽  주문하기') != -1 or
+        answer.find('📗  메뉴얼') != -1 or
+        answer.find('🗺  위치 설정') != -1 or
+        answer.find('📖  공지사항') != -1 or
+        answer.find('📜  소개') != -1
+    ):
+        KakaoInstantForm().Message(
+            '입력을 하지 않으셨습니다.',
+            '다시 홈으로 돌아갈게요!',
+            buttons=buttons,
+            kakaoForm=kakaoForm,
+        )
+    elif(Survey().apply(user, type, answer)):
         KakaoInstantForm().Message(
             '좋은 의견 감사합니다.',
             '전달된 내용 - 「 {} 」'.format(answer),
