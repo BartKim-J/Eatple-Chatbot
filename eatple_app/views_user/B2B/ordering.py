@@ -43,7 +43,7 @@ def kakaoView_TimeOut(blockId):
     QUICKREPLIES_MAP = [
         {
             'action': 'block',
-            'label': '🏠 홈',
+            'label': '🏠  홈',
             'messageText': KAKAO_EMOJI_LOADING,
             'blockId': KAKAO_BLOCK_USER_HOME,
             'extra': {
@@ -69,7 +69,7 @@ def kakaoView_MenuListup(kakaoPayload):
     QUICKREPLIES_MAP = [
         {
             'action': 'block',
-            'label': '🏠 홈',
+            'label': '🏠  홈',
             'messageText': KAKAO_EMOJI_LOADING,
             'blockId': KAKAO_BLOCK_USER_HOME,
             'extra': {
@@ -364,7 +364,7 @@ def kakaoView_MenuListupWithAreaOut(kakaoPayload):
     QUICKREPLIES_MAP = [
         {
             'action': 'block',
-            'label': '🏠 홈',
+            'label': '🏠  홈',
             'messageText': KAKAO_EMOJI_LOADING,
             'blockId': KAKAO_BLOCK_USER_HOME,
             'extra': {
@@ -452,7 +452,7 @@ def kakaoView_PickupTime(kakaoPayload):
     QUICKREPLIES_MAP = [
         {
             'action': 'block',
-            'label': '🏠 홈',
+            'label': '🏠  홈',
             'messageText': KAKAO_EMOJI_LOADING,
             'blockId': KAKAO_BLOCK_USER_HOME,
             'extra': {
@@ -620,7 +620,7 @@ def kakaoView_OrderPayment(kakaoPayload):
     QUICKREPLIES_MAP = [
         {
             'action': 'block',
-            'label': '🏠 홈',
+            'label': '🏠  홈',
             'messageText': KAKAO_EMOJI_LOADING,
             'blockId': KAKAO_BLOCK_USER_HOME,
             'extra': {
@@ -797,7 +797,7 @@ def kakaoView_OrderPayment(kakaoPayload):
 
     GET_PICKUP_TIME_QUICKREPLIES_MAP = [
         {
-            'action': 'message', 'label': '🏠 홈',
+            'action': 'message', 'label': '🏠  홈',
             'messageText': KAKAO_EMOJI_LOADING,
             'blockId': KAKAO_BLOCK_USER_HOME,
             'extra': {}
@@ -815,7 +815,7 @@ def kakaoView_OrderPaymentCheck(kakaoPayload):
     QUICKREPLIES_MAP = [
         {
             'action': 'block',
-            'label': '🏠 홈',
+            'label': '🏠  홈',
             'messageText': KAKAO_EMOJI_LOADING,
             'blockId': KAKAO_BLOCK_USER_HOME,
             'extra': {
@@ -939,7 +939,7 @@ def kakaoView_EatplePassIssuance(kakaoPayload):
         QUICKREPLIES_MAP = [
             {
                 'action': 'block',
-                'label': '🏠 홈',
+                'label': '🏠  홈',
                 'messageText': KAKAO_EMOJI_LOADING,
                 'blockId': KAKAO_BLOCK_USER_HOME,
                 'extra': {
@@ -1031,7 +1031,7 @@ def kakaoView_B2B_MenuListup(kakaoPayload):
     QUICKREPLIES_MAP = [
         {
             'action': 'block',
-            'label': '🏠 홈',
+            'label': '🏠  홈',
             'messageText': KAKAO_EMOJI_LOADING,
             'blockId': KAKAO_BLOCK_USER_HOME,
             'extra': {
@@ -1324,7 +1324,7 @@ def kakaoView_B2B_PickupTime(kakaoPayload):
     QUICKREPLIES_MAP = [
         {
             'action': 'block',
-            'label': '🏠 홈',
+            'label': '🏠  홈',
             'messageText': KAKAO_EMOJI_LOADING,
             'blockId': KAKAO_BLOCK_USER_HOME,
             'extra': {
@@ -1506,7 +1506,7 @@ def kakaoView_B2B_OrderPaymentCheck(kakaoPayload):
     QUICKREPLIES_MAP = [
         {
             'action': 'block',
-            'label': '🏠 홈',
+            'label': '🏠  홈',
             'messageText': KAKAO_EMOJI_LOADING,
             'blockId': KAKAO_BLOCK_USER_HOME,
             'extra': {

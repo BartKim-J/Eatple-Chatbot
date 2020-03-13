@@ -4,6 +4,7 @@ from eatple_app.views_system.debugger import *
 
 from eatple_app.apis.slack.slack_logger import SlackLogSignUp
 
+
 class KakaoInstantForm():
     def Message(self, title='', content='', thumbnail={}, buttons=[], kakaoForm=None, prev_block_id=None):
         if(kakaoForm == None):
@@ -76,7 +77,7 @@ class KakaoInstantForm():
         ORDER_LIST_QUICKREPLIES_MAP = [
             {
                 'action': 'block',
-                'label': '🏠 홈',
+                'label': '🏠  홈',
                 'messageText': KAKAO_EMOJI_LOADING,
                 'blockId': KAKAO_BLOCK_USER_HOME,
                 'extra': {}

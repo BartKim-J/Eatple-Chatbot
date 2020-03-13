@@ -6,7 +6,7 @@ from eatple_app.views_system.debugger import *
 DEFAULT_QUICKREPLIES_MAP = [
     {
         'action': 'block',
-        'label': '🏠 홈',
+        'label': '🏠  홈',
         'messageText': KAKAO_EMOJI_LOADING,
         'blockId': KAKAO_BLOCK_USER_HOME,
         'extra': {}
@@ -26,7 +26,7 @@ def kakaoView_notifiy(kakaoPayload):
     QUICKREPLIES_MAP = [
         {
             'action': 'block',
-            'label': '🏠 홈',
+            'label': '🏠  홈',
             'messageText': KAKAO_EMOJI_LOADING,
             'blockId': KAKAO_BLOCK_USER_HOME,
             'extra': {
