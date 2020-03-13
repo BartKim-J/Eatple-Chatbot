@@ -19,7 +19,7 @@ def kakaoView_UseEatplePass(kakaoPayload):
         {
             'action': 'block',
             'label': '🏠  홈',
-            'messageText': KAKAO_EMOJI_LOADING,
+            'messageText': '🏠  홈',
             'blockId': KAKAO_BLOCK_USER_HOME,
             'extra': {
                 KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_ORDER_DETAILS
@@ -102,7 +102,7 @@ def kakaoView_ConfirmUseEatplePass(kakaoPayload):
         {
             'action': 'block',
             'label': '🏠  홈',
-            'messageText': KAKAO_EMOJI_LOADING,
+            'messageText': '🏠  홈',
             'blockId': KAKAO_BLOCK_USER_HOME,
             'extra': {
                 KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_GET_USE_EATPLE_PASS_CONFIRM
@@ -233,7 +233,7 @@ def kakaoView_OrderCancel(kakaoPayload):
         {
             'action': 'block',
             'label': '🏠  홈',
-            'messageText': KAKAO_EMOJI_LOADING,
+            'messageText': '🏠  홈',
             'blockId': KAKAO_BLOCK_USER_HOME,
             'extra': {
                 KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_EATPLE_PASS
@@ -325,7 +325,7 @@ def kakaoView_EditPickupTime(kakaoPayload):
         {
             'action': 'block',
             'label': '🏠  홈',
-            'messageText': KAKAO_EMOJI_LOADING,
+            'messageText': '🏠  홈',
             'blockId': KAKAO_BLOCK_USER_HOME,
             'extra': {
                 KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_EDIT_PICKUP_TIME
@@ -425,7 +425,7 @@ def kakaoView_ConfirmEditPickupTime(kakaoPayload):
         {
             'action': 'block',
             'label': '🏠  홈',
-            'messageText': KAKAO_EMOJI_LOADING,
+            'messageText': '🏠  홈',
             'blockId': KAKAO_BLOCK_USER_HOME,
             'extra': {
                 KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_EDIT_PICKUP_TIME

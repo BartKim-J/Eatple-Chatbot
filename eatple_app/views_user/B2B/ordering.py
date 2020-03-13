@@ -44,7 +44,7 @@ def kakaoView_TimeOut(blockId):
         {
             'action': 'block',
             'label': '🏠  홈',
-            'messageText': KAKAO_EMOJI_LOADING,
+            'messageText': '🏠  홈',
             'blockId': KAKAO_BLOCK_USER_HOME,
             'extra': {
                 KAKAO_PARAM_PREV_BLOCK_ID: blockId
@@ -70,7 +70,7 @@ def kakaoView_MenuListup(kakaoPayload):
         {
             'action': 'block',
             'label': '🏠  홈',
-            'messageText': KAKAO_EMOJI_LOADING,
+            'messageText': '🏠  홈',
             'blockId': KAKAO_BLOCK_USER_HOME,
             'extra': {
                 KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_GET_MENU
@@ -365,7 +365,7 @@ def kakaoView_MenuListupWithAreaOut(kakaoPayload):
         {
             'action': 'block',
             'label': '🏠  홈',
-            'messageText': KAKAO_EMOJI_LOADING,
+            'messageText': '🏠  홈',
             'blockId': KAKAO_BLOCK_USER_HOME,
             'extra': {
                 KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_GET_MENU
@@ -453,7 +453,7 @@ def kakaoView_PickupTime(kakaoPayload):
         {
             'action': 'block',
             'label': '🏠  홈',
-            'messageText': KAKAO_EMOJI_LOADING,
+            'messageText': '🏠  홈',
             'blockId': KAKAO_BLOCK_USER_HOME,
             'extra': {
                 KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_GET_MENU
@@ -621,7 +621,7 @@ def kakaoView_OrderPayment(kakaoPayload):
         {
             'action': 'block',
             'label': '🏠  홈',
-            'messageText': KAKAO_EMOJI_LOADING,
+            'messageText': '🏠  홈',
             'blockId': KAKAO_BLOCK_USER_HOME,
             'extra': {
                 KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_GET_MENU
@@ -816,7 +816,7 @@ def kakaoView_OrderPaymentCheck(kakaoPayload):
         {
             'action': 'block',
             'label': '🏠  홈',
-            'messageText': KAKAO_EMOJI_LOADING,
+            'messageText': '🏠  홈',
             'blockId': KAKAO_BLOCK_USER_HOME,
             'extra': {
                 KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_EDIT_PICKUP_TIME
@@ -1032,7 +1032,7 @@ def kakaoView_B2B_MenuListup(kakaoPayload):
         {
             'action': 'block',
             'label': '🏠  홈',
-            'messageText': KAKAO_EMOJI_LOADING,
+            'messageText': '🏠  홈',
             'blockId': KAKAO_BLOCK_USER_HOME,
             'extra': {
                 KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_GET_MENU
@@ -1325,7 +1325,7 @@ def kakaoView_B2B_PickupTime(kakaoPayload):
         {
             'action': 'block',
             'label': '🏠  홈',
-            'messageText': KAKAO_EMOJI_LOADING,
+            'messageText': '🏠  홈',
             'blockId': KAKAO_BLOCK_USER_HOME,
             'extra': {
                 KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_GET_MENU
@@ -1507,7 +1507,7 @@ def kakaoView_B2B_OrderPaymentCheck(kakaoPayload):
         {
             'action': 'block',
             'label': '🏠  홈',
-            'messageText': KAKAO_EMOJI_LOADING,
+            'messageText': '🏠  홈',
             'blockId': KAKAO_BLOCK_USER_HOME,
             'extra': {
                 KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_EDIT_PICKUP_TIME

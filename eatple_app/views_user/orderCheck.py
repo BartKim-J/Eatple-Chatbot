@@ -264,7 +264,7 @@ def kakaoView_EatplePass(kakaoPayload):
         {
             'action': 'block',
             'label': '🏠  홈',
-            'messageText': KAKAO_EMOJI_LOADING,
+            'messageText': '🏠  홈',
             'blockId': KAKAO_BLOCK_USER_HOME,
             'extra': {}
         },
@@ -372,7 +372,7 @@ def kakaoView_OrderDetails(kakaoPayload):
         {
             'action': 'block',
             'label': '🏠  홈',
-            'messageText': KAKAO_EMOJI_LOADING,
+            'messageText': '🏠  홈',
             'blockId': KAKAO_BLOCK_USER_HOME,
             'extra': {}
         },

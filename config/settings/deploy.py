@@ -38,6 +38,7 @@ ALLOWED_HOSTS = [
     'admin.eatple.com',
     'skill.eatple.com',
     'kapi.eatple.com',
+    'eapi.eatple.com',
 ]
 
 # Application definition

@@ -47,7 +47,7 @@ def kakaoView_OrderDetails(kakaoPayload):
         {
             'action': 'block',
             'label': '🏠  홈',
-            'messageText': KAKAO_EMOJI_LOADING,
+            'messageText': '🏠  홈',
             'blockId': KAKAO_BLOCK_PARTNER_HOME,
             'extra': {
                 KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_PARTNER_GET_ORDER_DETAILS

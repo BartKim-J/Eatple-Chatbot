@@ -32,7 +32,7 @@ def kakaoView_GetDelegateUser(kakaoPayload):
         {
             'action': 'block',
             'label': '🏠  홈',
-            'messageText': KAKAO_EMOJI_LOADING,
+            'messageText': '🏠  홈',
             'blockId': KAKAO_BLOCK_USER_HOME,
             'extra': {}
         },
@@ -248,7 +248,7 @@ def kakaoView_DelegateUserRemove(kakaoPayload):
         {
             'action': 'block',
             'label': '🏠  홈',
-            'messageText': KAKAO_EMOJI_LOADING,
+            'messageText': '🏠  홈',
             'blockId': KAKAO_BLOCK_USER_HOME,
             'extra': {}
         },
@@ -334,7 +334,7 @@ def kakaoView_DelegateUserRemoveAll(kakaoPayload):
         {
             'action': 'block',
             'label': '🏠  홈',
-            'messageText': KAKAO_EMOJI_LOADING,
+            'messageText': '🏠  홈',
             'blockId': KAKAO_BLOCK_USER_HOME,
             'extra': {}
         },

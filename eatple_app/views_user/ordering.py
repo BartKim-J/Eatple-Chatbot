@@ -45,7 +45,7 @@ def kakaoView_TimeOut(blockId):
         {
             'action': 'block',
             'label': '🏠  홈',
-            'messageText': KAKAO_EMOJI_LOADING,
+            'messageText': '🏠  홈',
             'blockId': KAKAO_BLOCK_USER_HOME,
             'extra': {
                 KAKAO_PARAM_PREV_BLOCK_ID: blockId
@@ -69,7 +69,7 @@ def kakaoView_MenuListup(kakaoPayload):
         {
             'action': 'block',
             'label': '🏠  홈',
-            'messageText': KAKAO_EMOJI_LOADING,
+            'messageText': '🏠  홈',
             'blockId': KAKAO_BLOCK_USER_HOME,
             'extra': {
                 KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_GET_MENU
@@ -171,7 +171,7 @@ def kakaoView_MenuListup(kakaoPayload):
             Q(store__status=OC_OPEN) |
             Q(store__status=STORE_OC_VACATION)
         )
-    ).order_by(F'-pickupzone', F'distance')
+    ).order_by(F'-pickupzone', F'distance', F'price')
 
     # @PROMOTION
     addressMap = user.location.address.split()
@@ -189,7 +189,6 @@ def kakaoView_MenuListup(kakaoPayload):
                 "description": None,
                 "thumbnail": {
                     "imageUrl": '{}{}'.format(HOST_URL, EATPLE_MENU_HEADER_FF_IMG)
-
                 }
             }
         else:
@@ -209,7 +208,7 @@ def kakaoView_MenuListup(kakaoPayload):
                 Q(distance__lt=distance_condition)
             )
             menuList = menuList | pickupZoneMenuList
-            
+
             header = {
                 "title": None,
                 "description": None,
@@ -223,7 +222,7 @@ def kakaoView_MenuListup(kakaoPayload):
                 Q(distance__lte=distance_condition) &
                 ~Q(tag__name="픽업존")
             )
-            
+
             header = None
 
     sellingOutList = []
@@ -376,7 +375,7 @@ def kakaoView_MenuListupWithAreaOut(kakaoPayload):
         {
             'action': 'block',
             'label': '🏠  홈',
-            'messageText': KAKAO_EMOJI_LOADING,
+            'messageText': '🏠  홈',
             'blockId': KAKAO_BLOCK_USER_HOME,
             'extra': {
                 KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_GET_MENU
@@ -464,7 +463,7 @@ def kakaoView_PickupTime(kakaoPayload):
         {
             'action': 'block',
             'label': '🏠  홈',
-            'messageText': KAKAO_EMOJI_LOADING,
+            'messageText': '🏠  홈',
             'blockId': KAKAO_BLOCK_USER_HOME,
             'extra': {
                 KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_GET_MENU
@@ -532,7 +531,7 @@ def kakaoView_PickupTime(kakaoPayload):
     if(isClosedDay or isVacationDay):
         KakaoInstantForm().Message(
             '📌  안내사항',
-            '잇플은 \'주말 및 공휴일\'에 서비스 하지 않고있습니다.',
+            '월요일 점심 주문은 일요일 오후 4시 30분부터 가능합니다.',
             kakaoForm=kakaoForm
         )
 
@@ -632,7 +631,7 @@ def kakaoView_OrderPayment(kakaoPayload):
         {
             'action': 'block',
             'label': '🏠  홈',
-            'messageText': KAKAO_EMOJI_LOADING,
+            'messageText': '🏠  홈',
             'blockId': KAKAO_BLOCK_USER_HOME,
             'extra': {
                 KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_GET_MENU
@@ -827,7 +826,7 @@ def kakaoView_OrderPaymentCheck(kakaoPayload):
         {
             'action': 'block',
             'label': '🏠  홈',
-            'messageText': KAKAO_EMOJI_LOADING,
+            'messageText': '🏠  홈',
             'blockId': KAKAO_BLOCK_USER_HOME,
             'extra': {
                 KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_EDIT_PICKUP_TIME
