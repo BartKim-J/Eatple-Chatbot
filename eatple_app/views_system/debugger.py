@@ -1,30 +1,5 @@
-'''
-    Author : Ben Kim
-
-    @NOTE
-    @BUG
-    @TODO
- 
-'''
-# Django Library
-from django.shortcuts import render
-from django.views.decorators.csrf import csrf_exempt
-from django.http import JsonResponse
-
-# External Library
-import json
-import sys
-
-# Models
-from eatple_app.define import *
-
-from eatple_app.models import User
-from eatple_app.models import Order
-from eatple_app.models import Category, Tag
-from eatple_app.models import Store, Menu
-
-# View Modules
-from eatple_app.module_kakao.responseForm import *
+# View-System
+from eatple_app.views_system.include import *
 
 # SKill Log
 
@@ -38,7 +13,7 @@ def EatplusSkillLog(flow='some flow'):
 # Error View
 
 
-def errorView(error_log='error message', view_log='진행하는 도중 문제가생겼어요..', view_sub_log='죄송하지만 처음부터 다시 진행해주세요!'):
+def errorView(error_log='error message', view_log='진행하는 도중 문제가생겼어요.', view_sub_log='죄송하지만 처음부터 다시 진행해주세요!'):
     print('- - - - - - - - - - - - - - - - -')
     print('- [ ERROR! ]')
     print('-  func() => {}   '.format(sys._getframe(1).f_code.co_name + '()'))
