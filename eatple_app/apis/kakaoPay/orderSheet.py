@@ -1,29 +1,9 @@
-# Django Library
-from django.shortcuts import render
-from django.views.decorators.csrf import csrf_exempt
-from django.http import JsonResponse
-
-from eatple_app.apis.slack.slack_logger import SlackLogFollow, SlackLogUnfollow
-
-# Models
-from eatple_app.models import *
-
-# Define
-from eatple_app.define import *
-
-# Modules
-from eatple_app.module_kakao.responseForm import *
-from eatple_app.module_kakao.requestForm import *
-from eatple_app.module_kakao.kakaoPay import *
-from eatple_app.module_kakao.form import *
-from eatple_app.module_kakao.validation import *
-
-from eatple_app.apis.rest.validation import *
-
 # View-System
+from eatple_app.views_system.include import *
 from eatple_app.views_system.debugger import *
 
-from eatple_app.views import *
+from eatple_app.apis.slack.slack_logger import SlackLogFollow, SlackLogUnfollow
+from eatple_app.apis.rest.validation import *
 
 
 @csrf_exempt
@@ -69,6 +49,7 @@ def GET_KAKAO_PAY_OrderSheet(request):
         currentSellingTime = sellingTimeCheck()
         isClosedDay = weekendTimeCheck()
 
+        """
         if(currentSellingTime != order.menu.selling_time or isClosedDay == True):
             message = '현재 주문 가능시간이 아닙니다.'
             return JsonResponse({'status': 301, 'message': message})
@@ -76,6 +57,7 @@ def GET_KAKAO_PAY_OrderSheet(request):
         if(order.store.status != OC_OPEN or order.menu.status != OC_OPEN):
             message = '현재 주문 가능시간이 아닙니다.'
             return JsonResponse({'status': 301, 'message': message})
+        """
 
         order.payment_type = ORDER_PAYMENT_KAKAO_PAY
         order.save()

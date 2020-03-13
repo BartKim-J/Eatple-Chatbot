@@ -1,22 +1,8 @@
-# Django Library
-from django.shortcuts import render
-from django.views.decorators.csrf import csrf_exempt
-from django.http import JsonResponse
-
-# Models
-from eatple_app.models import *
-
-# Define
-from eatple_app.define import *
+# View-System
+from eatple_app.views_system.include import *
+from eatple_app.views_system.debugger import *
 
 from eatple_app.apis.slack.slack_logger import SlackLogSignUp
-
-# Modules
-from eatple_app.module_kakao.responseForm import *
-from eatple_app.module_kakao.requestForm import *
-from eatple_app.module_kakao.kakaoPay import *
-from eatple_app.module_kakao.validation import *
-
 
 class KakaoInstantForm():
     def Message(self, title='', content='', thumbnail={}, buttons=[], kakaoForm=None, prev_block_id=None):

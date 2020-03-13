@@ -1,23 +1,5 @@
-# Django Library
-from django.shortcuts import render
-from django.views.decorators.csrf import csrf_exempt
-from django.http import JsonResponse
-
-# Models
-from eatple_app.models import *
-
-# Define
-from eatple_app.define import *
-
-# Modules
-from eatple_app.module_kakao.responseForm import *
-from eatple_app.module_kakao.requestForm import *
-from eatple_app.module_kakao.kakaoPay import *
-from eatple_app.module_kakao.kakao import *
-from eatple_app.module_kakao.form import *
-from eatple_app.module_kakao.validation import *
-
 # View-System
+from eatple_app.views_system.include import *
 from eatple_app.views_system.debugger import *
 
 # # # # # # # # # # # # # # # # # # # # # # # # #
@@ -61,7 +43,6 @@ def surveyForm(kakaoForm):
 
     kakaoForm.BasicCard_Push(
         '사용하시는데 불편함이 있으신가요?',
-        #'알려주시면 빠른 시일 내에 반영하겠습니다!',
         '',
         thumbnail,
         buttons
@@ -205,7 +186,7 @@ def kakaoView_SurveyApply(user, type, answer):
 
     if(Survey().apply(user, type, answer)):
         KakaoInstantForm().Message(
-            '좋은 의견 감사합니다.\n더 나은 서비스를 제공하는 잇플이 되겠습니다.',
+            '좋은 의견 감사합니다.',
             '전달된 내용 - 「 {} 」'.format(answer),
             buttons=buttons,
             kakaoForm=kakaoForm,
@@ -314,6 +295,7 @@ def kakaoView_Home(user, address):
     kakaoForm.QuickReplies_AddWithMap(QUICKREPLIES_MAP)
 
     return JsonResponse(kakaoForm.GetForm())
+
 
 def kakaoView_Order_Home(user, order, address):
     EatplusSkillLog('Home')
