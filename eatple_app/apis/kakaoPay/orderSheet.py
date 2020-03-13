@@ -49,7 +49,6 @@ def GET_KAKAO_PAY_OrderSheet(request):
         currentSellingTime = sellingTimeCheck()
         isClosedDay = weekendTimeCheck()
 
-        """
         if(currentSellingTime != order.menu.selling_time or isClosedDay == True):
             message = '현재 주문 가능시간이 아닙니다.'
             return JsonResponse({'status': 301, 'message': message})
@@ -57,7 +56,6 @@ def GET_KAKAO_PAY_OrderSheet(request):
         if(order.store.status != OC_OPEN or order.menu.status != OC_OPEN):
             message = '현재 주문 가능시간이 아닙니다.'
             return JsonResponse({'status': 301, 'message': message})
-        """
 
         order.payment_type = ORDER_PAYMENT_KAKAO_PAY
         order.save()
@@ -66,9 +64,10 @@ def GET_KAKAO_PAY_OrderSheet(request):
         pass
 
     try:
-        approval_url = 'https://admin.eatple.com/payment/approve'
+        approval_url = '{}{}'.format(EATPLE_KAKAO_API_URL, '/payment/approve')
         encoded_approval_url = urllib.parse.quote(approval_url)
 
+        print(approval_url)
         data = {
             'rest_api_key': KAKAO_REST_API_KEY,
             'cid': KAKAO_PAY_CID,

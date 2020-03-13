@@ -43,8 +43,8 @@ RESTFUL_API_DOC_URLS = [
 ]
 
 router = routers.DefaultRouter()
-router.register(r'order_validation', api.OrderValidation)
-router.register(r'order_information', api.OrderInformation)
+router.register(r'order/validation', api.OrderValidation)
+router.register(r'order/information', api.OrderInformation)
 
 RESTFUL_API_URLS = [
     path('rest/api/', include(router.urls)),

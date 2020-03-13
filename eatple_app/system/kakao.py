@@ -1,3 +1,4 @@
+KAKAO_API_URL = 'https://kapi.eatple.com'
 
 # Kakao API KEY
 KAKAO_API_KEY = 'd62991888c78ec58d809bdc591eb62f6'
