@@ -187,7 +187,7 @@ def kakaoView_SurveyApply(user, type, answer):
     if(
         answer.find('⌛️') != -1 or
         answer.find('🍽  주문하기') != -1 or
-        answer.find('📗  메뉴얼') != -1 or
+        answer.find('📗  매뉴얼') != -1 or
         answer.find('🗺  위치 설정') != -1 or
         answer.find('📖  공지사항') != -1 or
         answer.find('📜  소개') != -1
@@ -240,8 +240,8 @@ def kakaoView_Home(user, address):
         },
         {
             'action': 'block',
-            'label': '📗  메뉴얼',
-            'messageText': '📗  메뉴얼',
+            'label': '📗  매뉴얼',
+            'messageText': '📗  매뉴얼',
             'blockId': KAKAO_BLOCK_USER_MANUAL,
             'extra': {
                 KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_HOME

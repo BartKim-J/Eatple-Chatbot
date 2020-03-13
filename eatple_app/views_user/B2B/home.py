@@ -197,6 +197,7 @@ def kakaoView_SurveyApply(user, type, answer):
 
     return JsonResponse(kakaoForm.GetForm())
 
+
 def kakaoView_B2B_Home(user, address):
     EatplusSkillLog('Home')
 
@@ -226,7 +227,7 @@ def kakaoView_B2B_Home(user, address):
         },
         {
             'action': 'block',
-            'label': '📗  메뉴얼',
+            'label': '📗  매뉴얼',
             'messageText': KAKAO_EMOJI_LOADING,
             'blockId': KAKAO_BLOCK_USER_MANUAL,
             'extra': {

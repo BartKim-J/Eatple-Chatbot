@@ -356,7 +356,7 @@ def kakaoView_EatplePass(kakaoPayload):
     else:
         KakaoInstantForm().Message(
             '현재 조회 가능한 잇플패스가 없습니다.',
-            '주문이 처음이시라면 사용 메뉴얼을 읽어주세요!',
+            '주문이 처음이시라면 사용 매뉴얼을 읽어주세요!',
             kakaoForm=kakaoForm
         )
 
@@ -406,7 +406,7 @@ def kakaoView_OrderDetails(kakaoPayload):
     else:
         KakaoInstantForm().Message(
             '이런.. 주문 내역이 없군요.',
-            '주문이 처음이시라면 사용 메뉴얼을 읽어주세요!',
+            '주문이 처음이시라면 사용 매뉴얼을 읽어주세요!',
             kakaoForm=kakaoForm
         )
 
