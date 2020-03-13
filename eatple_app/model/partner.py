@@ -65,6 +65,7 @@ class KakaoUser(models.Model):
     
     class Meta:
         abstract = True
+        
 class Partner(KakaoUser, models.Model):
     class Meta:
         verbose_name = "유저 - 파트너"

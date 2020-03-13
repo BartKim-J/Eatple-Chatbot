@@ -167,6 +167,14 @@ def kakaoView_MenuListup(kakaoPayload):
     menuList = Menu.objects.annotate(
         distance=Distance(F('store__place__point'),
                           user.location.point) * 100 * 1000,
+        pickupzone=Count(Case(
+            When(
+                tag__name="픽업존",
+                then=1
+            ),
+            default=0,
+            output_field=BooleanField(),
+        )),
     ).filter(
         Q(selling_time=currentSellingTime) &
         (
@@ -182,20 +190,25 @@ def kakaoView_MenuListup(kakaoPayload):
             Q(store__status=OC_OPEN) |
             Q(store__status=STORE_OC_VACATION)
         )
-    ).order_by(F'distance')
+    ).order_by(F'-pickupzone', F'distance')
 
-    if(area_in_flag):
-        # @PROMOTION
-        addressMap = user.location.address.split()
-        if(addressMap[2] == "신사동"):
+    # @PROMOTION
+    addressMap = user.location.address.split()
+
+    if(
+        area_in_flag or
+        (
+            area_in_flag == False and
+            area_code == "sinsa"
+        )
+    ):
+        if(addressMap[2] == "신사동" or area_code == "sinsa"):
+            pickupZoneMenuList = menuList.filter(Q(tag__name="픽업존"))
             menuList = menuList.filter(
-                Q(distance__lt=distance_condition) |
-                (
-                    ~Q(distance__lt=distance_condition) &
-                    Q(tag__name="픽업존")
-                )
+                ~Q(tag__name="픽업존") &
+                Q(distance__lt=distance_condition)
             )
-
+            menuList = menuList | pickupZoneMenuList
             header = {
                 "title": None,
                 "description": None,
@@ -238,14 +251,14 @@ def kakaoView_MenuListup(kakaoPayload):
                 distance = menu.distance
                 walkTime = round((distance / 100) * 2.1)
 
-                if(distance <= distance_condition):
+                if(delivery):
+                    walkTime = '픽업존'
+                elif(distance <= distance_condition):
                     if(area_in_flag):
                         walkTime = '약 도보 {} 분'.format(walkTime)
                     else:
                         walkTime = '약 도보 {} 분( {}역 )'.format(
                             walkTime, SERVICE_AREAS[area_code]['name'])
-                elif(delivery):
-                    walkTime = '픽업존'
                 else:
                     walkTime = '1 ㎞ 이상'
 
@@ -1064,8 +1077,9 @@ def kakaoView_B2B_MenuListup(kakaoPayload):
         pickup_time='00:00',
         totalPrice=0,
         count=1,
-        type=ORDER_TYPE_B2B
+        type=ORDER_TYPE_NORMAL
     )
+
     order.save()
 
     # Order Log Record
@@ -1084,23 +1098,45 @@ def kakaoView_B2B_MenuListup(kakaoPayload):
     try:
         distance_condition = kakaoPayload.dataActionExtra['distance_condition']
         area_in_flag = kakaoPayload.dataActionExtra['area_in_flag']
-    except:
+        area_code = kakaoPayload.dataActionExtra['area']
+
         QUICKREPLIES_MAP.insert(0, {
             'action': 'block',
-            'label': '그 외 지역',
+            'label': '내 지역',
             'messageText': KAKAO_EMOJI_LOADING,
             'blockId': KAKAO_BLOCK_USER_GET_MENU,
             'extra': {
                 KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_GET_MENU,
                 'distance_condition': DEFAULT_DISTANCE_CONDITION,
-                'area_in_flag': False,
+                'area_in_flag': True,
             }
         })
-        pass
+    except Exception as ex:
+        for code, area in SERVICE_AREAS.items():
+            QUICKREPLIES_MAP.insert(0, {
+                'action': 'block',
+                'label': '{}역'.format(area['name']),
+                'messageText': KAKAO_EMOJI_LOADING,
+                'blockId': KAKAO_BLOCK_USER_GET_MENU,
+                'extra': {
+                    KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_GET_MENU,
+                    'distance_condition': DEFAULT_DISTANCE_CONDITION,
+                    'area_in_flag': False,
+                    'area': code
+                }
+            })
 
     menuList = Menu.objects.annotate(
         distance=Distance(F('store__place__point'),
-                          user.location.point) * 100 * 1000
+                          user.location.point) * 100 * 1000,
+        pickupzone=Count(Case(
+            When(
+                tag__name="픽업존",
+                then=1
+            ),
+            default=0,
+            output_field=BooleanField(),
+        )),
     ).filter(
         Q(stocktable__company=user.company) &
         Q(selling_time=currentSellingTime) &
@@ -1117,18 +1153,49 @@ def kakaoView_B2B_MenuListup(kakaoPayload):
             Q(store__status=OC_OPEN) |
             Q(store__status=STORE_OC_VACATION)
         )
-    ).order_by(F'distance')
+    ).order_by(F'-pickupzone', F'distance')
 
-    if(area_in_flag):
-        menuList = menuList.filter(
-            Q(distance__lt=distance_condition) |
-            Q(tag__name="픽업존")
+    # @PROMOTION
+    addressMap = user.location.address.split()
+
+    if(
+        area_in_flag or
+        (
+            area_in_flag == False and
+            area_code == "sinsa"
         )
+    ):
+        if(addressMap[2] == "신사동" or area_code == "sinsa"):
+            pickupZoneMenuList = menuList.filter(Q(tag__name="픽업존"))
+            menuList = menuList.filter(
+                ~Q(tag__name="픽업존") &
+                Q(distance__lt=distance_condition)
+            )
+            menuList = menuList | pickupZoneMenuList
+            header = {
+                "title": None,
+                "description": None,
+                "thumbnail": {
+                    "imageUrl": '{}{}'.format(HOST_URL, EATPLE_MENU_HEADER_FF_IMG)
+
+                }
+            }
+        else:
+            menuList = menuList.filter(Q(distance__lt=distance_condition))
+            header = None
     else:
+        # @PROMOTION
+        menuList = menuList.annotate(
+            distance=Distance(
+                F('store__place__point'),
+                Point(y=SERVICE_AREAS[area_code]['y'], x=SERVICE_AREAS[area_code]['x'], srid=4326)) * 100 * 1000,
+        )
         menuList = menuList.filter(
-            Q(distance__gte=distance_condition) &
+            Q(distance__lte=distance_condition) &
             ~Q(tag__name="픽업존")
         )
+
+        header = None
 
     sellingOutList = []
 
@@ -1151,14 +1218,14 @@ def kakaoView_B2B_MenuListup(kakaoPayload):
                 distance = menu.distance
                 walkTime = round((distance / 100) * 2.1)
 
-                if(distance <= distance_condition):
+                if(delivery):
+                    walkTime = '픽업존'
+                elif(distance <= distance_condition):
                     if(area_in_flag):
                         walkTime = '약 도보 {} 분'.format(walkTime)
                     else:
                         walkTime = '약 도보 {} 분( {}역 )'.format(
                             walkTime, SERVICE_AREAS[area_code]['name'])
-                elif(delivery):
-                    walkTime = '배달'
                 else:
                     walkTime = '1 ㎞ 이상'
 

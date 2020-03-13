@@ -83,18 +83,28 @@ def kakaoView_OrderDetails(kakaoPayload):
 
         currentTime = dateNowByTimeZone()
 
-        if availableOrders:
+        if(availableOrders.exists() == True):
             isCafe = partner.store.category.filter(name="카페").exists()
-
+            isPickupZone = Menu.objects.filter(
+                store=partner.store).filter(tag__name="픽업존").exists()
             pickupTimes = PickupTime.objects.all()
 
-            if(isCafe):
+            if(isCafe or isPickupZone):
                 orderTimeSheet = OrderTimeSheet()
 
                 menuList = Menu.objects.filter(
                     store=partner.store, status=OC_OPEN)
+
+                if(isPickupZone):
+                    title = '{} {}'.format(
+                        datetime.datetime.now().strftime("%-m월 %-d일"),
+                        '오전 11시 30분'
+                    )
+                else:
+                    title = '상시 픽업'
+
                 header = {
-                    'title': '상시 픽업',
+                    'title': title,
                     'imageUrl': '{}{}'.format(HOST_URL, PARTNER_ORDER_SHEET_IMG),
                 }
 
@@ -168,7 +178,13 @@ def kakaoView_OrderDetails(kakaoPayload):
                             )
                         kakaoForm.ListCard_Add(header)
         else:
-            kakaoForm.SimpleText_Add('오늘은 들어온 주문이 없어요!')
+            kakaoForm.BasicCard_Push(
+                '오늘은 들어온 주문이 없어요.',
+                '',
+                {},
+                []
+            )
+            kakaoForm.BasicCard_Add()
     else:
         kakaoForm.BasicCard_Push(
             '아직 주문조회 가능시간이 아닙니다.',
