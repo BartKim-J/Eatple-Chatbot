@@ -176,13 +176,7 @@ def kakaoView_MenuListup(kakaoPayload):
     # @PROMOTION
     addressMap = user.location.address.split()
 
-    if(
-        area_in_flag or
-        (
-            area_in_flag == False and
-            area_code == "sinsa"
-        )
-    ):
+    if(area_in_flag):
         if(addressMap[2] == "신사동" or area_code == "sinsa"):
             pickupZoneMenuList = menuList.filter(Q(tag__name="픽업존"))
             menuList = menuList.filter(
@@ -208,12 +202,29 @@ def kakaoView_MenuListup(kakaoPayload):
                 F('store__place__point'),
                 Point(y=SERVICE_AREAS[area_code]['y'], x=SERVICE_AREAS[area_code]['x'], srid=4326)) * 100 * 1000,
         )
-        menuList = menuList.filter(
-            Q(distance__lte=distance_condition) &
-            ~Q(tag__name="픽업존")
-        )
+        if(area_code == "sinsa"):
+            pickupZoneMenuList = menuList.filter(Q(tag__name="픽업존"))
+            menuList = menuList.filter(
+                ~Q(tag__name="픽업존") &
+                Q(distance__lt=distance_condition)
+            )
+            menuList = menuList | pickupZoneMenuList
+            
+            header = {
+                "title": None,
+                "description": None,
+                "thumbnail": {
+                    "imageUrl": '{}{}'.format(HOST_URL, EATPLE_MENU_HEADER_FF_IMG)
 
-        header = None
+                }
+            }
+        else:
+            menuList = menuList.filter(
+                Q(distance__lte=distance_condition) &
+                ~Q(tag__name="픽업존")
+            )
+            
+            header = None
 
     sellingOutList = []
 

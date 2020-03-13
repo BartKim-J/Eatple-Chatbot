@@ -193,8 +193,8 @@ def kakaoView_SurveyApply(user, type, answer):
         answer.find('📜  소개') != -1
     ):
         KakaoInstantForm().Message(
-            '입력을 하지 않으셨습니다.',
-            '다시 홈으로 돌아갈게요!',
+            '불편한 점이 아직 입력되지 않았어요!',
+            '홈으로 돌아갈려면 확인을 눌러주세요.',
             buttons=buttons,
             kakaoForm=kakaoForm,
         )
