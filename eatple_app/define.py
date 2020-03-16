@@ -9,7 +9,7 @@ from django.utils import timezone
 import requests
 import json
 import urllib.parse
-
+from django.contrib.auth.models import User
 ###########################################################################################
 # System
 from eatple_app.system.db import *

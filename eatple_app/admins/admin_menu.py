@@ -13,8 +13,6 @@ from django.core import validators
 from django.utils.translation import ugettext_lazy as _
 from django.utils.safestring import mark_safe
 
-from jet.admin import CompactInline
-
 class TypeFilter(MultipleChoiceListFilter):
     title = '유형'
     parameter_name = 'type__in'

@@ -71,8 +71,31 @@ def kakaoView_Home(partner):
     EatplusSkillLog('Home')
 
     kakaoForm = KakaoForm()
-
-    BTN_MAP = [
+    """
+    # UPDATE
+    kakaoForm.BasicCard_Push(
+        '📌 「{}」 v{}.{}.{}({})'.format(
+            VERSION_CODE,
+            MAJOR_VERSION,
+            MINOR_VERSION,
+            BUILD_VERSION,
+            VERSION_LEVEL,),
+        '🛠️ 업데이트 내역을 확인하세요. ➔',
+        {},
+        [],
+    )
+    
+    kakaoForm.BasicCard_Push(
+        '🔗 \'카카오 페이\' 추가',
+        '카카오 원클릭 결제가 추가되었어요.',
+        {},
+        [],
+    )
+    
+    kakaoForm.BasicCard_Add()
+    """
+    
+    buttons = [
         {
             'action': 'block',
             'label': '주문 확인하기',
@@ -93,9 +116,6 @@ def kakaoView_Home(partner):
         },
     ]
 
-    QUICKREPLIES_MAP = [
-    ]
-
     thumbnail = {
         'imageUrl': '{}{}'.format(HOST_URL, partner.store.logoImgURL()),
         'fixedRatio': 'true',
@@ -103,17 +123,13 @@ def kakaoView_Home(partner):
         'height': 800,
     }
 
-    buttons = BTN_MAP
-
     kakaoForm.BasicCard_Push(
-        '안녕하세요. {store}점주님!'.format(store=partner.store.name),
-        '아래 명령어 중에 골라주세요!',
+        '{store} 카드'.format(store=partner.store.name),
+        '',
         thumbnail,
         buttons
     )
     kakaoForm.BasicCard_Add()
-
-    kakaoForm.QuickReplies_AddWithMap(QUICKREPLIES_MAP)
 
     return JsonResponse(kakaoForm.GetForm())
 
