@@ -4,6 +4,7 @@ from eatple_app.views_system.debugger import *
 
 from eatple_app.apis.slack.slack_logger import SlackLogFollow, SlackLogUnfollow, SlackLogSignUp
 
+
 def userSignUp(userProfile):
     nickname = userProfile['nickname']
     phone_number = userProfile['phone_number']

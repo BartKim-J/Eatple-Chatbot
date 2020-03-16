@@ -235,7 +235,7 @@ class StoreAdmin(ImportExportMixin, admin.GeoModelAdmin):
             '세부정보',
             {
                 'fields': [
-                    'pickup_time', 'container_support', 'spoon_support', 'plastic_bag_support', 'store_memo',
+                    'menu', 'price', 'pickup_time', 'container_support', 'spoon_support', 'plastic_bag_support', 'store_memo',
                 ]
             }
         ),

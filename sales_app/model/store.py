@@ -277,6 +277,17 @@ class StoreDetailInfo(models.Model):
 
         abstract = True
 
+    menu = models.CharField(
+        max_length=STRING_LENGTH,
+        null=True,
+        verbose_name='대표메뉴'
+    )
+
+    price = models.IntegerField(
+        default=6000,
+        verbose_name="가격(원)"
+    )
+
     pickup_time = models.ManyToManyField(
         PickupTime,
         blank=True,

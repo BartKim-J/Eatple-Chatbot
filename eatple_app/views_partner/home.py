@@ -24,10 +24,10 @@ def kakaoView_SignUp():
 
     kakaoForm = KakaoForm()
 
-    BTN_MAP = [
+    buttons = [
         {
             'action': 'block',
-            'label': '가입하러 가기',
+            'label': '가입을 시작해볼까요?',
             'messageText': KAKAO_EMOJI_LOADING,
             'blockId': KAKAO_BLOCK_PARTNER_SIGNUP,
             'extra': {
@@ -36,23 +36,11 @@ def kakaoView_SignUp():
         },
     ]
 
-    QUICKREPLIES_MAP = []
-
-    thumbnail = {'imageUrl': ''}
-
-    buttons = BTN_MAP
-
-    kakaoForm.BasicCard_Push(
+    return KakaoInstantForm().Message(
         '아직 잇플에 가입되지 않은 파트너 카카오 계정입니다.',
-        '함께 가입하러 가볼까요?',
-        thumbnail,
-        buttons
+        '',
+        buttons=buttons,
     )
-    kakaoForm.BasicCard_Add()
-
-    kakaoForm.QuickReplies_AddWithMap(QUICKREPLIES_MAP)
-
-    return JsonResponse(kakaoForm.GetForm())
 
 
 def kakaoView_StoreRegistration():
@@ -60,10 +48,10 @@ def kakaoView_StoreRegistration():
 
     kakaoForm = KakaoForm()
 
-    BTN_MAP = [
+    buttons = [
         {
             'action': 'block',
-            'label': '등록하러 가기',
+            'label': '가게 연동',
             'messageText': KAKAO_EMOJI_LOADING,
             'blockId': KAKAO_BLOCK_PARTNER_STORE_REGISTRATION,
             'extra': {
@@ -72,23 +60,11 @@ def kakaoView_StoreRegistration():
         },
     ]
 
-    QUICKREPLIES_MAP = []
-
-    thumbnail = {'imageUrl': ''}
-
-    buttons = BTN_MAP
-
-    kakaoForm.BasicCard_Push(
-        '파트너 계정에 가게 등록 절차가 남아있습니다!',
-        '등록해보러 가볼까요?',
-        thumbnail,
-        buttons
+    return KakaoInstantForm().Message(
+        '가게를 계정에 연동해주세요.',
+        '',
+        buttons=buttons,
     )
-    kakaoForm.BasicCard_Add()
-
-    kakaoForm.QuickReplies_AddWithMap(QUICKREPLIES_MAP)
-
-    return JsonResponse(kakaoForm.GetForm())
 
 
 def kakaoView_Home(partner):
