@@ -12,6 +12,8 @@ from eatple_app.define import *
 class OrderRecord(models.Model):
     class Meta:
         ordering = ['record_date']
+        verbose_name = "주문 진행 내역"
+        verbose_name_plural = "주문 진행 내역"
 
     order_record_sheet = models.ForeignKey(
         'OrderRecordSheet',

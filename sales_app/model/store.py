@@ -8,6 +8,7 @@ from django.core.files.storage import FileSystemStorage
 from django_mysql.models import Model
 from django.core.validators import MaxValueValidator, MinValueValidator
 
+
 class Category(models.Model):
     # Metadata
     class Meta:
@@ -23,6 +24,23 @@ class Category(models.Model):
     )
 
     # Methods
+    def __str__(self):
+        return '{}'.format(self.name)
+
+
+class Tag(models.Model):
+    # Metadata
+    class Meta:
+        verbose_name = "태그"
+        verbose_name_plural = "태그"
+
+        ordering = ['-name']
+
+    name = models.CharField(
+        max_length=WORD_LENGTH,
+        verbose_name="검색 태그"
+    )
+
     def __str__(self):
         return '{}'.format(self.name)
 
@@ -148,14 +166,33 @@ class CRN(models.Model):
         )
 
 
-class StoreInfo(models.Model):
-    store_id = models.CharField(
-        default='N/A',
-        max_length=WORD_LENGTH,
+class SalesRecord(models.Model):
+    class Meta:
+        ordering = ['record_date']
+        verbose_name = "영업 활동 내역"
+        verbose_name_plural = "영업 활동 내역"
+
+    store = models.ForeignKey(
+        'Store',
+        on_delete=models.CASCADE,
         unique=True,
-        verbose_name="상점 고유 번호"
+        null=True,
+        verbose_name="점포"
     )
 
+    record_date = models.DateTimeField(
+        auto_now_add=True,
+        verbose_name="기록일"
+    )
+
+    def save(self, *args, **kwargs):
+        super().save()
+
+    def __str__(self):
+        return '{}'.format(self.order_record_sheet)
+
+
+class StoreInfo(models.Model):
     name = models.CharField(
         max_length=WORD_LENGTH,
         verbose_name="상호"
@@ -238,27 +275,10 @@ class StoreStatus(models.Model):
 
 class Store(StoreInfo, StoreSetting, StoreStatus):
     class Meta:
-        verbose_name = "제휴 점포"
-        verbose_name_plural = "제휴 점포"
+        verbose_name = "점포"
+        verbose_name_plural = "점포"
 
         ordering = ['-name']
-
-    def __init__(self, *args, **kwargs):
-        super(Store, self).__init__(*args, **kwargs)
-
-        if (self.id == None):
-            try:
-                self.id = Store.objects.latest('id').id + 1
-            except (Store.DoesNotExist) as ex:
-                self.id = 1
-
-        self.store_id = '{area:04X}-{id:04X}'.format(area=0, id=self.id)
-
-    def logoImgURL(self):
-        try:
-            return self.logo.url
-        except ValueError:
-            return DEFAULT_LOGO_IMAGE_PATH
 
     def __str__(self):
         return '{name}'.format(name=self.name)
