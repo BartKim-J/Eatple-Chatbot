@@ -151,18 +151,18 @@ class StoreSalesResource(resources.ModelResource):
     owner = Field(attribute='owner', column_name='담당자')
     level = Field(attribute='level', column_name='직급')
     phone_number = Field(attribute='phone_number', column_name='연락처')
+    store_memo = Field(attribute='store_memo', column_name='상점 메모')
 
     progress_level = Field(attribute='progress_level', column_name='진척도')
+    sales_memo = Field(attribute='sales_memo', column_name='영업 메모')
+
     customer_level = Field(attribute='customer_level', column_name='우호도')
+    customer_memo = Field(attribute='customer_memo', column_name='특이사항')
 
     class Meta:
         model = Store
 
         exclude = (
-            'store_memo',
-            'sales_memo',
-            'customer_memo',
-
             'pickup_time',
             'container_support',
             'spoon_support',
