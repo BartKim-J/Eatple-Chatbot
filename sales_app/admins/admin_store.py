@@ -1,6 +1,7 @@
 # Define
 from sales_app.define import *
 
+
 # Models
 from sales_app.models import *
 
@@ -44,6 +45,31 @@ class PlaceInline(admin.TabularInline):
     }
 
 
+class MemberInline(admin.TabularInline):
+    verbose_name = "직원 리스트"
+    verbose_name_plural = "직원 리스트"
+
+    model = Member
+    extra = 0
+
+    def phonenumber(self, obj):
+        return obj.phone_number.as_national
+    phonenumber.short_description = "전화번호"
+
+    fieldsets = [
+        (
+            '직원 리스트',
+            {
+                'fields': [
+                    'name', 'phone_number', 'level',
+                ]
+            }
+        ),
+    ]
+
+    readonly_fields = ('store', )
+
+
 class RecordInline(admin.TabularInline):
     verbose_name = "영업 활동 내역"
     verbose_name_plural = "영업 활동 내역"
@@ -56,7 +82,7 @@ class RecordInline(admin.TabularInline):
             '기본 정보',
             {
                 'fields': [
-                    'record_memo', 'active_date', 'record_date',
+                    'activity_memo', 'activity_date', 'record_date',
                 ]
             }
         ),
@@ -66,34 +92,84 @@ class RecordInline(admin.TabularInline):
 
 
 class StoreAdmin(ImportExportMixin, admin.GeoModelAdmin):
-    def phonenumber(self, obj):
+    def field_phonenumber(self, obj):
         return obj.phone_number.as_national
-    phonenumber.short_description = "전화번호"
+    field_phonenumber.short_description = "연락처"
 
-    list_editable = ('progress_level', )
+    def field_category(self, obj):
+        if(obj.category.exists()):
+            categoryList = ''
+            for category in obj.category.all():
+                categoryList += "{} ,".format(category.name)
+
+            categoryList = replaceRight(categoryList, ",", "", 1)
+            return categoryList
+        else:
+            return "미등록"
+    field_category.short_description = "가게분류"
+
+    def field_tag(self, obj):
+        if(obj.tag.exists()):
+            tagList = ''
+            for tag in obj.tag.all():
+                tagList += "{} ,".format(tag.name)
+
+            tagList = replaceRight(tagList, ",", "", 1)
+            return tagList
+        else:
+            return "미등록"
+    field_tag.short_description = "분류-세부"
+
+    def field_activity(self, obj):
+        activityList = SalesRecord.objects.filter(store=obj)
+        if(activityList.exists()):
+            return activityList.first().activity_memo
+        else:
+            return "활동 기록 없음"
+    field_activity.short_description = "최근 활동내역"
+
+    def field_activity_date(self, obj):
+        activityList = SalesRecord.objects.filter(store=obj)
+        if(activityList.exists()):
+            return activityList.first().activity_date
+        else:
+            return "활동 기록 없음"
+    field_activity_date.short_description = "최근 활동내역"
+
+    list_editable = (
+        'progress_level',
+    )
 
     fieldsets = [
         (
-            '기본 정보',
+            '기본정보',
             {
                 'fields': [
-                    'name', 'addr', 'owner', 'phone_number'
+                    'name', 'area', 'addr', 'category', 'tag', 'owner', 'level', 'phone_number',
                 ]
             }
         ),
         (
-            '점포 정보',
+            '세부정보',
             {
                 'fields': [
-                    'category', 'tag', 'store_memo',
+                    'pickup_time', 'container_support', 'spoon_support', 'plastic_bag_support', 'store_memo',
                 ]
             }
         ),
         (
-            '영업 상태',
+            '영업현황',
             {
                 'fields': [
-                    'progress_level', 'sales_memo'
+                    'progress_level', 'sales_memo',
+                ]
+            }
+        ),
+        (
+            '고객관리',
+            {
+                'fields': [
+                    'customer_level', 'customer_memo'
                 ]
             }
         ),
@@ -101,14 +177,27 @@ class StoreAdmin(ImportExportMixin, admin.GeoModelAdmin):
 
     list_filter = (
         'progress_level',
+        'area',
     )
 
     list_display = (
         'name',
-        'phonenumber',
+        'area',
+        'field_category',
+        'field_tag',
+        'owner',
+        'field_phonenumber',
         'progress_level',
+        'field_activity',
+        'field_activity_date',
     )
 
-    search_fields = ['name']
+    search_fields = [
+        'name',
+        'owner',
+        'phone_number',
+        'member__name',
+        'member__phone_number',
+    ]
 
-    inlines = [RecordInline, CRNInline, PlaceInline, ]
+    inlines = [RecordInline, MemberInline, CRNInline, PlaceInline, ]

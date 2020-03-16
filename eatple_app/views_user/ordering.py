@@ -184,7 +184,6 @@ def kakaoView_MenuListup(kakaoPayload):
                 Q(distance__lt=distance_condition)
             )
             menuList = menuList | pickupZoneMenuList
-            """
             header = {
                 "title": None,
                 "description": None,
@@ -192,8 +191,6 @@ def kakaoView_MenuListup(kakaoPayload):
                     "imageUrl": '{}{}'.format(HOST_URL, EATPLE_MENU_HEADER_FF_IMG)
                 }
             }
-            """
-            header = None
         else:
             menuList = menuList.filter(Q(distance__lt=distance_condition))
             header = None
@@ -212,7 +209,6 @@ def kakaoView_MenuListup(kakaoPayload):
             )
             menuList = menuList | pickupZoneMenuList
 
-            """
             header = {
                 "title": None,
                 "description": None,
@@ -220,8 +216,6 @@ def kakaoView_MenuListup(kakaoPayload):
                     "imageUrl": '{}{}'.format(HOST_URL, EATPLE_MENU_HEADER_FF_IMG)
                 }
             }
-            """
-            header = None
         else:
             menuList = menuList.filter(
                 Q(distance__lte=distance_condition) &

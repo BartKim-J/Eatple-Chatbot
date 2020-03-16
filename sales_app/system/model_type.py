@@ -29,6 +29,28 @@ PROGRESS_LEVEL_TYPE = [
     (PROGRESS_LEVEL_N, '컨택하지 못함'),
 ]
 
+UP_AND_LOW_LEVEL_UPPER = 'UP'
+UP_AND_LOW_LEVEL_MIDDLE = 'MID'
+UP_AND_LOW_LEVEL_LOWER = 'LOW'
+UP_AND_LOW_LEVEL_TYPE = [
+    (UP_AND_LOW_LEVEL_UPPER, '상'),
+    (UP_AND_LOW_LEVEL_MIDDLE, '중'),
+    (UP_AND_LOW_LEVEL_LOWER, '하'),
+]
+
+
+MEMBER_LEVEL_OWNER = 'owner'
+MEMBER_LEVEL_MASTER = 'master'
+MEMBER_LEVEL_MANAGER = 'manager'
+MEMBER_LEVEL_NORMAL = 'normal'
+
+MEMBER_LEVEL_TYPE = [
+    (MEMBER_LEVEL_OWNER, '대표'),
+    (MEMBER_LEVEL_MASTER, '담당자'),
+    (MEMBER_LEVEL_MANAGER, '매니저'),
+    (MEMBER_LEVEL_NORMAL, '일반'),
+]
+
 ###########################################################################################
 # Default Value
 # Location

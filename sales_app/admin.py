@@ -22,7 +22,4 @@ class HideAdmin(admin.ModelAdmin):
         return {}
 
 
-admin.site.register(Category, HideAdmin)
-admin.site.register(Tag, HideAdmin)
-
 admin.site.register(Store, StoreAdmin)

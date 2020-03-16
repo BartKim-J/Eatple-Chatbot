@@ -1,4 +1,5 @@
 # System
+from eatple_app.define import replaceRight
 import os
 import sys
 
@@ -28,3 +29,6 @@ VERSION_LEVEL = "Beta"
 MAJOR_VERSION = 1
 MINOR_VERSION = 0
 BUILD_VERSION = 0
+
+###########################################################################################
+# Other App Define

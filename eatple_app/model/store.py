@@ -19,14 +19,14 @@ class Category(models.Model):
     # Metadata
     class Meta:
         # abstract = True
-        verbose_name = "분류"
-        verbose_name_plural = "분류"
+        verbose_name = '분류'
+        verbose_name_plural = '분류'
 
         ordering = ['-name']
 
     name = models.CharField(
         max_length=WORD_LENGTH,
-        verbose_name="분류"
+        verbose_name='분류'
     )
 
     # Methods
@@ -36,29 +36,29 @@ class Category(models.Model):
 
 class Place(models.Model):
     class Meta:
-        verbose_name = "위치"
-        verbose_name_plural = "위치"
+        verbose_name = '위치'
+        verbose_name_plural = '위치'
 
     store = models.OneToOneField(
         'Store',
         on_delete=models.CASCADE,
         unique=True,
         null=True,
-        verbose_name="상점"
+        verbose_name='상점'
     )
 
     lat = models.DecimalField(
         default=LOCATION_DEFAULT_LAT,
         max_digits=18,
         decimal_places=14,
-        verbose_name="위도"
+        verbose_name='위도'
     )
 
     long = models.DecimalField(
         default=LOCATION_DEFAULT_LNG,
         max_digits=18,
         decimal_places=14,
-        verbose_name="경도"
+        verbose_name='경도'
     )
 
     point = models.PointField(
@@ -66,7 +66,7 @@ class Place(models.Model):
         blank=True,
         srid=4326,
         geography=False,
-        verbose_name="위치"
+        verbose_name='위치'
     )
 
     def __init__(self, *args, **kwargs):
@@ -91,15 +91,15 @@ class Place(models.Model):
 
 class CRN(models.Model):
     class Meta:
-        verbose_name = "사업자 등록번호"
-        verbose_name_plural = "사업자 등록번호"
+        verbose_name = '사업자 등록번호'
+        verbose_name_plural = '사업자 등록번호'
 
     store = models.OneToOneField(
         'Store',
         on_delete=models.CASCADE,
         unique=True,
         null=True,
-        verbose_name="상점"
+        verbose_name='상점'
     )
 
     CRN_id = models.CharField(
@@ -107,31 +107,31 @@ class CRN(models.Model):
         help_text='Unique ID',
         blank=True,
         null=True,
-        verbose_name="사업자 등록번호"
+        verbose_name='사업자 등록번호'
     )
 
     UID = models.CharField(
         max_length=3,
         help_text='Unique ID',
-        verbose_name="UID"
+        verbose_name='UID'
     )
 
     CC = models.CharField(
         max_length=2,
         help_text='Corporation Classification Code',
-        verbose_name="CC"
+        verbose_name='CC'
     )
 
     SN = models.CharField(
         max_length=4,
         help_text='Serial Number',
-        verbose_name="SN"
+        verbose_name='SN'
     )
 
     VN = models.CharField(
         max_length=1,
         help_text='Vertification Number',
-        verbose_name="VN"
+        verbose_name='VN'
     )
 
     def __init__(self, *args, **kwargs):
@@ -160,28 +160,28 @@ class StoreInfo(models.Model):
         default='N/A',
         max_length=WORD_LENGTH,
         unique=True,
-        verbose_name="상점 고유 번호"
+        verbose_name='상점 고유 번호'
     )
 
     name = models.CharField(
         max_length=WORD_LENGTH,
-        verbose_name="상호"
+        verbose_name='상호'
     )
 
     addr = models.CharField(
         max_length=STRING_LENGTH,
-        verbose_name="주소"
+        verbose_name='주소'
     )
 
     phone_number = PhoneNumberField(
         null=True,
         blank=True,
-        verbose_name="관리자 전화번호"
+        verbose_name='관리자 전화번호'
     )
 
     owner = models.CharField(
         max_length=WORD_LENGTH,
-        verbose_name="점주명"
+        verbose_name='점주명'
     )
 
     class Meta:
@@ -190,19 +190,19 @@ class StoreInfo(models.Model):
 
 class StoreSetting(models.Model):
     class Meta:
-        verbose_name = "설정"
-        verbose_name_plural = "설정"
+        verbose_name = '설정'
+        verbose_name_plural = '설정'
 
         abstract = True
 
     category = models.ManyToManyField(
         'Category',
-        verbose_name="가게 분류"
+        verbose_name='가게 분류'
     )
 
     description = models.TextField(
         blank=True,
-        verbose_name="가게 설명"
+        verbose_name='가게 설명'
     )
 
     logo = models.ImageField(
@@ -210,14 +210,14 @@ class StoreSetting(models.Model):
         blank=True,
         upload_to=logo_directory_path,
         storage=OverwriteStorage(),
-        verbose_name="로고 이미지"
+        verbose_name='로고 이미지'
     )
 
 
 class StoreStatus(models.Model):
     class Meta:
-        verbose_name = "상태"
-        verbose_name_plural = "상태"
+        verbose_name = '상태'
+        verbose_name_plural = '상태'
 
         abstract = True
 
@@ -225,28 +225,28 @@ class StoreStatus(models.Model):
         max_length=WORD_LENGTH,
         default=STORE_OC_OPEN,
         choices=STORE_OC_STATUS,
-        verbose_name="상태"
+        verbose_name='상태'
     )
 
     type = models.CharField(
         max_length=WORD_LENGTH,
         default=STORE_TYPE_NORMAL,
         choices=STORE_TYPE,
-        verbose_name="유형"
+        verbose_name='유형'
     )
 
     area = models.CharField(
         max_length=WORD_LENGTH,
         default=STORE_AREA_A_3,
         choices=STORE_AREA,
-        verbose_name="지역코드"
+        verbose_name='지역코드'
     )
 
 
 class Store(StoreInfo, StoreSetting, StoreStatus):
     class Meta:
-        verbose_name = "제휴 점포"
-        verbose_name_plural = "제휴 점포"
+        verbose_name = '제휴 점포'
+        verbose_name_plural = '제휴 점포'
 
         ordering = ['-name']
 
