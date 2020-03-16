@@ -184,6 +184,7 @@ def kakaoView_MenuListup(kakaoPayload):
                 Q(distance__lt=distance_condition)
             )
             menuList = menuList | pickupZoneMenuList
+            """
             header = {
                 "title": None,
                 "description": None,
@@ -191,6 +192,8 @@ def kakaoView_MenuListup(kakaoPayload):
                     "imageUrl": '{}{}'.format(HOST_URL, EATPLE_MENU_HEADER_FF_IMG)
                 }
             }
+            """
+            header = None
         else:
             menuList = menuList.filter(Q(distance__lt=distance_condition))
             header = None
@@ -209,14 +212,16 @@ def kakaoView_MenuListup(kakaoPayload):
             )
             menuList = menuList | pickupZoneMenuList
 
+            """
             header = {
                 "title": None,
                 "description": None,
                 "thumbnail": {
                     "imageUrl": '{}{}'.format(HOST_URL, EATPLE_MENU_HEADER_FF_IMG)
-
                 }
             }
+            """
+            header = None
         else:
             menuList = menuList.filter(
                 Q(distance__lte=distance_condition) &
@@ -792,7 +797,7 @@ def kakaoView_OrderPayment(kakaoPayload):
     buttons = [
         {
             'action': 'block',
-            'label': '잇플패스 발급',
+            'label': '결제 완료하기',
             'messageText': KAKAO_EMOJI_LOADING,
             'blockId': KAKAO_BLOCK_USER_SET_ORDER_SHEET,
             'extra': dataActionExtra,
@@ -800,7 +805,7 @@ def kakaoView_OrderPayment(kakaoPayload):
     ]
 
     KakaoInstantForm().Message(
-        '결제가 완료되었다면 아래 \'잇플패스 발급\' 버튼을 눌러주세요.',
+        '결제가 완료 후 아래 \'결제 완료하기\' 버튼을 눌러주세요.',
         buttons=buttons,
         kakaoForm=kakaoForm
     )
@@ -900,6 +905,13 @@ def kakaoView_OrderPaymentCheck(kakaoPayload):
             order_id=order.order_id
         )
 
+        thumbnail = {
+            'imageUrl': ''.format(),
+            'fixedRatio': 'true',
+            'width': 800,
+            'height': 800,
+        }
+
         buttons = [
             {
                 'action': 'osLink',
@@ -920,19 +932,27 @@ def kakaoView_OrderPaymentCheck(kakaoPayload):
                     merchant_uid=order.order_id,
                 )
             },
-            {
-                'action': 'block',
-                'label': '잇플패스 발급',
-                'messageText': KAKAO_EMOJI_LOADING,
-                'blockId': KAKAO_BLOCK_USER_SET_ORDER_SHEET,
-                'extra': dataActionExtra,
-            },
         ]
 
         KakaoInstantForm().Message(
             '아직 결제가 완료되지 않았어요!',
             '{menu} - {price}원'.format(menu=menu.name,
                                        price=order.totalPrice),
+            buttons=buttons,
+            thumbnail=thumbnail,
+            kakaoForm=kakaoForm
+        )
+
+        buttons = {
+            'action': 'block',
+            'label': '결제 완료하기',
+            'messageText': KAKAO_EMOJI_LOADING,
+            'blockId': KAKAO_BLOCK_USER_SET_ORDER_SHEET,
+            'extra': dataActionExtra,
+        },
+
+        KakaoInstantForm().Message(
+            '결제가 완료 후 아래 \'결제 완료하기\' 버튼을 눌러주세요.',
             buttons=buttons,
             kakaoForm=kakaoForm
         )
