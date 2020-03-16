@@ -68,13 +68,24 @@ def kakaoView_OrderDetails(kakaoPayload):
             isCafe = partner.store.category.filter(name="카페").exists()
             isPickupZone = Menu.objects.filter(
                 store=partner.store).filter(tag__name="픽업존").exists()
+            isNormalMenu = Menu.objects.filter(
+                store=partner.store).filter(
+                    ~Q(tag__name="픽업존") and
+                    ~Q(tag__name="카페")
+            ).exists()
+
+            pickupZoneMenu = Menu.objects.filter(
+                store=partner.store).filter(tag__name="픽업존")
             pickupTimes = PickupTime.objects.all()
 
             if(isCafe or isPickupZone):
                 orderTimeSheet = OrderTimeSheet()
 
                 menuList = Menu.objects.filter(
-                    store=partner.store, status=OC_OPEN)
+                    store=partner.store, status=OC_OPEN).filter(
+                        Q(tag__name="픽업존") |
+                        Q(tag__name="카페")
+                )
 
                 if(isPickupZone):
                     title = '{} {}'.format(
@@ -110,10 +121,17 @@ def kakaoView_OrderDetails(kakaoPayload):
                         None
                     )
                     kakaoForm.ListCard_Add(header)
-            else:
+
+            if(isNormalMenu):
                 for pickupTime in pickupTimes:
                     menuList = Menu.objects.filter(
-                        store=partner.store, pickup_time=pickupTime, status=OC_OPEN)
+                        store=partner.store, pickup_time=pickupTime, status=OC_OPEN).filter(
+                            ~Q(tag__name="픽업존") |
+                            ~Q(tag__name="카페")
+                    )
+
+                    if(~menuList.exists()):
+                        continue
 
                     refPickupTime = [x.strip()
                                      for x in str(pickupTime.time).split(':')]
@@ -178,7 +196,6 @@ def kakaoView_OrderDetails(kakaoPayload):
 
     kakaoForm.QuickReplies_AddWithMap(ORDER_LIST_QUICKREPLIES_MAP)
 
-    print(kakaoForm.GetForm())
     return JsonResponse(kakaoForm.GetForm())
 
 # @TODO

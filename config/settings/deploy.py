@@ -71,6 +71,7 @@ INSTALLED_APPS = [
 
     # local-app
     'eatple_app.apps.EatpleChatbotAppConfig',
+    'sales_app.apps.SalesAppConfig',
 
     'corsheaders',
     'compressor',

@@ -805,7 +805,7 @@ def kakaoView_OrderPayment(kakaoPayload):
     ]
 
     KakaoInstantForm().Message(
-        '결제가 완료 후 아래 \'결제 완료하기\' 버튼을 눌러주세요.',
+        '결제 완료 후 아래 \'결제 완료하기\' 버튼을 눌러주세요.',
         buttons=buttons,
         kakaoForm=kakaoForm
     )
@@ -952,7 +952,7 @@ def kakaoView_OrderPaymentCheck(kakaoPayload):
         },
 
         KakaoInstantForm().Message(
-            '결제가 완료 후 아래 \'결제 완료하기\' 버튼을 눌러주세요.',
+            '결제 완료 후 아래 \'결제 완료하기\' 버튼을 눌러주세요.',
             buttons=buttons,
             kakaoForm=kakaoForm
         )
