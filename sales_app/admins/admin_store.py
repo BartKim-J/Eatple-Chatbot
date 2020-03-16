@@ -44,14 +44,25 @@ class PlaceInline(admin.TabularInline):
     }
 
 
-class RecordInline(admin.StackedInline):
+class RecordInline(admin.TabularInline):
     verbose_name = "영업 활동 내역"
     verbose_name_plural = "영업 활동 내역"
 
     model = SalesRecord
     extra = 0
 
-    readonly_fields = ('store', )
+    fieldsets = [
+        (
+            '기본 정보',
+            {
+                'fields': [
+                    'record_memo', 'active_date', 'record_date',
+                ]
+            }
+        ),
+    ]
+
+    readonly_fields = ('store', 'record_date')
 
 
 class StoreAdmin(ImportExportMixin, admin.GeoModelAdmin):
@@ -74,18 +85,19 @@ class StoreAdmin(ImportExportMixin, admin.GeoModelAdmin):
             '점포 정보',
             {
                 'fields': [
-                    'category', 'tag', 'description',
+                    'category', 'tag', 'store_memo',
                 ]
             }
         ),
         (
             '영업 상태',
             {
-                'fields': ['progress_level',]
+                'fields': [
+                    'progress_level', 'sales_memo'
+                ]
             }
         ),
     ]
-
 
     list_filter = (
         'progress_level',
@@ -99,4 +111,4 @@ class StoreAdmin(ImportExportMixin, admin.GeoModelAdmin):
 
     search_fields = ['name']
 
-    inlines = [PlaceInline, RecordInline, CRNInline]
+    inlines = [RecordInline, CRNInline, PlaceInline, ]

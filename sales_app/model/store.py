@@ -168,7 +168,7 @@ class CRN(models.Model):
 
 class SalesRecord(models.Model):
     class Meta:
-        ordering = ['record_date']
+        ordering = ['-record_date']
         verbose_name = "영업 활동 내역"
         verbose_name_plural = "영업 활동 내역"
 
@@ -177,6 +177,18 @@ class SalesRecord(models.Model):
         on_delete=models.CASCADE,
         null=True,
         verbose_name="점포"
+    )
+
+    record_memo = models.TextField(
+        blank=True,
+        verbose_name="영업 활동 내역"
+    )
+
+    active_date = models.CharField(
+        default=timezone.now().strftime(
+            '%-m월 %-d일 %p %-I시 %-M분').replace('AM', '오전').replace('PM', '오후'),
+        max_length=STRING_LENGTH,
+        verbose_name="활동일"
     )
 
     record_date = models.DateTimeField(
@@ -188,7 +200,7 @@ class SalesRecord(models.Model):
         super().save()
 
     def __str__(self):
-        return '{}'.format(self.order_record_sheet)
+        return '{}'.format(self.record_date)
 
 
 class StoreInfo(models.Model):
@@ -230,15 +242,17 @@ class StoreSetting(models.Model):
 
     category = models.ManyToManyField(
         'Category',
+        blank=True,
         verbose_name="가게 분류"
     )
 
     tag = models.ManyToManyField(
         'Tag',
+        blank=True,
         verbose_name="가게 세부 분류"
     )
 
-    description = models.TextField(
+    store_memo = models.TextField(
         blank=True,
         verbose_name="점포 관련 메모"
     )
@@ -256,6 +270,11 @@ class StoreStatus(models.Model):
         default=PROGRESS_LEVEL_N,
         choices=PROGRESS_LEVEL_TYPE,
         verbose_name="진척도"
+    )
+
+    sales_memo = models.TextField(
+        blank=True,
+        verbose_name="영업 관련 메모"
     )
 
 
