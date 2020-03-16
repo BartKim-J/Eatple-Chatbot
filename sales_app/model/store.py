@@ -154,7 +154,7 @@ class SalesRecord(models.Model):
     )
 
     activity_date = models.CharField(
-        default=timezone.now().strftime(
+        default=dateNowByTimeZone().strftime(
             '%-m월 %-d일 %p %-I시 %-M분').replace('AM', '오전').replace('PM', '오후'),
         max_length=STRING_LENGTH,
         verbose_name='활동일'
