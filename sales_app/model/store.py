@@ -175,7 +175,6 @@ class SalesRecord(models.Model):
     store = models.ForeignKey(
         'Store',
         on_delete=models.CASCADE,
-        unique=True,
         null=True,
         verbose_name="점포"
     )
@@ -193,25 +192,29 @@ class SalesRecord(models.Model):
 
 
 class StoreInfo(models.Model):
+    class Meta:
+        verbose_name = "기본 정보"
+        verbose_name_plural = "기본 정보"
+
     name = models.CharField(
         max_length=WORD_LENGTH,
-        verbose_name="상호"
+        verbose_name="점포명"
     )
 
     addr = models.CharField(
         max_length=STRING_LENGTH,
-        verbose_name="주소"
+        verbose_name="점포 주소"
+    )
+
+    owner = models.CharField(
+        max_length=WORD_LENGTH,
+        verbose_name="컨택된 사람"
     )
 
     phone_number = PhoneNumberField(
         null=True,
         blank=True,
-        verbose_name="관리자 전화번호"
-    )
-
-    owner = models.CharField(
-        max_length=WORD_LENGTH,
-        verbose_name="점주명"
+        verbose_name="컨택된 전화번호"
     )
 
     class Meta:
@@ -220,8 +223,8 @@ class StoreInfo(models.Model):
 
 class StoreSetting(models.Model):
     class Meta:
-        verbose_name = "설정"
-        verbose_name_plural = "설정"
+        verbose_name = "가게 정보"
+        verbose_name_plural = "가게 정보"
 
         abstract = True
 
@@ -230,46 +233,29 @@ class StoreSetting(models.Model):
         verbose_name="가게 분류"
     )
 
-    description = models.TextField(
-        blank=True,
-        verbose_name="가게 설명"
+    tag = models.ManyToManyField(
+        'Tag',
+        verbose_name="가게 세부 분류"
     )
 
-    logo = models.ImageField(
-        default=DEFAULT_LOGO_IMAGE_PATH,
+    description = models.TextField(
         blank=True,
-        upload_to=logo_directory_path,
-        storage=OverwriteStorage(),
-        verbose_name="로고 이미지"
+        verbose_name="점포 관련 메모"
     )
 
 
 class StoreStatus(models.Model):
     class Meta:
-        verbose_name = "상태"
-        verbose_name_plural = "상태"
+        verbose_name = "영업 상태"
+        verbose_name_plural = "영업 상태"
 
         abstract = True
 
-    status = models.CharField(
+    progress_level = models.CharField(
         max_length=WORD_LENGTH,
-        default=STORE_OC_OPEN,
-        choices=STORE_OC_STATUS,
-        verbose_name="상태"
-    )
-
-    type = models.CharField(
-        max_length=WORD_LENGTH,
-        default=STORE_TYPE_NORMAL,
-        choices=STORE_TYPE,
-        verbose_name="유형"
-    )
-
-    area = models.CharField(
-        max_length=WORD_LENGTH,
-        default=STORE_AREA_A_3,
-        choices=STORE_AREA,
-        verbose_name="지역코드"
+        default=PROGRESS_LEVEL_N,
+        choices=PROGRESS_LEVEL_TYPE,
+        verbose_name="진척도"
     )
 
 

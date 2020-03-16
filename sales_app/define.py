@@ -12,13 +12,13 @@ import urllib.parse
 
 ###########################################################################################
 # System
-from eatple_app.system.db import *
-from eatple_app.system.admin import *
-from eatple_app.system.rest_framework import *
+from sales_app.system.db import *
+from sales_app.system.admin import *
+from sales_app.system.rest_framework import *
 
-from eatple_app.system.mode import *
-from eatple_app.system.urls import *
-from eatple_app.system.model_type import *
+from sales_app.system.mode import *
+from sales_app.system.urls import *
+from sales_app.system.model_type import *
 
 ###########################################################################################
 # System Variable

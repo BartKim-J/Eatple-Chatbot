@@ -3,7 +3,7 @@ from eatple_app.views_system.include import *
 from eatple_app.views_system.debugger import *
 
 # STATIC EP_define
-ORDER_LIST_LENGTH = 4
+ORDER_LIST_LENGTH = 8
 
 # # # # # # # # # # # # # # # # # # # # # # # # #
 #
@@ -392,11 +392,14 @@ def kakaoView_OrderDetails(kakaoPayload):
     orderManager.orderPaidCheck()
     orderManager.orderPenddingCleanUp()
 
+    availableEatplePass = orderManager.availableOrderStatusUpdate()
+    ownEatplePass = availableEatplePass.filter(Q(ordersheet__user=user))
     unavailableOrders = orderManager.getUnavailableOrders().filter(
-        Q(ordersheet__user=user))[:ORDER_LIST_LENGTH]
+        Q(ordersheet__user=user))
 
-    if unavailableOrders:
-        for order in unavailableOrders:
+    orderList = ownEatplePass | unavailableOrders
+    if orderList:
+        for order in orderList[:ORDER_LIST_LENGTH]:
             KakaoInstantForm().OrderList(
                 order,
                 kakaoForm

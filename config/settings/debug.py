@@ -243,7 +243,7 @@ JET_INDEX_DASHBOARD = 'eatple_app.dashboard.CustomIndexDashboard'
 #JET_INDEX_DASHBOARD = 'jet.dashboard.dashboard.DefaultIndexDashboard'
 JET_APP_INDEX_DASHBOARD = 'jet.dashboard.dashboard.DefaultAppIndexDashboard'
 
-JET_SIDE_MENU_COMPACT = True
+JET_SIDE_MENU_COMPACT = False
 JET_CHANGE_FORM_SIBLING_LINKS = True
 JET_DEFAULT_THEME = 'light-violet'
 JET_THEMES = [
