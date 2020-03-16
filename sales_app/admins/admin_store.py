@@ -5,6 +5,9 @@ from sales_app.define import *
 # Models
 from sales_app.models import *
 
+# Eatple App Models
+from eatple_app.system.model_type import STORE_AREA
+
 # Django Library
 from django.contrib.gis import admin
 from django.contrib.gis import forms
@@ -30,6 +33,7 @@ class CRNInline(CompactInline):
     verbose_name_plural = "사업자 등록번호"
 
     model = CRN
+    max_num = 1
     extra = 0
 
     readonly_fields = ('CRN_id',)
@@ -40,7 +44,6 @@ class PlaceInline(CompactInline):
     verbose_name_plural = "장소"
 
     model = Place
-    min_num = 1
     max_num = 1
     extra = 0
 
@@ -95,7 +98,82 @@ class RecordInline(CompactInline):
     readonly_fields = ('store', 'record_date')
 
 
+class StoreSalesResource(resources.ModelResource):
+    def dehydrate_name(self, obj):
+        return obj.name
+
+    def dehydrate_phone_number(self, obj):
+        return obj.phone_number.as_national
+
+    def dehydrate_area(self, obj):
+        return dict(STORE_AREA)[obj.area]
+
+    def dehydrate_category(self, obj):
+        if(obj.category.exists()):
+            categoryList = ''
+            for category in obj.category.all():
+                categoryList += "{} ,".format(category.name)
+
+            categoryList = replaceRight(categoryList, ",", "", 1)
+            return categoryList
+        else:
+            return "미등록"
+
+    def dehydrate_tag(self, obj):
+        if(obj.tag.exists()):
+            tagList = ''
+            for tag in obj.tag.all():
+                tagList += "{} ,".format(tag.name)
+
+            tagList = replaceRight(tagList, ",", "", 1)
+            return tagList
+        else:
+            return "미등록"
+
+    def dehydrate_level(self, obj):
+        return dict(MEMBER_LEVEL_TYPE)[obj.level]
+
+    def dehydrate_customer_level(self, obj):
+        return dict(UP_AND_LOW_LEVEL_TYPE)[obj.customer_level]
+
+    def dehydrate_progress_level(self, obj):
+        return dict(PROGRESS_LEVEL_TYPE)[obj.progress_level]
+
+    id = Field(attribute='id', column_name='ID')
+    name = Field(attribute='name', column_name='점포명')
+
+    area = Field(attribute='area', column_name='지역')
+    addr = Field(attribute='addr', column_name='주소')
+
+    category = Field(attribute='category', column_name='가게 분류')
+    tag = Field(attribute='tag', column_name='분류 - 세부')
+
+    owner = Field(attribute='owner', column_name='담당자')
+    level = Field(attribute='level', column_name='직급')
+    phone_number = Field(attribute='phone_number', column_name='연락처')
+
+    progress_level = Field(attribute='progress_level', column_name='진척도')
+    customer_level = Field(attribute='customer_level', column_name='우호도')
+
+    class Meta:
+        model = Store
+
+        exclude = (
+            'store_memo',
+            'sales_memo',
+            'customer_memo',
+
+            'pickup_time',
+            'container_support',
+            'spoon_support',
+            'plastic_bag_support',
+        )
+
+
 class StoreAdmin(ImportExportMixin, admin.GeoModelAdmin):
+    resource_class = StoreSalesResource
+    list_per_page = 50
+
     def field_phonenumber(self, obj):
         return obj.phone_number.as_national
     field_phonenumber.short_description = "연락처"
@@ -204,4 +282,4 @@ class StoreAdmin(ImportExportMixin, admin.GeoModelAdmin):
         'member__phone_number',
     ]
 
-    inlines = [RecordInline, MemberInline, CRNInline, PlaceInline, ]
+    inlines = [RecordInline, MemberInline]

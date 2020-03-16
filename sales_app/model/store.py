@@ -226,12 +226,12 @@ class StoreBasicInfo(models.Model):
         max_length=WORD_LENGTH,
         default=STORE_AREA[0],
         choices=STORE_AREA,
-        verbose_name='지역코드'
+        verbose_name='지역'
     )
 
     addr = models.CharField(
         max_length=STRING_LENGTH,
-        verbose_name='점포 주소'
+        verbose_name='주소'
     )
 
     category = models.ManyToManyField(
