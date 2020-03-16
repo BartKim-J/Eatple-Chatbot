@@ -169,7 +169,7 @@ class SalesRecord(models.Model):
         super().save()
 
     def __str__(self):
-        return '{}'.format(self.record_date)
+        return '{}'.format(self.activity_date)
 
 
 class Member(models.Model):

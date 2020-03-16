@@ -14,6 +14,8 @@ from django.core import validators
 from django.utils.translation import ugettext_lazy as _
 from django.utils.safestring import mark_safe
 
+from jet.admin import CompactInline
+
 
 class TypeFilter(MultipleChoiceListFilter):
     title = '유형'
@@ -23,7 +25,7 @@ class TypeFilter(MultipleChoiceListFilter):
         return STORE_TYPE
 
 
-class CRNInline(admin.TabularInline):
+class CRNInline(CompactInline):
     verbose_name = "사업자 등록번호"
     verbose_name_plural = "사업자 등록번호"
 
@@ -33,19 +35,21 @@ class CRNInline(admin.TabularInline):
     readonly_fields = ('CRN_id',)
 
 
-class PlaceInline(admin.TabularInline):
+class PlaceInline(CompactInline):
     verbose_name = "장소"
     verbose_name_plural = "장소"
 
     model = Place
     min_num = 1
+    max_num = 1
+    extra = 0
 
     formfield_overrides = {
         models.PointField: {"widget": GoogleStaticMapWidget}
     }
 
 
-class MemberInline(admin.TabularInline):
+class MemberInline(CompactInline):
     verbose_name = "직원 리스트"
     verbose_name_plural = "직원 리스트"
 
@@ -70,7 +74,7 @@ class MemberInline(admin.TabularInline):
     readonly_fields = ('store', )
 
 
-class RecordInline(admin.TabularInline):
+class RecordInline(CompactInline):
     verbose_name = "영업 활동 내역"
     verbose_name_plural = "영업 활동 내역"
 
@@ -82,7 +86,7 @@ class RecordInline(admin.TabularInline):
             '기본 정보',
             {
                 'fields': [
-                    'activity_memo', 'activity_date', 'record_date',
+                    'activity_date', 'activity_memo', 'record_date',
                 ]
             }
         ),
@@ -158,18 +162,18 @@ class StoreAdmin(ImportExportMixin, admin.GeoModelAdmin):
             }
         ),
         (
-            '영업현황',
-            {
-                'fields': [
-                    'progress_level', 'sales_memo',
-                ]
-            }
-        ),
-        (
             '고객관리',
             {
                 'fields': [
                     'customer_level', 'customer_memo'
+                ]
+            }
+        ),
+        (
+            '영업현황',
+            {
+                'fields': [
+                    'progress_level', 'sales_memo',
                 ]
             }
         ),

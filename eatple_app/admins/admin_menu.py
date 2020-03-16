@@ -13,6 +13,7 @@ from django.core import validators
 from django.utils.translation import ugettext_lazy as _
 from django.utils.safestring import mark_safe
 
+from jet.admin import CompactInline
 
 class TypeFilter(MultipleChoiceListFilter):
     title = '유형'
@@ -22,7 +23,7 @@ class TypeFilter(MultipleChoiceListFilter):
         return OC_TYPE
 
 
-class StockTableInline(admin.TabularInline):
+class StockTableInline(CompactInline):
     verbose_name = "재고 관리"
     verbose_name_plural = "재고 관리"
 

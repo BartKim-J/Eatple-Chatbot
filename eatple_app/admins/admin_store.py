@@ -13,6 +13,8 @@ from django.core import validators
 from django.utils.translation import ugettext_lazy as _
 from django.utils.safestring import mark_safe
 
+from jet.admin import CompactInline
+
 
 class TypeFilter(MultipleChoiceListFilter):
     title = '유형'
@@ -22,7 +24,7 @@ class TypeFilter(MultipleChoiceListFilter):
         return STORE_TYPE
 
 
-class CRNInline(admin.TabularInline):
+class CRNInline(CompactInline):
     verbose_name = "사업자 등록번호"
     verbose_name_plural = "사업자 등록번호"
 
@@ -32,7 +34,7 @@ class CRNInline(admin.TabularInline):
     readonly_fields = ('CRN_id',)
 
 
-class PlaceInline(admin.TabularInline):
+class PlaceInline(CompactInline):
     verbose_name = "장소"
     verbose_name_plural = "장소"
 
@@ -44,7 +46,7 @@ class PlaceInline(admin.TabularInline):
     }
 
 
-class MenuInline(admin.StackedInline):
+class MenuInline(CompactInline):
     verbose_name = "메뉴"
     verbose_name_plural = "메뉴"
 

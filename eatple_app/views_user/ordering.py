@@ -264,25 +264,41 @@ def kakaoView_MenuListup(kakaoPayload):
                     place=menu.store.place
                 )
 
-                buttons = [
-                    {
-                        'action': 'block',
-                        'label': '선택',
-                        'messageText': KAKAO_EMOJI_LOADING,
-                        'blockId': KAKAO_BLOCK_USER_SET_PICKUP_TIME,
-                        'extra': {
-                            KAKAO_PARAM_STORE_ID: menu.store.store_id,
-                            KAKAO_PARAM_MENU_ID: menu.menu_id,
-                            KAKAO_PARAM_ORDER_ID: order.order_id,
-                            KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_GET_MENU
+                if(delivery == False):
+                    buttons = [
+                        {
+                            'action': 'block',
+                            'label': '선택',
+                            'messageText': KAKAO_EMOJI_LOADING,
+                            'blockId': KAKAO_BLOCK_USER_SET_PICKUP_TIME,
+                            'extra': {
+                                KAKAO_PARAM_STORE_ID: menu.store.store_id,
+                                KAKAO_PARAM_MENU_ID: menu.menu_id,
+                                KAKAO_PARAM_ORDER_ID: order.order_id,
+                                KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_GET_MENU
+                            }
+                        },
+                        {
+                            'action': 'webLink',
+                            'label': '위치보기',
+                            'webLinkUrl': kakaoMapUrl,
                         }
-                    },
-                    {
-                        'action': 'webLink',
-                        'label': '위치보기',
-                        'webLinkUrl': kakaoMapUrl,
-                    },
-                ]
+                    ]
+                else:
+                    buttons = [
+                        {
+                            'action': 'block',
+                            'label': '픽업존에서 수령하기',
+                            'messageText': KAKAO_EMOJI_LOADING,
+                            'blockId': KAKAO_BLOCK_USER_SET_PICKUP_TIME,
+                            'extra': {
+                                KAKAO_PARAM_STORE_ID: menu.store.store_id,
+                                KAKAO_PARAM_MENU_ID: menu.menu_id,
+                                KAKAO_PARAM_ORDER_ID: order.order_id,
+                                KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_GET_MENU
+                            }
+                        },
+                    ]
 
                 KakaoInstantForm().MenuList(
                     menu,
