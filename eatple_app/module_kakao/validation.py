@@ -4,6 +4,7 @@ from eatple_app.models import *
 # Define
 from eatple_app.define import *
 
+
 def partnerValidation(kakaoPayload):
     try:
         app_user_id = kakaoPayload.user_properties['app_user_id']

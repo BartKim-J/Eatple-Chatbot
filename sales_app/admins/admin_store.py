@@ -218,6 +218,7 @@ class StoreAdmin(ImportExportMixin, admin.GeoModelAdmin):
 
     list_editable = (
         'progress_level',
+        'partnership_manager',
     )
 
     fieldsets = [
@@ -256,6 +257,7 @@ class StoreAdmin(ImportExportMixin, admin.GeoModelAdmin):
     ]
 
     list_filter = (
+        'partnership_manager',
         'progress_level',
         'area',
     )
@@ -270,6 +272,7 @@ class StoreAdmin(ImportExportMixin, admin.GeoModelAdmin):
         'progress_level',
         'field_activity',
         'field_activity_date',
+        'partnership_manager',
     )
 
     search_fields = [

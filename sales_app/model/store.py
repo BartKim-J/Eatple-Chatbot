@@ -13,6 +13,9 @@ from django.core.files.storage import FileSystemStorage
 from django_mysql.models import Model
 from django.core.validators import MaxValueValidator, MinValueValidator
 
+# Django Model
+from django.contrib.auth.models import User
+
 
 class Place(models.Model):
     class Meta:
@@ -280,6 +283,7 @@ class StoreDetailInfo(models.Model):
     menu = models.CharField(
         max_length=STRING_LENGTH,
         null=True,
+        blank=True,
         verbose_name='대표메뉴'
     )
 
@@ -362,6 +366,13 @@ class Store(StoreBasicInfo, StoreDetailInfo, StoreSales, StoreCustomer):
         verbose_name_plural = '점포'
 
         ordering = ['-name']
+
+    partnership_manager = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        null=True,
+        verbose_name='담당 파트너'
+    )
 
     def __str__(self):
         return '{name}'.format(name=self.name)
