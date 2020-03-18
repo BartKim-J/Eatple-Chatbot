@@ -56,10 +56,6 @@ class MemberInline(CompactInline):
     model = Member
     extra = 0
 
-    def phonenumber(self, obj):
-        return obj.phone_number.as_national
-    phonenumber.short_description = '전화번호'
-
     fieldsets = [
         (
             '직원 리스트',
@@ -100,7 +96,10 @@ class StoreSalesResource(resources.ModelResource):
         return obj.name
 
     def dehydrate_phone_number(self, obj):
-        return obj.phone_number.as_national
+        if(obj.phone_number != None):
+            return obj.phone_number.as_national
+        else:
+            return '미등록'
 
     def dehydrate_area(self, obj):
         return dict(STORE_AREA)[obj.area]
@@ -164,6 +163,10 @@ class StoreSalesResource(resources.ModelResource):
             'container_support',
             'spoon_support',
             'plastic_bag_support',
+            'menu',
+            'price',
+            'partnership_manager',
+            'priority',
         )
 
 
@@ -171,12 +174,12 @@ class StoreAdmin(ImportExportMixin, admin.GeoModelAdmin):
     resource_class = StoreSalesResource
     list_per_page = 50
 
-    def field_phonenumber(self, obj):
+    def field_phone_number(self, obj):
         if(obj.phone_number != None):
             return obj.phone_number.as_national
         else:
             return '미등록'
-    field_phonenumber.short_description = '연락처'
+    field_phone_number.short_description = '연락처'
 
     def field_category(self, obj):
         if(obj.category.exists()):
@@ -314,7 +317,7 @@ class StoreAdmin(ImportExportMixin, admin.GeoModelAdmin):
         'field_category',
         'field_tag',
         'owner',
-        'field_phonenumber',
+        'field_phone_number',
         'field_progress_level_status',
         'progress_level',
         'field_activity',
