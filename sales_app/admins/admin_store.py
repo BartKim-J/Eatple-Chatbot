@@ -1,7 +1,6 @@
 # Define
 from sales_app.define import *
 
-
 # Models
 from sales_app.models import *
 
@@ -27,8 +26,8 @@ class TypeFilter(MultipleChoiceListFilter):
 
 
 class CRNInline(CompactInline):
-    verbose_name = "사업자 등록번호"
-    verbose_name_plural = "사업자 등록번호"
+    verbose_name = '사업자 등록번호'
+    verbose_name_plural = '사업자 등록번호'
 
     model = CRN
     max_num = 1
@@ -38,28 +37,28 @@ class CRNInline(CompactInline):
 
 
 class PlaceInline(CompactInline):
-    verbose_name = "장소"
-    verbose_name_plural = "장소"
+    verbose_name = '장소'
+    verbose_name_plural = '장소'
 
     model = Place
     max_num = 1
     extra = 0
 
     formfield_overrides = {
-        models.PointField: {"widget": GoogleStaticMapWidget}
+        models.PointField: {'widget': GoogleStaticMapWidget}
     }
 
 
 class MemberInline(CompactInline):
-    verbose_name = "직원 리스트"
-    verbose_name_plural = "직원 리스트"
+    verbose_name = '직원 리스트'
+    verbose_name_plural = '직원 리스트'
 
     model = Member
     extra = 0
 
     def phonenumber(self, obj):
         return obj.phone_number.as_national
-    phonenumber.short_description = "전화번호"
+    phonenumber.short_description = '전화번호'
 
     fieldsets = [
         (
@@ -76,8 +75,8 @@ class MemberInline(CompactInline):
 
 
 class RecordInline(CompactInline):
-    verbose_name = "영업 활동 내역"
-    verbose_name_plural = "영업 활동 내역"
+    verbose_name = '영업 활동 내역'
+    verbose_name_plural = '영업 활동 내역'
 
     model = SalesRecord
     extra = 0
@@ -110,23 +109,23 @@ class StoreSalesResource(resources.ModelResource):
         if(obj.category.exists()):
             categoryList = ''
             for category in obj.category.all():
-                categoryList += "{} ,".format(category.name)
+                categoryList += '{} ,'.format(category.name)
 
-            categoryList = replaceRight(categoryList, ",", "", 1)
+            categoryList = replaceRight(categoryList, ',', '', 1)
             return categoryList
         else:
-            return "미등록"
+            return '미등록'
 
     def dehydrate_tag(self, obj):
         if(obj.tag.exists()):
             tagList = ''
             for tag in obj.tag.all():
-                tagList += "{} ,".format(tag.name)
+                tagList += '{} ,'.format(tag.name)
 
-            tagList = replaceRight(tagList, ",", "", 1)
+            tagList = replaceRight(tagList, ',', '', 1)
             return tagList
         else:
-            return "미등록"
+            return '미등록'
 
     def dehydrate_level(self, obj):
         return dict(MEMBER_LEVEL_TYPE)[obj.level]
@@ -173,53 +172,87 @@ class StoreAdmin(ImportExportMixin, admin.GeoModelAdmin):
     list_per_page = 50
 
     def field_phonenumber(self, obj):
-        return obj.phone_number.as_national
-    field_phonenumber.short_description = "연락처"
+        if(obj.phone_number != None):
+            return obj.phone_number.as_national
+        else:
+            return '미등록'
+    field_phonenumber.short_description = '연락처'
 
     def field_category(self, obj):
         if(obj.category.exists()):
             categoryList = ''
             for category in obj.category.all():
-                categoryList += "{} ,".format(category.name)
+                categoryList += '{} ,'.format(category.name)
 
-            categoryList = replaceRight(categoryList, ",", "", 1)
+            categoryList = replaceRight(categoryList, ',', '', 1)
             return categoryList
         else:
-            return "미등록"
-    field_category.short_description = "가게분류"
+            return '미등록'
+    field_category.short_description = '가게분류'
 
     def field_tag(self, obj):
         if(obj.tag.exists()):
             tagList = ''
             for tag in obj.tag.all():
-                tagList += "{} ,".format(tag.name)
+                tagList += '{} ,'.format(tag.name)
 
-            tagList = replaceRight(tagList, ",", "", 1)
+            tagList = replaceRight(tagList, ',', '', 1)
             return tagList
         else:
-            return "미등록"
-    field_tag.short_description = "분류-세부"
+            return '미등록'
+    field_tag.short_description = '분류-세부'
 
     def field_activity(self, obj):
         activityList = SalesRecord.objects.filter(store=obj)
         if(activityList.exists()):
-            return activityList.first().activity_memo
+            memoLength = len(activityList.first().activity_memo)
+            memoLengthLimit = 40
+
+            if(memoLength > memoLengthLimit):
+                return '{}..'.format(activityList.first().activity_memo[:memoLengthLimit])
+            else:
+                return activityList.first().activity_memo
         else:
-            return "활동 기록 없음"
-    field_activity.short_description = "최근 활동내역"
+            return '활동 기록 없음'
+    field_activity.short_description = '최근 활동내역'
 
     def field_activity_date(self, obj):
         activityList = SalesRecord.objects.filter(store=obj)
         if(activityList.exists()):
             return activityList.first().activity_date
         else:
-            return "활동 기록 없음"
-    field_activity_date.short_description = "최근 활동내역"
+            return '활동 기록 없음'
+    field_activity_date.short_description = '최근 활동내역'
 
-    list_editable = (
-        'progress_level',
-        'partnership_manager',
-    )
+    def field_progress_level_status(self, obj):
+        if(obj.progress_level == PROGRESS_LEVEL_S):
+            return '🏆'
+        elif(obj.progress_level == PROGRESS_LEVEL_A):
+            return '✅'
+        elif(obj.progress_level == PROGRESS_LEVEL_B):
+            return '💬'
+        elif(obj.progress_level == PROGRESS_LEVEL_C):
+            return '💭'
+        elif(obj.progress_level == PROGRESS_LEVEL_D):
+            return '⛔️'
+        elif(obj.progress_level == PROGRESS_LEVEL_N):
+            return '🛑'
+        else:
+            return '⛔️'
+    field_progress_level_status.short_description = '📢'
+
+    def field_priority(self, obj):
+        if(obj.priority == PRIORITY_LEVEL_HIGH):
+            return '🥇'
+        elif(obj.priority == PRIORITY_LEVEL_MIDDLE):
+            return '🥈'
+        elif(obj.priority == PRIORITY_LEVEL_LOW):
+            return '🥉'
+        elif(obj.priority == PRIORITY_LEVEL_PENDDING):
+            return '🚧'
+        else:
+            return '⛔️'
+    field_priority.short_description = '우선도'
 
     fieldsets = [
         (
@@ -250,7 +283,7 @@ class StoreAdmin(ImportExportMixin, admin.GeoModelAdmin):
             '영업현황',
             {
                 'fields': [
-                    'progress_level', 'sales_memo',
+                    'progress_level', 'priority', 'sales_memo',
                 ]
             }
         ),
@@ -259,7 +292,13 @@ class StoreAdmin(ImportExportMixin, admin.GeoModelAdmin):
     list_filter = (
         'partnership_manager',
         'progress_level',
+        'priority',
         'area',
+    )
+
+    list_editable = (
+        'progress_level',
+        'partnership_manager',
     )
 
     list_display = (
@@ -269,10 +308,12 @@ class StoreAdmin(ImportExportMixin, admin.GeoModelAdmin):
         'field_tag',
         'owner',
         'field_phonenumber',
+        'field_progress_level_status',
         'progress_level',
         'field_activity',
         'field_activity_date',
         'partnership_manager',
+        'field_priority',
     )
 
     search_fields = [

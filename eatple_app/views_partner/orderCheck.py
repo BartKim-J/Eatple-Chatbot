@@ -88,10 +88,17 @@ def kakaoView_OrderDetails(kakaoPayload):
                 )
 
                 if(isPickupZone):
+                    time = '오전 11시 30분'
+
+                    # @Temporary Code
+                    if(partner.store.name == '핏자당'):
+                        time = '오후 12시'
+
                     title = '{} {}'.format(
                         datetime.datetime.now().strftime("%-m월 %-d일"),
-                        '오전 11시 30분'
+                        time
                     )
+
                 else:
                     title = '상시 픽업'
 

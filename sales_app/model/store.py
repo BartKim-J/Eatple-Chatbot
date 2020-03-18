@@ -365,13 +365,20 @@ class Store(StoreBasicInfo, StoreDetailInfo, StoreSales, StoreCustomer):
         verbose_name = '점포'
         verbose_name_plural = '점포'
 
-        ordering = ['-name']
+        ordering = ['priority', 'progress_level']
 
     partnership_manager = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
         null=True,
         verbose_name='담당 파트너'
+    )
+
+    priority = models.CharField(
+        max_length=WORD_LENGTH,
+        default=PRIORITY_LEVEL_MIDDLE,
+        choices=PRIORITY_LEVEL_TYPE,
+        verbose_name='우선순위'
     )
 
     def __str__(self):

@@ -51,6 +51,17 @@ MEMBER_LEVEL_TYPE = [
     (MEMBER_LEVEL_NORMAL, '일반'),
 ]
 
+PRIORITY_LEVEL_HIGH = 'high'
+PRIORITY_LEVEL_MIDDLE = 'middle'
+PRIORITY_LEVEL_LOW = 'low'
+PRIORITY_LEVEL_PENDDING = 'pendding'
+
+PRIORITY_LEVEL_TYPE = [
+    (PRIORITY_LEVEL_HIGH, '상'),
+    (PRIORITY_LEVEL_MIDDLE, '중'),
+    (PRIORITY_LEVEL_LOW, '하'),
+    (PRIORITY_LEVEL_PENDDING, '보류')
+]
 ###########################################################################################
 # Default Value
 # Location
