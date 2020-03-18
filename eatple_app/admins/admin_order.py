@@ -60,8 +60,8 @@ class OrderResource(resources.ModelResource):
             return '일반'
 
     def dehydrate_phone_number(self, obj):
-        if(obj.ordersheet.user.phone_number != None):
-            return obj.ordersheet.user.phone_number.as_national
+        if(obj.ordersheet.user.field_phone_number != None):
+            return obj.ordersheet.user.field_phone_number.as_national
         else:
             return ''
 
@@ -70,10 +70,10 @@ class OrderResource(resources.ModelResource):
 
     def dehydrate_payment_status(self, obj):
         return dict(EATPLE_ORDER_STATUS)[obj.payment_status]
-    
+
     def dehydrate_payment_type(self, obj):
         return dict(ORDER_PAYMENT_TYPE)[obj.payment_type]
-    
+
     def dehydrate_user_name(self, obj):
         return obj.ordersheet.user.nickname
 
@@ -98,7 +98,7 @@ class OrderResource(resources.ModelResource):
     b2b_name = Field(column_name='B2B')
     payment_status = Field(column_name='결제 상태')
     totalPrice = Field(attribute='totalPrice', column_name='총 결제금액')
-    phone_number = Field(column_name='전화번호')
+    field_phone_number = Field(column_name='전화번호')
     order_date = Field(column_name='주문 시간')
     payment_date = Field(column_name='결제 완료 시간')
     pickup_complete_date = Field(column_name='픽업 완료 시간')
@@ -129,28 +129,28 @@ class OrderAdmin(ImportExportMixin, admin.ModelAdmin):
 
     make_enable.short_description = '지정 주문을 Enable 상태로 변경'
 
-    def owner(self, obj):
+    def field_owner(self, obj):
         return obj.ordersheet.user.nickname
-    owner.short_description = "사용자"
+    field_owner.short_description = "사용자"
 
-    def owner_id(self, obj):
+    def field_owner_id(self, obj):
         return obj.ordersheet.user.app_user_id
-    owner_id.short_description = "사용자 고유번호"
+    field_owner_id.short_description = "사용자 고유번호"
 
-    def user_type(self, obj):
+    def field_user_type(self, obj):
         return obj.ordersheet.user.type
 
-    def phone_number(self, obj):
-        return obj.ordersheet.user.phone_number
+    def field_phone_number(self, obj):
+        return obj.ordersheet.user.field_phone_number
 
-    def delegate_flag(self, obj):
+    def field_delegate_flag(self, obj):
         if(obj.delegate != None):
             return 'O'
         else:
             return 'X'
 
         return False
-    delegate_flag.short_description = "부탁하기"
+    field_delegate_flag.short_description = "부탁하기"
 
     def b2b_name(self, obj):
         if(obj.ordersheet.user.company != None and obj.type == ORDER_TYPE_B2B):
@@ -177,6 +177,10 @@ class OrderAdmin(ImportExportMixin, admin.ModelAdmin):
         'update_date',
     )
 
+    list_editable = (
+        'status',
+    )
+
     list_filter = (
         ('payment_date', DateRangeFilter),
         ('pickup_time', DateRangeFilter),
@@ -190,7 +194,7 @@ class OrderAdmin(ImportExportMixin, admin.ModelAdmin):
 
     actions = ['make_enable']
 
-    list_display = ('order_id', 'owner', 'owner_id',  'store', 'menu', 'type', 'b2b_name',
-                    'payment_type', 'payment_status', 'status', 'delegate_flag', 'pickup_time', 'payment_date', 'pickup_complete_date')
+    list_display = ('order_id', 'field_owner', 'field_owner_id',  'store', 'menu', 'type', 'b2b_name',
+                    'payment_type', 'payment_status', 'status', 'field_delegate_flag', 'pickup_time', 'payment_date', 'pickup_complete_date')
 
     inlines = [KakaoPayInline]

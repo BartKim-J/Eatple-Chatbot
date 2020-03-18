@@ -13,6 +13,7 @@ from django.core import validators
 from django.utils.translation import ugettext_lazy as _
 from django.utils.safestring import mark_safe
 
+
 class TypeFilter(MultipleChoiceListFilter):
     title = '유형'
     parameter_name = 'type__in'
@@ -132,14 +133,14 @@ class StoreAdmin(ImportExportMixin, admin.GeoModelAdmin):
         'type',
     )
 
-    def status_flag(self, obj):
+    def field_status_flag(self, obj):
         if(obj.status == OC_OPEN):
             return 'O'
         else:
             return 'X'
 
         return False
-    status_flag.short_description = "상태"
+    field_status_flag.short_description = "상태"
 
     list_display = (
         'name',
@@ -147,7 +148,7 @@ class StoreAdmin(ImportExportMixin, admin.GeoModelAdmin):
         'crn',
         'type',
         'area',
-        'status_flag',
+        'field_status_flag',
     )
 
     search_fields = ['name', 'store_id', 'area', 'menu__name']
