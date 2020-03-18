@@ -222,23 +222,23 @@ class StoreAdmin(ImportExportMixin, admin.GeoModelAdmin):
             return activityList.first().activity_date
         else:
             return '활동 기록 없음'
-    field_activity_date.short_description = '최근 활동내역'
+    field_activity_date.short_description = '최근 활동일자'
 
     def field_progress_level_status(self, obj):
         if(obj.progress_level == PROGRESS_LEVEL_S):
             return '🏆'
         elif(obj.progress_level == PROGRESS_LEVEL_A):
-            return '✅'
+            return '✔️'
         elif(obj.progress_level == PROGRESS_LEVEL_B):
             return '💬'
         elif(obj.progress_level == PROGRESS_LEVEL_C):
             return '💭'
         elif(obj.progress_level == PROGRESS_LEVEL_D):
-            return '⛔️'
+            return '🚫'
         elif(obj.progress_level == PROGRESS_LEVEL_N):
-            return '🛑'
+            return '👁‍🗨'
         else:
-            return '⛔️'
+            return '⚠️'
     field_progress_level_status.short_description = '📢'
 
     def field_priority(self, obj):
@@ -251,7 +251,7 @@ class StoreAdmin(ImportExportMixin, admin.GeoModelAdmin):
         elif(obj.priority == PRIORITY_LEVEL_PENDDING):
             return '🚧'
         else:
-            return '⛔️'
+            return '⚠️'
     field_priority.short_description = '우선도'
 
     fieldsets = [
@@ -287,6 +287,13 @@ class StoreAdmin(ImportExportMixin, admin.GeoModelAdmin):
                 ]
             }
         ),
+    ]
+
+    search_fields = [
+        'name',
+        'addr',
+        'owner',
+        'phone_number',
     ]
 
     list_filter = (

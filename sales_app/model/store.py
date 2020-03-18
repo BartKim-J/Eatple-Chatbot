@@ -362,10 +362,10 @@ class StoreCustomer(models.Model):
 
 class Store(StoreBasicInfo, StoreDetailInfo, StoreSales, StoreCustomer):
     class Meta:
-        verbose_name = '점포'
-        verbose_name_plural = '점포'
+        verbose_name = '점포 영업 상황'
+        verbose_name_plural = '점포 영업 상황'
 
-        ordering = ['priority', 'progress_level']
+        ordering = ['progress_level', 'priority', ]
 
     partnership_manager = models.ForeignKey(
         settings.AUTH_USER_MODEL,
