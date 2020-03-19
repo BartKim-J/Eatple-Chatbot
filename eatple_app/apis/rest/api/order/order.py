@@ -27,8 +27,8 @@ class OrderViewSet(viewsets.ModelViewSet):
         status = request.query_params.get('status')
         count = request.query_params.get('count')
 
-        date_range_start = request.query_params.get('start')
-        date_range_end = request.query_params.get('end')
+        date_range_start = request.query_params.get('date_range_start')
+        date_range_end = request.query_params.get('date_range_end')
 
         orderList = Order.objects.filter(
             ~Q(store=None) &
