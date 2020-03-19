@@ -47,6 +47,7 @@ router.register(r'order/validation', api.OrderValidation)
 router.register(r'order/information', api.OrderInformation)
 
 router.register(r'partner', api.PartnerViewSet)
+router.register(r'order', api.OrderViewSet)
 
 RESTFUL_API_URLS = [
     path('rest/api/', include(router.urls)),

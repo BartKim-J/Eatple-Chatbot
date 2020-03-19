@@ -19,3 +19,4 @@ from eatple_app.apis.rest.api.user.order import OrderValidation
 from eatple_app.apis.rest.api.user.order import OrderInformation
 
 from eatple_app.apis.rest.api.partner.partner import PartnerViewSet
+from eatple_app.apis.rest.api.order.order import OrderViewSet

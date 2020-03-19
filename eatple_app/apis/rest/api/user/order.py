@@ -23,14 +23,14 @@ class OrderValidation(viewsets.ModelViewSet):
         operation_description="주문 증명",
         responses={
             200:
-                ORDER_200_VALID.as_md(),
+                PAYMENT_200_VALID.as_md(),
             400:
-                ORDER_201_USER_INVALID.as_md() +
-                ORDER_202_MULTI_ORDER.as_md() +
-                ORDER_203_ORDER_ID_INVALID.as_md() +
-                ORDER_204_ALREADY_PAID.as_md() +
-                ORDER_205_ALREADY_CANCELLED.as_md() +
-                ORDER_206_SELLING_TIME_INVALID.as_md()
+                PAYMENT_201_USER_INVALID.as_md() +
+                PAYMENT_202_MULTI_ORDER.as_md() +
+                PAYMENT_203_ORDER_ID_INVALID.as_md() +
+                PAYMENT_204_ALREADY_PAID.as_md() +
+                PAYMENT_205_ALREADY_CANCELLED.as_md() +
+                PAYMENT_206_SELLING_TIME_INVALID.as_md()
         }
     )
     def list(self, request, *args, **kwargs):
@@ -42,25 +42,25 @@ class OrderValidation(viewsets.ModelViewSet):
         }
 
         if(merchant_uid == None):
-            response['error_code'] = PARAM_600_MERCHANT_UID_INVALID.code
-            response['error_msg'] = PARAM_600_MERCHANT_UID_INVALID.message
+            response['error_code'] = PAYMENT_600_MERCHANT_UID_INVALID.code
+            response['error_msg'] = PAYMENT_600_MERCHANT_UID_INVALID.message
 
-            return Response(response, status=PARAM_600_MERCHANT_UID_INVALID.status)
+            return Response(response, status=PAYMENT_600_MERCHANT_UID_INVALID.status)
 
         # Order Check
         order = orderValidation(merchant_uid)
 
         if(order == None or order.payment_status == EATPLE_ORDER_STATUS_FAILED):
-            response['error_code'] = ORDER_203_ORDER_ID_INVALID.code
-            response['error_msg'] = ORDER_203_ORDER_ID_INVALID.message
+            response['error_code'] = PAYMENT_203_ORDER_ID_INVALID.code
+            response['error_msg'] = PAYMENT_203_ORDER_ID_INVALID.message
             return Response(response)
         elif(order.payment_status == EATPLE_ORDER_STATUS_PAID):
-            response['error_code'] = ORDER_100_SUCCESS.code
-            response['error_msg'] = ORDER_100_SUCCESS.message
+            response['error_code'] = PAYMENT_100_SUCCESS.code
+            response['error_msg'] = PAYMENT_100_SUCCESS.message
             return Response(response)
         elif(order.payment_status == EATPLE_ORDER_STATUS_CANCELLED):
-            response['error_code'] = ORDER_205_ALREADY_CANCELLED.code
-            response['error_msg'] = ORDER_205_ALREADY_CANCELLED.message
+            response['error_code'] = PAYMENT_205_ALREADY_CANCELLED.code
+            response['error_msg'] = PAYMENT_205_ALREADY_CANCELLED.message
             return Response(response)
         else:
             # Order Payment Type Setup to INI Pay
@@ -75,22 +75,22 @@ class OrderValidation(viewsets.ModelViewSet):
                 order.payment_date = dateNowByTimeZone()
                 order.save()
 
-                response['error_code'] = ORDER_100_SUCCESS.code
-                response['error_msg'] = ORDER_100_SUCCESS.message
+                response['error_code'] = PAYMENT_100_SUCCESS.code
+                response['error_msg'] = PAYMENT_100_SUCCESS.message
                 return Response(response)
 
         # Account Check
         user = userValidation(order.ordersheet.user.app_user_id)
         if(user == None):
-            response['error_code'] = ORDER_201_USER_INVALID.code
-            response['error_msg'] = ORDER_201_USER_INVALID.message
+            response['error_code'] = PAYMENT_201_USER_INVALID.code
+            response['error_msg'] = PAYMENT_201_USER_INVALID.message
             return Response(response)
 
         # Eatple Pass Check
         eatplePassStatus = eatplePassValidation(user)
         if(eatplePassStatus == False):
-            response['error_code'] = ORDER_202_MULTI_ORDER.code
-            response['error_msg'] = ORDER_202_MULTI_ORDER.message
+            response['error_code'] = PAYMENT_202_MULTI_ORDER.code
+            response['error_msg'] = PAYMENT_202_MULTI_ORDER.message
             return Response(response)
 
         # Time Check
@@ -98,18 +98,18 @@ class OrderValidation(viewsets.ModelViewSet):
         isClosedDay = weekendTimeCheck()
 
         if(currentSellingTime != order.menu.selling_time or isClosedDay == True):
-            response['error_code'] = ORDER_206_SELLING_TIME_INVALID.code
-            response['error_msg'] = ORDER_206_SELLING_TIME_INVALID.message
+            response['error_code'] = PAYMENT_206_SELLING_TIME_INVALID.code
+            response['error_msg'] = PAYMENT_206_SELLING_TIME_INVALID.message
             return Response(response)
 
         # Store Check
         if(order.store.status != OC_OPEN or order.menu.status != OC_OPEN):
-            response['error_code'] = ORDER_206_SELLING_TIME_INVALID.code
-            response['error_msg'] = ORDER_206_SELLING_TIME_INVALID.message
+            response['error_code'] = PAYMENT_206_SELLING_TIME_INVALID.code
+            response['error_msg'] = PAYMENT_206_SELLING_TIME_INVALID.message
             return Response(response)
 
-        response['error_code'] = ORDER_200_VALID.code
-        response['error_msg'] = ORDER_200_VALID.message
+        response['error_code'] = PAYMENT_200_VALID.code
+        response['error_msg'] = PAYMENT_200_VALID.message
         return Response(response)
 
 
@@ -127,34 +127,34 @@ class OrderInformation(viewsets.ModelViewSet):
         }
 
         if(merchant_uid == None):
-            response['error_code'] = PARAM_600_MERCHANT_UID_INVALID.code
-            response['error_msg'] = PARAM_600_MERCHANT_UID_INVALID.message
+            response['error_code'] = PAYMENT_600_MERCHANT_UID_INVALID.code
+            response['error_msg'] = PAYMENT_600_MERCHANT_UID_INVALID.message
 
-            return Response(response, status=PARAM_600_MERCHANT_UID_INVALID.status)
+            return Response(response, status=PAYMENT_600_MERCHANT_UID_INVALID.status)
 
         # Order Check
         order = orderValidation(merchant_uid)
 
         if(order == None or order.payment_status == EATPLE_ORDER_STATUS_FAILED):
-            response['error_code'] = ORDER_203_ORDER_ID_INVALID.code
-            response['error_msg'] = ORDER_203_ORDER_ID_INVALID.message
+            response['error_code'] = PAYMENT_203_ORDER_ID_INVALID.code
+            response['error_msg'] = PAYMENT_203_ORDER_ID_INVALID.message
             return Response(response)
 
         if(order.payment_status == EATPLE_ORDER_STATUS_PAID):
-            response['error_code'] = ORDER_204_ALREADY_PAID.code
-            response['error_msg'] = ORDER_204_ALREADY_PAID.message
+            response['error_code'] = PAYMENT_204_ALREADY_PAID.code
+            response['error_msg'] = PAYMENT_204_ALREADY_PAID.message
             return Response(response)
 
         if(order.payment_status == EATPLE_ORDER_STATUS_CANCELLED):
-            response['error_code'] = ORDER_205_ALREADY_CANCELLED.code
-            response['error_msg'] = ORDER_205_ALREADY_CANCELLED.message
+            response['error_code'] = PAYMENT_205_ALREADY_CANCELLED.code
+            response['error_msg'] = PAYMENT_205_ALREADY_CANCELLED.message
             return Response(response)
 
         # Account Check
         user = userValidation(order.ordersheet.user.app_user_id)
         if(user == None):
-            response['error_code'] = ORDER_201_USER_INVALID.code
-            response['error_msg'] = ORDER_201_USER_INVALID.message
+            response['error_code'] = PAYMENT_201_USER_INVALID.code
+            response['error_msg'] = PAYMENT_201_USER_INVALID.message
             return Response(response)
 
         response['store'] = order.store.name
