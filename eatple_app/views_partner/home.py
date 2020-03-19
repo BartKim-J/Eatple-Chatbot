@@ -159,15 +159,19 @@ def GET_PartnerHome(request):
                 else:
                     CRN = kakaoPayload.dataActionParams['CRN']['origin']
 
-                    try:
-                        store = Store.objects.get(crn__CRN_id=CRN)
-                        partner.storeRegistration(store)
+                    storeList = Store.objects.filter(crn__CRN_id=CRN)
+                    storeListCount = storeList.count()
 
-                        return GET_PartnerHome(request)
-                    except Store.DoesNotExist as ex:
+                    if(storeListCount == 1):
+                        partner.storeRegistration(storeList.first())
+                    elif(storeListCount > 1):
+                        for store in storeList:
+                            print(store.name)
+                        partner.storeRegistration(storeList.first())
+                    else:
                         return errorView('잘못된 사업자 등록번호', '잇플에 등록되지 않은 사업자 번호입니다.')
 
-                    return kakaoView_StoreRegistration()
+                    return GET_PartnerHome(request)
 
             except (RuntimeError, TypeError, NameError, KeyError):
                 if(partner == None):

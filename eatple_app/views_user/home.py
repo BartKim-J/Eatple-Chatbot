@@ -43,7 +43,7 @@ def surveyForm(kakaoForm):
 
     kakaoForm.BasicCard_Push(
         '사용하시는데 불편함이 있으신가요?',
-        '',
+        '말씀해주시면 반영해드릴게요!',
         thumbnail,
         buttons
     )
@@ -296,8 +296,8 @@ def kakaoView_Home(user, address):
     }
 
     kakaoForm.BasicCard_Push(
-        '',
-        '',
+        '주문 가능시간',
+        '오후 4시 30분 ~ 오전 10시 30분',
         thumbnail,
         buttons
     )
