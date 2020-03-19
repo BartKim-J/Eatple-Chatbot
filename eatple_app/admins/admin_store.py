@@ -44,6 +44,27 @@ class PlaceInline(CompactInline):
     }
 
 
+class RecordInline(CompactInline):
+    verbose_name = '영업 활동 내역'
+    verbose_name_plural = '영업 활동 내역'
+
+    model = SalesRecord
+    extra = 0
+
+    fieldsets = [
+        (
+            '기본 정보',
+            {
+                'fields': [
+                    'activity_memo', 'activity_date', 'record_date',
+                ]
+            }
+        ),
+    ]
+
+    readonly_fields = ('store', 'record_date')
+
+
 class MenuInline(CompactInline):
     verbose_name = "메뉴"
     verbose_name_plural = "메뉴"
@@ -93,11 +114,53 @@ class StoreAdmin(ImportExportMixin, admin.GeoModelAdmin):
     list_editable = ()
 
     fieldsets = [
-        ('기본 정보',            {'fields': [
-         'store_id', 'name', 'addr', 'owner', 'phone_number']}),
-        ('설정',                 {'fields': [
-         'category', 'description', 'logo', 'logo_preview']}),
-        ('상태',                 {'fields': ['status', 'type', 'area']}),
+        (
+            '기본 정보',
+            {
+                'fields': [
+                    'store_id',
+                    'name',
+                    'addr',
+                    'owner',
+                    'phone_number'
+                ]
+            }
+        ),
+        (
+            '설정',
+            {
+                'fields': [
+                    'category',
+                    'description',
+                    'logo',
+                    'logo_preview'
+                ]
+            }
+        ),
+        (
+            '상태',
+            {
+                'fields':
+                    [
+                        'status',
+                        'type',
+                        'area'
+                    ]
+            }
+        ),
+        (
+            '영업 관리',
+            {
+                'fields':
+                    [
+                        'customer_level',
+                        'sales_memo',
+                        'container_support',
+                        'spoon_support',
+                        'plastic_bag_support',
+                    ]
+            }
+        )
     ]
 
     def logo_preview(self, obj):
@@ -167,4 +230,4 @@ class StoreAdmin(ImportExportMixin, admin.GeoModelAdmin):
 
     actions = ['store_open', 'store_close']
 
-    inlines = [PlaceInline, MenuInline, CRNInline]
+    inlines = [RecordInline, PlaceInline, MenuInline, CRNInline]

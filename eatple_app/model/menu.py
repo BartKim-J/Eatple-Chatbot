@@ -215,6 +215,11 @@ class MenuSetting(models.Model):
         default=6000,
         verbose_name="가격"
     )
+    
+    price_origin = models.IntegerField(
+        default=6000,
+        verbose_name="매장가격"
+    )
 
     class Meta:
         abstract = True

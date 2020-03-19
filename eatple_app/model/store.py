@@ -8,6 +8,8 @@ from django.core.files.storage import FileSystemStorage
 from django_mysql.models import Model
 from django.core.validators import MaxValueValidator, MinValueValidator
 
+from sales_app.system.model_type import UP_AND_LOW_LEVEL_LOWER, UP_AND_LOW_LEVEL_TYPE
+
 # Utils
 from eatple_app.model.utils import OverwriteStorage
 from eatple_app.model.utils import logo_directory_path
@@ -155,6 +157,43 @@ class CRN(models.Model):
         )
 
 
+class SalesRecord(models.Model):
+    class Meta:
+        ordering = ['-record_date']
+        verbose_name = '영업 활동 내역'
+        verbose_name_plural = '영업 활동 내역'
+
+    store = models.ForeignKey(
+        'Store',
+        on_delete=models.CASCADE,
+        null=True,
+        verbose_name='점포'
+    )
+
+    activity_memo = models.TextField(
+        blank=True,
+        verbose_name='영업 활동 내역'
+    )
+
+    activity_date = models.CharField(
+        default=dateNowByTimeZone().strftime(
+            '%-m월 %-d일 %p %-I시 %-M분').replace('AM', '오전').replace('PM', '오후'),
+        max_length=STRING_LENGTH,
+        verbose_name='활동일'
+    )
+
+    record_date = models.DateTimeField(
+        auto_now_add=True,
+        verbose_name='기록일'
+    )
+
+    def save(self, *args, **kwargs):
+        super().save()
+
+    def __str__(self):
+        return '{}'.format(self.activity_date)
+
+
 class StoreInfo(models.Model):
     store_id = models.CharField(
         default='N/A',
@@ -243,7 +282,42 @@ class StoreStatus(models.Model):
     )
 
 
-class Store(StoreInfo, StoreSetting, StoreStatus):
+class StoreSalesInfo(models.Model):
+    class Meta:
+        verbose_name = '영업 관리'
+        verbose_name_plural = '영업 관리'
+
+        abstract = True
+
+    customer_level = models.CharField(
+        max_length=WORD_LENGTH,
+        default=UP_AND_LOW_LEVEL_LOWER,
+        choices=UP_AND_LOW_LEVEL_TYPE,
+        verbose_name='우호도'
+    )
+
+    sales_memo = models.TextField(
+        blank=True,
+        verbose_name='특이사항'
+    )
+
+    container_support = models.BooleanField(
+        default=False,
+        verbose_name='용기 사용 유무'
+    )
+
+    spoon_support = models.BooleanField(
+        default=False,
+        verbose_name='수저 사용 유무'
+    )
+
+    plastic_bag_support = models.BooleanField(
+        default=False,
+        verbose_name='비닐 사용 유무'
+    )
+
+
+class Store(StoreInfo, StoreSetting, StoreStatus, StoreSalesInfo):
     class Meta:
         verbose_name = '제휴 점포'
         verbose_name_plural = '제휴 점포'
