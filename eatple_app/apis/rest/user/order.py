@@ -2,7 +2,7 @@
 from eatple_app.views_system.include import *
 from eatple_app.views_system.debugger import *
 
-from eatple_app.apis.rest.validation import *
+from eatple_app.apis.rest.user.validation import *
 from eatple_app.apis.rest.error_table import *
 
 from drf_yasg.utils import swagger_auto_schema
@@ -11,7 +11,7 @@ from rest_framework import status
 from rest_framework import viewsets
 from rest_framework import permissions
 
-from eatple_app.apis.rest.serializer import OrderSerializer
+from eatple_app.apis.rest.serializer.order import OrderSerializer
 
 
 class OrderValidation(viewsets.ModelViewSet):

@@ -3,7 +3,7 @@ from eatple_app.views_system.include import *
 from eatple_app.views_system.debugger import *
 
 from eatple_app.apis.slack.slack_logger import SlackLogFollow, SlackLogUnfollow
-from eatple_app.apis.rest.validation import *
+from eatple_app.apis.rest.user.validation import *
 
 @csrf_exempt
 def GET_KAKAO_PAY_OrderStatus(request):
