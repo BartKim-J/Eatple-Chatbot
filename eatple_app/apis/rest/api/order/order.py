@@ -27,6 +27,9 @@ class OrderViewSet(viewsets.ModelViewSet):
         status = request.query_params.get('status')
         count = request.query_params.get('count')
 
+        date_range_start = request.query_params.get('start')
+        date_range_end = request.query_params.get('end')
+
         orderList = Order.objects.filter(
             ~Q(store=None) &
             ~Q(menu=None) &
@@ -40,6 +43,25 @@ class OrderViewSet(viewsets.ModelViewSet):
         if(count == None):
             count = 30
 
+        if(date_range_start != None and date_range_end != None):
+            date_range_start = date_range_start.split('-')
+            date_range_start = dateNowByTimeZone().replace(
+                year=int(date_range_start[0]),
+                month=int(date_range_start[1]),
+                day=int(date_range_start[2]),
+                hour=0, minute=0, second=0, microsecond=0)
+
+            date_range_end = date_range_end.split('-')
+            date_range_end = dateNowByTimeZone().replace(
+                year=int(date_range_end[0]),
+                month=int(date_range_end[1]),
+                day=int(date_range_end[2]),
+                hour=0, minute=0, second=0, microsecond=0)
+        else:
+            date_range_start = dateNowByTimeZone() + datetime.timedelta(days=-1)
+            date_range_end = dateNowByTimeZone()
+            pass
+
         if(store != None):
             filter.add(Q(store__name__contains=store), filter.OR)
 
@@ -52,11 +74,15 @@ class OrderViewSet(viewsets.ModelViewSet):
         if(status != None):
             filter.add(Q(payment_status=status), filter.OR)
 
-        orderList = orderList.filter(filter)[:count]
+        orderList = orderList.filter(
+            (
+                Q(payment_date__gte=date_range_start) &
+                Q(payment_date__lt=date_range_end)
+            ) &
+            filter)[:count]
 
         response['total'] = orderList.count()
         response['order'] = OrderSerializer(orderList, many=True).data
-        response['error_code'] = PARTNER_LOGIN_200_SUCCESS.code
-        response['error_msg'] = PARTNER_LOGIN_200_SUCCESS.message
+        response['error_code'] = 200
 
         return Response(response)
