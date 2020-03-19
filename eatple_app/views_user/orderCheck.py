@@ -334,23 +334,27 @@ def kakaoView_EatplePass(kakaoPayload):
                 place=order.store.place
             )
 
-            buttons = [
-                {
-                    'action': 'osLink',
-                    'label': '길찾기',
-                    'osLink': {
-                        'android': kakaoMapUrlAndriod,
-                        'ios': kakaoMapUrlIOS,
-                        'pc': kakaoMapUrl,
+            isPickupZone = order.menu.tag.filter(name="픽업존").exists()
+            if(isPickupZone):
+                pass
+            else:
+                buttons = [
+                    {
+                        'action': 'osLink',
+                        'label': '길찾기',
+                        'osLink': {
+                            'android': kakaoMapUrlAndriod,
+                            'ios': kakaoMapUrlIOS,
+                            'pc': kakaoMapUrl,
+                        }
                     }
-                }
-            ]
+                ]
 
-            KakaoInstantForm().Message(
-                '{}'.format(order.store.addr),
-                buttons=buttons,
-                kakaoForm=kakaoForm
-            )
+                KakaoInstantForm().Message(
+                    '{}'.format(order.store.addr),
+                    buttons=buttons,
+                    kakaoForm=kakaoForm
+                )
 
     # No EatplePass
     else:

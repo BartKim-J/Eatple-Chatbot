@@ -772,7 +772,7 @@ def kakaoView_OrderPayment(kakaoPayload):
     buttons = [
         {
             'action': 'osLink',
-            'label': '카카오 페이 결제',
+            'label': '카카오페이 결제',
             'messageText': KAKAO_EMOJI_LOADING,
             'osLink': {
                 'android': oneclick_url,
@@ -781,7 +781,7 @@ def kakaoView_OrderPayment(kakaoPayload):
         },
         {
             'action': 'webLink',
-            'label': '웹으로 결제',
+            'label': '신용카드 결제',
             'messageText': KAKAO_EMOJI_LOADING,
             'extra': dataActionExtra,
             'webLinkUrl': '{server_url}/payment?merchant_uid={merchant_uid}'.format(
@@ -807,7 +807,7 @@ def kakaoView_OrderPayment(kakaoPayload):
     buttons = [
         {
             'action': 'block',
-            'label': '결제 완료하기',
+            'label': '주문 완료하기',
             'messageText': KAKAO_EMOJI_LOADING,
             'blockId': KAKAO_BLOCK_USER_SET_ORDER_SHEET,
             'extra': dataActionExtra,
@@ -815,7 +815,7 @@ def kakaoView_OrderPayment(kakaoPayload):
     ]
 
     KakaoInstantForm().Message(
-        '결제 완료 후 아래 \'결제 완료하기\' 버튼을 눌러주세요.',
+        '결제 완료 후 아래 \'주문 완료하기\' 버튼을 눌러주세요.',
         buttons=buttons,
         kakaoForm=kakaoForm
     )
@@ -955,14 +955,14 @@ def kakaoView_OrderPaymentCheck(kakaoPayload):
 
         buttons = {
             'action': 'block',
-            'label': '결제 완료하기',
+            'label': '주문 완료하기',
             'messageText': KAKAO_EMOJI_LOADING,
             'blockId': KAKAO_BLOCK_USER_SET_ORDER_SHEET,
             'extra': dataActionExtra,
         },
 
         KakaoInstantForm().Message(
-            '결제 완료 후 아래 \'결제 완료하기\' 버튼을 눌러주세요.',
+            '결제 완료 후 아래 \'주문 완료하기\' 버튼을 눌러주세요.',
             buttons=buttons,
             kakaoForm=kakaoForm
         )

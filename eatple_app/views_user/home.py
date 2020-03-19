@@ -364,6 +364,7 @@ def kakaoView_Order_Home(user, order, address):
     ]
 
     # HEADER
+    isPickupZone = order.menu.tag.filter(name="픽업존").exists()
     isCafe = order.store.category.filter(name="카페").exists()
     if(isCafe):
         pickupTimeStr = dateByTimeZone(order.pickup_time).strftime(
@@ -385,27 +386,48 @@ def kakaoView_Order_Home(user, order, address):
         thumbnail,
         buttons
     )
+    if(isPickupZone):
+        thumbnail = {
+            'imageUrl': 'https://maps.googleapis.com/maps/api/staticmap?center={lat},{long}&maptype=mobile&zoom={zoom}&markers=size:mid%7C{lat},{long}&size=500x500&key={apiKey}'.format(
+                zoom=18,
+                lat=37.518492,
+                long=127.024382,
+                apiKey='AIzaSyDRhnn4peSzEfKzQ_WjwDqDF9pzDiuVRhM',
+            ),
+            'fixedRatio': 'true',
+            'width': 800,
+            'height': 800,
+        }
 
-    thumbnail = {
-        'imageUrl': 'https://maps.googleapis.com/maps/api/staticmap?center={lat},{long}&maptype=mobile&zoom={zoom}&markers=size:mid%7C{lat},{long}&size=500x500&key={apiKey}'.format(
-            zoom=18,
-            lat=order.store.place.lat,
-            long=order.store.place.long,
-            apiKey='AIzaSyDRhnn4peSzEfKzQ_WjwDqDF9pzDiuVRhM',
-        ),
-        'fixedRatio': 'true',
-        'width': 800,
-        'height': 800,
-    }
+        KakaoInstantForm().Message(
+            '패스트파이브 신사점',
+            '픽업 시간 - {}'.format(dateByTimeZone(order.pickup_time).strftime(
+                '%p %-I시 %-M분').replace('AM', '오전').replace('PM', '오후')),
+            thumbnail=thumbnail,
+            buttons=[],
+            kakaoForm=kakaoForm
+        )
+    else:
+        thumbnail = {
+            'imageUrl': 'https://maps.googleapis.com/maps/api/staticmap?center={lat},{long}&maptype=mobile&zoom={zoom}&markers=size:mid%7C{lat},{long}&size=500x500&key={apiKey}'.format(
+                zoom=18,
+                lat=order.store.place.lat,
+                long=order.store.place.long,
+                apiKey='AIzaSyDRhnn4peSzEfKzQ_WjwDqDF9pzDiuVRhM',
+            ),
+            'fixedRatio': 'true',
+            'width': 800,
+            'height': 800,
+        }
 
-    KakaoInstantForm().Message(
-        order.store.addr,
-        '픽업 시간 - {}'.format(dateByTimeZone(order.pickup_time).strftime(
-            '%p %-I시 %-M분').replace('AM', '오전').replace('PM', '오후')),
-        thumbnail=thumbnail,
-        buttons=[],
-        kakaoForm=kakaoForm
-    )
+        KakaoInstantForm().Message(
+            order.store.addr,
+            '픽업 시간 - {}'.format(dateByTimeZone(order.pickup_time).strftime(
+                '%p %-I시 %-M분').replace('AM', '오전').replace('PM', '오후')),
+            thumbnail=thumbnail,
+            buttons=[],
+            kakaoForm=kakaoForm
+        )
 
     kakaoForm.QuickReplies_AddWithMap(QUICKREPLIES_MAP)
 

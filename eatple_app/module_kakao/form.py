@@ -84,6 +84,7 @@ class KakaoInstantForm():
             },
         ]
 
+        isPickupZone = order.menu.tag.filter(name="픽업존").exists()
         isCafe = order.store.category.filter(name="카페").exists()
         if(isCafe):
             pickupTimeStr = dateByTimeZone(order.pickup_time).strftime(
@@ -122,23 +123,26 @@ class KakaoInstantForm():
         )
         kakaoForm.BasicCard_Add()
 
-        kakaoForm.BasicCard_Push(
-            '{}'.format(order.store.addr),
-            '',
-            {},
-            [
-                {
-                    'action': 'osLink',
-                    'label': '길찾기',
-                    'osLink': {
-                        'android': kakaoMapUrlAndriod,
-                        'ios': kakaoMapUrlIOS,
-                        'pc': kakaoMapUrl,
-                    }
-                },
-            ]
-        )
-        kakaoForm.BasicCard_Add()
+        if(isPickupZone):
+            pass
+        else:
+            kakaoForm.BasicCard_Push(
+                '{}'.format(order.store.addr),
+                '',
+                {},
+                [
+                    {
+                        'action': 'osLink',
+                        'label': '길찾기',
+                        'osLink': {
+                            'android': kakaoMapUrlAndriod,
+                            'ios': kakaoMapUrlIOS,
+                            'pc': kakaoMapUrl,
+                        }
+                    },
+                ]
+            )
+            kakaoForm.BasicCard_Add()
 
         kakaoForm.QuickReplies_AddWithMap(ORDER_LIST_QUICKREPLIES_MAP)
 
