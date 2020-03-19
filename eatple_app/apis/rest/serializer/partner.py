@@ -3,8 +3,11 @@ from django.contrib.auth.models import User
 from eatple_app.models import Partner
 
 
-class StoreSerializer(serializers.ModelSerializer):
+class PartnerSerializer(serializers.ModelSerializer):
     class Meta:
         model = Partner
         fields = (
+            'app_user_id',
+            'nickname',
+            'email',
         )

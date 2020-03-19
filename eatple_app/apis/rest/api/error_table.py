@@ -67,3 +67,33 @@ PARAM_600_MERCHANT_UID_INVALID = ErrorCollection(
     status=status.HTTP_400_BAD_REQUEST,
     message='\'merchant_uid\' is null'
 )
+
+PARTNER_LOGIN_200_SUCCESS = ErrorCollection(
+    code=200,
+    status=status.HTTP_200_OK,
+    message='인증이 완료되었습니다.'
+)
+
+PARTNER_LOGIN_300_INVALID_CRN = ErrorCollection(
+    code=300,
+    status=status.HTTP_200_OK,
+    message='유효하지 않은 사업자 등록번호입니다.'
+)
+
+PARTNER_LOGIN_301_INVALID_TOKEN = ErrorCollection(
+    code=301,
+    status=status.HTTP_200_OK,
+    message='유효하지 않은 고유 번호입니다.'
+)
+
+PARTNER_LOGIN_310_NULL_CRN = ErrorCollection(
+    code=310,
+    status=status.HTTP_200_OK,
+    message='사업자등록 번호를 입력하지 않았습니다.'
+)
+
+PARTNER_LOGIN_311_NULL_TOKEN = ErrorCollection(
+    code=310,
+    status=status.HTTP_200_OK,
+    message='고유 번호를 입력하지 않았습니다.'
+)

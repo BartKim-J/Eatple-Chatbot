@@ -46,6 +46,10 @@ router = routers.DefaultRouter()
 router.register(r'order/validation', api.OrderValidation)
 router.register(r'order/information', api.OrderInformation)
 
+
+router.register(r'partner', api.Partner)
+
+
 RESTFUL_API_URLS = [
     path('rest/api/', include(router.urls)),
 ]

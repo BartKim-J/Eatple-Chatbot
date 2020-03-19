@@ -2,8 +2,8 @@
 from eatple_app.views_system.include import *
 from eatple_app.views_system.debugger import *
 
-from eatple_app.apis.rest.user.validation import *
-from eatple_app.apis.rest.error_table import *
+from eatple_app.apis.rest.api.user.validation import *
+from eatple_app.apis.rest.api.error_table import *
 
 from drf_yasg.utils import swagger_auto_schema
 

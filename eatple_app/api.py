@@ -15,7 +15,7 @@ from eatple_app.apis.kakaoPay.paymentApprove import GET_KAKAO_PAY_PaymentApprove
 from eatple_app.apis.slack.slack_api import Events
 
 # Rest Framework
-from eatple_app.apis.rest.user.order import OrderValidation
-from eatple_app.apis.rest.user.order import OrderInformation
+from eatple_app.apis.rest.api.user.order import OrderValidation
+from eatple_app.apis.rest.api.user.order import OrderInformation
 
-from eatple_app.apis.rest.partner import *
+from eatple_app.apis.rest.api.partner.partner import Partner
