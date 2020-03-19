@@ -22,7 +22,7 @@ class TypeFilter(MultipleChoiceListFilter):
         return STORE_TYPE
 
 
-class CRNInline(CompactInline):
+class CRNInline(admin.TabularInline):
     verbose_name = "사업자 등록번호"
     verbose_name_plural = "사업자 등록번호"
 
@@ -97,45 +97,45 @@ class MenuInline(CompactInline):
 
     fieldsets = [
         (
-            '기본 정보',                  
+            '기본 정보',
             {
                 'fields': [
                     'menu_id',
-                    'name', 
+                    'name',
                 ]
             }
         ),
         (
-            '메뉴 정보',                  
+            '메뉴 정보',
             {
                 'fields': [
-                    'selling_time', 
-                    'pickup_time', 
-                    'tag', 
+                    'selling_time',
+                    'pickup_time',
+                    'tag',
                     'description',
-                    'price', 
+                    'price',
                     'price_origin'
                 ]
             }
         ),
         (
-            '이미지',                  
+            '이미지',
             {
                 'fields': [
-                    'image', 
+                    'image',
                     'image_preview',
-                    'soldout_image', 
+                    'soldout_image',
                     'image_soldout_preview',
                 ]
             }
         ),
         (
-            '메뉴 상태',                  
+            '메뉴 상태',
             {
                 'fields': [
-                    'current_stock', 
-                    'pickuped_stock', 
-                    'max_stock', 
+                    'current_stock',
+                    'pickuped_stock',
+                    'max_stock',
                     'status'
                 ]
             }
