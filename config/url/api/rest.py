@@ -42,13 +42,11 @@ RESTFUL_API_DOC_URLS = [
                                             cache_timeout=0), name='schema-redoc'),
 ]
 
-router = routers.DefaultRouter()
+router = routers.DefaultRouter(trailing_slash=False)
 router.register(r'order/validation', api.OrderValidation)
 router.register(r'order/information', api.OrderInformation)
 
-
-router.register(r'partner', api.Partner)
-
+router.register(r'partner', api.PartnerViewSet)
 
 RESTFUL_API_URLS = [
     path('rest/api/', include(router.urls)),

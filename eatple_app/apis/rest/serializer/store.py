@@ -7,4 +7,14 @@ class StoreSerializer(serializers.ModelSerializer):
     class Meta:
         model = Store
         fields = (
+            'id',
+            'store_id',
+            'name',
+            'addr',
+            'owner',
+            'phone_number',
+            'status',
+            'type',
+            'area',
+            'logo'
         )

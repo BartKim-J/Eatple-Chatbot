@@ -9,5 +9,8 @@ class PartnerSerializer(serializers.ModelSerializer):
         fields = (
             'app_user_id',
             'nickname',
+            'phone_number',
             'email',
+            'type',
+            'create_date',
         )

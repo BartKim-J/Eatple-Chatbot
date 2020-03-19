@@ -40,12 +40,12 @@ class KakaoUser(models.Model):
     birthyear = models.CharField(
         max_length=WORD_LENGTH, 
         null=True,
-        verbose_name = "생일년도"
+        verbose_name = "생년"
     )
     birthday = models.CharField(
         max_length=WORD_LENGTH, 
         null=True,
-        verbose_name = "생일날짜"
+        verbose_name = "생일"
     )
     
     gender = models.CharField(

@@ -18,4 +18,4 @@ from eatple_app.apis.slack.slack_api import Events
 from eatple_app.apis.rest.api.user.order import OrderValidation
 from eatple_app.apis.rest.api.user.order import OrderInformation
 
-from eatple_app.apis.rest.api.partner.partner import Partner
+from eatple_app.apis.rest.api.partner.partner import PartnerViewSet
