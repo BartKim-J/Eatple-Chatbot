@@ -400,7 +400,7 @@ def kakaoView_Order_Home(user, order, address):
         }
 
         KakaoInstantForm().Message(
-            '패스트파이브 신사점',
+            '패스트파이브 신사점 3층',
             '픽업 시간 - {}'.format(dateByTimeZone(order.pickup_time).strftime(
                 '%p %-I시 %-M분').replace('AM', '오전').replace('PM', '오후')),
             thumbnail=thumbnail,
