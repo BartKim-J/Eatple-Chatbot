@@ -213,12 +213,12 @@ class MenuSetting(models.Model):
 
     price = models.IntegerField(
         default=6000,
-        verbose_name="가격"
+        verbose_name="가격(원)"
     )
     
     price_origin = models.IntegerField(
         default=6000,
-        verbose_name="매장가격"
+        verbose_name="매장가격(원)"
     )
 
     class Meta:

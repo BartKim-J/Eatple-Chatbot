@@ -56,7 +56,7 @@ class RecordInline(CompactInline):
             '기본 정보',
             {
                 'fields': [
-                    'activity_memo', 'activity_date', 'record_date',
+                    'activity_date', 'activity_memo', 'record_date',
                 ]
             }
         ),
@@ -96,15 +96,50 @@ class MenuInline(CompactInline):
     image_soldout_preview.short_description = "매진 이미지 미리보기"
 
     fieldsets = [
-        (None,                  {'fields': ['menu_id']}),
-        ('메뉴 정보',                  {'fields': ['name']}),
-        (None,                  {'fields': [
-         'selling_time', 'pickup_time', 'tag', 'description',
-         'image', 'image_preview',
-         'soldout_image', 'image_soldout_preview',
-         'price', ]}),
-        (None,                  {'fields': [
-         'current_stock', 'pickuped_stock', 'max_stock', 'status']}),
+        (
+            '기본 정보',                  
+            {
+                'fields': [
+                    'menu_id',
+                    'name', 
+                ]
+            }
+        ),
+        (
+            '메뉴 정보',                  
+            {
+                'fields': [
+                    'selling_time', 
+                    'pickup_time', 
+                    'tag', 
+                    'description',
+                    'price', 
+                    'price_origin'
+                ]
+            }
+        ),
+        (
+            '이미지',                  
+            {
+                'fields': [
+                    'image', 
+                    'image_preview',
+                    'soldout_image', 
+                    'image_soldout_preview',
+                ]
+            }
+        ),
+        (
+            '메뉴 상태',                  
+            {
+                'fields': [
+                    'current_stock', 
+                    'pickuped_stock', 
+                    'max_stock', 
+                    'status'
+                ]
+            }
+        ),
     ]
 
 
@@ -230,4 +265,4 @@ class StoreAdmin(ImportExportMixin, admin.GeoModelAdmin):
 
     actions = ['store_open', 'store_close']
 
-    inlines = [RecordInline, PlaceInline, MenuInline, CRNInline]
+    inlines = [MenuInline, RecordInline, PlaceInline, CRNInline]
