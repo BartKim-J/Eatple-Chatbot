@@ -11,6 +11,7 @@ from eatple_app.define import *
 
 WEEKDAY = ['월요일', '화요일', '수요일', '목요일', '금요일', '토요일', '일요일']
 
+
 def getOrderChart(orderTimeSheet):
     currentDate = orderTimeSheet.GetCurrentDate()
     currentDateWithoutTime = orderTimeSheet.GetCurrentDateWithoutTime()
@@ -30,9 +31,9 @@ def getOrderChart(orderTimeSheet):
         checkData = currentDateWithoutTime + datetime.timedelta(days=-(20 - i))
 
         prevLunchOrderEditTimeStart = checkData + \
-            datetime.timedelta(hours=16, minutes=30, days=-1)
+            datetime.timedelta(hours=16, minutes=0, days=-1)
         nextLunchOrderEditTimeStart = checkData + \
-            datetime.timedelta(hours=16, minutes=30)
+            datetime.timedelta(hours=16, minutes=0)
 
         if(prevLunchOrderEditTimeStart.strftime('%A') == 'Friday' and
            nextLunchOrderEditTimeStart.strftime('%A') == 'Saturday'):
@@ -186,9 +187,9 @@ def getTotalPickuped(orderTimeSheet):
             datetime.timedelta(days=1)
 
     prevLunchOrderEditTimeStart = currentDateWithoutTime + \
-        datetime.timedelta(hours=16, minutes=30, days=-1)
+        datetime.timedelta(hours=16, minutes=0, days=-1)
     nextLunchOrderEditTimeStart = currentDateWithoutTime + \
-        datetime.timedelta(hours=16, minutes=30)
+        datetime.timedelta(hours=16, minutes=0)
 
     totalPickuped = Order.objects.filter(
         Q(payment_status=EATPLE_ORDER_STATUS_PAID) &
@@ -213,9 +214,9 @@ def getOrderFailed(orderTimeSheet):
             datetime.timedelta(days=1)
 
     prevLunchOrderEditTimeStart = currentDateWithoutTime + \
-        datetime.timedelta(hours=16, minutes=30, days=-1)
+        datetime.timedelta(hours=16, minutes=0, days=-1)
     nextLunchOrderEditTimeStart = currentDateWithoutTime + \
-        datetime.timedelta(hours=16, minutes=30)
+        datetime.timedelta(hours=16, minutes=0)
 
     orderFailed = Order.objects.filter(
         Q(payment_status=EATPLE_ORDER_STATUS_FAILED) &
