@@ -14,6 +14,9 @@ from sales_app.system.model_type import UP_AND_LOW_LEVEL_LOWER, UP_AND_LOW_LEVEL
 from eatple_app.model.utils import OverwriteStorage
 from eatple_app.model.utils import logo_directory_path
 
+# Coustom Model Type
+from eatple_app.system.model_type_bank import *
+
 DEFAULT_LOGO_IMAGE_PATH = 'STORE_DB/images/default/logo.png'
 
 
@@ -317,7 +320,28 @@ class StoreSalesInfo(models.Model):
     )
 
 
-class Store(StoreInfo, StoreSetting, StoreStatus, StoreSalesInfo):
+class StoreBankAccount(models.Model):
+    class Meta:
+        verbose_name = '계좌 정보'
+        verbose_name_plural = '계좌 정보'
+
+        abstract = True
+
+    bank_type = models.CharField(
+        max_length=WORD_LENGTH,
+        default=BANK_CODE[101],
+        choices=BANK_CODE,
+        verbose_name='은행코드'
+    )
+
+    bank_account = models.CharField(
+        default='',
+        max_length=WORD_LENGTH,
+        verbose_name='계좌번호'
+    )
+
+
+class Store(StoreInfo, StoreSetting, StoreStatus, StoreSalesInfo, StoreBankAccount):
     class Meta:
         verbose_name = '제휴 점포'
         verbose_name_plural = '제휴 점포'

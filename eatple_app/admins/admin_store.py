@@ -195,6 +195,16 @@ class StoreAdmin(ImportExportMixin, admin.GeoModelAdmin):
                         'plastic_bag_support',
                     ]
             }
+        ),
+        (
+            '계좌 정보',
+            {
+                'fields':
+                    [
+                        'bank_type',
+                        'bank_account',
+                    ]
+            }
         )
     ]
 

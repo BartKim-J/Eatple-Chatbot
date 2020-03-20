@@ -10,11 +10,11 @@ from drf_yasg.utils import swagger_auto_schema
 from rest_framework import status
 from rest_framework import viewsets
 from rest_framework import permissions
-from rest_framework.decorators import action
+from rest_framework.decorators import api_view, action
+from rest_framework.response import Response
 
 from eatple_app.apis.rest.serializer.partner import PartnerSerializer
 from eatple_app.apis.rest.serializer.store import StoreSerializer
-
 
 class PartnerViewSet(viewsets.ModelViewSet):
     queryset = Partner.objects.all()
@@ -34,6 +34,8 @@ class PartnerViewSet(viewsets.ModelViewSet):
         }
     )
     def list(self, request, *args, **kwargs):
+        print(request.body)
+
         response = {}
         crn = request.query_params.get('crn')
         token = request.query_params.get('token')

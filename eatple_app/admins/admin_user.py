@@ -110,14 +110,20 @@ class UserServiceLocationFilter(SimpleListFilter):
 
 class UserResource(resources.ModelResource):
 
-    def latlng(self, obj):
-        return "{}, {}".format(obj.location.lat, obj.location.long)
+    def dehydrate_latlng(self, obj):
+        try:
+            return "{}, {}".format(obj.location.lat, obj.location.long)
+        except Exception:
+            return "{}, {}".format(LOCATION_DEFAULT_LAT, LOCATION_DEFAULT_LNG)
+
+    latlng = Field(column_name='위치')
 
     class Meta:
         model = User
         fields = (
             'nickname',
-            'phone_number'
+            'app_user_id',
+            'latlng'
         )
 
 
