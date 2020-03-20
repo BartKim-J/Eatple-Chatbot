@@ -13,6 +13,9 @@ from django.core import validators
 from django.utils.translation import ugettext_lazy as _
 from django.utils.safestring import mark_safe
 
+# Coustom Model Type
+from eatple_app.system.model_type_bank import *
+
 
 class TypeFilter(MultipleChoiceListFilter):
     title = '유형'
@@ -143,7 +146,45 @@ class MenuInline(CompactInline):
     ]
 
 
+class StoreResource(resources.ModelResource):
+    def dehydrate_bank_code(self, obj):
+        return obj.bank_type
+
+    def dehydrate_bank_type(self, obj):
+        return dict(BANK_CODE)[obj.bank_type]
+
+    id = Field(attribute='id', column_name='ID')
+    store_id = Field(attribute='store_id', column_name='상점 고유 번호')
+    name = Field(attribute='name', column_name='상호')
+    area = Field(attribute='area', column_name='지역코드')
+    owner = Field(attribute='owner', column_name='점주명')
+    owner_email = Field(attribute='owner_email', column_name='이메일')
+    phone_number = Field(attribute='phone_number', column_name='연락처')
+    bank_code = Field(column_name='은행코드')
+    bank_type = Field(column_name='은행명')
+    bank_account = Field(attribute='bank_account', column_name='계좌번호')
+    bank_owner = Field(attribute='bank_owner', column_name='예금주명')
+    crn = Field(attribute='crn', column_name='사업자 등록 번호')
+
+    class Meta:
+        model = Store
+        exclude = (
+            'description',
+            'logo',
+            'addr',
+            'category',
+            'customer_level',
+            'sales_memo',
+            'container_support',
+            'spoon_support',
+            'plastic_bag_support',
+            'status',
+            'type'
+        )
+
+
 class StoreAdmin(ImportExportMixin, admin.GeoModelAdmin):
+    resource_class = StoreResource
     readonly_fields = ('store_id', 'logo_preview')
 
     list_editable = ()

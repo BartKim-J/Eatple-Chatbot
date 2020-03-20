@@ -16,6 +16,7 @@ from rest_framework.response import Response
 from eatple_app.apis.rest.serializer.partner import PartnerSerializer
 from eatple_app.apis.rest.serializer.store import StoreSerializer
 
+
 class PartnerViewSet(viewsets.ModelViewSet):
     queryset = Partner.objects.all()
     serializer_class = PartnerSerializer
@@ -37,8 +38,25 @@ class PartnerViewSet(viewsets.ModelViewSet):
         print(request.body)
 
         response = {}
-        crn = request.query_params.get('crn')
-        token = request.query_params.get('token')
+        response['error_code'] = PARTNER_LOGIN_200_SUCCESS.code
+        response['error_msg'] = PARTNER_LOGIN_200_SUCCESS.message
+
+        return Response(response)
+
+    @action(detail=False, methods=['post'])
+    def login(self, request, pk=None):
+        print(request.body)
+        response = {}
+
+        try:
+            json_str = ((request.body).decode('utf-8'))
+            received_json_data = json.loads(json_str)
+
+            crn = received_json_data['username']
+            token = received_json_data['password']
+        except Exception as ex:
+            print(ex)
+            return JsonResponse({'status': 400, })
 
         if(crn == None):
             response['error_code'] = PARTNER_LOGIN_311_NULL_TOKEN.code
@@ -83,22 +101,6 @@ class PartnerViewSet(viewsets.ModelViewSet):
 
         response['stores'] = StoreSerializer(storeList, many=True).data
         response['partner'] = PartnerSerializer(partner).data
-        response['error_code'] = PARTNER_LOGIN_200_SUCCESS.code
-        response['error_msg'] = PARTNER_LOGIN_200_SUCCESS.message
-
-        return Response(response)
-
-    def post(self, request):
-        print("create")
-        response = {}
-
-        response['error_code'] = PARTNER_LOGIN_200_SUCCESS.code
-        response['error_msg'] = PARTNER_LOGIN_200_SUCCESS.message
-
-        return Response(response)
-
-    def destroys(self, request, pk=None):
-        print("destroys")
         response['error_code'] = PARTNER_LOGIN_200_SUCCESS.code
         response['error_msg'] = PARTNER_LOGIN_200_SUCCESS.message
 

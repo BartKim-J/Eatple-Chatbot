@@ -222,8 +222,15 @@ class StoreInfo(models.Model):
     )
 
     owner = models.CharField(
+        default='',
         max_length=WORD_LENGTH,
         verbose_name='점주명'
+    )
+
+    owner_email = models.CharField(
+        default='',
+        max_length=WORD_LENGTH,
+        verbose_name='점주 이메일'
     )
 
     class Meta:
@@ -329,9 +336,15 @@ class StoreBankAccount(models.Model):
 
     bank_type = models.CharField(
         max_length=WORD_LENGTH,
-        default=BANK_CODE[101],
+        default='100',
         choices=BANK_CODE,
         verbose_name='은행코드'
+    )
+
+    bank_owner = models.CharField(
+        default='',
+        max_length=WORD_LENGTH,
+        verbose_name='예금주명'
     )
 
     bank_account = models.CharField(
