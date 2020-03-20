@@ -77,10 +77,8 @@ class StockTable(models.Model):
 
         deadline = orderTimeSheet.GetInitialCountTime()
 
-        # order deadline  ~ pickup-day 16:20 , get yesterday 16:30 ~ orders
         if(currentDate <= deadline):
             expireDate = prevLunchOrderEditTimeStart
-        # over deadline pickup-day 16:20 ~ , get today 16:30 ~ order
         else:
             expireDate = nextLunchOrderEditTimeStart
 
@@ -215,7 +213,7 @@ class MenuSetting(models.Model):
         default=6000,
         verbose_name="가격(원)"
     )
-    
+
     price_origin = models.IntegerField(
         default=6000,
         verbose_name="매장가격(원)"
