@@ -735,13 +735,13 @@ def kakaoView_OrderPayment(kakaoPayload):
     isCafe = store.category.filter(name="카페").exists()
     if(isCafe):
         profile = {
-            'nickname': '픽업 시간 : {pickup_time}'.format(pickup_time=dateByTimeZone(order.pickup_time).strftime(
+            'nickname': '픽업 시간 : {pickup_time}'.format(pickup_time=order.pickup_time.strftime(
                 '%-m월 %-d일 오전 11시 30분 ~ 오후 4시')),
             'imageUrl': '{}{}'.format(HOST_URL, store.logoImgURL()),
         }
     else:
         profile = {
-            'nickname': '픽업 시간 : {pickup_time}'.format(pickup_time=dateByTimeZone(order.pickup_time).strftime(
+            'nickname': '픽업 시간 : {pickup_time}'.format(pickup_time=order.pickup_time.strftime(
                 '%p %-I시 %-M분').replace('AM', '오전').replace('PM', '오후'),),
             'imageUrl': '{}{}'.format(HOST_URL, store.logoImgURL()),
         }
