@@ -52,7 +52,7 @@ class PartnerViewSet(viewsets.ModelViewSet):
             json_str = ((request.body).decode('utf-8'))
             received_json_data = json.loads(json_str)
 
-            crn = received_json_data['username']
+            crn = received_json_data['username'].replace('-', '')
             token = received_json_data['password']
         except Exception as ex:
             print(ex)
