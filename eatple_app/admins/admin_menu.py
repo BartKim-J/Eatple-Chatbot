@@ -13,6 +13,7 @@ from django.core import validators
 from django.utils.translation import ugettext_lazy as _
 from django.utils.safestring import mark_safe
 
+
 class TypeFilter(MultipleChoiceListFilter):
     title = '유형'
     parameter_name = 'type__in'
@@ -62,14 +63,52 @@ class MenuAdmin(ImportExportMixin, admin.GeoModelAdmin):
     image_soldout_preview.short_description = "매진 이미지 미리보기"
 
     fieldsets = [
-        ('기본 정보',                  {'fields': ['menu_id', 'store', 'name']}),
-        ('설정',                  {'fields': [
-         'type', 'selling_time', 'pickup_time', 'tag', 'description',
-         'image', 'image_preview',
-         'soldout_image', 'image_soldout_preview',
-         'price', ]}),
-        ('상태',                  {'fields': [
-         'current_stock', 'pickuped_stock', 'max_stock', 'status']}),
+        (
+            '기본 정보',
+            {
+                'fields':
+                    [
+                        'menu_id',
+                        'store'
+                    ]
+            }
+        ),
+        (
+            '메뉴 정보',
+            {
+                'fields': [
+                    'name',
+                    'selling_time',
+                    'pickup_time',
+                    'tag',
+                    'description',
+                    'price',
+                    'price_origin'
+                ]
+            }
+        ),
+        (
+            '이미지',
+            {
+                'fields': [
+                    'image',
+                    'image_preview',
+                    'soldout_image',
+                    'image_soldout_preview',
+                ]
+            }
+        ),
+        (
+            '메뉴 상태',
+            {
+                'fields': [
+                    'current_stock',
+                    'pickuped_stock',
+                    'max_stock',
+                    'status'
+                ]
+            }
+        ),
     ]
 
     search_fields = ['name', 'menu_id',
@@ -85,9 +124,15 @@ class MenuAdmin(ImportExportMixin, admin.GeoModelAdmin):
     list_display = (
         'name',
         'store',
+        'selling_time',
+        'price',
+        'price_origin',
         'max_stock',
         'status',
-        'selling_time',
+    )
+
+    list_editable = (
+        'status',
     )
 
     def menu_open(self, request, queryset):

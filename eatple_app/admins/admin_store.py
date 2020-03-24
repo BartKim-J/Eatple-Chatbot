@@ -104,7 +104,7 @@ class MenuInline(CompactInline):
             {
                 'fields': [
                     'menu_id',
-                    'name',
+                    'store',
                 ]
             }
         ),
@@ -112,6 +112,7 @@ class MenuInline(CompactInline):
             '메뉴 정보',
             {
                 'fields': [
+                    'name',
                     'selling_time',
                     'pickup_time',
                     'tag',
