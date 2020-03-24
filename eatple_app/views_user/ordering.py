@@ -546,7 +546,7 @@ def kakaoView_PickupTime(kakaoPayload):
     if(isClosedDay or isVacationDay):
         KakaoInstantForm().Message(
             '📌  안내사항',
-            '월요일 점심 주문은 일요일 오후 4시 30분부터 가능합니다.',
+            '월요일 점심 주문은 일요일 오후 4시부터 가능합니다.',
             kakaoForm=kakaoForm
         )
 
