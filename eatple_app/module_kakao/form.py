@@ -197,7 +197,7 @@ class KakaoInstantForm():
             thumbnail,
         ]
 
-        discount = 500
+        discount = menu.price_origin - menu.price
 
         kakaoForm.ComerceCard_Push(
             _description=menu.description,

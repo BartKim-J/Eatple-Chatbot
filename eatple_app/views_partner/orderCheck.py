@@ -95,7 +95,7 @@ def kakaoView_OrderDetails(kakaoPayload):
                         time = '오후 12시'
                     elif(partner.store.name == '봉된장'):
                         time = '오전 11시 40분'
-                        
+
                     title = '{} {}'.format(
                         datetime.datetime.now().strftime("%-m월 %-d일"),
                         time
@@ -130,7 +130,7 @@ def kakaoView_OrderDetails(kakaoPayload):
                         None
                     )
                     kakaoForm.ListCard_Add(header)
-            elif(isNormalMenu):
+            if(isNormalMenu):
                 for pickupTime in pickupTimes:
                     menuList = Menu.objects.filter(
                         store=partner.store, pickup_time=pickupTime, status=OC_OPEN).filter(
