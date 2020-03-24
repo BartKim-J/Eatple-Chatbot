@@ -81,7 +81,7 @@ class MenuInline(CompactInline):
                        "image_soldout_preview", 'pickuped_stock', 'current_stock',)
 
     def image_preview(self, obj):
-        return mark_safe('<img src="{url}" width="{width}" height={height} />'.format(
+        return mark_safe('<img src="{url}" width="{width}" height={height} /><a href="{url}" download>다운로드</a>'.format(
             url=obj.image.url,
             width=obj.image.width * 0.4,
             height=obj.image.height * 0.4,
@@ -90,7 +90,7 @@ class MenuInline(CompactInline):
     image_preview.short_description = "이미지 미리보기"
 
     def image_soldout_preview(self, obj):
-        return mark_safe('<img src="{url}" width="{width}" height={height} />'.format(
+        return mark_safe('<img src="{url}" width="{width}" height={height} /><a href="{url}" download>다운로드</a>'.format(
             url=obj.soldout_image.url,
             width=obj.soldout_image.width * 0.4,
             height=obj.soldout_image.height * 0.4,
@@ -186,7 +186,7 @@ class StoreResource(resources.ModelResource):
 
 class StoreAdmin(ImportExportMixin, admin.GeoModelAdmin):
     resource_class = StoreResource
-    readonly_fields = ('store_id', 'logo_preview')
+    readonly_fields = ('store_id', 'logo_preview', 'brc_preview', 'hc_preview')
 
     list_editable = ()
 
@@ -243,21 +243,52 @@ class StoreAdmin(ImportExportMixin, admin.GeoModelAdmin):
             {
                 'fields':
                     [
+                        'bank_email',
                         'bank_owner',
                         'bank_type',
                         'bank_account',
                     ]
             }
+        ),
+        (
+            '사업자 & 영업 신고증',
+            {
+                'fields':
+                    [
+                        'brc_document_file',
+                        'brc_preview',
+                        'hc_document_file',
+                        'hc_preview',
+                    ]
+            }
         )
     ]
 
+    def brc_preview(self, obj):
+        return mark_safe('<img src="{url}" width="{width}" height={height} /><a href="{url}" download>다운로드</a>'.format(
+            url=obj.brc_document_file.url,
+            width=obj.brc_document_file.width * 0.4,
+            height=obj.brc_document_file.height * 0.4,
+        )
+        )
+    brc_preview.short_description = "사업자등록증 미리보기"
+
+    def hc_preview(self, obj):
+        return mark_safe('<img src="{url}" width="{width}" height={height} /><a href="{url}" download>다운로드</a>'.format(
+            url=obj.hc_document_file.url,
+            width=obj.hc_document_file.width * 0.4,
+            height=obj.hc_document_file.height * 0.4,
+        )
+        )
+    hc_preview.short_description = "영업신고증 미리보기"
+
     def logo_preview(self, obj):
         return mark_safe(
-            '<img src="{url}" width="{width}" height={height} />'.format(
+            '<img src="{url}" width="{width}" height={height} /><a href="{url}" download>다운로드</a>'.format(
                 url=obj.logo.url,
                 width=58,
                 height=58,
-            )
+            ),
         )
     logo_preview.short_description = "이미지 미리보기"
 

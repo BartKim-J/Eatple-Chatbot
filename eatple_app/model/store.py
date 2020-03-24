@@ -12,12 +12,13 @@ from sales_app.system.model_type import UP_AND_LOW_LEVEL_LOWER, UP_AND_LOW_LEVEL
 
 # Utils
 from eatple_app.model.utils import OverwriteStorage
-from eatple_app.model.utils import logo_directory_path
+from eatple_app.model.utils import logo_directory_path, store_directory_path
 
 # Coustom Model Type
 from eatple_app.system.model_type_bank import *
 
 DEFAULT_LOGO_IMAGE_PATH = 'STORE_DB/images/default/logo.png'
+DEFAULT_FILE_PATH = 'STORE_DB/images/'
 
 
 class Category(models.Model):
@@ -227,12 +228,6 @@ class StoreInfo(models.Model):
         verbose_name='점주명'
     )
 
-    owner_email = models.CharField(
-        default='',
-        max_length=WORD_LENGTH,
-        verbose_name='점주 이메일'
-    )
-
     class Meta:
         abstract = True
 
@@ -334,6 +329,13 @@ class StoreBankAccount(models.Model):
 
         abstract = True
 
+    bank_email = models.EmailField(
+        default='',
+        blank=True,
+        max_length=STRING_LENGTH,
+        verbose_name='세금 계산서 이메일'
+    )
+
     bank_type = models.CharField(
         max_length=WORD_LENGTH,
         default='100',
@@ -353,6 +355,24 @@ class StoreBankAccount(models.Model):
         blank=True,
         max_length=WORD_LENGTH,
         verbose_name='계좌번호'
+    )
+
+    # Business registration certificate
+    brc_document_file = models.ImageField(
+        default=DEFAULT_FILE_PATH,
+        blank=True,
+        upload_to=store_directory_path,
+        storage=OverwriteStorage(),
+        verbose_name='사업자등록증'
+    )
+
+    # Health certificate
+    hc_document_file = models.ImageField(
+        default=DEFAULT_FILE_PATH,
+        blank=True,
+        upload_to=store_directory_path,
+        storage=OverwriteStorage(),
+        verbose_name='영업신고증'
     )
 
 

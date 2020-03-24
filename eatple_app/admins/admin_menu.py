@@ -45,7 +45,7 @@ class MenuAdmin(ImportExportMixin, admin.GeoModelAdmin):
                        "image_soldout_preview", "current_stock", "pickuped_stock", "store")
 
     def image_preview(self, obj):
-        return mark_safe('<img src="{url}" width="{width}" height={height} />'.format(
+        return mark_safe('<img src="{url}" width="{width}" height={height} /><a href="{url}" download>다운로드</a>'.format(
             url=obj.image.url,
             width=obj.image.width * 0.4,
             height=obj.image.height * 0.4,
@@ -54,7 +54,7 @@ class MenuAdmin(ImportExportMixin, admin.GeoModelAdmin):
     image_preview.short_description = "이미지 미리보기"
 
     def image_soldout_preview(self, obj):
-        return mark_safe('<img src="{url}" width="{width}" height={height} />'.format(
+        return mark_safe('<img src="{url}" width="{width}" height={height} /><a href="{url}" download>다운로드</a>'.format(
             url=obj.soldout_image.url,
             width=obj.soldout_image.width * 0.4,
             height=obj.soldout_image.height * 0.4,

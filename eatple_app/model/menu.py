@@ -184,6 +184,7 @@ class MenuSetting(models.Model):
     )
 
     image = models.ImageField(
+        blank=True,
         default=DEFAULT_MENU_IMAGE_PATH,
         upload_to=menu_directory_path,
         storage=OverwriteStorage(),
@@ -191,6 +192,7 @@ class MenuSetting(models.Model):
     )
 
     soldout_image = models.ImageField(
+        blank=True,
         default=DEFAULT_MENU_IMAGE_PATH,
         upload_to=menu_soldout_directory_path,
         storage=OverwriteStorage(),
