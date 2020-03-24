@@ -242,6 +242,7 @@ class StoreAdmin(ImportExportMixin, admin.GeoModelAdmin):
             {
                 'fields':
                     [
+                        'bank_owner',
                         'bank_type',
                         'bank_account',
                     ]

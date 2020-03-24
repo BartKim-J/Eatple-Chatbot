@@ -343,12 +343,14 @@ class StoreBankAccount(models.Model):
 
     bank_owner = models.CharField(
         default='',
+        blank=True,
         max_length=WORD_LENGTH,
         verbose_name='예금주명'
     )
 
     bank_account = models.CharField(
         default='',
+        blank=True,
         max_length=WORD_LENGTH,
         verbose_name='계좌번호'
     )
