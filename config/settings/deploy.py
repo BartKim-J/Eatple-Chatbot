@@ -222,19 +222,7 @@ COMPRESS_ENABLED = True
 #SESSION_COOKIE_SECURE = True
 
 # CORS
-CORS_ORIGIN_ALLOW_ALL = False
-CORS_ORIGIN_WHITELIST = [
-    'https://www.eatple.com',
-    'https://www.eatple.com:8000',
-    'https://www.eatple.com:8001',
-    'http://www.eatple.com:8080',
-    'http://www.eatple.com:8081',
-    'https://eatple.com',
-    'https://eatple.com:8000',
-    'https://eatple.com:8001',
-    'http://localhost:3000',
-    'http://localhost:5000',
-]
+CORS_ORIGIN_ALLOW_ALL = True
 
 # JET
 JET_INDEX_DASHBOARD = 'eatple_app.dashboard.CustomIndexDashboard'

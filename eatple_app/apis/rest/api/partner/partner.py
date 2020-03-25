@@ -35,8 +35,6 @@ class PartnerViewSet(viewsets.ModelViewSet):
         }
     )
     def list(self, request, *args, **kwargs):
-        print(request.body)
-
         response = {}
         response['error_code'] = PARTNER_LOGIN_200_SUCCESS.code
         response['error_msg'] = PARTNER_LOGIN_200_SUCCESS.message
@@ -45,7 +43,6 @@ class PartnerViewSet(viewsets.ModelViewSet):
 
     @action(detail=False, methods=['post'])
     def login(self, request, pk=None):
-        print(request.body)
         response = {}
 
         try:
