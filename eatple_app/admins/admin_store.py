@@ -256,30 +256,36 @@ class StoreAdmin(ImportExportMixin, admin.GeoModelAdmin):
                 'fields':
                     [
                         'brc_document_file',
-                        'brc_preview',
                         'hc_document_file',
-                        'hc_preview',
                     ]
             }
         )
     ]
 
     def brc_preview(self, obj):
-        return mark_safe('<img src="{url}" width="{width}" height={height} /><a href="{url}" download>다운로드</a>'.format(
-            url=obj.brc_document_file.url,
-            width=obj.brc_document_file.width * 0.4,
-            height=obj.brc_document_file.height * 0.4,
-        )
-        )
+        print(obj.brc_document_file.url)
+        if(obj.brc_document_file.url != 'STORE_DB/images/'):
+            return mark_safe('<img src="{url}" width="{width}" height={height} /><a href="{url}" download>다운로드</a>'.format(
+                url=obj.brc_document_file.url,
+                width=obj.brc_document_file.width * 0.4,
+                height=obj.brc_document_file.height * 0.4,
+            )
+            )
+        else:
+            return None
     brc_preview.short_description = "사업자등록증 미리보기"
 
     def hc_preview(self, obj):
-        return mark_safe('<img src="{url}" width="{width}" height={height} /><a href="{url}" download>다운로드</a>'.format(
-            url=obj.hc_document_file.url,
-            width=obj.hc_document_file.width * 0.4,
-            height=obj.hc_document_file.height * 0.4,
-        )
-        )
+        print(obj.brc_document_file.url)
+        if(obj.brc_document_file.url != 'STORE_DB/images/'):
+            return mark_safe('<img src="{url}" width="{width}" height={height} /><a href="{url}" download>다운로드</a>'.format(
+                url=obj.hc_document_file.url,
+                width=obj.hc_document_file.width * 0.4,
+                height=obj.hc_document_file.height * 0.4,
+            )
+            )
+        else:
+            return None
     hc_preview.short_description = "영업신고증 미리보기"
 
     def logo_preview(self, obj):
@@ -292,29 +298,6 @@ class StoreAdmin(ImportExportMixin, admin.GeoModelAdmin):
         )
     logo_preview.short_description = "이미지 미리보기"
 
-    def menu_pickup_status(self, obj):
-        menu = Menu.objects.filter(store=obj, status=OC_OPEN).order_by(
-            '-current_stock').first()
-
-        if(menu != None):
-            current_stock = menu.current_stock
-
-            if(current_stock != 0):
-                return "{}개".format(current_stock)
-            else:
-                return "들어온 주문 없음"
-
-        else:
-            return "열린 메뉴가 없음"
-
-    menu_pickup_status.short_description = "들어온 주문"
-
-    list_filter = (
-        'status',
-        'area',
-        'type',
-    )
-
     def field_status_flag(self, obj):
         if(obj.status == OC_OPEN):
             return 'O'
@@ -323,6 +306,12 @@ class StoreAdmin(ImportExportMixin, admin.GeoModelAdmin):
 
         return False
     field_status_flag.short_description = "상태"
+
+    list_filter = (
+        'status',
+        'area',
+        'type',
+    )
 
     list_display = (
         'name',

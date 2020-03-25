@@ -16,5 +16,5 @@ class StoreSerializer(serializers.ModelSerializer):
             'status',
             'type',
             'area',
-            'logo'
+            'logo',
         )
