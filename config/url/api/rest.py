@@ -48,6 +48,8 @@ router.register(r'order/information', api.OrderInformation)
 
 router.register(r'partner', api.PartnerViewSet)
 router.register(r'order', api.OrderViewSet)
+router.register(r'store', api.StoreViewSet)
+router.register(r'menu', api.MenuViewSet)
 
 RESTFUL_API_URLS = [
     path('rest/api/', include(router.urls)),
