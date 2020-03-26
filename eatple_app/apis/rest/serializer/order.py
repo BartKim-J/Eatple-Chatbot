@@ -22,8 +22,8 @@ class OrderSerializer(serializers.ModelSerializer):
         return dict(EATPLE_ORDER_STATUS)[obj.payment_status]
 
     def get_totalPrice(self, obj):
-        return '{}원'.format(obj.totalPrice)
-
+        return '{}원'.format(format(obj.totalPrice, ","))
+    
     def get_user(self, obj):
         return obj.ordersheet.user.nickname
         

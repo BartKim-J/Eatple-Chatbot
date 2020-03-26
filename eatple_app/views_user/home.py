@@ -186,7 +186,7 @@ def kakaoView_SurveyApply(user, type, answer):
 
     if(
         answer.find('⌛️') != -1 or
-        answer.find('🍽  주문하기') != -1 or
+        answer.find('🍽  주문하기/주문확인') != -1 or
         answer.find('📗  매뉴얼') != -1 or
         answer.find('🗺  위치 설정') != -1 or
         answer.find('📖  공지사항') != -1 or

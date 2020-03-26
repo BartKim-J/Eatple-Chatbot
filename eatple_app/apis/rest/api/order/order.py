@@ -10,8 +10,59 @@ from drf_yasg.utils import swagger_auto_schema
 from rest_framework import status
 from rest_framework import viewsets
 from rest_framework import permissions
+from rest_framework.decorators import api_view, action
+from rest_framework.response import Response
 
 from eatple_app.apis.rest.serializer.order import OrderSerializer
+
+
+def getaAdjustment(orderList):
+    orderList = orderList.order_by('payment_date')
+    adjustmentList = []
+
+    start_date = orderList.first().payment_date.replace(
+        hour=0, minute=0, second=0)
+
+    # Do
+    start_date = start_date - datetime.timedelta(days=start_date.weekday())
+    end_date = start_date + datetime.timedelta(days=7)
+    settlement_date = end_date + datetime.timedelta(days=10)
+
+    inquiryOrderList = orderList.filter(
+        Q(payment_date__gte=start_date),
+        Q(payment_date__lt=end_date)
+    )
+
+    while(inquiryOrderList.count() > 0):
+        total_price = 0
+        total_order = inquiryOrderList.count()
+
+        for order in inquiryOrderList:
+            total_price += order.totalPrice
+
+        adjustmentList.append(
+            dict({
+                'settlement_date': settlement_date.strftime('%Y-%m-%d'),
+                'adjustment_date_range': '{} ~ {}'.format(start_date.strftime('%Y-%m-%d'), end_date.strftime('%Y-%m-%d')),
+                'total_order': total_order,
+                'total_price': '{}원'.format(format(total_price, ",")),
+                'supply_price': '{}원'.format(format(int(total_price / 1.1), ",")),
+                'surtax_price': '{}원'.format(format(total_price - int(total_price / 1.1), ",")),
+                'fee': '{}원'.format(format(int(total_price * 0.0352), ",")),
+                'settlement_amount': '{}원'.format(format(total_price - int(total_price * 0.0352), ",")),
+                'unit': 'won'
+            })
+        )
+        start_date = end_date
+        end_date = start_date + datetime.timedelta(days=7)
+        settlement_date = end_date + datetime.timedelta(days=10)
+
+        inquiryOrderList = orderList.filter(
+            Q(payment_date__gte=start_date),
+            Q(payment_date__lt=end_date)
+        )
+
+    return adjustmentList
 
 
 def param_valid(param):
@@ -26,7 +77,19 @@ class OrderViewSet(viewsets.ModelViewSet):
     serializer_class = OrderSerializer
     http_method_names = ['get']
 
-    def list(self, request, *args, **kwargs):
+    def list(self, request):
+        orderList = Order.objects.filter(
+            ~Q(store=None) &
+            ~Q(menu=None)
+        )
+        response['total'] = orderList.count()
+        response['order'] = OrderSerializer(orderList, many=True).data
+        response['error_code'] = 200
+
+        return Response(response)
+
+    @action(detail=False, methods=['get'])
+    def store(self, request, *args, **kwargs):
         response = {}
         crn = request.query_params.get('crn')
         order_id = request.query_params.get('order_id')
@@ -35,8 +98,6 @@ class OrderViewSet(viewsets.ModelViewSet):
         methodList = request.query_params.getlist('method[]')
         isPaid = request.query_params.get('isPaid')
         isCanceled = request.query_params.get('isCanceled')
-        count = request.query_params.get('count')
-
         date_range = request.query_params.getlist('date_range[]')
 
         if(crn != None):
@@ -56,9 +117,6 @@ class OrderViewSet(viewsets.ModelViewSet):
                 Q(payment_status=EATPLE_ORDER_STATUS_CANCELLED)
             )
         )
-
-        if(param_valid(count) == False):
-            count = 30
 
         if(date_range and len(date_range) >= 2):
             date_range[0] = date_range[0].split('-')
@@ -128,4 +186,69 @@ class OrderViewSet(viewsets.ModelViewSet):
         response['order'] = OrderSerializer(orderList, many=True).data
         response['error_code'] = 200
 
-        return Response(response)
+        return JsonResponse(response)
+
+    @action(detail=False, methods=['get'])
+    def adjustment(self, request, *args, **kwargs):
+        response = {}
+        crn = request.query_params.get('crn')
+        store = request.query_params.get('store')
+        date_range = request.query_params.getlist('date_range[]')
+
+        if(crn != None):
+            crn = crn.replace('-', '')
+        else:
+            response['error_code'] = PARTNER_LOGIN_300_INVALID_CRN.code
+            response['error_msg'] = PARTNER_LOGIN_300_INVALID_CRN.message
+
+            return Response(response)
+
+        orderList = Order.objects.filter(
+            Q(store__crn__CRN_id=crn) &
+            ~Q(store=None) &
+            ~Q(menu=None) &
+            (
+                Q(payment_status=EATPLE_ORDER_STATUS_PAID) |
+                Q(payment_status=EATPLE_ORDER_STATUS_CANCELLED)
+            )
+        )
+
+        if(date_range and len(date_range) >= 2):
+            date_range[0] = date_range[0].split('-')
+            date_range[0] = dateNowByTimeZone().replace(
+                year=int(date_range[0][0]),
+                month=int(date_range[0][1]),
+                day=int(date_range[0][2]),
+                hour=0, minute=0, second=0, microsecond=0)
+
+            date_range[1] = date_range[1].split('-')
+            date_range[1] = dateNowByTimeZone().replace(
+                year=int(date_range[1][0]),
+                month=int(date_range[1][1]),
+                day=int(date_range[1][2]),
+                hour=0, minute=0, second=0, microsecond=0)
+
+            if(date_range[0] > date_range[1]):
+                temp = date_range[0]
+                date_range[0] = date_range[1]
+                date_range[1] = temp
+
+        else:
+            date_range.append(dateNowByTimeZone() -
+                              datetime.timedelta(days=(31 * 3)))
+            date_range.append(dateNowByTimeZone())
+            pass
+
+        orderList = orderList.filter(
+            (
+                Q(payment_date__gte=date_range[0]) &
+                Q(payment_date__lt=date_range[1])
+            ))
+
+        adjustmentList = getaAdjustment(orderList)
+
+        response['total'] = len(adjustmentList)
+        response['adjustments'] = adjustmentList
+        response['error_code'] = 200
+
+        return JsonResponse(response)

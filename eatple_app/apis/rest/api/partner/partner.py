@@ -34,13 +34,6 @@ class PartnerViewSet(viewsets.ModelViewSet):
                 PARTNER_LOGIN_311_NULL_TOKEN.as_md()
         }
     )
-    def list(self, request, *args, **kwargs):
-        response = {}
-        response['error_code'] = PARTNER_LOGIN_200_SUCCESS.code
-        response['error_msg'] = PARTNER_LOGIN_200_SUCCESS.message
-
-        return Response(response)
-
     @action(detail=False, methods=['post'])
     def login(self, request, pk=None):
         response = {}
