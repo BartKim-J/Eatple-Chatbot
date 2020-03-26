@@ -83,7 +83,7 @@ def kakaoView_MenuListup(kakaoPayload):
         return errorView('잘못된 사용자 계정', '찾을 수 없는 사용자 계정 아이디입니다.')
 
     # User's Eatple Pass Validation
-    eatplePassStatus = eatplePassValidation(user)
+    eatplePassStatus = eatplePassValidation(user, kakaoPayload)
     if(eatplePassStatus != None):
         return eatplePassStatus
 
@@ -239,7 +239,7 @@ def kakaoView_MenuListup(kakaoPayload):
             if(menu.max_stock > menu.current_stock and menu.store.status == STORE_OC_OPEN):
                 delivery = menu.tag.filter(name="픽업존").exists()
                 distance = menu.distance
-                walkTime = round((distance / 100) * 2.1)
+                walkTime = round((distance / 100) * 1.2)
 
                 if(delivery):
                     walkTime = '픽업존'
@@ -498,7 +498,7 @@ def kakaoView_PickupTime(kakaoPayload):
         return errorView('잘못된 사용자 계정', '찾을 수 없는 사용자 계정 아이디입니다.')
 
     # User's Eatple Pass Validation
-    eatplePassStatus = eatplePassValidation(user)
+    eatplePassStatus = eatplePassValidation(user, kakaoPayload)
     if(eatplePassStatus != None):
         return eatplePassStatus
 
@@ -665,7 +665,7 @@ def kakaoView_OrderPayment(kakaoPayload):
         return errorView('잘못된 사용자 계정', '찾을 수 없는 사용자 계정 아이디입니다.')
 
     # User's Eatple Pass Validation
-    eatplePassStatus = eatplePassValidation(user)
+    eatplePassStatus = eatplePassValidation(user, kakaoPayload)
     if(eatplePassStatus != None):
         return eatplePassStatus
 
@@ -879,9 +879,11 @@ def kakaoView_OrderPaymentCheck(kakaoPayload):
     except OrderRecordSheet.DoesNotExist:
         orderRecordSheet = OrderRecordSheet()
 
+    """
     if (orderRecordSheet.timeoutValidation()):
         orderRecordSheet.recordUpdate(ORDER_RECORD_TIMEOUT)
         return kakaoView_TimeOut(KAKAO_BLOCK_USER_SET_ORDER_SHEET)
+    """
 
     orderRecordSheet.user = user
     orderRecordSheet.order = order
@@ -925,7 +927,7 @@ def kakaoView_OrderPaymentCheck(kakaoPayload):
         buttons = [
             {
                 'action': 'osLink',
-                'label': '원클릭 결제하기',
+                'label': '카카오페이 결제',
                 'messageText': KAKAO_EMOJI_LOADING,
                 'osLink': {
                     'android': oneclick_url,
@@ -934,7 +936,7 @@ def kakaoView_OrderPaymentCheck(kakaoPayload):
             },
             {
                 'action': 'webLink',
-                'label': '웹으로 결제하기',
+                'label': '신용카드 결제',
                 'messageText': KAKAO_EMOJI_LOADING,
                 'extra': dataActionExtra,
                 'webLinkUrl': '{server_url}/payment?merchant_uid={merchant_uid}'.format(
@@ -1031,10 +1033,6 @@ def kakaoView_EatplePassIssuance(kakaoPayload):
         except OrderRecordSheet.DoesNotExist:
             orderRecordSheet = OrderRecordSheet()
 
-        if (orderRecordSheet.timeoutValidation()):
-            orderRecordSheet.recordUpdate(ORDER_RECORD_TIMEOUT)
-            return kakaoView_TimeOut(KAKAO_BLOCK_USER_SET_ORDER_SHEET)
-
         orderRecordSheet.user = user
         orderRecordSheet.order = order
         orderRecordSheet.paid = True
@@ -1048,7 +1046,7 @@ def kakaoView_EatplePassIssuance(kakaoPayload):
         order.save()
 
         KakaoInstantForm().Message(
-            '잇플패스 발급이 완료되었습니다.',
+            '주문이 완료되었습니다.',
             kakaoForm=kakaoForm
         )
 

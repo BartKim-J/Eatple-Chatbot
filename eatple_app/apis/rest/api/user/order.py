@@ -101,7 +101,7 @@ class OrderValidation(viewsets.ModelViewSet):
             response['error_code'] = PAYMENT_206_SELLING_TIME_INVALID.code
             response['error_msg'] = PAYMENT_206_SELLING_TIME_INVALID.message
             return Response(response)
-
+        
         # Store Check
         if(order.store.status != OC_OPEN or order.menu.status != OC_OPEN):
             response['error_code'] = PAYMENT_206_SELLING_TIME_INVALID.code

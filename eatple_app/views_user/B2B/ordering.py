@@ -230,7 +230,7 @@ def kakaoView_MenuListup(kakaoPayload):
             if(menu.max_stock > menu.current_stock and menu.store.status == STORE_OC_OPEN):
                 delivery = menu.tag.filter(name="픽업존").exists()
                 distance = menu.distance
-                walkTime = round((distance / 100) * 2.1)
+                walkTime = round((distance / 100) * 0.8)
 
                 if(delivery):
                     walkTime = '픽업존'
@@ -1197,7 +1197,7 @@ def kakaoView_B2B_MenuListup(kakaoPayload):
             if(maxStock > currentStock and menu.store.status == STORE_OC_OPEN):
                 delivery = menu.tag.filter(name="픽업존").exists()
                 distance = menu.distance
-                walkTime = round((distance / 100) * 2.1)
+                walkTime = round((distance / 100) * 0.8)
 
                 if(delivery):
                     walkTime = '픽업존'

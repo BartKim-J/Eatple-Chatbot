@@ -39,7 +39,7 @@ def GET_KAKAO_PAY_OrderSheet(request):
             return JsonResponse({'status': 300, 'message': message})
 
         # Eatple Pass Check
-        eatplePassStatus = eatplePassValidation(user)
+        eatplePassStatus = eatplePassValidation(user, request)
         if(eatplePassStatus == False):
             message = '이미 다른 주문을 하셨습니다.'
             print(message)

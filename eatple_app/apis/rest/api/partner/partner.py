@@ -50,17 +50,17 @@ class PartnerViewSet(viewsets.ModelViewSet):
             received_json_data = json.loads(json_str)
 
             crn = received_json_data['username'].replace('-', '')
-            token = received_json_data['password']
+            phone_code = received_json_data['password']
         except Exception as ex:
             print(ex)
             return JsonResponse({'status': 400, })
 
         if(crn == None):
-            response['error_code'] = PARTNER_LOGIN_311_NULL_TOKEN.code
-            response['error_msg'] = PARTNER_LOGIN_311_NULL_TOKEN.message
+            response['error_code'] = PARTNER_LOGIN_310_NULL_CRN.code
+            response['error_msg'] = PARTNER_LOGIN_310_NULL_CRN.message
 
             return Response(response)
-        elif(token == None):
+        elif(phone_code == None):
             response['error_code'] = PARTNER_LOGIN_311_NULL_TOKEN.code
             response['error_msg'] = PARTNER_LOGIN_311_NULL_TOKEN.message
 
@@ -74,14 +74,14 @@ class PartnerViewSet(viewsets.ModelViewSet):
 
             return Response(response)
 
-        token_auth = False
+        phone_number_auth = False
         for store in storeList:
             checker = store.phone_number.as_national.split('-')[2]
-            if(checker == token):
+            if(checker == phone_code):
                 partnerStore = store
-                token_auth = True
+                phone_number_auth = True
 
-        if(token_auth == False):
+        if(phone_number_auth == False):
             response['error_code'] = PARTNER_LOGIN_301_INVALID_TOKEN.code
             response['error_msg'] = PARTNER_LOGIN_301_INVALID_TOKEN.message
 
@@ -91,6 +91,42 @@ class PartnerViewSet(viewsets.ModelViewSet):
             partner = Partner.objects.get(
                 phone_number=partnerStore.phone_number)
         except Partner.DoesNotExist as ex:
+            response['error_code'] = PARTNER_LOGIN_300_INVALID_CRN.code
+            response['error_msg'] = PARTNER_LOGIN_300_INVALID_CRN.message
+
+            return Response(response)
+
+        response['token'] = partner.ci
+        response['error_code'] = PARTNER_LOGIN_200_SUCCESS.code
+        response['error_msg'] = PARTNER_LOGIN_200_SUCCESS.message
+
+        return Response(response)
+
+    @action(detail=False, methods=['post'])
+    def getProfile(self, request, pk=None):
+        response = {}
+
+        try:
+            json_str = ((request.body).decode('utf-8'))
+            received_json_data = json.loads(json_str)
+
+            token = received_json_data['token']
+        except Exception as ex:
+            print(ex)
+            return JsonResponse({'status': 400, })
+
+        try:
+            partner = Partner.objects.get(ci=token)
+        except Partner.DoesNotExist as ex:
+            response['error_code'] = PARTNER_LOGIN_301_INVALID_TOKEN.code
+            response['error_msg'] = PARTNER_LOGIN_301_INVALID_TOKEN.message
+
+            return Response(response)
+
+        try:
+            storeList = Store.objects.filter(
+                crn__CRN_id=partner.store.crn.CRN_id)
+        except Store.DoesNotExist as ex:
             response['error_code'] = PARTNER_LOGIN_300_INVALID_CRN.code
             response['error_msg'] = PARTNER_LOGIN_300_INVALID_CRN.message
 

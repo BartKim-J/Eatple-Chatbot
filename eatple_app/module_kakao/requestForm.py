@@ -14,6 +14,7 @@ from eatple_app.views_system.debugger import EatplusSkillLog, errorView
 
 class KakaoPayLoad():
     def __init__(self, request):
+        self.request = request
         #HTTP Request Parsing to Json Type
         self.json_str           = ((request.body).decode('utf-8'))
         self.received_json_data = json.loads(self.json_str)

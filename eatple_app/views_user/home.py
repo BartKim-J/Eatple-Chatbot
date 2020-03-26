@@ -228,26 +228,58 @@ def kakaoView_Home(user, address):
         },
     ]
 
-    buttons = [
-        {
-            'action': 'block',
-            'label': '🍽  주문하기',
-            'messageText': '🍽  주문하기',
-            'blockId': KAKAO_BLOCK_USER_GET_MENU,
-            'extra': {
-                KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_HOME
-            }
-        },
-        {
-            'action': 'block',
-            'label': '📗  매뉴얼',
-            'messageText': '📗  매뉴얼',
-            'blockId': KAKAO_BLOCK_USER_MANUAL,
-            'extra': {
-                KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_HOME
-            }
-        },
-    ]
+    orderManager = UserOrderManager(user)
+    orderManager.orderPenddingCleanUp()
+    orderManager.availableOrderStatusUpdate()
+
+    orderList = orderManager.getAvailableOrders().filter(Q(ordersheet__user=user))
+    orderCount = orderList.count()
+    order = orderList.first()
+
+    isOrderEnable = (orderCount != 0)
+
+    if(isOrderEnable):
+        buttons = [
+            {
+                'action': 'block',
+                'label': '주문내역 확인',
+                'messageText': KAKAO_EMOJI_LOADING,
+                'blockId': KAKAO_BLOCK_USER_EATPLE_PASS,
+                'extra': {
+                    KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_HOME
+                }
+            },
+            {
+                'action': 'block',
+                'label': '고객 소리함',
+                'messageText': KAKAO_EMOJI_LOADING,
+                'blockId': KAKAO_BLOCK_USER_SURVEY_IMPROVEMENTS,
+                'extra': {
+                    KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_HOME
+                }
+            },
+        ]
+    else:
+        buttons = [
+            {
+                'action': 'block',
+                'label': '🍽  주문하기',
+                'messageText': '🍽  주문하기',
+                'blockId': KAKAO_BLOCK_USER_GET_MENU,
+                'extra': {
+                    KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_HOME
+                }
+            },
+            {
+                'action': 'block',
+                'label': '고객 소리함',
+                'messageText': KAKAO_EMOJI_LOADING,
+                'blockId': KAKAO_BLOCK_USER_SURVEY_IMPROVEMENTS,
+                'extra': {
+                    KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_HOME
+                }
+            },
+        ]
 
     # MAP
     addressMap = address.split()
@@ -258,30 +290,6 @@ def kakaoView_Home(user, address):
             addressMap[0], addressMap[1], addressMap[2]),
         {},
         []
-    )
-    # UPDATE
-    kakaoForm.BasicCard_Push(
-        '📌 「{}」 v{}.{}.{}({})'.format(
-            VERSION_CODE,
-            MAJOR_VERSION,
-            MINOR_VERSION,
-            BUILD_VERSION,
-            VERSION_LEVEL,),
-        '🛠️ 업데이트 내역을 확인하세요. ➔',
-        {},
-        [],
-    )
-    kakaoForm.BasicCard_Push(
-        '🔗 \'카카오 페이\' 추가',
-        '카카오 원클릭 결제가 추가되었어요.',
-        {},
-        [],
-    )
-    kakaoForm.BasicCard_Push(
-        '🔗 \'챗봇 UI 리뉴얼\'',
-        '잇플 챗봇 UI가 리뉴얼 되었어요!',
-        {},
-        [],
     )
     kakaoForm.BasicCard_Add()
 
@@ -296,138 +304,15 @@ def kakaoView_Home(user, address):
     }
 
     kakaoForm.BasicCard_Push(
-        '주문 가능시간',
+        '주문 가능/취소 시간',
         '오후 4시 ~ 오전 10시 30분',
         thumbnail,
         buttons
     )
 
-    surveyForm(kakaoForm)
+    # surveyForm(kakaoForm)
 
     kakaoForm.BasicCard_Add()
-
-    kakaoForm.QuickReplies_AddWithMap(QUICKREPLIES_MAP)
-
-    return JsonResponse(kakaoForm.GetForm())
-
-
-def kakaoView_Order_Home(user, order, address):
-    EatplusSkillLog('Home')
-
-    kakaoForm = KakaoForm()
-
-    # MAP
-    kakaoMapUrl = 'https://map.kakao.com/link/map/{name},{place}'.format(
-        name=order.store.name,
-        place=order.store.place
-    )
-
-    kakaoMapUrlAndriod = 'http://m.map.kakao.com/scheme/route?ep={place}&by=FOOT'.format(
-        place=order.store.place
-    )
-
-    kakaoMapUrlIOS = 'http://m.map.kakao.com/scheme/route?ep={place}&by=FOOT'.format(
-        place=order.store.place
-    )
-
-    QUICKREPLIES_MAP = [
-        {
-            'action': 'block',
-            'label': '최근 주문내역',
-            'messageText': KAKAO_EMOJI_LOADING,
-            'blockId': KAKAO_BLOCK_USER_ORDER_DETAILS,
-            'extra': {
-                KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_HOME
-            }
-        },
-    ]
-
-    buttons = [
-        {
-            'action': 'block',
-            'label': '잇플패스 확인',
-            'messageText': KAKAO_EMOJI_LOADING,
-            'blockId': KAKAO_BLOCK_USER_EATPLE_PASS,
-            'extra': {
-                KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_HOME
-            }
-        },
-        {
-            'action': 'osLink',
-            'label': '길찾기',
-            'osLink': {
-                'android': kakaoMapUrlAndriod,
-                'ios': kakaoMapUrlIOS,
-                'pc': kakaoMapUrl,
-            }
-        },
-    ]
-
-    # HEADER
-    isPickupZone = order.menu.tag.filter(name="픽업존").exists()
-    isCafe = order.store.category.filter(name="카페").exists()
-    if(isCafe):
-        pickupTimeStr = dateByTimeZone(order.pickup_time).strftime(
-            '%-m월 %-d일 오전 11시 30분 ~ 오후 4시')
-    else:
-        pickupTimeStr = dateByTimeZone(order.pickup_time).strftime(
-            '%-m월 %-d일 %p %-I시 %-M분').replace('AM', '오전').replace('PM', '오후')
-
-    thumbnail = {
-        'imageUrl': '{}{}'.format(HOST_URL, order.menu.imgURL()),
-        'fixedRatio': 'true',
-        'width': 800,
-        'height': 800,
-    }
-
-    kakaoForm.BasicCard_Push(
-        '',
-        '',
-        thumbnail,
-        buttons
-    )
-    if(isPickupZone):
-        thumbnail = {
-            'imageUrl': 'https://maps.googleapis.com/maps/api/staticmap?center={lat},{long}&maptype=mobile&zoom={zoom}&markers=size:mid%7C{lat},{long}&size=500x500&key={apiKey}'.format(
-                zoom=18,
-                lat=37.518492,
-                long=127.024382,
-                apiKey='AIzaSyDRhnn4peSzEfKzQ_WjwDqDF9pzDiuVRhM',
-            ),
-            'fixedRatio': 'true',
-            'width': 800,
-            'height': 800,
-        }
-
-        KakaoInstantForm().Message(
-            '패스트파이브 신사점 3층',
-            '픽업 시간 - {}'.format(dateByTimeZone(order.pickup_time).strftime(
-                '%p %-I시 %-M분').replace('AM', '오전').replace('PM', '오후')),
-            thumbnail=thumbnail,
-            buttons=[],
-            kakaoForm=kakaoForm
-        )
-    else:
-        thumbnail = {
-            'imageUrl': 'https://maps.googleapis.com/maps/api/staticmap?center={lat},{long}&maptype=mobile&zoom={zoom}&markers=size:mid%7C{lat},{long}&size=500x500&key={apiKey}'.format(
-                zoom=18,
-                lat=order.store.place.lat,
-                long=order.store.place.long,
-                apiKey='AIzaSyDRhnn4peSzEfKzQ_WjwDqDF9pzDiuVRhM',
-            ),
-            'fixedRatio': 'true',
-            'width': 800,
-            'height': 800,
-        }
-
-        KakaoInstantForm().Message(
-            order.store.addr,
-            '픽업 시간 - {}'.format(dateByTimeZone(order.pickup_time).strftime(
-                '%p %-I시 %-M분').replace('AM', '오전').replace('PM', '오후')),
-            thumbnail=thumbnail,
-            buttons=[],
-            kakaoForm=kakaoForm
-        )
 
     kakaoForm.QuickReplies_AddWithMap(QUICKREPLIES_MAP)
 
@@ -452,20 +337,7 @@ def kakaoView_Route_Home(user):
 
         address = user.location.address
 
-    orderManager = UserOrderManager(user)
-    orderManager.orderPenddingCleanUp()
-    orderManager.availableOrderStatusUpdate()
-
-    orderList = orderManager.getAvailableOrders().filter(Q(ordersheet__user=user))
-    orderCount = orderList.count()
-    order = orderList.first()
-
-    isOrderEnable = (orderCount != 0)
-
-    if(isOrderEnable):
-        return kakaoView_Order_Home(user, order, address)
-    else:
-        return kakaoView_Home(user, address)
+    return kakaoView_Home(user, address)
 
 # # # # # # # # # # # # # # # # # # # # # # # # #
 #

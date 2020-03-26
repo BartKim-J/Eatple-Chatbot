@@ -49,7 +49,7 @@ def eatplePass(order, ownEatplePass, delegatedEatplePassCount, delegatedEatplePa
     buttons = [
         {
             'action': 'block',
-            'label': '사용하기(사장님 전용)',
+            'label': '사장님께 확인받기',
             'messageText': KAKAO_EMOJI_LOADING,
             'blockId': KAKAO_BLOCK_USER_GET_USE_EATPLE_PASS_CONFIRM,
             'extra': {
@@ -126,22 +126,6 @@ def eatplePass(order, ownEatplePass, delegatedEatplePassCount, delegatedEatplePa
         )
 
     else:
-        if (order.status == ORDER_STATUS_ORDER_CONFIRM_WAIT or
-            order.status == ORDER_STATUS_ORDER_CONFIRMED or
-                order.status == ORDER_STATUS_PICKUP_PREPARE):
-            buttons.append(
-                {
-                    'action': 'block',
-                    'label': '픽업 부탁하기',
-                    'messageText': KAKAO_EMOJI_LOADING,
-                    'blockId': KAKAO_BLOCK_USER_ORDER_SHARING_START,
-                    'extra': {
-                        KAKAO_PARAM_ORDER_ID: order.order_id,
-                        KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_EATPLE_PASS
-                    }
-                }
-            )
-
         if(order.status == ORDER_STATUS_ORDER_CONFIRM_WAIT or
                 order.status == ORDER_STATUS_ORDER_CONFIRMED):
             buttons.append(
@@ -306,6 +290,45 @@ def kakaoView_EatplePass(kakaoPayload):
                     ORDER_LIST_QUICKREPLIES_MAP,
                     kakaoForm
                 )
+                kakaoForm.BasicCard_Add()
+
+                kakaoMapUrl = 'https://map.kakao.com/link/map/{name},{place}'.format(
+                    name=order.store.name,
+                    place=order.store.place
+                )
+
+                isPickupZone = order.menu.tag.filter(name="픽업존").exists()
+                if(isPickupZone):
+                    pass
+                else:
+                    buttons = [
+                        {
+                            'action': 'webLink',
+                            'label': '매장 위치확인',
+                            'webLinkUrl': kakaoMapUrl,
+                        }
+                    ]
+                    if (order.status == ORDER_STATUS_ORDER_CONFIRM_WAIT or
+                        order.status == ORDER_STATUS_ORDER_CONFIRMED or
+                            order.status == ORDER_STATUS_PICKUP_PREPARE):
+                        buttons.insert(
+                            0,
+                            {
+                                'action': 'block',
+                                'label': '픽업 부탁하기',
+                                'messageText': KAKAO_EMOJI_LOADING,
+                                'blockId': KAKAO_BLOCK_USER_ORDER_SHARING_START,
+                                'extra': {
+                                    KAKAO_PARAM_ORDER_ID: order.order_id,
+                                    KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_EATPLE_PASS
+                                }
+                            }
+                        )
+                    KakaoInstantForm().Message(
+                        '직접 픽업이 어려울땐, “픽업 부탁하기”로 함께 주문한 동료에게 부탁해보세요',
+                        buttons=buttons,
+                        kakaoForm=kakaoForm
+                    )
             else:
                 eatplePassDelegated(
                     order,
@@ -316,45 +339,7 @@ def kakaoView_EatplePass(kakaoPayload):
                     ORDER_LIST_QUICKREPLIES_MAP,
                     kakaoForm
                 )
-
-        kakaoForm.BasicCard_Add()
-
-        if(order.delegate == None):
-
-            kakaoMapUrl = 'https://map.kakao.com/link/map/{name},{place}'.format(
-                name=order.store.name,
-                place=order.store.place
-            )
-
-            kakaoMapUrlAndriod = 'http://m.map.kakao.com/scheme/route?ep={place}&by=FOOT'.format(
-                place=order.store.place
-            )
-
-            kakaoMapUrlIOS = 'http://m.map.kakao.com/scheme/route?ep={place}&by=FOOT'.format(
-                place=order.store.place
-            )
-
-            isPickupZone = order.menu.tag.filter(name="픽업존").exists()
-            if(isPickupZone):
-                pass
-            else:
-                buttons = [
-                    {
-                        'action': 'osLink',
-                        'label': '길찾기',
-                        'osLink': {
-                            'android': kakaoMapUrlAndriod,
-                            'ios': kakaoMapUrlIOS,
-                            'pc': kakaoMapUrl,
-                        }
-                    }
-                ]
-
-                KakaoInstantForm().Message(
-                    '{}'.format(order.store.addr),
-                    buttons=buttons,
-                    kakaoForm=kakaoForm
-                )
+                kakaoForm.BasicCard_Add()
 
     # No EatplePass
     else:

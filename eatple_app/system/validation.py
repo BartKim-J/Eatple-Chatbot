@@ -18,6 +18,7 @@ from eatple_app.module_kakao.kakaoPay import *
 from eatple_app.views_system.debugger import *
 
 from eatple_app.views import *
+from eatple_app.views_user.orderCheck import GET_EatplePass
 
 DEFAULT_QUICKREPLIES_MAP = [
     {
@@ -162,7 +163,7 @@ def vacationTimeCheck():
     return False
 
 
-def eatplePassValidation(user):
+def eatplePassValidation(user, kakaoPayload):
     orderManager = UserOrderManager(user)
     orderManager.orderPaidCheck()
 
@@ -178,36 +179,12 @@ def eatplePassValidation(user):
     kakaoForm.QuickReplies_AddWithMap(DEFAULT_QUICKREPLIES_MAP)
 
     if (lunchPurchaed and dinnerPurchaced):
-        kakaoForm.BasicCard_Push(
-            '아직 사용하지 않은 잇플패스가 있어요.',
-            '발급된 잇플패스를 먼저 사용해주세요.',
-            {},
-            []
-        )
-        kakaoForm.BasicCard_Add()
-
-        return JsonResponse(kakaoForm.GetForm())
+        return GET_EatplePass(kakaoPayload.request)
 
     elif (lunchPurchaed):
-        kakaoForm.BasicCard_Push(
-            '아직 사용하지 않은 잇플패스가 있어요.',
-            '발급된 잇플패스를 먼저 사용해주세요.',
-            {},
-            []
-        )
-        kakaoForm.BasicCard_Add()
-
-        return JsonResponse(kakaoForm.GetForm())
+        return GET_EatplePass(kakaoPayload.request)
 
     elif (dinnerPurchaced):
-        kakaoForm.BasicCard_Push(
-            '아직 사용하지 않은 잇플패스가 있어요.',
-            '발급된 잇플패스를 먼저 사용해주세요.',
-            {},
-            []
-        )
-        kakaoForm.BasicCard_Add()
-
-        return JsonResponse(kakaoForm.GetForm())
+        return GET_EatplePass(kakaoPayload.request)
 
     return None

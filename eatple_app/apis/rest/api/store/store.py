@@ -32,10 +32,6 @@ class StoreViewSet(viewsets.ModelViewSet):
         id = request.query_params.get('id')
         name = request.query_params.get('name')
 
-        print('CRN', crn)
-        print('ID', id)
-        print('NAME', name)
-
         filter = Q()
         if(crn != None):
             crn = crn.replace('-', '')
@@ -46,10 +42,10 @@ class StoreViewSet(viewsets.ModelViewSet):
 
         if(param_valid(id)):
             filter.add(Q(store_id=id), filter.OR)
-            
+
         if(param_valid(name)):
             filter.add(Q(name_contains=name), filter.OR)
-            
+
         storeList = Store.objects.filter(filter)
 
         response['stores'] = StoreSerializer(storeList, many=True).data

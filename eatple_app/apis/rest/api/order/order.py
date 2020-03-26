@@ -39,16 +39,6 @@ class OrderViewSet(viewsets.ModelViewSet):
 
         date_range = request.query_params.getlist('date_range[]')
 
-        print('CRN', crn)
-        print('ORDER ID', order_id)
-        print('STORE', store)
-        print('MENU', menu)
-        print('METHOD', methodList)
-        print('PAID', isPaid)
-        print('CANCELED', isCanceled)
-        print(count)
-        print('DATE RANGE', date_range)
-
         if(crn != None):
             crn = crn.replace('-', '')
         else:
@@ -91,8 +81,8 @@ class OrderViewSet(viewsets.ModelViewSet):
                 date_range[1] = temp
 
         else:
-            date_range.append(dateNowByTimeZone() +
-                              datetime.timedelta(days=-30))
+            date_range.append(dateNowByTimeZone() -
+                              datetime.timedelta(days=(31 * 3)))
             date_range.append(dateNowByTimeZone())
             pass
 

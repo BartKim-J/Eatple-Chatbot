@@ -33,11 +33,6 @@ class MenuViewSet(viewsets.ModelViewSet):
         id = request.query_params.get('id')
         name = request.query_params.get('name')
 
-        print('CRN', crn)
-        print('STORE', store)
-        print('ID', id)
-        print('NAME', name)
-
         filter = Q()
         if(crn != None):
             crn = crn.replace('-', '')
@@ -56,7 +51,6 @@ class MenuViewSet(viewsets.ModelViewSet):
             filter.add(Q(name_contains=name), filter.AND)
 
         menuList = Menu.objects.filter(filter)
-
 
         response['menus'] = MenuSerializer(menuList, many=True).data
         response['error_code'] = 200
