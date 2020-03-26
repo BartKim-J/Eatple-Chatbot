@@ -113,7 +113,7 @@ def eatplePass(order, ownEatplePass, delegatedEatplePassCount, delegatedEatplePa
         kakaoForm.BasicCard_Push(
             '총 잇플패스 : {}개'.format(
                 delegatedEatplePass.count() + ownEatplePass.count()),
-            '주문번호: {}\n - 주문자: {}\n\n메뉴 내역\n{}\n - 주문 상태: {}\n\n - 픽업 시간: {}\n주문취소 가능시간: 오전 10시 30분까지'.format(
+            '주문번호: {}\n - 주문자: {}\n\n메뉴 내역\n{}\n - 주문 상태: {}\n\n - 픽업 시간: {}\n * 주문취소 가능시간: 오전 10시 30분까지'.format(
                 order.order_id,
                 nicknameList,
                 menuNameList,
@@ -160,7 +160,7 @@ def eatplePass(order, ownEatplePass, delegatedEatplePassCount, delegatedEatplePa
 
         kakaoForm.BasicCard_Push(
             '{}'.format(order.menu.name),
-            '주문번호: {}\n - 주문자: {}({})\n\n - 매장: {}\n - 주문 상태: {}\n\n - 픽업 시간: {}\n주문취소 가능시간: 오전 10시 30분까지'.format(
+            '주문번호: {}\n - 주문자: {}({})\n\n - 매장: {}\n - 주문 상태: {}\n\n - 픽업 시간: {}\n * 주문취소 가능시간: 오전 10시 30분까지'.format(
                 order.order_id,
                 order.ordersheet.user.nickname,
                 str(order.ordersheet.user.phone_number)[9:13],
@@ -219,7 +219,7 @@ def eatplePassDelegated(order, ownEatplePass, delegatedEatplePassCount, delegate
 
     kakaoForm.BasicCard_Push(
         '{}님에게 부탁된 잇플패스 입니다.'.format(order.delegate.nickname),
-        '주문번호: {}\n - 소유자: {}({})\n\n - 위임자: {}({})\n\n - 매장: {}\n - 주문 상태: {}\n\n - 픽업 시간: {}\n주문취소 가능시간: 오전 10시 30분까지'.format(
+        '주문번호: {}\n - 소유자: {}({})\n\n - 위임자: {}({})\n\n - 매장: {}\n - 주문 상태: {}\n\n - 픽업 시간: {}\n * 주문취소 가능시간: 오전 10시 30분까지'.format(
             order.order_id,
             order.ordersheet.user.nickname,
             str(order.ordersheet.user.phone_number)[9:13],
