@@ -16,44 +16,16 @@ from rest_framework.response import Response
 from eatple_app.apis.rest.serializer.order import OrderSerializer
 
 
-def getaAdjustment(orderList):
+def getAdjustment(orderList, date_range):
     orderList = orderList.order_by('payment_date')
     adjustmentList = []
 
-    start_date = orderList.first().payment_date.replace(
-        hour=0, minute=0, second=0)
+    if(orderList):
+        start_date = orderList.first().payment_date.replace(
+            hour=0, minute=0, second=0)
 
-    # Do
-    start_date = start_date - datetime.timedelta(days=start_date.weekday())
-    end_date = start_date + datetime.timedelta(days=7)
-    settlement_date = end_date + datetime.timedelta(days=10)
-
-    inquiryOrderList = orderList.filter(
-        Q(payment_date__gte=start_date),
-        Q(payment_date__lt=end_date)
-    )
-
-    while(inquiryOrderList.count() > 0):
-        total_price = 0
-        total_order = inquiryOrderList.count()
-
-        for order in inquiryOrderList:
-            total_price += order.totalPrice
-
-        adjustmentList.append(
-            dict({
-                'settlement_date': settlement_date.strftime('%Y-%m-%d'),
-                'adjustment_date_range': '{} ~ {}'.format(start_date.strftime('%Y-%m-%d'), end_date.strftime('%Y-%m-%d')),
-                'total_order': total_order,
-                'total_price': '{}원'.format(format(total_price, ",")),
-                'supply_price': '{}원'.format(format(int(total_price / 1.1), ",")),
-                'surtax_price': '{}원'.format(format(total_price - int(total_price / 1.1), ",")),
-                'fee': '{}원'.format(format(int(total_price * 0.0352), ",")),
-                'settlement_amount': '{}원'.format(format(total_price - int(total_price * 0.0352), ",")),
-                'unit': 'won'
-            })
-        )
-        start_date = end_date
+        # Do
+        start_date = start_date - datetime.timedelta(days=start_date.weekday())
         end_date = start_date + datetime.timedelta(days=7)
         settlement_date = end_date + datetime.timedelta(days=10)
 
@@ -62,7 +34,82 @@ def getaAdjustment(orderList):
             Q(payment_date__lt=end_date)
         )
 
+        while(inquiryOrderList.count() > 0):
+            total_price = 0
+            total_order = inquiryOrderList.count()
+
+            for order in inquiryOrderList:
+                total_price += order.totalPrice
+
+            supply_price = int(total_price / 1.1)
+            surtax_price = total_price - supply_price
+            fee = int(total_price * 0.0352)
+            settlement_amount = total_price - fee
+
+            adjustmentList.append(
+                dict({
+                    'settlement_date': settlement_date.strftime('%Y-%m-%d'),
+                    'adjustment_date_range': '{} ~ {}'.format(start_date.strftime('%Y-%m-%d'), end_date.strftime('%Y-%m-%d')),
+                    'total_order': total_order,
+                    'total_price': '{}원'.format(format(total_price, ",")),
+                    'supply_price': '{}원'.format(format(supply_price, ",")),
+                    'surtax_price': '{}원'.format(format(surtax_price, ",")),
+                    'fee': '{}원'.format(format(fee, ",")),
+                    'settlement_amount': '{}원'.format(format(settlement_amount, ",")),
+                    'unit': 'won'
+                })
+            )
+            start_date = end_date
+            end_date = start_date + datetime.timedelta(days=7)
+            settlement_date = end_date + datetime.timedelta(days=10)
+
+            inquiryOrderList = orderList.filter(
+                Q(payment_date__gte=start_date),
+                Q(payment_date__lt=end_date)
+            )
+    else:
+        pass
+
     return adjustmentList
+
+
+def getSurtax(orderList, date_range):
+    orderList = orderList.order_by('payment_date')
+    surtax = {
+        'sales': {},
+        'purchase': {}
+    }
+
+    if(orderList):
+        total_price = 0
+        total_order = orderList.count()
+
+        for order in orderList:
+            total_price += order.totalPrice
+
+        fee_total_price = int(total_price * 0.0352)
+        fee_supply_price = int(fee_total_price / 1.1)
+        fee_surtax_price = fee_total_price - fee_supply_price
+
+        surtax['sales'] = dict({
+            'date_range': '{} ~ {}'.format(date_range[0].strftime('%Y-%m-%d'), date_range[1].strftime('%Y-%m-%d')),
+            'total_order': total_order,
+            'total_price': '{}원'.format(format(total_price, ",")),
+            'unit': 'won'
+        })
+        surtax['purchase'] = dict({
+            'date_range': '{} ~ {}'.format(date_range[0].strftime('%Y-%m-%d'), date_range[1].strftime('%Y-%m-%d')),
+            'total_order': total_order,
+            'supply_price': '{}원'.format(format(fee_supply_price, ",")),
+            'surtax_price': '{}원'.format(format(fee_surtax_price, ",")),
+            'total_price': '{}원'.format(format(fee_total_price, ",")),
+            'unit': 'won'
+        })
+
+    else:
+        pass
+
+    return surtax
 
 
 def param_valid(param):
@@ -142,7 +189,6 @@ class OrderViewSet(viewsets.ModelViewSet):
             date_range.append(dateNowByTimeZone() -
                               datetime.timedelta(days=(31 * 3)))
             date_range.append(dateNowByTimeZone())
-            pass
 
         infoFilter = Q()
         if(param_valid(order_id)):
@@ -189,7 +235,7 @@ class OrderViewSet(viewsets.ModelViewSet):
         return JsonResponse(response)
 
     @action(detail=False, methods=['get'])
-    def adjustment(self, request, *args, **kwargs):
+    def adjustments(self, request, *args, **kwargs):
         response = {}
         crn = request.query_params.get('crn')
         store = request.query_params.get('store')
@@ -237,7 +283,6 @@ class OrderViewSet(viewsets.ModelViewSet):
             date_range.append(dateNowByTimeZone() -
                               datetime.timedelta(days=(31 * 3)))
             date_range.append(dateNowByTimeZone())
-            pass
 
         orderList = orderList.filter(
             (
@@ -245,10 +290,11 @@ class OrderViewSet(viewsets.ModelViewSet):
                 Q(payment_date__lt=date_range[1])
             ))
 
-        adjustmentList = getaAdjustment(orderList)
+        adjustmentList = getAdjustment(orderList, date_range)
+        surtax = getSurtax(orderList, date_range)
 
-        response['total'] = len(adjustmentList)
         response['adjustments'] = adjustmentList
+        response['surtax'] = surtax
         response['error_code'] = 200
 
         return JsonResponse(response)
