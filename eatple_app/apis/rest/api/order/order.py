@@ -202,7 +202,7 @@ class OrderViewSet(viewsets.ModelViewSet):
         isPaid = request.query_params.get('isPaid')
         isCanceled = request.query_params.get('isCanceled')
         date_range = request.query_params.getlist('date_range[]')
-
+        
         if(crn != None):
             crn = crn.replace('-', '')
         else:
@@ -253,10 +253,10 @@ class OrderViewSet(viewsets.ModelViewSet):
 
         infoFilter = Q()
         if(param_valid(store)):
-            infoFilter.add(Q(store__name__contains=store), infoFilter.OR)
+            infoFilter.add(Q(store__name__contains=store), infoFilter.AND)
 
         if(param_valid(menu)):
-            infoFilter.add(Q(menu__name__contains=menu), infoFilter.OR)
+            infoFilter.add(Q(menu__name__contains=menu), infoFilter.AND)
 
         methodFilter = Q()
         if(param_valid(methodList)):
