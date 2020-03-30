@@ -19,6 +19,13 @@ from eatple_app.apis.rest.serializer.order import OrderSerializer
 def getAdjustment(orderList, date_range):
     orderList = orderList.order_by('payment_date')
     adjustmentList = []
+    adjustmentExcel = []
+
+    adjustment_total_price = 0
+    adjustment_supply_price = 0
+    adjustment_surtax_price = 0
+    adjustment_fee = 0
+    adjustment_settlement_amount = 0
 
     if(orderList):
         start_date = orderList.first().payment_date.replace(
@@ -35,27 +42,64 @@ def getAdjustment(orderList, date_range):
         )
 
         while(inquiryOrderList.count() > 0):
-            total_price = 0
             total_order = inquiryOrderList.count()
+            inquiry_total_price = 0
+            inquiry_supply_price = 0
+            inquiry_surtax_price = 0
+            inquiry_fee = 0
+            inquiry_settlement_amount = 0
 
             for order in inquiryOrderList:
-                total_price += order.totalPrice
+                total_price = order.totalPrice
+                supply_price = round(total_price / 1.1)
+                surtax_price = total_price - supply_price
+                fee = round(total_price * 0.0352)
+                settlement_amount = total_price - fee
 
-            supply_price = int(total_price / 1.1)
-            surtax_price = total_price - supply_price
-            fee = int(total_price * 0.0352)
-            settlement_amount = total_price - fee
+                # inquiry
+                inquiry_total_price += total_price
+                inquiry_supply_price += supply_price
+                inquiry_surtax_price += surtax_price
+                inquiry_fee += fee
+                inquiry_settlement_amount += settlement_amount
+
+                # all
+                adjustment_total_price += total_price
+                adjustment_supply_price += supply_price
+                adjustment_surtax_price += surtax_price
+                adjustment_fee += fee
+                adjustment_settlement_amount += settlement_amount
+
+                # push body on excel
+                adjustmentExcel.append(
+                    dict({
+                        'ID': order.id,
+                        '결제일': order.payment_date.strftime('%Y-%m-%d'),
+                        '정산일': settlement_date.strftime('%Y-%m-%d'),
+                        '주문번호': order.order_id,
+                        '상점': order.store.name,
+                        '메뉴': order.menu.name,
+                        '주문 타입': dict(ORDER_TYPE)[order.type],
+                        '결제수단': '신용카드',
+                        '주문 금액': total_price,
+                        '공급가액': supply_price,
+                        '부가세': surtax_price,
+                        '수수료': fee,
+                        '정산금액': settlement_amount,
+                    })
+                )
+                total_price += order.totalPrice
 
             adjustmentList.append(
                 dict({
                     'settlement_date': settlement_date.strftime('%Y-%m-%d'),
                     'adjustment_date_range': '{} ~ {}'.format(start_date.strftime('%Y-%m-%d'), end_date.strftime('%Y-%m-%d')),
                     'total_order': total_order,
-                    'total_price': '{}원'.format(format(total_price, ",")),
-                    'supply_price': '{}원'.format(format(supply_price, ",")),
-                    'surtax_price': '{}원'.format(format(surtax_price, ",")),
-                    'fee': '{}원'.format(format(fee, ",")),
-                    'settlement_amount': '{}원'.format(format(settlement_amount, ",")),
+                    'total_price': '{}원'.format(format(inquiry_total_price, ",")),
+                    'supply_price': '{}원'.format(format(inquiry_supply_price, ",")),
+                    'surtax_price': '{}원'.format(format(inquiry_surtax_price, ",")),
+                    'fee': '{}원'.format(format(inquiry_fee, ",")),
+                    'settlement_amount': '{}원'.format(format(inquiry_settlement_amount, ",")),
                     'unit': 'won'
                 })
             )
@@ -67,10 +111,22 @@ def getAdjustment(orderList, date_range):
                 Q(payment_date__gte=start_date),
                 Q(payment_date__lt=end_date)
             )
+
+        # push footer on excel
+        adjustmentExcel.append(
+            dict({
+                'ID': "합계",
+                '주문 금액': adjustment_total_price,
+                '공급가액': adjustment_supply_price,
+                '부가세': adjustment_surtax_price,
+                '수수료': adjustment_fee,
+                '정산금액': adjustment_settlement_amount,
+            })
+        )
     else:
         pass
 
-    return adjustmentList
+    return [adjustmentList, adjustmentExcel]
 
 
 def getSurtax(orderList, date_range):
@@ -190,11 +246,12 @@ class OrderViewSet(viewsets.ModelViewSet):
                               datetime.timedelta(days=(31 * 3)))
             date_range.append(dateNowByTimeZone())
 
-        infoFilter = Q()
+        idFilter = Q()
         if(param_valid(order_id)):
-            infoFilter.add(
-                Q(order_id__contains=order_id.upper()), infoFilter.AND)
+            idFilter.add(
+                Q(order_id__contains=order_id.upper()), idFilter.AND)
 
+        infoFilter = Q()
         if(param_valid(store)):
             infoFilter.add(Q(store__name__contains=store), infoFilter.OR)
 
@@ -226,6 +283,7 @@ class OrderViewSet(viewsets.ModelViewSet):
             ) &
             methodFilter &
             statusFilter &
+            idFilter &
             infoFilter)
 
         response['total'] = orderList.count()
@@ -254,8 +312,7 @@ class OrderViewSet(viewsets.ModelViewSet):
             ~Q(store=None) &
             ~Q(menu=None) &
             (
-                Q(payment_status=EATPLE_ORDER_STATUS_PAID) |
-                Q(payment_status=EATPLE_ORDER_STATUS_CANCELLED)
+                Q(payment_status=EATPLE_ORDER_STATUS_PAID)
             )
         )
 
@@ -290,10 +347,11 @@ class OrderViewSet(viewsets.ModelViewSet):
                 Q(payment_date__lt=date_range[1])
             ))
 
-        adjustmentList = getAdjustment(orderList, date_range)
+        adjustmentForm = getAdjustment(orderList, date_range)
         surtax = getSurtax(orderList, date_range)
 
-        response['adjustments'] = adjustmentList
+        response['adjustments'] = adjustmentForm[0]
+        response['adjustments_excel'] = adjustmentForm[1]
         response['surtax'] = surtax
         response['error_code'] = 200
 
