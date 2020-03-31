@@ -1,13 +1,4 @@
-# Django Library
-from django.shortcuts import render
-from django.views.decorators.csrf import csrf_exempt
-from django.http import JsonResponse
-
-# Models
-from eatple_app.models import *
-
-# Define
-from eatple_app.define import *
+from eatple_app.apis.rest.define import *
 
 
 def eatplePassValidation(user):

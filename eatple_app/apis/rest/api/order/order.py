@@ -1,17 +1,4 @@
-# View-System
-from eatple_app.views_system.include import *
-from eatple_app.views_system.debugger import *
-
-from eatple_app.apis.rest.api.user.validation import *
-from eatple_app.apis.rest.api.error_table import *
-
-from drf_yasg.utils import swagger_auto_schema
-
-from rest_framework import status
-from rest_framework import viewsets
-from rest_framework import permissions
-from rest_framework.decorators import api_view, action
-from rest_framework.response import Response
+from eatple_app.apis.rest.define import *
 
 from eatple_app.apis.rest.serializer.order import OrderSerializer
 
@@ -41,7 +28,7 @@ def getAdjustment(orderList, date_range):
             Q(payment_date__lt=end_date)
         )
 
-        while(inquiryOrderList.count() > 0):
+        while(end_date <= dateNowByTimeZone()):
             total_order = inquiryOrderList.count()
             inquiry_total_price = 0
             inquiry_supply_price = 0
@@ -53,7 +40,13 @@ def getAdjustment(orderList, date_range):
                 total_price = order.totalPrice
                 supply_price = round(total_price / 1.1)
                 surtax_price = total_price - supply_price
-                fee = round(total_price * 0.0352)
+                if(order.type == ORDER_TYPE_B2B):
+                    fee = round(total_price * FEE_CONST)
+                else:
+                    if(dateByTimeZone(order.payment_date) < FEE_CHANGE_DATE):
+                        fee = round(total_price * FEE_CONST_BEFORE)
+                    else:
+                        fee = round(total_price * FEE_CONST)
                 settlement_amount = total_price - fee
 
                 # inquiry
@@ -90,19 +83,21 @@ def getAdjustment(orderList, date_range):
                 )
                 total_price += order.totalPrice
 
-            adjustmentList.append(
-                dict({
-                    'settlement_date': settlement_date.strftime('%Y-%m-%d'),
-                    'adjustment_date_range': '{} ~ {}'.format(start_date.strftime('%Y-%m-%d'), end_date.strftime('%Y-%m-%d')),
-                    'total_order': total_order,
-                    'total_price': '{}원'.format(format(inquiry_total_price, ",")),
-                    'supply_price': '{}원'.format(format(inquiry_supply_price, ",")),
-                    'surtax_price': '{}원'.format(format(inquiry_surtax_price, ",")),
-                    'fee': '{}원'.format(format(inquiry_fee, ",")),
-                    'settlement_amount': '{}원'.format(format(inquiry_settlement_amount, ",")),
-                    'unit': 'won'
-                })
-            )
+            if(inquiryOrderList):
+                adjustmentList.append(
+                    dict({
+                        'settlement_date': settlement_date.strftime('%Y-%m-%d'),
+                        'adjustment_date_range': '{} ~ {}'.format(start_date.strftime('%Y-%m-%d'), end_date.strftime('%Y-%m-%d')),
+                        'total_order': total_order,
+                        'total_price': '{}원'.format(format(inquiry_total_price, ",")),
+                        'supply_price': '{}원'.format(format(inquiry_supply_price, ",")),
+                        'surtax_price': '{}원'.format(format(inquiry_surtax_price, ",")),
+                        'fee': '{}원'.format(format(inquiry_fee, ",")),
+                        'settlement_amount': '{}원'.format(format(inquiry_settlement_amount, ",")),
+                        'unit': 'won'
+                    })
+                )
+
             start_date = end_date
             end_date = start_date + datetime.timedelta(days=7)
             settlement_date = end_date + datetime.timedelta(days=10)
@@ -136,29 +131,58 @@ def getSurtax(orderList, date_range):
         'purchase': {}
     }
 
+    sales_total_price = 0
+    sales_supply_price = 0
+    sales_surtax_price = 0
+    sales_fee = 0
+    sales_settlement_amount = 0
+
+    purchase_total_price = 0
+    purchase_supply_price = 0
+    purchase_surtax_price = 0
+
     if(orderList):
         total_price = 0
         total_order = orderList.count()
 
         for order in orderList:
-            total_price += order.totalPrice
+            total_price = order.totalPrice
+            supply_price = round(total_price / 1.1)
+            surtax_price = total_price - supply_price
+            if(order.type == ORDER_TYPE_B2B):
+                fee = round(total_price * FEE_CONST)
+            else:
+                if(dateByTimeZone(order.payment_date) < FEE_CHANGE_DATE):
+                    fee = round(total_price * FEE_CONST_BEFORE)
+                else:
+                    fee = round(total_price * FEE_CONST)
+            settlement_amount = total_price - fee
 
-        fee_total_price = int(total_price * 0.0352)
-        fee_supply_price = int(fee_total_price / 1.1)
-        fee_surtax_price = fee_total_price - fee_supply_price
+            # all
+            sales_total_price += total_price
+            sales_supply_price += supply_price
+            sales_surtax_price += surtax_price
+            sales_fee += fee
+            sales_settlement_amount += settlement_amount
+
+            purchase_total_price += fee
+            purchase_supply_price += int(fee / 1.1)
+            purchase_surtax_price += fee - int(fee / 1.1)
 
         surtax['sales'] = dict({
             'date_range': '{} ~ {}'.format(date_range[0].strftime('%Y-%m-%d'), date_range[1].strftime('%Y-%m-%d')),
+            'supply_price': '{}원'.format(format(sales_supply_price, ",")),
+            'surtax_price': '{}원'.format(format(sales_surtax_price, ",")),
             'total_order': total_order,
-            'total_price': '{}원'.format(format(total_price, ",")),
+            'total_price': '{}원'.format(format(sales_total_price, ",")),
             'unit': 'won'
         })
         surtax['purchase'] = dict({
             'date_range': '{} ~ {}'.format(date_range[0].strftime('%Y-%m-%d'), date_range[1].strftime('%Y-%m-%d')),
             'total_order': total_order,
-            'supply_price': '{}원'.format(format(fee_supply_price, ",")),
-            'surtax_price': '{}원'.format(format(fee_surtax_price, ",")),
-            'total_price': '{}원'.format(format(fee_total_price, ",")),
+            'supply_price': '{}원'.format(format(purchase_supply_price, ",")),
+            'surtax_price': '{}원'.format(format(purchase_surtax_price, ",")),
+            'total_price': '{}원'.format(format(purchase_total_price, ",")),
             'unit': 'won'
         })
 
@@ -182,6 +206,10 @@ class OrderViewSet(viewsets.ModelViewSet):
 
     def list(self, request):
         orderList = Order.objects.filter(
+            (
+                Q(payment_date__gte=date_range[0]) &
+                Q(payment_date__lt=date_range[1])
+            ) &
             ~Q(store=None) &
             ~Q(menu=None)
         )
@@ -202,7 +230,7 @@ class OrderViewSet(viewsets.ModelViewSet):
         isPaid = request.query_params.get('isPaid')
         isCanceled = request.query_params.get('isCanceled')
         date_range = request.query_params.getlist('date_range[]')
-        
+
         if(crn != None):
             crn = crn.replace('-', '')
         else:
@@ -211,8 +239,14 @@ class OrderViewSet(viewsets.ModelViewSet):
 
             return Response(response)
 
+        adminFilter = Q()
+        if(crn == ADMIN_CRN):
+            pass
+        else:
+            adminFilter.add(Q(store__crn__CRN_id=crn), adminFilter.AND)
+
         orderList = Order.objects.filter(
-            Q(store__crn__CRN_id=crn) &
+            adminFilter &
             ~Q(store=None) &
             ~Q(menu=None) &
             (
@@ -243,7 +277,7 @@ class OrderViewSet(viewsets.ModelViewSet):
 
         else:
             date_range.append(dateNowByTimeZone() -
-                              datetime.timedelta(days=(31 * 3)))
+                              datetime.timedelta(days=(31 * 1)))
             date_range.append(dateNowByTimeZone())
 
         idFilter = Q()
@@ -307,12 +341,19 @@ class OrderViewSet(viewsets.ModelViewSet):
 
             return Response(response)
 
+        adminFilter = Q()
+        if(crn == ADMIN_CRN):
+            pass
+        else:
+            adminFilter.add(Q(store__crn__CRN_id=crn), adminFilter.AND)
+
         orderList = Order.objects.filter(
-            Q(store__crn__CRN_id=crn) &
+            adminFilter &
             ~Q(store=None) &
             ~Q(menu=None) &
             (
-                Q(payment_status=EATPLE_ORDER_STATUS_PAID)
+                Q(payment_status=EATPLE_ORDER_STATUS_PAID) |
+                Q(payment_status=EATPLE_ORDER_STATUS_CANCELLED)
             )
         )
 
@@ -338,7 +379,7 @@ class OrderViewSet(viewsets.ModelViewSet):
 
         else:
             date_range.append(dateNowByTimeZone() -
-                              datetime.timedelta(days=(31 * 3)))
+                              datetime.timedelta(days=(31 * 1)))
             date_range.append(dateNowByTimeZone())
 
         orderList = orderList.filter(

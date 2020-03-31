@@ -1,20 +1,8 @@
-# View-System
-from eatple_app.views_system.include import *
-from eatple_app.views_system.debugger import *
+from eatple_app.apis.rest.define import *
 
-from eatple_app.apis.rest.api.error_table import *
-
-from django.core import serializers
-from drf_yasg.utils import swagger_auto_schema
-
-from rest_framework import status
-from rest_framework import viewsets
-from rest_framework import permissions
-from rest_framework.decorators import api_view, action
-from rest_framework.response import Response
-
-from eatple_app.apis.rest.serializer.partner import PartnerSerializer
+from eatple_app.apis.rest.serializer.partner import PartnerSerializer, PartnerAdminSerializer
 from eatple_app.apis.rest.serializer.store import StoreSerializer
+
 
 
 class PartnerViewSet(viewsets.ModelViewSet):
@@ -117,8 +105,12 @@ class PartnerViewSet(viewsets.ModelViewSet):
             return Response(response)
 
         try:
-            storeList = Store.objects.filter(
-                crn__CRN_id=partner.store.crn.CRN_id)
+            if(ADMIN_CI == token):
+                storeList = Store.objects.all()
+            else:
+                storeList = Store.objects.filter(
+                    crn__CRN_id=partner.store.crn.CRN_id)
+
         except Store.DoesNotExist as ex:
             response['error_code'] = PARTNER_LOGIN_300_INVALID_CRN.code
             response['error_msg'] = PARTNER_LOGIN_300_INVALID_CRN.message
@@ -126,7 +118,10 @@ class PartnerViewSet(viewsets.ModelViewSet):
             return Response(response)
 
         response['stores'] = StoreSerializer(storeList, many=True).data
-        response['partner'] = PartnerSerializer(partner).data
+        if(ADMIN_CI == token):
+            response['partner'] = PartnerAdminSerializer(partner).data
+        else:
+            response['partner'] = PartnerSerializer(partner).data
         response['error_code'] = PARTNER_LOGIN_200_SUCCESS.code
         response['error_msg'] = PARTNER_LOGIN_200_SUCCESS.message
 

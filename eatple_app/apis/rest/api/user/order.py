@@ -1,15 +1,4 @@
-# View-System
-from eatple_app.views_system.include import *
-from eatple_app.views_system.debugger import *
-
-from eatple_app.apis.rest.api.user.validation import *
-from eatple_app.apis.rest.api.error_table import *
-
-from drf_yasg.utils import swagger_auto_schema
-
-from rest_framework import status
-from rest_framework import viewsets
-from rest_framework import permissions
+from eatple_app.apis.rest.define import *
 
 from eatple_app.apis.rest.serializer.order import OrderSerializer
 
