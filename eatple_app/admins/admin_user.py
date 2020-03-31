@@ -116,12 +116,23 @@ class UserResource(resources.ModelResource):
         except Exception:
             return "{}, {}".format(LOCATION_DEFAULT_LAT, LOCATION_DEFAULT_LNG)
 
-    latlng = Field(column_name='위치')
+    def dehydrate_phone_number(self, obj):
+        if(obj.phone_number != None):
+            return obj.phone_number.as_national
+        else:
+            return ''
+
+    nickname = Field(attribute='nickname', column_name='닉네임')
+    app_user_id = Field(attribute='app_user_id', column_name='계정 ID')
+    latlng = Field(column_name='위도/경도')
+    phone_number = Field(column_name='연락처')
+    
 
     class Meta:
         model = User
         fields = (
             'nickname',
+            'phone_number',
             'app_user_id',
             'latlng'
         )
