@@ -3,6 +3,19 @@ from eatple_app.apis.rest.define import *
 from eatple_app.apis.rest.serializer.order import OrderSerializer
 
 
+"""
+
+0: 월
+1: 화
+2: 수
+3: 목
+4: 금
+5: 토
+6: 일
+
+"""
+
+
 def getAdjustment(orderList, date_range):
     orderList = orderList.order_by('payment_date')
     adjustmentList = []
@@ -19,8 +32,10 @@ def getAdjustment(orderList, date_range):
             hour=0, minute=0, second=0)
 
         # Do
-        start_date = start_date - datetime.timedelta(days=start_date.weekday())
-        end_date = start_date + datetime.timedelta(days=7)
+        start_date = start_date - \
+            datetime.timedelta(days=5 - start_date.weekday())
+        end_date = start_date.replace(
+            hour=23, minute=59, second=59, microsecond=0) + datetime.timedelta(days=7)
         settlement_date = end_date + datetime.timedelta(days=10)
 
         inquiryOrderList = orderList.filter(
@@ -35,8 +50,6 @@ def getAdjustment(orderList, date_range):
             inquiry_surtax_price = 0
             inquiry_fee = 0
             inquiry_settlement_amount = 0
-
-            print(total_order)
 
             for order in inquiryOrderList:
                 total_price = order.totalPrice
