@@ -1,6 +1,6 @@
 from eatple_app.apis.rest.define import *
 
-from eatple_app.apis.rest.serializer.partner import PartnerSerializer, PartnerAdminSerializer
+from eatple_app.apis.rest.serializer.partner import PartnerSerializer
 from eatple_app.apis.rest.serializer.store import StoreSerializer
 
 
@@ -115,10 +115,7 @@ class PartnerViewSet(viewsets.ModelViewSet):
             return Response(response)
 
         response['stores'] = StoreSerializer(storeList, many=True).data
-        if(ADMIN_CI == token):
-            response['partner'] = PartnerAdminSerializer(partner).data
-        else:
-            response['partner'] = PartnerSerializer(partner).data
+        response['partner'] = PartnerSerializer(partner).data
         response['error_code'] = PARTNER_LOGIN_200_SUCCESS.code
         response['error_msg'] = PARTNER_LOGIN_200_SUCCESS.message
 
