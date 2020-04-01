@@ -208,7 +208,8 @@ class OrderViewSet(viewsets.ModelViewSet):
         date_range = []
         date_range.append(dateNowByTimeZone() -
                           datetime.timedelta(days=(31 * 3)))
-        date_range.append(dateNowByTimeZone())
+        date_range.append(dateNowByTimeZone().replace(
+            hour=23, minute=59, second=59, microsecond=0))
 
         orderList = Order.objects.filter(
             (
@@ -267,7 +268,7 @@ class OrderViewSet(viewsets.ModelViewSet):
                 year=int(date_range[1][0]),
                 month=int(date_range[1][1]),
                 day=int(date_range[1][2]),
-                hour=0, minute=0, second=0, microsecond=0)
+                hour=23, minute=59, second=59, microsecond=0)
 
             if(date_range[0] > date_range[1]):
                 temp = date_range[0]
@@ -277,7 +278,8 @@ class OrderViewSet(viewsets.ModelViewSet):
         else:
             date_range.append(dateNowByTimeZone() -
                               datetime.timedelta(days=(31 * 3)))
-            date_range.append(dateNowByTimeZone())
+            date_range.append(dateNowByTimeZone().replace(
+                hour=23, minute=59, second=59, microsecond=0))
 
         idFilter = Q()
         if(param_valid(order_id)):
@@ -368,7 +370,7 @@ class OrderViewSet(viewsets.ModelViewSet):
                 year=int(date_range[1][0]),
                 month=int(date_range[1][1]),
                 day=int(date_range[1][2]),
-                hour=0, minute=0, second=0, microsecond=0)
+                hour=23, minute=59, second=59, microsecond=0)
 
             if(date_range[0] > date_range[1]):
                 temp = date_range[0]
@@ -378,7 +380,8 @@ class OrderViewSet(viewsets.ModelViewSet):
         else:
             date_range.append(dateNowByTimeZone() -
                               datetime.timedelta(days=(31 * 3)))
-            date_range.append(dateNowByTimeZone())
+            date_range.append(dateNowByTimeZone().replace(
+                hour=23, minute=59, second=59, microsecond=0))
 
         orderList = orderList.filter(
             (
