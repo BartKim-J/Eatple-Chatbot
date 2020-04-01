@@ -205,6 +205,11 @@ class OrderViewSet(viewsets.ModelViewSet):
     http_method_names = ['get']
 
     def list(self, request):
+        date_range = []
+        date_range.append(dateNowByTimeZone() -
+                          datetime.timedelta(days=(31 * 3)))
+        date_range.append(dateNowByTimeZone())
+
         orderList = Order.objects.filter(
             (
                 Q(payment_date__gte=date_range[0]) &
@@ -271,7 +276,7 @@ class OrderViewSet(viewsets.ModelViewSet):
 
         else:
             date_range.append(dateNowByTimeZone() -
-                              datetime.timedelta(days=(31 * 1)))
+                              datetime.timedelta(days=(31 * 3)))
             date_range.append(dateNowByTimeZone())
 
         idFilter = Q()
@@ -314,6 +319,11 @@ class OrderViewSet(viewsets.ModelViewSet):
             idFilter &
             infoFilter)
 
+        total_amount = 0
+        for order in orderList.filter(Q(payment_status=EATPLE_ORDER_STATUS_PAID)):
+            total_amount += order.totalPrice
+
+        response['total_amount'] = '{}원'.format(format(total_amount, ","))
         response['total'] = orderList.count()
         response['order'] = OrderSerializer(orderList, many=True).data
         response['error_code'] = 200
@@ -367,7 +377,7 @@ class OrderViewSet(viewsets.ModelViewSet):
 
         else:
             date_range.append(dateNowByTimeZone() -
-                              datetime.timedelta(days=(31 * 1)))
+                              datetime.timedelta(days=(31 * 3)))
             date_range.append(dateNowByTimeZone())
 
         orderList = orderList.filter(

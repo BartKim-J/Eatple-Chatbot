@@ -3,8 +3,6 @@ from eatple_app.apis.rest.define import *
 from eatple_app.apis.rest.serializer.partner import PartnerSerializer
 from eatple_app.apis.rest.serializer.store import StoreSerializer
 
-
-
 class PartnerViewSet(viewsets.ModelViewSet):
     queryset = Partner.objects.all()
     serializer_class = PartnerSerializer

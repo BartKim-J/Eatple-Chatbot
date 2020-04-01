@@ -255,7 +255,7 @@ def getWAU(orderTimeSheet):
     currentDate = orderTimeSheet.GetCurrentDate() + datetime.timedelta(days=-1)
     currentDateWithoutTime = orderTimeSheet.GetCurrentDateWithoutTime()
 
-    WAUStartDate = currentDateWithoutTime + datetime.timedelta(days=-7)
+    WAUStartDate = currentDateWithoutTime - datetime.timedelta(days=7)
     WAUEndDate = currentDateWithoutTime
 
     WAU = Order.objects.filter(
@@ -323,6 +323,53 @@ def getWAS(orderTimeSheet):
     return len(WAS)
 
 
+def showActiveStatus(orderTimeSheet):
+    # Test
+    test_start_date = dateNowByTimeZone().replace(year=2020, month=1, day=1,
+                                                  hour=0, minute=0, second=0, microsecond=0)
+    test_end_date = orderTimeSheet.GetCurrentDate()
+
+    WAU_Condition_Date = dateNowByTimeZone().replace(year=2020, month=1, day=7,
+                                                     hour=0, minute=0, second=0, microsecond=0)
+    MAU_Condition_Date = dateNowByTimeZone().replace(year=2020, month=2, day=1,
+                                                     hour=0, minute=0, second=0, microsecond=0)
+
+    bestDAU = 0
+    bestDAUDate = ''
+
+    bestWAU = 0
+    bestWAUDate = ''
+
+    bestMAU = 0
+    bestMAUDate = ''
+
+    print(test_start_date, test_end_date)
+    while(test_start_date <= test_end_date):
+        test_timeSheet = OrderTimeSheet(test_start_date)
+        DAU = getDAU(test_timeSheet)
+        WAU = getWAU(test_timeSheet)
+        MAU = getMAU(test_timeSheet)
+
+        if(bestDAU < DAU):
+            bestDAU = DAU
+            bestDAUDate = test_start_date
+
+        if(bestWAU < WAU and test_start_date > WAU_Condition_Date):
+            bestWAU = WAU
+            bestWAUDate = test_start_date
+
+        if(bestMAU < MAU and test_start_date > MAU_Condition_Date):
+            bestMAU = MAU
+            bestMAUDate = test_start_date
+
+        test_start_date = test_start_date + datetime.timedelta(days=1)
+
+    print(test_start_date)
+    print('DAU', bestDAU, bestDAUDate)
+    print('WAU', bestWAU, bestWAUDate)
+    print('MAU', bestMAU, bestMAUDate)
+
+
 def getUserInService():
     distance = 500
     ref_gangnam = Point(y=37.497907, x=127.027635, srid=4326)
@@ -370,13 +417,13 @@ def getUserActive():
         if(count == 0):
             NotAtive += 1
 
-        elif(count == 1):
+        if(count == 1):
             InActive += 1
 
-        elif(count >= 2):
+        if(count >= 2):
             GetActive += 1
 
-        elif(count >= 3):
+        if(count >= 3):
             OnActive += 1
 
     data = {
@@ -385,6 +432,11 @@ def getUserActive():
         'inActive': InActive,
         'getActive': GetActive,
         'onActive': OnActive,
+        'OMG': OMG,
+        'Legend': Legend,
+        'sixuse': sixuse,
+        'sevuse': sevuse,
+        'god': god
     }
 
     return data

@@ -63,10 +63,16 @@ def dateByUTC(KOR):
 
 
 class OrderTimeSheet():
-    def __init__(self):
-        self.currentDate = dateNowByTimeZone().replace(microsecond=0)
+    def __init__(self, setTime=None):
+        if(setTime != None):
+            self.currentDate = setTime
+        else:
+            self.currentDate = dateNowByTimeZone().replace(microsecond=0)
+            
+            
         self.currentDateWithoutTime = self.currentDate.replace(
             hour=0, minute=0, second=0)
+        
 
         self.yesterday = self.currentDateWithoutTime + \
             datetime.timedelta(days=-1)  # Yesterday start
