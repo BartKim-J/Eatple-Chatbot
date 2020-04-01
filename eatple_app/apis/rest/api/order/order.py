@@ -323,7 +323,7 @@ class OrderViewSet(viewsets.ModelViewSet):
         for order in orderList.filter(Q(payment_status=EATPLE_ORDER_STATUS_PAID)):
             total_amount += order.totalPrice
 
-        response['total_amount'] = '{}원'.format(format(total_amount, ","))
+        response['total_amount'] = total_amount
         response['total'] = orderList.count()
         response['order'] = OrderSerializer(orderList, many=True).data
         response['error_code'] = 200
