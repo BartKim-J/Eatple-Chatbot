@@ -35,8 +35,9 @@ def getAdjustment(orderList, date_range):
         start_date = start_date - \
             datetime.timedelta(days=5 - start_date.weekday())
         end_date = start_date.replace(
-            hour=23, minute=59, second=59, microsecond=0) + datetime.timedelta(days=7)
-        settlement_date = end_date + datetime.timedelta(days=10)
+            hour=23, minute=59, second=59, microsecond=0) + datetime.timedelta(days=6)
+        settlement_date = end_date.replace(
+            hour=0, minute=0, second=0, microsecond=0) + datetime.timedelta(days=10)
 
         inquiryOrderList = orderList.filter(
             Q(payment_date__gte=start_date),
@@ -113,9 +114,12 @@ def getAdjustment(orderList, date_range):
                     })
                 )
 
-            start_date = end_date
-            end_date = start_date + datetime.timedelta(days=7)
-            settlement_date = end_date + datetime.timedelta(days=10)
+            start_date = end_date.replace(
+                hour=0, minute=0, second=0, microsecond=0) + datetime.timedelta(days=1)
+            end_date = start_date.replace(
+                hour=23, minute=59, second=59, microsecond=0) + datetime.timedelta(days=6)
+            settlement_date = end_date.replace(
+                hour=0, minute=0, second=0, microsecond=0) + datetime.timedelta(days=10)
 
             inquiryOrderList = orderList.filter(
                 Q(payment_date__gte=start_date),
