@@ -432,11 +432,6 @@ def getUserActive():
         'inActive': InActive,
         'getActive': GetActive,
         'onActive': OnActive,
-        'OMG': OMG,
-        'Legend': Legend,
-        'sixuse': sixuse,
-        'sevuse': sevuse,
-        'god': god
     }
 
     return data
