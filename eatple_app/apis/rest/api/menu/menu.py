@@ -22,12 +22,6 @@ class MenuViewSet(viewsets.ModelViewSet):
             response['error_code'] = PARTNER_LOGIN_300_INVALID_CRN.code
             response['error_msg'] = PARTNER_LOGIN_300_INVALID_CRN.message
 
-        adminFilter = Q()
-        if(crn == ADMIN_CRN):
-            pass
-        else:
-            adminFilter.add(Q(store__crn__CRN_id=crn), adminFilter.AND)
-
         if(param_valid(store)):
             filter.add(Q(store__id=store), filter.AND)
 
@@ -37,7 +31,7 @@ class MenuViewSet(viewsets.ModelViewSet):
         if(param_valid(name)):
             filter.add(Q(name_contains=name), filter.AND)
 
-        menuList = Menu.objects.filter(adminFilter & filter)
+        menuList = Menu.objects.filter(filter)
 
         response['menus'] = MenuSerializer(menuList, many=True).data
         response['error_code'] = 200

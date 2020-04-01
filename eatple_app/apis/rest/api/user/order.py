@@ -1,5 +1,5 @@
 from eatple_app.apis.rest.define import *
-
+from eatple_app.apis.rest.api.user.validation import *
 from eatple_app.apis.rest.serializer.order import OrderSerializer
 
 

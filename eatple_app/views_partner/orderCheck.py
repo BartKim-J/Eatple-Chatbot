@@ -93,9 +93,15 @@ def kakaoView_OrderDetails(kakaoPayload):
                     # @Temporary Code
                     if(partner.store.name == '핏자당'):
                         time = '오후 12시'
-                    elif(partner.store.name == '봉된장' or
-                         partner.store.name == '마치래빗샐러드'):
+                    elif(partner.store.name == '봉된장'):
                         time = '오전 11시 40분'
+                    elif(partner.store.name == 'LUNA'):
+                        time = '오전 12시'
+                    elif(partner.store.name == '마치래빗샐러드' or
+                         partner.store.name == '카도야라멘' or
+                         partner.store.name == '칙피스' or
+                         partner.store.name == '배러댄비프'):
+                        time = '오전 11시 50분'
 
                     title = '{} {}'.format(
                         datetime.datetime.now().strftime("%-m월 %-d일"),
@@ -110,27 +116,35 @@ def kakaoView_OrderDetails(kakaoPayload):
                     'imageUrl': '{}{}'.format(HOST_URL, PARTNER_ORDER_SHEET_IMG),
                 }
 
-                for menu in menuList:
-                    orderByMenu = Order.objects.filter(menu=menu).filter(
-                        (
-                            Q(status=ORDER_STATUS_PICKUP_COMPLETED) |
-                            Q(status=ORDER_STATUS_PICKUP_WAIT) |
-                            Q(status=ORDER_STATUS_PICKUP_PREPARE) |
-                            Q(status=ORDER_STATUS_ORDER_CONFIRM_WAIT) |
-                            Q(status=ORDER_STATUS_ORDER_CONFIRMED)
-                        ) &
-                        Q(menu=menu) &
-                        Q(pickup_time__gte=orderTimeSheet.GetLunchOrderPickupTimeStart())
-                    )
+                if(menuList):
+                    for menu in menuList:
+                        orderByMenu = Order.objects.filter(menu=menu).filter(
+                            (
+                                Q(status=ORDER_STATUS_PICKUP_COMPLETED) |
+                                Q(status=ORDER_STATUS_PICKUP_WAIT) |
+                                Q(status=ORDER_STATUS_PICKUP_PREPARE) |
+                                Q(status=ORDER_STATUS_ORDER_CONFIRM_WAIT) |
+                                Q(status=ORDER_STATUS_ORDER_CONFIRMED)
+                            ) &
+                            Q(menu=menu) &
+                            Q(pickup_time__gte=orderTimeSheet.GetLunchOrderPickupTimeStart())
+                        )
 
-                    imageUrl = '{}{}'.format(HOST_URL, menu.imgURL())
-                    kakaoForm.ListCard_Push(
-                        '{}'.format(menu.name),
-                        '들어온 주문 : {}개'.format(orderByMenu.count()),
-                        imageUrl,
-                        None
-                    )
+                        if(orderByMenu.count() > 0):
+                            imageUrl = '{}{}'.format(HOST_URL, menu.imgURL())
+                            kakaoForm.ListCard_Push(
+                                '{}'.format(menu.name),
+                                '들어온 주문 : {}개'.format(orderByMenu.count()),
+                                imageUrl,
+                                None
+                            )
+                        else:
+                            pass
+
                     kakaoForm.ListCard_Add(header)
+                else:
+                    pass
+
             if(isNormalMenu):
                 for pickupTime in pickupTimes:
                     menuList = Menu.objects.filter(
@@ -176,14 +190,18 @@ def kakaoView_OrderDetails(kakaoPayload):
 
                             totalCount += orderCount
 
-                            imageUrl = '{}{}'.format(HOST_URL, menu.imgURL())
+                            if(orderCount > 0):
+                                imageUrl = '{}{}'.format(
+                                    HOST_URL, menu.imgURL())
 
-                            kakaoForm.ListCard_Push(
-                                '{}'.format(menu.name),
-                                '들어온 주문 : {}개'.format(orderCount),
-                                imageUrl,
-                                None
-                            )
+                                kakaoForm.ListCard_Push(
+                                    '{}'.format(menu.name),
+                                    '들어온 주문 : {}개'.format(orderCount),
+                                    imageUrl,
+                                    None
+                                )
+                            else:
+                                pass
                         kakaoForm.ListCard_Add(header)
         else:
             kakaoForm.BasicCard_Push(

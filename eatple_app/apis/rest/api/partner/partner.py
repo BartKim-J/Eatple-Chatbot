@@ -105,11 +105,8 @@ class PartnerViewSet(viewsets.ModelViewSet):
             return Response(response)
 
         try:
-            if(ADMIN_CI == token):
-                storeList = Store.objects.all()
-            else:
-                storeList = Store.objects.filter(
-                    crn__CRN_id=partner.store.crn.CRN_id)
+            storeList = Store.objects.filter(
+                crn__CRN_id=partner.store.crn.CRN_id)
 
         except Store.DoesNotExist as ex:
             response['error_code'] = PARTNER_LOGIN_300_INVALID_CRN.code
