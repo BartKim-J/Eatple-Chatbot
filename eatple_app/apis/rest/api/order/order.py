@@ -240,6 +240,7 @@ class OrderViewSet(viewsets.ModelViewSet):
             return Response(response)
 
         orderList = Order.objects.filter(
+            Q(store__crn__CRN_id=crn) &
             ~Q(store=None) &
             ~Q(menu=None) &
             (
@@ -334,14 +335,8 @@ class OrderViewSet(viewsets.ModelViewSet):
 
             return Response(response)
 
-        adminFilter = Q()
-        if(crn == ADMIN_CRN):
-            pass
-        else:
-            adminFilter.add(Q(store__crn__CRN_id=crn), adminFilter.AND)
-
         orderList = Order.objects.filter(
-            adminFilter &
+            Q(store__crn__CRN_id=crn) &
             ~Q(store=None) &
             ~Q(menu=None) &
             (

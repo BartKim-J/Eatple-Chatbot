@@ -15,6 +15,7 @@ class StoreViewSet(viewsets.ModelViewSet):
         filter = Q()
         if(crn != None):
             crn = crn.replace('-', '')
+            filter.add(Q(crn__CRN_id=crn), filter.AND)
         else:
             response['error_code'] = PARTNER_LOGIN_300_INVALID_CRN.code
             response['error_msg'] = PARTNER_LOGIN_300_INVALID_CRN.message
@@ -26,6 +27,7 @@ class StoreViewSet(viewsets.ModelViewSet):
             filter.add(Q(name_contains=name), filter.OR)
 
         storeList = Store.objects.filter(filter)
+
 
         response['stores'] = StoreSerializer(storeList, many=True).data
         response['error_code'] = 200

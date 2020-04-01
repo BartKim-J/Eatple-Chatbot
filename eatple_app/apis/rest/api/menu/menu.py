@@ -18,6 +18,7 @@ class MenuViewSet(viewsets.ModelViewSet):
         filter = Q()
         if(crn != None):
             crn = crn.replace('-', '')
+            filter.add(Q(store__crn__CRN_id=crn), filter.AND)
         else:
             response['error_code'] = PARTNER_LOGIN_300_INVALID_CRN.code
             response['error_msg'] = PARTNER_LOGIN_300_INVALID_CRN.message
