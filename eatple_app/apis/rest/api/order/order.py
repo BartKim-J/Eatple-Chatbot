@@ -297,6 +297,9 @@ class OrderViewSet(viewsets.ModelViewSet):
         if(param_valid(methodList)):
             for methodValue in methodList:
                 for item in dict(ORDER_PAYMENT_TYPE).items():
+                    if(methodValue == '신용카드'):
+                        methodValue = '이니 페이'
+
                     if(methodValue == item[1]):
                         methodFilter.add(
                             Q(payment_type=item[0]), methodFilter.OR)
