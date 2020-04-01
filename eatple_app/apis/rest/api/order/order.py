@@ -28,7 +28,7 @@ def getAdjustment(orderList, date_range):
             Q(payment_date__lt=end_date)
         )
 
-        while(end_date <= dateNowByTimeZone()):
+        while(start_date <= dateNowByTimeZone()):
             total_order = inquiryOrderList.count()
             inquiry_total_price = 0
             inquiry_supply_price = 0
@@ -36,17 +36,19 @@ def getAdjustment(orderList, date_range):
             inquiry_fee = 0
             inquiry_settlement_amount = 0
 
+            print(total_order)
+
             for order in inquiryOrderList:
                 total_price = order.totalPrice
                 supply_price = round(total_price / 1.1)
                 surtax_price = total_price - supply_price
                 if(order.type == ORDER_TYPE_B2B):
-                    fee = round(total_price * FEE_CONST)
+                    fee = int(total_price * FEE_CONST)
                 else:
                     if(dateByTimeZone(order.payment_date) < FEE_CHANGE_DATE):
-                        fee = round(total_price * FEE_CONST_BEFORE)
+                        fee = int(total_price * FEE_CONST_BEFORE)
                     else:
-                        fee = round(total_price * FEE_CONST)
+                        fee = int(total_price * FEE_CONST)
                 settlement_amount = total_price - fee
 
                 # inquiry
@@ -150,12 +152,12 @@ def getSurtax(orderList, date_range):
             supply_price = round(total_price / 1.1)
             surtax_price = total_price - supply_price
             if(order.type == ORDER_TYPE_B2B):
-                fee = round(total_price * FEE_CONST)
+                fee = int(total_price * FEE_CONST)
             else:
                 if(dateByTimeZone(order.payment_date) < FEE_CHANGE_DATE):
-                    fee = round(total_price * FEE_CONST_BEFORE)
+                    fee = int(total_price * FEE_CONST_BEFORE)
                 else:
-                    fee = round(total_price * FEE_CONST)
+                    fee = int(total_price * FEE_CONST)
             settlement_amount = total_price - fee
 
             # all
@@ -297,9 +299,6 @@ class OrderViewSet(viewsets.ModelViewSet):
         if(param_valid(methodList)):
             for methodValue in methodList:
                 for item in dict(ORDER_PAYMENT_TYPE).items():
-                    if(methodValue == '신용카드'):
-                        methodValue = '이니 페이'
-
                     if(methodValue == item[1]):
                         methodFilter.add(
                             Q(payment_type=item[0]), methodFilter.OR)
@@ -355,8 +354,7 @@ class OrderViewSet(viewsets.ModelViewSet):
             ~Q(store=None) &
             ~Q(menu=None) &
             (
-                Q(payment_status=EATPLE_ORDER_STATUS_PAID) |
-                Q(payment_status=EATPLE_ORDER_STATUS_CANCELLED)
+                Q(payment_status=EATPLE_ORDER_STATUS_PAID)
             )
         )
 
@@ -386,11 +384,16 @@ class OrderViewSet(viewsets.ModelViewSet):
             date_range.append(dateNowByTimeZone().replace(
                 hour=23, minute=59, second=59, microsecond=0))
 
+        infoFilter = Q()
+        if(param_valid(store)):
+            infoFilter.add(Q(store__name__contains=store), infoFilter.AND)
+
         orderList = orderList.filter(
             (
                 Q(payment_date__gte=date_range[0]) &
                 Q(payment_date__lt=date_range[1])
-            ))
+            ) &
+            infoFilter)
 
         adjustmentForm = getAdjustment(orderList, date_range)
         surtax = getSurtax(orderList, date_range)

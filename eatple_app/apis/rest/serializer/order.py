@@ -13,6 +13,7 @@ class OrderSerializer(serializers.ModelSerializer):
     payment_status = serializers.SerializerMethodField()
 
     user = serializers.SerializerMethodField()
+    app_user_id = serializers.SerializerMethodField()
     phone_number = serializers.SerializerMethodField()
     
     def get_payment_type(self, obj):
@@ -27,6 +28,9 @@ class OrderSerializer(serializers.ModelSerializer):
     def get_user(self, obj):
         return obj.ordersheet.user.nickname
         
+    def get_app_user_id(self, obj):
+        return obj.ordersheet.user.app_user_id
+    
     def get_phone_number(self, obj):
         return obj.ordersheet.user.phone_number.as_national
         
