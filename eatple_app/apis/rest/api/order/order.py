@@ -28,14 +28,12 @@ def getAdjustment(orderList, date_range):
     adjustment_settlement_amount = 0
 
     if(orderList):
-        print(date_range[0], date_range[1])
-
         date_range_start = date_range[0].replace(
             hour=0, minute=0, second=0)
         date_range_end = date_range[1].replace(
-            hour=0, minute=0, second=0)
+            hour=23, minute=59, second=59)
 
-        start_date = date_range_start
+        start_date = date_range_start - datetime.timedelta(days=14)
 
         # Do
         start_date = start_date - \
@@ -120,6 +118,8 @@ def getAdjustment(orderList, date_range):
                             'unit': 'won'
                         })
                     )
+                else:
+                    pass
             else:
                 pass
 
@@ -416,8 +416,9 @@ class OrderViewSet(viewsets.ModelViewSet):
 
         orderList = orderList.filter(
             (
-                Q(payment_date__gte=date_range[0]) &
-                Q(payment_date__lt=date_range[1])
+                Q(payment_date__gte=(date_range[0] - datetime.timedelta(days=14))) &
+                Q(payment_date__lt=(
+                    date_range[1] + datetime.timedelta(days=14)))
             ) &
             infoFilter)
 
