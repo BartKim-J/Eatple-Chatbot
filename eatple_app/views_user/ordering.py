@@ -148,8 +148,11 @@ def kakaoView_StoreListup(kakaoPayload):
                 'area_in_flag': True,
             }
         })
-    except Exception as ex:
-        for code, area in SERVICE_AREAS.items():
+    except:
+        pass
+
+    for code, area in SERVICE_AREAS.items():
+        if(area_code != code):
             QUICKREPLIES_MAP.insert(0, {
                 'action': 'block',
                 'label': '{}역'.format(area['name']),
