@@ -182,22 +182,13 @@ def kakaoView_StoreListup(kakaoPayload):
     addressMap = user.location.address.split()
 
     if(area_in_flag):
-        if(addressMap[2] == "신사동" or area_code == "sinsa"):
-            storeList = storeList.filter(Q(distance__lte=distance_condition))
-            header = None
-        else:
-            storeList = storeList.filter(Q(distance__lte=distance_condition))
-            header = None
+        storeList = storeList.filter(Q(distance__lte=distance_condition))
     else:
         storeList = storeList.annotate(
             distance=Distance(
                 F('place__point'),
                 Point(y=SERVICE_AREAS[area_code]['y'], x=SERVICE_AREAS[area_code]['x'], srid=4326)) * 100 * 1000,
         )
-        if(area_code == "sinsa"):
-            header = None
-        else:
-            header = None
 
         storeList = storeList.filter(Q(distance__lte=distance_condition))
 
@@ -205,7 +196,7 @@ def kakaoView_StoreListup(kakaoPayload):
 
     if storeList:
         # @PROMOTION
-        if(addressMap[2] == "신사동" or area_code == "sinsa"):
+        if((area_in_flag and addressMap[2] == "신사동") or area_code == "sinsa"):
             thumbnail = {
                 "imageUrl": '{}{}'.format(HOST_URL, EATPLE_MENU_PICKUP_ZONE_FF_IMG),
                 'fixedRatio': 'False',
@@ -312,7 +303,7 @@ def kakaoView_StoreListup(kakaoPayload):
                 # Store have don't exist menu
                 pass
 
-        kakaoForm.BasicCard_Add(header)
+        kakaoForm.BasicCard_Add()
 
     else:
         KakaoInstantForm().Message(
@@ -726,6 +717,7 @@ def kakaoView_MenuListupWithAreaOut(kakaoPayload):
         distance=Distance(F('store__place__point'),
                           user.location.point) * 100 * 1000,
     ).filter(
+        ~Q(tag__name__contains="픽업존") &
         Q(selling_time=currentSellingTime) &
         (
             Q(store__type=STORE_TYPE_B2B_AND_NORMAL) |
@@ -847,7 +839,8 @@ def kakaoView_PickupTime(kakaoPayload):
         orderRecordSheet.recordUpdate(user, order, ORDER_RECORD_TIMEOUT)
         return kakaoView_TimeOut(KAKAO_BLOCK_USER_SET_PICKUP_TIME)
     else:
-        orderRecordSheet.recordUpdate(user, order, ORDER_RECORD_SET_PICKUP_TIEM)
+        orderRecordSheet.recordUpdate(
+            user, order, ORDER_RECORD_SET_PICKUP_TIEM)
 
     currentStock = menu.getCurrentStock()
 
@@ -1023,7 +1016,8 @@ def kakaoView_OrderPayment(kakaoPayload):
         orderRecordSheet.recordUpdate(user, order, ORDER_RECORD_TIMEOUT)
         return kakaoView_TimeOut(user, order, AKAO_BLOCK_USER_SET_ORDER_SHEET)
     else:
-        orderRecordSheet.recordUpdate(user, order, ORDER_RECORD_ORDERSHEET_CHECK)
+        orderRecordSheet.recordUpdate(
+            user, order, ORDER_RECORD_ORDERSHEET_CHECK)
 
     dataActionExtra = kakaoPayload.dataActionExtra
     dataActionExtra[KAKAO_PARAM_ORDER_ID] = order.order_id
@@ -1352,7 +1346,8 @@ def kakaoView_EatplePassIssuance(kakaoPayload):
             orderRecordSheet = OrderRecordSheet()
 
         orderRecordSheet.paid = True
-        orderRecordSheet.recordUpdate(user, order, ORDER_RECORD_PAYMENT_COMPLETED)
+        orderRecordSheet.recordUpdate(
+            user, order, ORDER_RECORD_PAYMENT_COMPLETED)
 
         dataActionExtra = kakaoPayload.dataActionExtra
         dataActionExtra[KAKAO_PARAM_ORDER_ID] = order.order_id
