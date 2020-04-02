@@ -206,10 +206,6 @@ def kakaoView_StoreListup(kakaoPayload):
     if storeList:
         # @PROMOTION
         if(addressMap[2] == "신사동" or area_code == "sinsa"):
-            kakaoMapUrl = 'https://map.kakao.com/link/map/{name},{place}'.format(
-                name='신사점 픽업존',
-                place='37.516433, 127.020389'
-            )
             thumbnail = {
                 "imageUrl": '{}{}'.format(HOST_URL, EATPLE_MENU_PICKUP_ZONE_FF_IMG),
                 'fixedRatio': 'False',
