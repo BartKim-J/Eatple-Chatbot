@@ -326,15 +326,15 @@ class StoreAdmin(ImportExportMixin, admin.GeoModelAdmin):
 
     def store_open(self, request, queryset):
         updated_count = queryset.update(status=OC_OPEN)  # queryset.update
-        self.message_user(request, '{}건의 제휴 점포를 열림 상태로 변경'.format(
+        self.message_user(request, '{}건의 제휴 매장을 열림 상태로 변경'.format(
             updated_count))  # django message framework 활용
-    store_open.short_description = '지정 제휴 점포를 열림 상태로 변경'
+    store_open.short_description = '지정 제휴 매장을 열림 상태로 변경'
 
     def store_close(self, request, queryset):
         updated_count = queryset.update(status=OC_CLOSE)  # queryset.update
-        self.message_user(request, '{}건의 제휴 점포을 닫힘 상태로 변경'.format(
+        self.message_user(request, '{}건의 제휴 매장을 닫힘 상태로 변경'.format(
             updated_count))  # django message framework 활용
-    store_close.short_description = '지정 제휴 점포를 닫힘 상태로 변경'
+    store_close.short_description = '지정 제휴 매장을 닫힘 상태로 변경'
 
     actions = ['store_open', 'store_close']
 

@@ -38,7 +38,7 @@ def eatple_b2b_status():
                             "들어운 일일 주문 : {current_stock}개"
                             "픽업 완료된 주문 : {pickuped_stock}개"
                             "```"
-                            " > <{host_url}/admin/eatple_app/store/{store_index}/change|점포 자세히 보기>\n"
+                            " > <{host_url}/admin/eatple_app/store/{store_index}/change|매장 자세히 보기>\n"
                         ).format(
                             name=menu.store.name,
                             menu=menu.name,

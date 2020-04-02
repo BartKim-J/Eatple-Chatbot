@@ -265,7 +265,7 @@ def kakaoView_Home(user, address):
                 'action': 'block',
                 'label': '🍽  주문하기',
                 'messageText': '🍽  주문하기',
-                'blockId': KAKAO_BLOCK_USER_GET_MENU,
+                'blockId': KAKAO_BLOCK_USER_GET_STORE,
                 'extra': {
                     KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_HOME
                 }

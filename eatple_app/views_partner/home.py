@@ -124,7 +124,7 @@ def kakaoView_Home(partner):
     }
 
     kakaoForm.BasicCard_Push(
-        '{store} 점포용 카드'.format(store=partner.store.name),
+        '{store} 매장용 카드'.format(store=partner.store.name),
         '조회 시간 : {}'.format(datetime.datetime.now().strftime(
             '%-m월 %-d일 %p %-I시 %-M분').replace('AM', '오전').replace('PM', '오후')),
         thumbnail,

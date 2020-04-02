@@ -171,7 +171,7 @@ class SalesRecord(models.Model):
         'Store',
         on_delete=models.CASCADE,
         null=True,
-        verbose_name='점포'
+        verbose_name='매장'
     )
 
     activity_memo = models.TextField(
@@ -378,8 +378,8 @@ class StoreBankAccount(models.Model):
 
 class Store(StoreInfo, StoreSetting, StoreStatus, StoreSalesInfo, StoreBankAccount):
     class Meta:
-        verbose_name = '제휴 점포'
-        verbose_name_plural = '제휴 점포'
+        verbose_name = '제휴 매장'
+        verbose_name_plural = '제휴 매장'
 
         ordering = ['-name']
 

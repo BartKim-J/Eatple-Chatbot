@@ -125,7 +125,7 @@ class KakaoInstantForm():
                     },
                     {
                         'action': 'webLink',
-                        'label': '매장 위치확인',
+                        'label': '📍  매장 위치',
                         'webLinkUrl': kakaoMapUrl,
                     }
                 ]
@@ -194,6 +194,19 @@ class KakaoInstantForm():
             _thumbnails=thumbnails,
             _profile=profile,
             _buttons=buttons
+        )
+
+        return JsonResponse(kakaoForm.GetForm())
+
+    def StoreList(self, store, subText='', description='', thumbnail={}, buttons=[], kakaoForm=None, prev_block_id=None):
+        if(kakaoForm == None):
+            kakaoForm = KakaoForm()
+
+        kakaoForm.BasicCard_Push(
+            '매장: {} - {}'.format(store.name, subText),
+            '{}'.format(description),
+            thumbnail,
+            buttons
         )
 
         return JsonResponse(kakaoForm.GetForm())

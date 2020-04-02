@@ -148,7 +148,7 @@ class SalesRecord(models.Model):
         'Store',
         on_delete=models.CASCADE,
         null=True,
-        verbose_name='점포'
+        verbose_name='매장'
     )
 
     activity_memo = models.TextField(
@@ -185,7 +185,7 @@ class Member(models.Model):
         'Store',
         on_delete=models.CASCADE,
         null=True,
-        verbose_name='점포'
+        verbose_name='매장'
     )
 
     name = models.CharField(
@@ -222,7 +222,7 @@ class StoreBasicInfo(models.Model):
 
     name = models.CharField(
         max_length=WORD_LENGTH,
-        verbose_name='점포명'
+        verbose_name='매장명'
     )
 
     area = models.CharField(
@@ -316,7 +316,7 @@ class StoreDetailInfo(models.Model):
 
     store_memo = models.TextField(
         blank=True,
-        verbose_name='점포 관련 메모'
+        verbose_name='매장 관련 메모'
     )
 
 
@@ -362,8 +362,8 @@ class StoreCustomer(models.Model):
 
 class Store(StoreBasicInfo, StoreDetailInfo, StoreSales, StoreCustomer):
     class Meta:
-        verbose_name = '점포 영업 상황'
-        verbose_name_plural = '점포 영업 상황'
+        verbose_name = '매장 영업 상황'
+        verbose_name_plural = '매장 영업 상황'
 
         ordering = ['progress_level', 'priority', ]
 

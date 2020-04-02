@@ -12,6 +12,7 @@ KAKAO_SKILL_USER_URLS = [
     path('skill/user/home', views.GET_UserHome),
 
     # Order Flow
+    path('skill/user/order/get_store',         views.GET_Store),
     path('skill/user/order/get_menu',         views.GET_Menu),
     path('skill/user/order/set_pickup_time',   views.SET_PickupTime),
     path('skill/user/order/set_order_sheet',   views.SET_OrderSheet),

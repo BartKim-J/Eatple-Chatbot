@@ -73,13 +73,14 @@ class KakaoForm():
             'discount': _discount,
             'thumbnails': _thumbnails,
             'profile': _profile,
-            'buttons': _buttons
+            'buttons': _buttons,
         },
 
-    def BasicCard_Add(self):
+    def BasicCard_Add(self, _header=None):
         self.template['outputs'] += {
             'carousel': {
                 'type': 'basicCard',
+                'header': _header,
                 'items': self.items
             }
         },
@@ -91,7 +92,7 @@ class KakaoForm():
             'title': _title,
             'description': _description,
             'thumbnail': _thumbnail,
-            'buttons': _buttons
+            'buttons': _buttons,
         },
 
     def ListCard_Add(self, _header):

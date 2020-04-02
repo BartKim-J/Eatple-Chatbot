@@ -304,7 +304,7 @@ def kakaoView_EatplePass(kakaoPayload):
                     buttons = [
                         {
                             'action': 'webLink',
-                            'label': '매장 위치확인',
+                            'label': '📍  매장 위치',
                             'webLinkUrl': kakaoMapUrl,
                         }
                     ]

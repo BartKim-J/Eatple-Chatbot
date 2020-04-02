@@ -4,6 +4,7 @@ from eatple_app.views_user.debug import GET_Debug
 from eatple_app.views_user.home import GET_UserHome
 
 # Ordeirng
+from eatple_app.views_user.ordering import GET_Store
 from eatple_app.views_user.ordering import GET_Menu
 from eatple_app.views_user.ordering import SET_PickupTime
 from eatple_app.views_user.ordering import SET_OrderSheet

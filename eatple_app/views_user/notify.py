@@ -45,7 +45,7 @@ def kakaoView_notifiy(kakaoPayload):
         'imageUrl': '{}{}'.format(HOST_URL, PARTNER_ORDER_SHEET_IMG),
     }
     kakaoForm.ListCard_Push(
-        '신사 지역 점포들이 오픈되었습니다.',
+        '신사 지역 매장들이 오픈되었습니다.',
         '2020.03.11',
         None,
         None

@@ -57,12 +57,12 @@ class OrderRecordSheet(models.Model):
     )
 
     paid = models.BooleanField(
-        default=False, 
+        default=False,
         verbose_name="결제 완료 여부"
     )
 
     status = models.BooleanField(
-        default=False, 
+        default=False,
         verbose_name="메뉴 선택 여부"
     )
 
@@ -73,11 +73,17 @@ class OrderRecordSheet(models.Model):
 
     created_date = models.DateTimeField(
         auto_now_add=True,
-         verbose_name="주문 시작 시간"
+        verbose_name="주문 시작 시간"
     )
 
-    def recordUpdate(self, status, *args, **kwargs):
+    def recordUpdate(self, user, order, status, *args, **kwargs):
         isVertification = True
+
+        if(user != None and order != None):
+            self.user = user
+            self.order = order
+        else:
+            isVertification = False
 
         if(self.user == None):
             isVertification = False
@@ -97,7 +103,8 @@ class OrderRecordSheet(models.Model):
     def timeoutValidation(self):
         timeOut = False
 
-        deadline = dateByTimeZone(self.update_date) + datetime.timedelta(minutes=30)
+        deadline = dateByTimeZone(self.update_date) + \
+            datetime.timedelta(minutes=30)
 
         current_date = dateNowByTimeZone()
 

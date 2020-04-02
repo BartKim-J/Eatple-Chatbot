@@ -349,7 +349,7 @@ def kakaoView_MenuListup(kakaoPayload):
     else:
         KakaoInstantForm().Message(
             '판매중인 메뉴가 없습니다.',
-            '빠른 시일안에 이 지역 점포를 늘려볼게요!',
+            '빠른 시일안에 이 지역 매장을 늘려볼게요!',
             kakaoForm=kakaoForm
         )
 
@@ -437,7 +437,7 @@ def kakaoView_MenuListupWithAreaOut(kakaoPayload):
     else:
         KakaoInstantForm().Message(
             '판매중인 메뉴가 없습니다.',
-            '빠른 시일안에 이 지역 점포를 늘려볼게요!',
+            '빠른 시일안에 이 지역 매장을 늘려볼게요!',
             kakaoForm=kakaoForm
         )
 
@@ -553,15 +553,15 @@ def kakaoView_PickupTime(kakaoPayload):
     isCafe = store.category.filter(name="카페").exists()
     if(isCafe):
         KakaoInstantForm().Message(
-            '🛎  상시픽업이 가능한 점포입니다.',
+            '🛎  상시픽업이 가능한 매장입니다.',
             '오전 11시 30분 부터 오후 4시 까지 언제든 방문하여 메뉴를 픽업할 수 있습니다.',
             kakaoForm=kakaoForm
         )
     else:
         if(pickupTimes.count() < 2):
             KakaoInstantForm().Message(
-                '❗ 픽업 시간이 제한된 점포입니다',
-                '점주님의 요청으로 픽업 시간이 한 타임으로 제한된 점포입니다.',
+                '❗ 픽업 시간이 제한된 매장입니다',
+                '점주님의 요청으로 픽업 시간이 한 타임으로 제한된 매장입니다.',
                 kakaoForm=kakaoForm
             )
 
@@ -1309,7 +1309,7 @@ def kakaoView_B2B_MenuListup(kakaoPayload):
     else:
         KakaoInstantForm().Message(
             '판매중인 메뉴가 없습니다.',
-            '빠른 시일안에 이 지역 점포를 늘려볼게요!',
+            '빠른 시일안에 이 지역 매장을 늘려볼게요!',
             kakaoForm=kakaoForm
         )
 
@@ -1432,15 +1432,15 @@ def kakaoView_B2B_PickupTime(kakaoPayload):
     isCafe = store.category.filter(name="카페").exists()
     if(isCafe):
         KakaoInstantForm().Message(
-            '🛎  상시픽업이 가능한 점포입니다.',
+            '🛎  상시픽업이 가능한 매장입니다.',
             '오전 11시 30분 부터 오후 4시 까지 언제든 방문하여 메뉴를 픽업할 수 있습니다.',
             kakaoForm=kakaoForm
         )
     else:
         if(pickupTimes.count() < 2):
             KakaoInstantForm().Message(
-                '❗ 픽업 시간이 제한된 점포입니다.',
-                '점주님의 요청으로 픽업 시간이 한 타임으로 제한된 점포입니다.',
+                '❗ 픽업 시간이 제한된 매장입니다.',
+                '점주님의 요청으로 픽업 시간이 한 타임으로 제한된 매장입니다.',
                 kakaoForm=kakaoForm
             )
 

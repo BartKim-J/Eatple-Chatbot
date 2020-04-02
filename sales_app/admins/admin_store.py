@@ -136,7 +136,7 @@ class StoreSalesResource(resources.ModelResource):
         return dict(PROGRESS_LEVEL_TYPE)[obj.progress_level]
 
     id = Field(attribute='id', column_name='ID')
-    name = Field(attribute='name', column_name='점포명')
+    name = Field(attribute='name', column_name='매장명')
 
     area = Field(attribute='area', column_name='지역')
     addr = Field(attribute='addr', column_name='주소')
