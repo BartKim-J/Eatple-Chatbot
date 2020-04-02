@@ -28,8 +28,14 @@ def getAdjustment(orderList, date_range):
     adjustment_settlement_amount = 0
 
     if(orderList):
-        start_date = orderList.first().payment_date.replace(
+        print(date_range[0], date_range[1])
+
+        date_range_start = date_range[0].replace(
             hour=0, minute=0, second=0)
+        date_range_end = date_range[1].replace(
+            hour=0, minute=0, second=0)
+
+        start_date = date_range_start
 
         # Do
         start_date = start_date - \
@@ -44,7 +50,7 @@ def getAdjustment(orderList, date_range):
             Q(payment_date__lt=end_date)
         )
 
-        while(start_date <= dateNowByTimeZone()):
+        while(start_date <= date_range_end):
             total_order = inquiryOrderList.count()
             inquiry_total_price = 0
             inquiry_supply_price = 0
@@ -52,67 +58,70 @@ def getAdjustment(orderList, date_range):
             inquiry_fee = 0
             inquiry_settlement_amount = 0
 
-            for order in inquiryOrderList:
-                total_price = order.totalPrice
-                supply_price = round(total_price / 1.1)
-                surtax_price = total_price - supply_price
-                if(order.type == ORDER_TYPE_B2B):
-                    fee = int(total_price * FEE_CONST)
-                else:
-                    if(dateByTimeZone(order.payment_date) < FEE_CHANGE_DATE):
-                        fee = int(total_price * FEE_CONST_BEFORE)
-                    else:
+            if(date_range_start <= settlement_date and settlement_date <= date_range_end):
+                for order in inquiryOrderList:
+                    total_price = order.totalPrice
+                    supply_price = round(total_price / 1.1)
+                    surtax_price = total_price - supply_price
+                    if(order.type == ORDER_TYPE_B2B):
                         fee = int(total_price * FEE_CONST)
-                settlement_amount = total_price - fee
+                    else:
+                        if(dateByTimeZone(order.payment_date) < FEE_CHANGE_DATE):
+                            fee = int(total_price * FEE_CONST_BEFORE)
+                        else:
+                            fee = int(total_price * FEE_CONST)
+                    settlement_amount = total_price - fee
 
-                # inquiry
-                inquiry_total_price += total_price
-                inquiry_supply_price += supply_price
-                inquiry_surtax_price += surtax_price
-                inquiry_fee += fee
-                inquiry_settlement_amount += settlement_amount
+                    # inquiry
+                    inquiry_total_price += total_price
+                    inquiry_supply_price += supply_price
+                    inquiry_surtax_price += surtax_price
+                    inquiry_fee += fee
+                    inquiry_settlement_amount += settlement_amount
 
-                # all
-                adjustment_total_price += total_price
-                adjustment_supply_price += supply_price
-                adjustment_surtax_price += surtax_price
-                adjustment_fee += fee
-                adjustment_settlement_amount += settlement_amount
+                    # all
+                    adjustment_total_price += total_price
+                    adjustment_supply_price += supply_price
+                    adjustment_surtax_price += surtax_price
+                    adjustment_fee += fee
+                    adjustment_settlement_amount += settlement_amount
 
-                # push body on excel
-                adjustmentExcel.append(
-                    dict({
-                        'ID': order.id,
-                        '결제일': order.payment_date.strftime('%Y-%m-%d'),
-                        '정산일': settlement_date.strftime('%Y-%m-%d'),
-                        '주문번호': order.order_id,
-                        '상점': order.store.name,
-                        '메뉴': order.menu.name,
-                        '주문 타입': dict(ORDER_TYPE)[order.type],
-                        '결제수단': '신용카드',
-                        '주문 금액': total_price,
-                        '공급가액': supply_price,
-                        '부가세': surtax_price,
-                        '수수료': fee,
-                        '정산금액': settlement_amount,
-                    })
-                )
-                total_price += order.totalPrice
+                    # push body on excel
+                    adjustmentExcel.append(
+                        dict({
+                            'ID': order.id,
+                            '결제일': order.payment_date.strftime('%Y-%m-%d'),
+                            '정산일': settlement_date.strftime('%Y-%m-%d'),
+                            '주문번호': order.order_id,
+                            '상점': order.store.name,
+                            '메뉴': order.menu.name,
+                            '주문 타입': dict(ORDER_TYPE)[order.type],
+                            '결제수단': '신용카드',
+                            '주문 금액': total_price,
+                            '공급가액': supply_price,
+                            '부가세': surtax_price,
+                            '수수료': fee,
+                            '정산금액': settlement_amount,
+                        })
+                    )
+                    total_price += order.totalPrice
 
-            if(inquiryOrderList):
-                adjustmentList.append(
-                    dict({
-                        'settlement_date': settlement_date.strftime('%Y-%m-%d'),
-                        'adjustment_date_range': '{} ~ {}'.format(start_date.strftime('%Y-%m-%d'), end_date.strftime('%Y-%m-%d')),
-                        'total_order': total_order,
-                        'total_price': '{}원'.format(format(inquiry_total_price, ",")),
-                        'supply_price': '{}원'.format(format(inquiry_supply_price, ",")),
-                        'surtax_price': '{}원'.format(format(inquiry_surtax_price, ",")),
-                        'fee': '{}원'.format(format(inquiry_fee, ",")),
-                        'settlement_amount': '{}원'.format(format(inquiry_settlement_amount, ",")),
-                        'unit': 'won'
-                    })
-                )
+                if(inquiryOrderList):
+                    adjustmentList.append(
+                        dict({
+                            'settlement_date': settlement_date.strftime('%Y-%m-%d'),
+                            'adjustment_date_range': '{} ~ {}'.format(start_date.strftime('%Y-%m-%d'), end_date.strftime('%Y-%m-%d')),
+                            'total_order': total_order,
+                            'total_price': '{}원'.format(format(inquiry_total_price, ",")),
+                            'supply_price': '{}원'.format(format(inquiry_supply_price, ",")),
+                            'surtax_price': '{}원'.format(format(inquiry_surtax_price, ",")),
+                            'fee': '{}원'.format(format(inquiry_fee, ",")),
+                            'settlement_amount': '{}원'.format(format(inquiry_settlement_amount, ",")),
+                            'unit': 'won'
+                        })
+                    )
+            else:
+                pass
 
             start_date = end_date.replace(
                 hour=0, minute=0, second=0, microsecond=0) + datetime.timedelta(days=1)
