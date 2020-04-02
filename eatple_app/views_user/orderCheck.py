@@ -299,7 +299,28 @@ def kakaoView_EatplePass(kakaoPayload):
 
                 isPickupZone = order.menu.tag.filter(name="픽업존").exists()
                 if(isPickupZone):
-                    pass
+                    buttons = []
+                    if (order.status == ORDER_STATUS_ORDER_CONFIRM_WAIT or
+                        order.status == ORDER_STATUS_ORDER_CONFIRMED or
+                            order.status == ORDER_STATUS_PICKUP_PREPARE):
+                        buttons.insert(
+                            0,
+                            {
+                                'action': 'block',
+                                'label': '픽업 부탁하기',
+                                'messageText': KAKAO_EMOJI_LOADING,
+                                'blockId': KAKAO_BLOCK_USER_ORDER_SHARING_START,
+                                'extra': {
+                                    KAKAO_PARAM_ORDER_ID: order.order_id,
+                                    KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_EATPLE_PASS
+                                }
+                            }
+                        )
+                    KakaoInstantForm().Message(
+                        '직접 픽업이 어려울땐, “픽업 부탁하기”로 함께 주문한 동료에게 부탁해보세요',
+                        buttons=buttons,
+                        kakaoForm=kakaoForm
+                    )
                 else:
                     buttons = [
                         {

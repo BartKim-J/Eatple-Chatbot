@@ -585,7 +585,7 @@ class Order(models.Model):
             orderRecordSheet.user = self.ordersheet.user
             orderRecordSheet.order = self
             orderRecordSheet.paid = True
-            orderRecordSheet.recordUpdate(user, order, ORDER_RECORD_PAYMENT_CANCELED)
+            orderRecordSheet.recordUpdate(orderRecordSheet.user, orderRecordSheet.order, ORDER_RECORD_PAYMENT_CANCELED)
 
         return isCancelled
 
@@ -603,7 +603,7 @@ class Order(models.Model):
         orderRecordSheet.user = self.ordersheet.user
         orderRecordSheet.order = self
         orderRecordSheet.paid = True
-        orderRecordSheet.recordUpdate(user, order, ORDER_RECORD_PAYMENT_COMPLETED)
+        orderRecordSheet.recordUpdate(orderRecordSheet.user, orderRecordSheet.order, ORDER_RECORD_PAYMENT_COMPLETED)
 
         return self
 

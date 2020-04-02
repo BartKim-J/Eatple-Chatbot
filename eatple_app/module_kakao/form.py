@@ -106,7 +106,24 @@ class KakaoInstantForm():
         kakaoForm.BasicCard_Add()
 
         if(isPickupZone):
-            pass
+            kakaoForm.BasicCard_Push(
+                '직접 픽업이 어려울땐, “픽업 부탁하기”로 함께 주문한 동료에게 부탁해보세요',
+                '',
+                {},
+                [
+                    {
+                        'action': 'block',
+                        'label': '픽업 부탁하기',
+                        'messageText': KAKAO_EMOJI_LOADING,
+                        'blockId': KAKAO_BLOCK_USER_ORDER_SHARING_START,
+                        'extra': {
+                            KAKAO_PARAM_ORDER_ID: order.order_id,
+                            KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_EATPLE_PASS
+                        }
+                    },
+                ]
+            )
+            kakaoForm.BasicCard_Add()
         else:
             kakaoForm.BasicCard_Push(
                 '직접 픽업이 어려울땐, “픽업 부탁하기”로 함께 주문한 동료에게 부탁해보세요',
