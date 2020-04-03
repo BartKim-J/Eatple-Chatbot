@@ -91,17 +91,16 @@ def kakaoView_OrderDetails(kakaoPayload):
                     time = '오전 11시 30분'
 
                     # @Temporary Code
-                    if(partner.store.name == '핏자당'):
-                        time = '오후 12시'
-                    elif(partner.store.name == '봉된장'):
+                    if(partner.store.name == '봉된장'):
                         time = '오전 11시 40분'
-                    elif(partner.store.name == 'LUNA'):
-                        time = '오전 12시'
                     elif(partner.store.name == '마치래빗샐러드' or
                          partner.store.name == '카도야라멘' or
                          partner.store.name == '칙피스' or
                          partner.store.name == '배러댄비프'):
                         time = '오전 11시 50분'
+                    elif(partner.store.name == 'LUNA' or 
+                         partner.store.name == '핏자당'):
+                        time = '오전 12시'
 
                     title = '{} {}'.format(
                         datetime.datetime.now().strftime("%-m월 %-d일"),
@@ -140,7 +139,7 @@ def kakaoView_OrderDetails(kakaoPayload):
                             )
                         else:
                             pass
-
+                    print(menu.name)
                     kakaoForm.ListCard_Add(header)
                 else:
                     pass
@@ -202,7 +201,9 @@ def kakaoView_OrderDetails(kakaoPayload):
                                 )
                             else:
                                 pass
-                        kakaoForm.ListCard_Add(header)
+                        
+                        if(totalCount > 0):
+                            kakaoForm.ListCard_Add(header)
         else:
             kakaoForm.BasicCard_Push(
                 '오늘은 들어온 주문이 없어요.',
