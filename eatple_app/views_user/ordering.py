@@ -209,7 +209,7 @@ def kakaoView_StoreListup(kakaoPayload):
             buttons = [
                 {
                     'action': 'block',
-                    'label': '📋  메뉴판 보기',
+                    'label': '📋 픽업존 메뉴판 보기',
                     'messageText': KAKAO_EMOJI_LOADING,
                     'blockId': KAKAO_BLOCK_USER_GET_MENU,
                     'extra': {
@@ -220,7 +220,7 @@ def kakaoView_StoreListup(kakaoPayload):
                 },
             ]
             kakaoForm.BasicCard_Push(
-                '매일 다른 메뉴를 경험하세요💕',
+                '픽업존: 패파 신사점 3층',
                 '⏱️  픽업가능 시간\n - 오후12:10,  오후1:10',
                 thumbnail,
                 buttons
