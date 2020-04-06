@@ -198,6 +198,11 @@ def kakaoView_StoreListup(kakaoPayload):
     sellingOutList = []
 
     if storeList:
+        KakaoInstantForm().Message(
+            '매장 확인 후 \'메뉴판 보기\'에서 메뉴를 확인하세요.',
+            kakaoForm=kakaoForm
+        )
+
         # @PROMOTION
         if((area_in_flag and addressMap[2] == "신사동") or area_code == "sinsa"):
             thumbnail = {
@@ -456,8 +461,8 @@ def kakaoView_PickupZone_MenuListup(kakaoPayload):
 
     else:
         KakaoInstantForm().Message(
-            '이벤트가 종료되었습니다.',
-            '다음 픽업존 이벤트를 기대해주세요!',
+            '당일 픽업존 이벤트는 종료되었습니다.',
+            '내일 픽업존 메뉴를 기대해주세요!',
             kakaoForm=kakaoForm
         )
 

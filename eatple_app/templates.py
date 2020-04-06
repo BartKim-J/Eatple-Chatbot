@@ -1,3 +1,5 @@
+from django.contrib.admin.models import LogEntry
+
 from django.shortcuts import render
 
 # Models
@@ -487,7 +489,10 @@ def dashboard(request):
 
     # showActiveStatus(orderTimeSheet)
 
+    log = LogEntry.objects.all()
+
     return render(request, 'dashboard/dashboard.html', {
+        'log': log[:5],
         'currentDate': "{}".format(currentDate.strftime(
             '%Y년 %-m월 %-d일 %p %-I시 %-M분 %S초').replace('AM', '오전').replace('PM', '오후')),
         'menus': menuList,

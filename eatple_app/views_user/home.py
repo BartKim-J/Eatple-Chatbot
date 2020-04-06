@@ -249,15 +249,6 @@ def kakaoView_Home(user, address):
                     KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_HOME
                 }
             },
-            {
-                'action': 'block',
-                'label': '고객 소리함',
-                'messageText': KAKAO_EMOJI_LOADING,
-                'blockId': KAKAO_BLOCK_USER_SURVEY_IMPROVEMENTS,
-                'extra': {
-                    KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_HOME
-                }
-            },
         ]
     else:
         buttons = [
@@ -266,15 +257,6 @@ def kakaoView_Home(user, address):
                 'label': '🍽  주문하기',
                 'messageText': '🍽  주문하기',
                 'blockId': KAKAO_BLOCK_USER_GET_STORE,
-                'extra': {
-                    KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_HOME
-                }
-            },
-            {
-                'action': 'block',
-                'label': '고객 소리함',
-                'messageText': KAKAO_EMOJI_LOADING,
-                'blockId': KAKAO_BLOCK_USER_SURVEY_IMPROVEMENTS,
                 'extra': {
                     KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_HOME
                 }

@@ -97,10 +97,8 @@ def kakaoView_OrderDetails(kakaoPayload):
                          partner.store.name == '칙피스' or
                          partner.store.name == '배러댄비프'):
                         time = '오전 11시 50분'
-                        
-                    elif(partner.store.name == '핏자당'):
-                        time = '오전 12시'
-                    elif(partner.store.name == 'LUNA' or 
+                    elif(partner.store.name == 'LUNA' or
+                         partner.store.name == '핏자당' or
                          partner.store.name == '마치래빗샐러드'):
                         time = '오후 1시'
 
@@ -203,7 +201,7 @@ def kakaoView_OrderDetails(kakaoPayload):
                                 )
                             else:
                                 pass
-                        
+
                         if(totalCount > 0):
                             kakaoForm.ListCard_Add(header)
         else:

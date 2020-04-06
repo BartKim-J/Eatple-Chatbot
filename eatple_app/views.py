@@ -37,3 +37,8 @@ from eatple_app.views_partner.home import GET_PartnerHome
 
 # Check
 from eatple_app.views_partner.orderCheck import GET_ParnterOrderDetails
+
+# Admin
+
+from eatple_app.views_admin.login import POST_AdminLogin
+from eatple_app.views_admin.logout import POST_AdminLogout

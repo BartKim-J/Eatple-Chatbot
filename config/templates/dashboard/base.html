@@ -8,16 +8,19 @@
 {% block body %}
     <main role="main">
         <!-- Page Wrapper -->
-        <div id="wrapper">
-            {% block sidebar %}
-                {% include 'dashboard/layout/sidebar.html' %} 
-            {% endblock %}
-            
+        <div id="wrapper">            
             {% if user.is_authenticated %}
+                {% block sidebar %}
+                    {% include 'dashboard/layout/sidebar.html' %} 
+                {% endblock %}
                 <!-- Content Wrapper -->
                 <div id="content-wrapper" class="d-flex flex-column">
                     <!-- Main Content -->
                     <div id="content" class="bg-dark">
+                        {% block navbar %}
+                            {% include 'dashboard/layout/navbar.html' %} 
+                        {% endblock %}
+
                         {% block content %} 
                         {% endblock %}
                     </div>
@@ -31,8 +34,9 @@
                 </div>
             <!-- End of Content Wrapper -->
             {% else %}
-                <p>You are not logged in</p>
-                <a href="/admin/login">login</a>
+                {% block login %}
+                    {% include 'dashboard/page/login.html' %} 
+                {% endblock %}
             {% endif %}
         </div>
         <!-- End of Page Wrapper -->
