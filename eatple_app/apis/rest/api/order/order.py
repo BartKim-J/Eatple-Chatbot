@@ -88,8 +88,8 @@ def getAdjustment(orderList, date_range):
                     adjustmentExcel.append(
                         dict({
                             'ID': order.id,
-                            '결제일': order.payment_date.strftime('%Y-%m-%d'),
                             '정산일': settlement_date.strftime('%Y-%m-%d'),
+                            '결제일': order.payment_date.strftime('%Y-%m-%d'),
                             '주문번호': order.order_id,
                             '상점': order.store.name,
                             '메뉴': order.menu.name,

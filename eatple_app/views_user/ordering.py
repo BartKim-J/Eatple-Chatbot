@@ -199,7 +199,7 @@ def kakaoView_StoreListup(kakaoPayload):
 
     if storeList:
         KakaoInstantForm().Message(
-            '매장 확인 후 \'메뉴판 보기\'에서 메뉴를 확인하세요.',
+            '매장 확인 후 \'메뉴판 보기\'에서 메뉴를 확인하세요',
             kakaoForm=kakaoForm
         )
 
