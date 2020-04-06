@@ -93,14 +93,16 @@ def kakaoView_OrderDetails(kakaoPayload):
                     # @Temporary Code
                     if(partner.store.name == '봉된장'):
                         time = '오전 11시 40분'
-                    elif(partner.store.name == '마치래빗샐러드' or
-                         partner.store.name == '카도야라멘' or
+                    elif(partner.store.name == '카도야라멘' or
                          partner.store.name == '칙피스' or
                          partner.store.name == '배러댄비프'):
                         time = '오전 11시 50분'
-                    elif(partner.store.name == 'LUNA' or 
-                         partner.store.name == '핏자당'):
+                        
+                    elif(partner.store.name == '핏자당'):
                         time = '오전 12시'
+                    elif(partner.store.name == 'LUNA' or 
+                         partner.store.name == '마치래빗샐러드'):
+                        time = '오후 1시'
 
                     title = '{} {}'.format(
                         datetime.datetime.now().strftime("%-m월 %-d일"),

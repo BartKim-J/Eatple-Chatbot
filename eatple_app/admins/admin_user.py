@@ -126,7 +126,6 @@ class UserResource(resources.ModelResource):
     app_user_id = Field(attribute='app_user_id', column_name='계정 ID')
     latlng = Field(column_name='위도/경도')
     phone_number = Field(column_name='연락처')
-    
 
     class Meta:
         model = User
@@ -202,6 +201,7 @@ class UserAdmin(ImportExportMixin, admin.ModelAdmin):
         'app_user_id',
         'phonenumber',
         'email',
+        'create_date',
         'address',
     )
 

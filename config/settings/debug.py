@@ -228,6 +228,9 @@ COMPRESS_ENABLED = True
 # CORS
 CORS_ORIGIN_ALLOW_ALL = True
 
+#AUTH
+LOGIN_REDIRECT_URL = '/'
+
 # JET
 JET_INDEX_DASHBOARD = 'eatple_app.dashboard.CustomIndexDashboard'
 #JET_INDEX_DASHBOARD = 'jet.dashboard.dashboard.DefaultIndexDashboard'
@@ -268,6 +271,8 @@ JET_THEMES = [
         'title': 'Light Gray'
     }
 ]
+
+JET_CHANGE_FORM_SIBLING_LINKS = True
 
 # JENKINS
 JENKINS_TASKS = (

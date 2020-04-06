@@ -17,10 +17,12 @@ admin.site.site_title = "Eat+ Admin"
 
 ADMIN_URLS = [
     # Admin
-    path('jet/', include('jet.urls', 'jet')),  # Django JET URLS
     path('jet/dashboard/', include('jet.dashboard.urls',
                                    'jet-dashboard')),  # Django JET dashboard URLS
+    path('jet/', include('jet.urls', 'jet')),  # Django JET URLS
     path('admin/', admin.site.urls),
+    
+    path('accounts/', include('django.contrib.auth.urls')),
 ]
 
 MEDIA_URLS = [

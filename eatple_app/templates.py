@@ -325,7 +325,7 @@ def getWAS(orderTimeSheet):
 
 def showActiveStatus(orderTimeSheet):
     # Test
-    test_start_date = dateNowByTimeZone().replace(year=2020, month=1, day=1,
+    test_start_date = dateNowByTimeZone().replace(year=2020, month=3, day=16,
                                                   hour=0, minute=0, second=0, microsecond=0)
     test_end_date = orderTimeSheet.GetCurrentDate()
 
@@ -343,13 +343,13 @@ def showActiveStatus(orderTimeSheet):
     bestMAU = 0
     bestMAUDate = ''
 
-    print(test_start_date, test_end_date)
     while(test_start_date <= test_end_date):
         test_timeSheet = OrderTimeSheet(test_start_date)
         DAU = getDAU(test_timeSheet)
         WAU = getWAU(test_timeSheet)
         MAU = getMAU(test_timeSheet)
 
+        print('DAU D -', DAU, test_start_date)
         if(bestDAU < DAU):
             bestDAU = DAU
             bestDAUDate = test_start_date
@@ -485,7 +485,9 @@ def dashboard(request):
 
     userActive = getUserActive()
 
-    return render(request, 'dashboard/base.html', {
+    # showActiveStatus(orderTimeSheet)
+
+    return render(request, 'dashboard/dashboard.html', {
         'currentDate': "{}".format(currentDate.strftime(
             '%Y년 %-m월 %-d일 %p %-I시 %-M분 %S초').replace('AM', '오전').replace('PM', '오후')),
         'menus': menuList,
@@ -532,7 +534,7 @@ def dashboard(request):
     })
 
 
-def sales_dashboard(request):
+def sales(request):
     orderTimeSheet = OrderTimeSheet()
 
     currentDate = orderTimeSheet.GetCurrentDate()
@@ -568,7 +570,7 @@ def sales_dashboard(request):
     totalPickuped = getTotalPickuped(orderTimeSheet)
     orderFailed = getOrderFailed(orderTimeSheet)
 
-    return render(request, 'dashboard/sales_dashboard.html', {
+    return render(request, 'dashboard/sales/sales.html', {
         'currentDate': "{}".format(currentDate.strftime(
             '%Y년 %-m월 %-d일 %p %-I시 %-M분 %S초').replace('AM', '오전').replace('PM', '오후')),
         'menus': menuList,
@@ -623,7 +625,7 @@ def sales_menulist(request):
     totalPickuped = getTotalPickuped(orderTimeSheet)
     orderFailed = getOrderFailed(orderTimeSheet)
 
-    return render(request, 'dashboard/sales_menulist.html', {
+    return render(request, 'dashboard/sales/sales_menulist.html', {
         'currentDate': "{}".format(currentDate.strftime(
             '%Y년 %-m월 %-d일 %p %-I시 %-M분 %S초').replace('AM', '오전').replace('PM', '오후')),
         'menus': menuList,

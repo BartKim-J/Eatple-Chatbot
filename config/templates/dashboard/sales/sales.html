@@ -1,0 +1,170 @@
+{% extends 'dashboard/base.html' %} 
+
+{% load static %}
+{% load humanize %}
+{% load compress %}
+{% load eatple_app_extras %}
+
+{% block content %}
+    <div class="container-fluid">
+        <div class="card-body">
+
+        <!-- 4 Card -->
+        <div class="row">
+
+            <!-- Daily Selled Card -->
+            <div class="col-xl-4 col-md-6 mb-4">
+            <div class="card bg-dark-gray text-white border-bottom-primary shadow py-2">
+                <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                    <div class="text-xs font-weight-bold text-secondary text-uppercase mb-1">일일 판매량</div>
+                    <div class="h6 font-weight-bold" id="TotalStockStatus"><i id="TotalStockStatusIcon" class="fas"></i> {{ totalStockIncrease }}</div>
+                    <div class="h5 mb-0 font-weight-bold text-gray-100">{{ totalStock }}개</div>
+                    </div>
+                    <div class="col-auto">
+                    <i class="fas fa-boxes fa-2x text-white"></i>
+                    </div>
+                </div>
+                </div>
+            </div>
+            </div>
+
+            <!-- Earnings (Monthly) Card Example -->
+            <div class="col-xl-4 col-md-6 mb-4">
+            <div class="card bg-dark-gray text-white border-bottom-primary shadow py-2">
+                <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                    <div class="text-xs font-weight-bold text-secondary text-uppercase mb-1">일일 픽업</div>
+                    <div class="h6 font-weight-bold text-danger"></i> <small>주문 실패</small> : {{ orderFailed }}개</div>
+                    <div class="h5 mb-0 font-weight-bold text-gray-100">{{ totalPickuped }} 개</div>
+                    </div>
+                    <div class="col-auto">
+                    <i class="fas fa-inbox fa-2x text-white"></i>
+                    </div>
+                </div>
+                </div>
+            </div>
+            </div>
+                            
+            <!-- Daily Earning Card -->
+            <div class="col-xl-4 col-md-6 mb-4">
+            <div class="card bg-dark-gray text-white border-bottom-primary shadow py-2">
+                <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                    <div class="text-xs font-weight-bold text-secondary text-uppercase mb-1">활성화된 매장</div>
+                    <div class="h6 font-weight-bold" id="WASStatus"><i id="WASStatusIcon" class="fas"></i> {{ WASIncrease }}</div>
+                    <div class="h5 mb-0 font-weight-bold text-gray-100">
+                        {{ WAS }} 매장
+                    </div>
+                    </div>
+                    <div class="col-auto">
+                    <i class="fas fa-store fa-2x text-white"></i>
+                    </div>
+                </div>
+                </div>
+            </div>
+            </div>
+
+        </div>
+
+        <!-- Table List -->
+        <div class="row">
+            <div class="col-xl-12 col-md-12 mb-12">
+            <div class="card bg-dark-gray text-white shadow mb-4">
+                <div class="card-header bg-dark-gray text-white">
+                <h6 class="font-weight-bold text-primary">메뉴 현황 리스트<small class="blockquote-footer">{{ currentDate }}</small></h6>
+                </div>
+                <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-sm small table-borderless table-hover" id="dataTable" width="100%" cellspacing="0">
+                    <thead>
+                        <tr >
+                            <th style="border-bottom: none;" scope="col">매장명</th>
+                            <th style="border-bottom: none;" scope="col">구분</th>
+                            <th style="border-bottom: none;" scope="col">담당자 번호</th>
+                            <th style="border-bottom: none;" scope="col">메뉴</th>
+                            <th style="border-bottom: none;" scope="col">총 주문</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for store in stores %}
+                        <tr class="text-white">
+                            <th><a href="{{ site.url }}/admin/eatple_app/store/{{ store.id }}/#/tab/inline_1/">{{ store.name }}</a></th>
+                            <td>{{ store.id|storeType }}</td>
+                            <td>{{ store.id|storePhoneNumber }}</td>
+                            <td>
+                            <table class="table">
+                                <thead>
+                                <tr class="small row">
+                                    <th style="border-bottom: none; border-top: none;" class="col-md-4"><small>메뉴명</small></th>
+                                    <th style="border-bottom: none; border-top: none;" class="col-md-2"><small>주문량</small></thstyle="border-bottom: none;">
+                                    <th style="border-bottom: none; border-top: none;" class="col-md-2"><small>주문 가능</small></th>
+                                    <th style="border-bottom: none; border-top: none;" class="col-md-3"><small>픽업 수량</small></th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {% for menu in menus %}
+                                    {% if menu.store.name == store.name %}
+                                    <tr class="small row text-white">
+                                    <td class="col-md-4">{{ menu.name }}</td>
+                                    <td class="col-md-2">{{ menu.current_stock }}개</td>
+                                    <td class="col-md-2">{{ menu.max_stock }}개</td>
+                                    <td class="col-md-3">
+                                        {{ menu.pickuped_stock }} / {{ menu.current_stock }}개
+                                        ({{ menu.pickuped_stock|div:menu.current_stock }}%)
+                                    </td>
+                                    </tr>
+                                    {% endif %}
+                                {% endfor %}
+                                </tbody>
+                            </table>
+                            </td>
+                            <td>{{ store.id|totalStock }}개</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                    </table>
+                </div>
+                </div>
+            </div>
+            </div>
+        </div>
+        
+        
+        </div>
+    </div>
+{% endblock %}
+
+{% block content_js %}
+    <!-- Bootstrap core JavaScript-->
+    <script type="text/javascript" src="{% static 'dashboard/vendor/jquery/jquery.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'dashboard/vendor/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+
+
+    <!-- Core plugin JavaScript-->
+    <script type="text/javascript" src="{% static 'dashboard/vendor/jquery-easing/jquery.easing.min.js' %}"></script>
+    
+    <!-- Page level plugins -->
+    <script type="text/javascript" src="{% static 'dashboard/vendor/chart.js/Chart.min.js' %}"></script>
+
+    <script type="text/javascript" src="{% static 'dashboard/vendor/datatables/jquery.dataTables.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'dashboard/vendor/datatables/dataTables.bootstrap4.min.js' %}"></script>
+
+    <!-- Page level javascript -->
+    {% compress js %}
+      <script>
+        totalStockIncrease = '{{ totalStockIncrease }}'
+        
+
+        WASIncrease = '{{ WASIncrease }}'     
+      </script>
+      <script type="text/javascript" src="{% static 'dashboard/js/base.js' %}"></script>
+      <script type="text/javascript" src="{% static 'dashboard/js/scroll-to-top.js' %}"></script>
+      <script type="text/javascript" src="{% static 'dashboard/js/sb-admin-2.js' %}"></script>
+      <script type="text/javascript" src="{% static 'dashboard/js/datatables.init.js' %}"></script>
+      <script type="text/javascript" src="{% static 'dashboard/js/card-status.init.js' %}"></script>
+    {% endcompress %}
+{% endblock %} 
