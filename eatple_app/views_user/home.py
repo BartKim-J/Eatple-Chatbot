@@ -254,8 +254,8 @@ def kakaoView_Home(user, address):
         buttons = [
             {
                 'action': 'block',
-                'label': '🍽  주문하기',
-                'messageText': '🍽  주문하기',
+                'label': '🥡  테이크아웃 하기',
+                'messageText': '🥡  테이크아웃 하기',
                 'blockId': KAKAO_BLOCK_USER_GET_STORE,
                 'extra': {
                     KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_HOME

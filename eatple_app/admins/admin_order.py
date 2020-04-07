@@ -79,15 +79,15 @@ class OrderResource(resources.ModelResource):
 
     def dehydrate_order_date(self, obj):
         return dateByTimeZone(obj.order_date).strftime(
-            '%Y년 %-m월 %-d일')
+            '%Y-%m-%d')
 
     def dehydrate_pickup_complete_date(self, obj):
         return dateByTimeZone(obj.pickup_complete_date).strftime(
-            '%Y년 %-m월 %-d일')
+            '%Y-%m-%d')
 
     def dehydrate_payment_date(self, obj):
         return dateByTimeZone(obj.payment_date).strftime(
-            '%Y년 %-m월 %-d일')
+            '%Y-%m-%d')
 
     order_id = Field(attribute='order_id', column_name='주문번호')
     user_name = Field(attribute='ordersheet__user__nickname',
