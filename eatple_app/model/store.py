@@ -12,7 +12,7 @@ from sales_app.system.model_type import UP_AND_LOW_LEVEL_LOWER, UP_AND_LOW_LEVEL
 
 # Utils
 from eatple_app.model.utils import OverwriteStorage
-from eatple_app.model.utils import logo_directory_path, store_directory_path
+from eatple_app.model.utils import logo_directory_path, cover_directory_path, store_directory_path
 
 # Coustom Model Type
 from eatple_app.system.model_type_bank import *
@@ -257,6 +257,14 @@ class StoreSetting(models.Model):
         verbose_name='로고 이미지'
     )
 
+    cover = models.ImageField(
+        default=DEFAULT_LOGO_IMAGE_PATH,
+        blank=True,
+        upload_to=cover_directory_path,
+        storage=OverwriteStorage(),
+        verbose_name='커버 이미지'
+    )
+
 
 class StoreStatus(models.Model):
     class Meta:
@@ -397,6 +405,12 @@ class Store(StoreInfo, StoreSetting, StoreStatus, StoreSalesInfo, StoreBankAccou
     def logoImgURL(self):
         try:
             return self.logo.url
+        except ValueError:
+            return DEFAULT_LOGO_IMAGE_PATH
+
+    def coverImgURL(self):
+        try:
+            return self.cover.url
         except ValueError:
             return DEFAULT_LOGO_IMAGE_PATH
 

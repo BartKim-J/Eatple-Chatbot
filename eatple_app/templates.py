@@ -457,8 +457,7 @@ def dashboard(request):
         create_date__gte=currentDateWithoutTime).count()
 
     totalOrder = Order.objects.filter(
-        Q(payment_status=EATPLE_ORDER_STATUS_PAID) |
-        Q(payment_status=EATPLE_ORDER_STATUS_CANCELLED)).count()
+        Q(payment_status=EATPLE_ORDER_STATUS_PAID)).count()
 
     totalOrderIncrease = totalUser.filter(
         create_date__gte=currentDateWithoutTime).count()
@@ -479,6 +478,7 @@ def dashboard(request):
     areaDataList = orderChart['data'].split(",")
     prevTotalStock = int(areaDataList[len(areaDataList)-2])
     totalStock = 0
+
     for menu in menuList:
         totalStock += menu.current_stock
 

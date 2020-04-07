@@ -259,12 +259,20 @@ def kakaoView_StoreListup(kakaoPayload):
                 else:
                     walkTime = '1 ㎞ 이상'
 
-                thumbnail = {
-                    'imageUrl': '{}{}'.format(HOST_URL, menu.imgURL()),
-                    'fixedRatio': 'False',
-                    'width': 800,
-                    'height': 800,
-                }
+                if(store.coverImgURL().find('default') == -1):
+                    thumbnail = {
+                        'imageUrl': '{}{}'.format(HOST_URL, store.coverImgURL()),
+                        'fixedRatio': 'True',
+                        'width': 800,
+                        'height': 800,
+                    }
+                else:
+                    thumbnail = {
+                        'imageUrl': '{}{}'.format(HOST_URL, menu.imgURL()),
+                        'fixedRatio': 'False',
+                        'width': 800,
+                        'height': 800,
+                    }
 
                 kakaoMapUrl = 'https://map.kakao.com/link/map/{name},{place}'.format(
                     name=menu.store.name,

@@ -59,6 +59,14 @@ def logo_directory_path(instance, filename):
 
     return path
 
+def cover_directory_path(instance, filename):
+    path = 'STORE_DB/images/{storename}/{number}{filename}'.format(
+        storename=instance.name,
+        filename=set_filename_format(instance, filename, 'coverImg'),
+        number=dateNowByTimeZone().strftime('%f'),
+    )
+
+    return path
 
 def store_directory_path(instance, filename):
     path = 'STORE_DB/images/{storename}/{number}{filename}'.format(
@@ -68,6 +76,7 @@ def store_directory_path(instance, filename):
     )
 
     return path
+
 
 
 def b2b_logo_directory_path(instance, filename):

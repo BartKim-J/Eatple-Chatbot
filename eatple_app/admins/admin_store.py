@@ -172,6 +172,7 @@ class StoreResource(resources.ModelResource):
         exclude = (
             'description',
             'logo',
+            'cover',
             'addr',
             'category',
             'customer_level',
@@ -186,7 +187,8 @@ class StoreResource(resources.ModelResource):
 
 class StoreAdmin(ImportExportMixin, admin.GeoModelAdmin):
     resource_class = StoreResource
-    readonly_fields = ('store_id', 'logo_preview', 'brc_preview', 'hc_preview')
+    readonly_fields = ('store_id', 'logo_preview',
+                       'cover_preview', 'brc_preview', 'hc_preview')
 
     list_editable = ()
 
@@ -210,7 +212,9 @@ class StoreAdmin(ImportExportMixin, admin.GeoModelAdmin):
                     'category',
                     'description',
                     'logo',
-                    'logo_preview'
+                    'logo_preview',
+                    'cover',
+                    'cover_preview',
                 ]
             }
         ),
@@ -296,7 +300,17 @@ class StoreAdmin(ImportExportMixin, admin.GeoModelAdmin):
                 height=58,
             ),
         )
-    logo_preview.short_description = "이미지 미리보기"
+    logo_preview.short_description = "로고 이미지 미리보기"
+
+    def cover_preview(self, obj):
+        return mark_safe(
+            '<img src="{url}" width="{width}" height={height} /><a href="{url}" download>다운로드</a>'.format(
+                url=obj.cover.url,
+                width=58,
+                height=58,
+            ),
+        )
+    cover_preview.short_description = "커버 이미지 미리보기"
 
     def field_status_flag(self, obj):
         if(obj.status == OC_OPEN):

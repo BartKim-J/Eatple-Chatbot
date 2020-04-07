@@ -1,3 +1,5 @@
+{% load static %}
+
 <!-- Sidebar -->
 <ul
     class="visible-md visible-lg navbar-nav bg-dark sidebar sidebar-dark accordion fixed-left"
@@ -9,22 +11,26 @@
         class="sidebar-brand d-flex align-items-center justify-content-center"
         href="/"
     >
-        <div class="sidebar-brand-icon rotate-n-15">
-        <i class="fas fa-tools"></i>
-        </div>
-        <div class="sidebar-brand-text mx-3">잇플<sup> 2.0.2V</sup></div>
+        <div class="sidebar-brand-text">EATPLE<sup> 2.0.2V</sup></div>
     </a>
 
     <!-- Divider -->
     <hr class="sidebar-divider my-0" />
 
-    <!-- Nav Item - Dashboard -->
-    <li class="nav-item active">
-        <a class="nav-link" href="/">
-        <i class="fas fa-fw fa-tachometer-alt"></i>
-        <span>대쉬보드</span></a
-        >
-    </li>
+    <div class="profilebar text-center">
+        <img src="{% static 'dashboard/assets/images/users/profile.svg' %}" class="img-fluid" alt="profile">
+        <div class="profilename">
+            <h5 class="text-white">{{ user.get_full_name }}</h5>
+            <p>{{ user.email }}</p>
+        </div>
+        <div class="userbox">
+            <ul class="list-inline mb-0">
+                <li class="list-inline-item"><a href="#" class="profile-icon"><img src="{% static 'dashboard/assets/images/svg-icon/user.svg' %}" class="img-fluid" alt="user"></a></li>
+                <li class="list-inline-item"><a href="#" class="profile-icon"><img src="{% static 'dashboard/assets/images/svg-icon/email.svg' %}" class="img-fluid" alt="email"></a></li>
+                <li class="list-inline-item"><a href="/admin/api/auth/logout" class="profile-icon"><img src="{% static 'dashboard/assets/images/svg-icon/logout.svg' %}" class="img-fluid" alt="logout"></a></li>
+            </ul>
+        </div>
+    </div>
 
     <!-- Divider -->
     <hr class="sidebar-divider" />

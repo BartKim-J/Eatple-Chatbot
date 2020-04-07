@@ -14,7 +14,7 @@
 
         <!-- Daily Selled Card -->
         <div class="col-xl-4 col-md-6 mb-4">
-            <div class="card bg-dark-gray text-white border-bottom-primary shadow py-2">
+            <div class="card bg-dark text-white py-2">
             <div class="card-body">
                 <div class="row no-gutters align-items-center">
                 <div class="col mr-2">
@@ -32,7 +32,7 @@
 
         <!-- Earnings (Monthly) Card Example -->
         <div class="col-xl-4 col-md-6 mb-4">
-            <div class="card bg-dark-gray text-white border-bottom-primary shadow py-2">
+            <div class="card bg-dark text-white py-2">
             <div class="card-body">
                 <div class="row no-gutters align-items-center">
                 <div class="col mr-2">
@@ -50,7 +50,7 @@
                             
         <!-- Daily Earning Card -->
         <div class="col-xl-4 col-md-6 mb-4">
-            <div class="card bg-dark-gray text-white border-bottom-primary shadow py-2">
+            <div class="card bg-dark text-white py-2">
             <div class="card-body">
                 <div class="row no-gutters align-items-center">
                 <div class="col mr-2">
@@ -75,7 +75,7 @@
         <div class="row">
         {% for menu in menus %}
             <div class="col-lg-2 col-md-5 col-sm-6">
-            <div class="card bg-dark-gray text-white mb-3 shadow-sm">
+            <div class="card bg-dark text-white mb-3 shadow-sm">
                 {% if menu.current_stock == menu.max_stock %}
                     <img src={{ menu.soldout_image.url }} class="card-img-top" text="Thumbnail" />
                 {% else %}
@@ -107,7 +107,7 @@
                 </div>
                 </div>
 
-                <div class="card-footer bg-dark-gray text-white d-flex justify-content-between align-items-center text-muted">
+                <div class="card-footer bg-dark text-white d-flex justify-content-between align-items-center text-muted">
                 <small class="text-muted">주문 상태</small>
                 <small class="text-muted">{{ menu.current_stock }}/{{ menu.max_stock }}</small>
                 </div>

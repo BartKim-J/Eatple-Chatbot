@@ -57,6 +57,7 @@ INSTALLED_APPS = [
     'django_admin_listfilter_dropdown',
     'django.contrib.humanize',
 
+    'sass_processor',
     'import_export',
     'phonenumber_field',
 
@@ -212,14 +213,20 @@ STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.FileSystemFinder',
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
     'compressor.finders.CompressorFinder',
+    'sass_processor.finders.CssFinder',
 )
 
+# COMPRESS
 COMPRESS_JS_FILTERS = [
     'compressor.filters.template.TemplateFilter',
 ]
 
 COMPRESS_ENABLED = True
 
+# SASS
+SASS_PROCESSOR_ROOT = STATIC_ROOT
+SASS_PROCESSOR_ENABLED = True
+SASS_OUTPUT_STYLE = 'compact'
 # COOKIES
 #SECURE_SSL_REDIRECT = True
 #CSRF_COOKIE_SECURE = True

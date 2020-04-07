@@ -1,5 +1,5 @@
 <!-- Topbar -->
-<nav class="navbar navbar-expand navbar-light bg-very-dark topbar mb-4 static-top shadow">
+<nav class="navbar navbar-expand navbar-light bg-very-dark topbar mb-4 static-top">
 
     <!-- Topbar Navbar -->
     <ul class="navbar-nav ml-auto">
@@ -12,54 +12,25 @@
             <!-- <span class="badge badge-danger badge-counter">3+</span> -->
             </a>
             <!-- Dropdown - Alerts -->
-            <div class="dropdown-list dropdown-menu dropdown-menu-right shadow animated--grow-in" aria-labelledby="alertsDropdown">
-            <h6 class="dropdown-header">
-                활동 기록
-            </h6>
-            {% for l in log %}
-                <a class="dropdown-item d-flex align-items-center" href='admin/'>
-                    <div class="mr-3">
-                    <div class="icon-circle bg-primary">
-                        <i class="fas fa-file-alt text-white"></i>
-                    </div>
-                    </div>
-                    <div>
-                    <div class="small text-gray-500">{{ l.action_time }}</div>
-                    <span class="font-weight-bold">{{ l.object_repr }}이(가) 수정되었습니다.</span>
-                    </div>
-                </a>
-            {% endfor %}
+            <div class="dropdown-list dropdown-menu dropdown-menu-right animated--grow-in" aria-labelledby="alertsDropdown">
+                <h6 class="dropdown-header">
+                    활동 기록
+                </h6>
+                {% for l in log %}
+                    <a class="dropdown-item bg-dark d-flex align-items-center" href='admin/'>
+                        <div class="mr-3">
+                            <div class="icon-circle bg-primary">
+                                <i class="fas fa-file-alt text-white"></i>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="small text-gray-400">{{ l.action_time }}
+                        </div>
+                            <span class="text-white font-weight-bold">{{ l.object_repr }}이(가) 수정되었습니다.</span>
+                        </div>
+                    </a>
+                {% endfor %}
         </li>
-
-        <div class="topbar-divider d-none d-sm-block"></div>
-
-        <!-- Nav Item - User Information -->
-        <li class="nav-item dropdown no-arrow">
-            <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-            <span class="mr-2 d-none d-lg-inline text-gray-600 small">{{ user.get_username }}</span>
-            <img class="img-profile rounded-circle" src="https://img1.daumcdn.net/thumb/C100x100.mplusfriend/?fname=https%3A%2F%2Fk.kakaocdn.net%2Fdn%2FiMkxy%2Fbtqzs8D5z8A%2FZyQIMrIIMvVNdRK953fVC1%2Fimg_s.jpg">
-            </a>
-            <!-- Dropdown - User Information -->
-            <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in" aria-labelledby="userDropdown">
-                <a class="dropdown-item" href="">
-                    <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
-                    Profile
-                </a>
-                <a class="dropdown-item" href="">
-                    <i class="fas fa-cogs fa-sm fa-fw mr-2 text-gray-400"></i>
-                    Settings
-                </a>
-                <div class="dropdown-divider"></div>
-                <form method="POST" action="/admin/api/auth/logout" style="margin-block-end: 0px;">
-                    {% csrf_token %}
-                    <button class="btn btn-danger dropdown-item">
-                        <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
-                        Logout
-                    </button>
-                </form>
-            </div>
-        </li>
-
     </ul>
 
 </nav>

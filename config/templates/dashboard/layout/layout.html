@@ -1,6 +1,7 @@
 {% load static %} 
 {% load humanize %} 
 {% load compress %} 
+{% load sass_tags %}
 {% load eatple_app_extras %}
 
 <html>
@@ -19,7 +20,7 @@
     <link
       rel="shortcut icon"
       type="image/png"
-      href="{% static 'dashboard/img/favicon.ico' %}"
+      href="{% static 'dashboard/assets/favicon.ico' %}"
     />
 
     <link
@@ -29,8 +30,9 @@
       crossorigin="anonymous"
     />
 
-    <link rel="stylesheet" href="{% static 'dashboard/css/base.css' %}" />
-    <link rel="stylesheet" href="{% static 'dashboard/css/sb-admin-2.css' %}" />
+    <link rel="stylesheet" href="{% sass_src 'dashboard/css/base.scss' %}" />
+    <link rel="stylesheet" href="{% sass_src 'dashboard/css/sidebar.scss' %}" />
+    <link rel="stylesheet" href="{% sass_src 'dashboard/css/sb-admin-2.css' %}" />
 
     <!-- Custom fonts for this template-->
     <link
