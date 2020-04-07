@@ -508,11 +508,7 @@ def dashboard(request):
 
         'totalUserIncrease': totalUserIncrease,
         'totalUser': totalUser.count(),
-
         'userInService': userActive['userInService'],
-        'notActive': userActive['notActive'],
-        'inActive': userActive['inActive'],
-        'getActive': userActive['getActive'],
 
         'totalOrder': totalOrder,
         'orderFailed': orderFailed,
@@ -528,14 +524,6 @@ def dashboard(request):
 
         'pieLabel': menuStockChart['label'],
         'pieData': menuStockChart['data'],
-
-        'DAU': DAU,
-        'WAU': WAU,
-        'MAU': MAU,
-
-        'DAUIncrease': DAU - prevDAU,
-        'WAUIncrease': WAU - prevWAU,
-        'MAUIncrease': MAU - prevMAU,
     })
 
 
@@ -547,7 +535,8 @@ def sales(request):
 
     menuList = Menu.objects.filter(~Q(store__type=STORE_TYPE_PROMOTION)).order_by(
         '-status', '-store__status', '-current_stock', 'store__name')
-    storeList = Store.objects.filter(~Q(type=STORE_TYPE_PROMOTION))
+    storeList = Store.objects.filter(
+        ~Q(type=STORE_TYPE_PROMOTION) & ~Q(name__contains="잇플"))
 
     totalUser = User.objects.all()
     totalUserIncrease = totalUser.filter(
@@ -602,7 +591,8 @@ def sales_menulist(request):
 
     menuList = Menu.objects.filter(~Q(store__type=STORE_TYPE_PROMOTION)).order_by(
         '-status', '-store__status', '-current_stock', 'store__name')
-    storeList = Store.objects.filter(~Q(type=STORE_TYPE_PROMOTION))
+    storeList = Store.objects.filter(
+        ~Q(type=STORE_TYPE_PROMOTION) & ~Q(name__contains="잇플"))
 
     totalUser = User.objects.all()
     totalUserIncrease = totalUser.filter(

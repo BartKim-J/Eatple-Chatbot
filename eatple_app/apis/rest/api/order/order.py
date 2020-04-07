@@ -154,6 +154,7 @@ def getAdjustment(orderList, date_range):
 
 def getSurtax(orderList, date_range):
     orderList = orderList.order_by('payment_date')
+    surtaxExcel = []
     surtax = {
         'sales': {},
         'purchase': {}
@@ -174,6 +175,14 @@ def getSurtax(orderList, date_range):
         total_order = orderList.count()
 
         for order in orderList:
+            start_date = order.payment_date.replace(
+                hour=0, minute=0, second=0) - \
+                datetime.timedelta(days=5 - order.payment_date.weekday())
+            end_date = start_date.replace(
+                hour=23, minute=59, second=59, microsecond=0) + datetime.timedelta(days=6)
+            settlement_date = end_date.replace(
+                hour=0, minute=0, second=0, microsecond=0) + datetime.timedelta(days=10)
+
             total_price = order.totalPrice
             supply_price = round(total_price / 1.1)
             surtax_price = total_price - supply_price
@@ -197,6 +206,36 @@ def getSurtax(orderList, date_range):
             purchase_supply_price += int(fee / 1.1)
             purchase_surtax_price += fee - int(fee / 1.1)
 
+            # push body on excel
+            surtaxExcel.append(
+                dict({
+                    'ID': order.id,
+                    '정산일': settlement_date.strftime('%Y-%m-%d'),
+                    '결제일': order.payment_date.strftime('%Y-%m-%d'),
+                    '주문번호': order.order_id,
+                    '상점': order.store.name,
+                    '메뉴': order.menu.name,
+                    '주문 타입': dict(ORDER_TYPE)[order.type],
+                    '결제수단': '신용카드',
+                    '주문 금액': total_price,
+                    '공급가액': supply_price,
+                    '부가세': surtax_price,
+                    '수수료': fee,
+                    '정산금액': settlement_amount,
+                })
+            )
+        # push footer on excel
+        surtaxExcel.append(
+            dict({
+                'ID': "합계",
+                '주문 금액': sales_total_price,
+                '공급가액': sales_supply_price,
+                '부가세': sales_surtax_price,
+                '수수료': sales_fee,
+                '정산금액': sales_settlement_amount,
+            })
+        )
+
         surtax['sales'] = dict({
             'date_range': '{} ~ {}'.format(date_range[0].strftime('%Y-%m-%d'), date_range[1].strftime('%Y-%m-%d')),
             'supply_price': '{}원'.format(format(sales_supply_price, ",")),
@@ -217,7 +256,7 @@ def getSurtax(orderList, date_range):
     else:
         pass
 
-    return surtax
+    return [surtax, surtaxExcel]
 
 
 def param_valid(param):
@@ -423,11 +462,12 @@ class OrderViewSet(viewsets.ModelViewSet):
             infoFilter)
 
         adjustmentForm = getAdjustment(orderList, date_range)
-        surtax = getSurtax(orderList, date_range)
+        surtaxForm = getSurtax(orderList, date_range)
 
         response['adjustments'] = adjustmentForm[0]
         response['adjustments_excel'] = adjustmentForm[1]
-        response['surtax'] = surtax
+        response['surtax'] = surtaxForm[0]
+        response['surtax_excel'] = surtaxForm[1]
         response['error_code'] = 200
 
         return JsonResponse(response)

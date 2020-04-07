@@ -6,117 +6,115 @@
 {% load eatple_app_extras %}
 
 {% block content %}
-    <div class="container">
-        <div class="card-body">
+    <div class="card-body">
 
 
-            <!-- 4 Card -->
-            <div class="row">
+        <!-- 4 Card -->
+        <div class="row">
 
-            <!-- Daily Selled Card -->
-            <div class="col-xl-4 col-md-6 mb-4">
-                <div class="card bg-dark-gray text-white border-bottom-primary shadow py-2">
+        <!-- Daily Selled Card -->
+        <div class="col-xl-4 col-md-6 mb-4">
+            <div class="card bg-dark-gray text-white border-bottom-primary shadow py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                <div class="col mr-2">
+                    <div class="text-xs font-weight-bold text-secondary text-uppercase mb-1">일일 판매량</div>
+                    <div class="h6 font-weight-bold" id="TotalStockStatus"><i id="TotalStockStatusIcon" class="fas"></i> {{ totalStockIncrease }}</div>
+                    <div class="h5 mb-0 font-weight-bold text-gray-100">{{ totalStock }}개</div>
+                </div>
+                <div class="col-auto">
+                    <i class="fas fa-boxes fa-2x text-white"></i>
+                </div>
+                </div>
+            </div>
+            </div>
+        </div>
+
+        <!-- Earnings (Monthly) Card Example -->
+        <div class="col-xl-4 col-md-6 mb-4">
+            <div class="card bg-dark-gray text-white border-bottom-primary shadow py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                <div class="col mr-2">
+                    <div class="text-xs font-weight-bold text-secondary text-uppercase mb-1">일일 픽업</div>
+                    <div class="h6 font-weight-bold text-danger"></i> <small>주문 실패</small> : {{ orderFailed }}개</div>
+                    <div class="h5 mb-0 font-weight-bold text-gray-100">{{ totalPickuped }} 개</div>
+                </div>
+                <div class="col-auto">
+                    <i class="fas fa-inbox fa-2x text-white"></i>
+                </div>
+                </div>
+            </div>
+            </div>
+        </div>
+                            
+        <!-- Daily Earning Card -->
+        <div class="col-xl-4 col-md-6 mb-4">
+            <div class="card bg-dark-gray text-white border-bottom-primary shadow py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                <div class="col mr-2">
+                    <div class="text-xs font-weight-bold text-secondary text-uppercase mb-1">활성화된 매장</div>
+                    <div class="h6 font-weight-bold" id="WASStatus"><i id="WASStatusIcon" class="fas"></i> {{ WASIncrease }}</div>
+                    <div class="h5 mb-0 font-weight-bold text-gray-100">
+                    {{ WAS }} 매장
+                    </div>
+                </div>
+                <div class="col-auto">
+                    <i class="fas fa-store fa-2x text-white"></i>
+                </div>
+                </div>
+            </div>
+            </div>
+        </div>
+
+        </div>
+
+        
+        <!-- Menu Card List -->
+        <div class="row">
+        {% for menu in menus %}
+            <div class="col-lg-2 col-md-5 col-sm-6">
+            <div class="card bg-dark-gray text-white mb-3 shadow-sm">
+                {% if menu.current_stock == menu.max_stock %}
+                    <img src={{ menu.soldout_image.url }} class="card-img-top" text="Thumbnail" />
+                {% else %}
+                    <img src={{ menu.image.url }} class="card-img-top" text="Thumbnail" />
+                {% endif %}
+                
                 <div class="card-body">
-                    <div class="row no-gutters align-items-center">
-                    <div class="col mr-2">
-                        <div class="text-xs font-weight-bold text-secondary text-uppercase mb-1">일일 판매량</div>
-                        <div class="h6 font-weight-bold" id="TotalStockStatus"><i id="TotalStockStatusIcon" class="fas"></i> {{ totalStockIncrease }}</div>
-                        <div class="h5 mb-0 font-weight-bold text-gray-100">{{ totalStock }}개</div>
-                    </div>
-                    <div class="col-auto">
-                        <i class="fas fa-boxes fa-2x text-white"></i>
-                    </div>
-                    </div>
-                </div>
-                </div>
-            </div>
+                <blockquote class="blockquote">
+                    <h6 class="mb-0">{{ menu.name }}</h6>
+                    <small class="blockquote-footer text-right">{{ menu.store.name}}</small>
+                </blockquote>
 
-            <!-- Earnings (Monthly) Card Example -->
-            <div class="col-xl-4 col-md-6 mb-4">
-                <div class="card bg-dark-gray text-white border-bottom-primary shadow py-2">
-                <div class="card-body">
-                    <div class="row no-gutters align-items-center">
-                    <div class="col mr-2">
-                        <div class="text-xs font-weight-bold text-secondary text-uppercase mb-1">일일 픽업</div>
-                        <div class="h6 font-weight-bold text-danger"></i> <small>주문 실패</small> : {{ orderFailed }}개</div>
-                        <div class="h5 mb-0 font-weight-bold text-gray-100">{{ totalPickuped }} 개</div>
-                    </div>
-                    <div class="col-auto">
-                        <i class="fas fa-inbox fa-2x text-white"></i>
-                    </div>
-                    </div>
-                </div>
-                </div>
-            </div>
-                                
-            <!-- Daily Earning Card -->
-            <div class="col-xl-4 col-md-6 mb-4">
-                <div class="card bg-dark-gray text-white border-bottom-primary shadow py-2">
-                <div class="card-body">
-                    <div class="row no-gutters align-items-center">
-                    <div class="col mr-2">
-                        <div class="text-xs font-weight-bold text-secondary text-uppercase mb-1">활성화된 매장</div>
-                        <div class="h6 font-weight-bold" id="WASStatus"><i id="WASStatusIcon" class="fas"></i> {{ WASIncrease }}</div>
-                        <div class="h5 mb-0 font-weight-bold text-gray-100">
-                        {{ WAS }} 매장
-                        </div>
-                    </div>
-                    <div class="col-auto">
-                        <i class="fas fa-store fa-2x text-white"></i>
-                    </div>
+                <div class="d-flex justify-content-between align-items-center">
+                    <a href="{{ site.url }}/admin/eatple_app/store/{{ menu.store.id }}/#/tab/inline_1/">
+                        <button type="button" class="btn btn-sm btn-outline-secondary">수정</button>
+                    </a>
+                    <div class="btn-group">
+                        {% if menu.current_stock == menu.max_stock%}
+                        <button type="button" class="btn btn-sm btn-danger text-white">매진</button>
+                        {% endif %}
+                        {% if menu.status == "open" and menu.store.status == "open" %}
+                        <button type="button" class="btn btn-sm btn-success text-white">열림</button>
+                        {% elif menu.status == "open" and menu.store.status == "vacation" %}
+                        <button type="button" class="btn btn-sm btn-info text-white">휴무</button>
+                        {% else %}
+                        <button type="button" class="btn btn-sm btn-secondary text-white">닫힘</button>
+                        {% endif %}
                     </div>
                 </div>
                 </div>
-            </div>
+
+                <div class="card-footer bg-dark-gray text-white d-flex justify-content-between align-items-center text-muted">
+                <small class="text-muted">주문 상태</small>
+                <small class="text-muted">{{ menu.current_stock }}/{{ menu.max_stock }}</small>
+                </div>
 
             </div>
-
-            
-            <!-- Menu Card List -->
-            <div class="row">
-            {% for menu in menus %}
-                <div class="col-lg-3 col-md-5 col-sm-6">
-                <div class="card bg-dark-gray text-white mb-3 shadow-sm">
-                    {% if menu.current_stock == menu.max_stock %}
-                        <img src={{ menu.soldout_image.url }} class="card-img-top" text="Thumbnail" />
-                    {% else %}
-                        <img src={{ menu.image.url }} class="card-img-top" text="Thumbnail" />
-                    {% endif %}
-                    
-                    <div class="card-body">
-                    <blockquote class="blockquote">
-                        <h6 class="mb-0">{{ menu.name }}</h6>
-                        <small class="blockquote-footer text-right">{{ menu.store.name}}</small>
-                    </blockquote>
-
-                    <div class="d-flex justify-content-between align-items-center">
-                        <a href="{{ site.url }}/admin/eatple_app/store/{{ menu.store.id }}/#/tab/inline_1/">
-                            <button type="button" class="btn btn-sm btn-outline-secondary">수정</button>
-                        </a>
-                        <div class="btn-group">
-                            {% if menu.current_stock == menu.max_stock%}
-                            <button type="button" class="btn btn-sm btn-danger text-white">매진</button>
-                            {% endif %}
-                            {% if menu.status == "open" and menu.store.status == "open" %}
-                            <button type="button" class="btn btn-sm btn-success text-white">열림</button>
-                            {% elif menu.status == "open" and menu.store.status == "vacation" %}
-                            <button type="button" class="btn btn-sm btn-info text-white">휴무</button>
-                            {% else %}
-                            <button type="button" class="btn btn-sm btn-secondary text-white">닫힘</button>
-                            {% endif %}
-                        </div>
-                    </div>
-                    </div>
-
-                    <div class="card-footer bg-dark-gray text-white d-flex justify-content-between align-items-center text-muted">
-                    <small class="text-muted">주문 상태</small>
-                    <small class="text-muted">{{ menu.current_stock }}/{{ menu.max_stock }}</small>
-                    </div>
-
-                </div>
-                </div>
-            {% endfor %}
             </div>
+        {% endfor %}
         </div>
     </div>
 {% endblock %} 

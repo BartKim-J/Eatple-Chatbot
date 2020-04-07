@@ -200,14 +200,19 @@ def orderUpdate(order):
     else:
         if(order.menu == None or order.store == None):
             order.payment_status = EATPLE_ORDER_STATUS_NOT_PUSHED
-            order.save()
         else:
             if(order.payment_type == ORDER_PAYMENT_INI_PAY):
                 order = iamportOrderValidation(order)
             elif(order.payment_type == ORDER_PAYMENT_KAKAO_PAY):
                 order = kakaoPayOrderValidation(order)
             else:
-                order = iamportOrderValidation(order)
+                order.payment_status = EATPLE_ORDER_STATUS_NOT_PUSHED
+
+            if(order.payment_status == EATPLE_ORDER_STATUS_FAILED and
+               order.order_date >= dateNowByTimeZone() - datetime.timedelta(minutes=30)):
+                order.payment_status = EATPLE_ORDER_STATUS_NOT_PUSHED
+
+        order.save()
 
     # Payment State Update
     if(order.payment_status == EATPLE_ORDER_STATUS_CANCELLED):
@@ -585,7 +590,8 @@ class Order(models.Model):
             orderRecordSheet.user = self.ordersheet.user
             orderRecordSheet.order = self
             orderRecordSheet.paid = True
-            orderRecordSheet.recordUpdate(orderRecordSheet.user, orderRecordSheet.order, ORDER_RECORD_PAYMENT_CANCELED)
+            orderRecordSheet.recordUpdate(
+                orderRecordSheet.user, orderRecordSheet.order, ORDER_RECORD_PAYMENT_CANCELED)
 
         return isCancelled
 
@@ -603,7 +609,8 @@ class Order(models.Model):
         orderRecordSheet.user = self.ordersheet.user
         orderRecordSheet.order = self
         orderRecordSheet.paid = True
-        orderRecordSheet.recordUpdate(orderRecordSheet.user, orderRecordSheet.order, ORDER_RECORD_PAYMENT_COMPLETED)
+        orderRecordSheet.recordUpdate(
+            orderRecordSheet.user, orderRecordSheet.order, ORDER_RECORD_PAYMENT_COMPLETED)
 
         return self
 

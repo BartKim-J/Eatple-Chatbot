@@ -1,5 +1,5 @@
 <!-- Topbar -->
-<nav class="navbar navbar-expand navbar-light bg-dark topbar mb-4 static-top shadow">
+<nav class="navbar navbar-expand navbar-light bg-very-dark topbar mb-4 static-top shadow">
 
     <!-- Topbar Navbar -->
     <ul class="navbar-nav ml-auto">
@@ -50,9 +50,9 @@
                     Settings
                 </a>
                 <div class="dropdown-divider"></div>
-                <form method="POST" action="/admin/api/auth/logout" class="dropdown-item" style="margin-block-end: 0px;">
+                <form method="POST" action="/admin/api/auth/logout" style="margin-block-end: 0px;">
                     {% csrf_token %}
-                    <button type="submit" class="btn btn-danger">
+                    <button class="btn btn-danger dropdown-item">
                         <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
                         Logout
                     </button>
