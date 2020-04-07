@@ -306,8 +306,8 @@ class StoreAdmin(ImportExportMixin, admin.GeoModelAdmin):
         return mark_safe(
             '<img src="{url}" width="{width}" height={height} /><a href="{url}" download>다운로드</a>'.format(
                 url=obj.cover.url,
-                width=58,
-                height=58,
+                width=116,
+                height=116,
             ),
         )
     cover_preview.short_description = "커버 이미지 미리보기"

@@ -87,7 +87,6 @@ def getAdjustment(orderList, date_range):
                     # push body on excel
                     adjustmentExcel.append(
                         dict({
-                            'ID': order.id,
                             '정산일': settlement_date.strftime('%Y-%m-%d'),
                             '결제일': order.payment_date.strftime('%Y-%m-%d'),
                             '주문번호': order.order_id,
@@ -138,7 +137,7 @@ def getAdjustment(orderList, date_range):
         # push footer on excel
         adjustmentExcel.append(
             dict({
-                'ID': "합계",
+                '정산일': "합계",
                 '주문 금액': adjustment_total_price,
                 '공급가액': adjustment_supply_price,
                 '부가세': adjustment_surtax_price,
@@ -209,7 +208,6 @@ def getSurtax(orderList, date_range):
             # push body on excel
             surtaxExcel.append(
                 dict({
-                    'ID': order.id,
                     '정산일': settlement_date.strftime('%Y-%m-%d'),
                     '결제일': order.payment_date.strftime('%Y-%m-%d'),
                     '주문번호': order.order_id,
@@ -227,7 +225,7 @@ def getSurtax(orderList, date_range):
         # push footer on excel
         surtaxExcel.append(
             dict({
-                'ID': "합계",
+                '정산일': "합계",
                 '주문 금액': sales_total_price,
                 '공급가액': sales_supply_price,
                 '부가세': sales_surtax_price,
