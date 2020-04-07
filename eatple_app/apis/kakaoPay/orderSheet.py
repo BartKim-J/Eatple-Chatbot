@@ -29,6 +29,11 @@ def GET_KAKAO_PAY_OrderSheet(request):
             print(message)
             return JsonResponse({'status': 400, 'message': message})
 
+        if(order.payment_status == EATPLE_ORDER_STATUS_FAILED):
+            order.status = ORDER_RECORD_GET_MENU
+            order.payment_status = EATPLE_ORDER_STATUS_READY
+            order.save()
+
         if(order.payment_status == EATPLE_ORDER_STATUS_PAID):
             message = '이미 결제가 완료되었습니다.'
             print(message)

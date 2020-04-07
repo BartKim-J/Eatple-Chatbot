@@ -38,12 +38,17 @@ class OrderValidation(viewsets.ModelViewSet):
 
         # Order Check
         order = orderValidation(merchant_uid)
-
-        if(order == None or order.payment_status == EATPLE_ORDER_STATUS_FAILED):
+        if(order == None):
             response['error_code'] = PAYMENT_203_ORDER_ID_INVALID.code
             response['error_msg'] = PAYMENT_203_ORDER_ID_INVALID.message
             return Response(response)
-        elif(order.payment_status == EATPLE_ORDER_STATUS_PAID):
+
+        if(order.payment_status == EATPLE_ORDER_STATUS_FAILED):
+            order.status = ORDER_RECORD_GET_MENU
+            order.payment_status = EATPLE_ORDER_STATUS_READY
+            order.save()
+
+        if(order.payment_status == EATPLE_ORDER_STATUS_PAID):
             response['error_code'] = PAYMENT_100_SUCCESS.code
             response['error_msg'] = PAYMENT_100_SUCCESS.message
             return Response(response)
@@ -90,7 +95,7 @@ class OrderValidation(viewsets.ModelViewSet):
             response['error_code'] = PAYMENT_206_SELLING_TIME_INVALID.code
             response['error_msg'] = PAYMENT_206_SELLING_TIME_INVALID.message
             return Response(response)
-        
+
         # Store Check
         if(order.store.status != OC_OPEN or order.menu.status != OC_OPEN):
             response['error_code'] = PAYMENT_206_SELLING_TIME_INVALID.code
