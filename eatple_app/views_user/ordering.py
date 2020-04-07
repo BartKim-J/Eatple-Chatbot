@@ -259,7 +259,7 @@ def kakaoView_StoreListup(kakaoPayload):
                 else:
                     walkTime = '1 ㎞ 이상'
 
-                if(False and store.coverImgURL().find('default') == -1):
+                if(store.coverImgURL().find('default') == -1):
                     thumbnail = {
                         'imageUrl': '{}{}'.format(HOST_URL, store.coverImgURL()),
                         'fixedRatio': 'True',
