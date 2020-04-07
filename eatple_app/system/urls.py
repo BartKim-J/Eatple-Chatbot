@@ -9,7 +9,7 @@ PARTNER_ORDER_SHEET_IMG = '/media/STORE_DB/images/default/partnerOrderSheet.png'
 EATPLE_HOME_IMG = '/media/STORE_DB/images/default/homeBeta07.png'
 EATPLE_SURVEY_IMG = '/media/STORE_DB/images/default/surveyBeta07.png'
 
-EATPLE_MENU_PICKUP_ZONE_FF_IMG = '/media/STORE_DB/images/default/PickupZoneStoreFF_02.png'
+EATPLE_MENU_PICKUP_ZONE_FF_IMG = '/media/STORE_DB/images/default/PickupZoneStoreFF_03.png'
 
 EATPLE_PASS_IMG_01 = '/media/STORE_DB/images/default/EatplePassImg_01.png'
 EATPLE_PASS_IMG_02 = '/media/STORE_DB/images/default/EatplePassImg_02.png'
