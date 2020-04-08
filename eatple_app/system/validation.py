@@ -86,7 +86,7 @@ def sellingTimeCheck():
     prevLunchOrderTimeEnd = orderTimeSheet.GetPrevLunchOrderEditTimeEnd()
 
     # Dinner Order Time 10:31 ~ 16:29
-    dinnerOrderTimeStart = orderTimeSheet.GetPrevLunchOrderEditTimeEnd()
+    dinnerOrderTimeStart = orderTimeSheet.GetDinnerOrderEditTimeStart()
     dinnerOrderTimeEnd = orderTimeSheet.GetDinnerOrderTimeEnd()
 
     # Next Lunch Order Time 16:30 ~ 10:30

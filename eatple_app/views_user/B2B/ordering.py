@@ -529,7 +529,8 @@ def kakaoView_PickupTime(kakaoPayload):
 
         return JsonResponse(kakaoForm.GetForm())
 
-    currentSellingTime = sellingTimeCheck()
+    # currentSellingTime = sellingTimeCheck()
+    currentSellingTime = SELLING_TIME_LUNCH
 
     if (currentSellingTime == None):
         return errorView('잘못된 주문 시간', '정상적인 주문 시간대가 아닙니다.')
@@ -1408,7 +1409,8 @@ def kakaoView_B2B_PickupTime(kakaoPayload):
 
         return JsonResponse(kakaoForm.GetForm())
 
-    currentSellingTime = sellingTimeCheck()
+    # currentSellingTime = sellingTimeCheck()
+    currentSellingTime = SELLING_TIME_LUNCH
 
     if (currentSellingTime == None):
         return errorView('잘못된 주문 시간', '정상적인 주문 시간대가 아닙니다.')
@@ -1586,7 +1588,8 @@ def kakaoView_B2B_OrderPaymentCheck(kakaoPayload):
     if(eatplePassStatus != None):
         return eatplePassStatus
 
-    currentSellingTime = sellingTimeCheck()
+    # currentSellingTime = sellingTimeCheck()
+    currentSellingTime = SELLING_TIME_LUNCH
 
     if (currentSellingTime == None):
         return errorView('Get Invalid Selling Time', '잘못된 주문 시간입니다.')
