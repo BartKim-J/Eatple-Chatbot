@@ -126,8 +126,7 @@ def kakaoView_OrderDetails(kakaoPayload):
                         )
 
                         if(orderByMenu.count() > 0):
-                            # '{}{}'.format(HOST_URL, menu.imgURL())
-                            imageUrl = None
+                            imageUrl = '{}{}'.format(HOST_URL, menu.imgURL())
                             if(partner.store.name == '마치래빗샐러드'):
                                 kakaoForm.ListCard_Push(
                                     '{}'.format(menu.name),
@@ -145,7 +144,8 @@ def kakaoView_OrderDetails(kakaoPayload):
                                 )
                         else:
                             pass
-                    kakaoForm.ListCard_Add(header)
+                    if(orderByMenu.count() > 0):
+                        kakaoForm.ListCard_Add(header)
                 else:
                     pass
 
@@ -195,8 +195,8 @@ def kakaoView_OrderDetails(kakaoPayload):
                             totalCount += orderCount
 
                             if(orderCount > 0):
-                                # '{}{}'.format(HOST_URL, menu.imgURL())
-                                imageUrl = None
+                                imageUrl = '{}{}'.format(
+                                    HOST_URL, menu.imgURL())
 
                                 if(partner.store.name == '마치래빗샐러드'):
                                     kakaoForm.ListCard_Push(
