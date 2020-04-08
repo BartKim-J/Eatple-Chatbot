@@ -197,12 +197,21 @@ def kakaoView_OrderDetails(kakaoPayload):
                                 imageUrl = '{}{}'.format(
                                     HOST_URL, menu.imgURL())
 
-                                kakaoForm.ListCard_Push(
-                                    '{}'.format(menu.name),
-                                    '들어온 주문 : {}개'.format(orderCount),
-                                    imageUrl,
-                                    None
-                                )
+                                if(partner.store.name == '마치래빗샐러드'):
+                                    kakaoForm.ListCard_Push(
+                                        '{}'.format(menu.name),
+                                        '들어온 주문 : {}개 / {}원'.format(
+                                            orderCount, format(orderByPickupTime.first().totalPrice * orderCount, ',')),
+                                        imageUrl,
+                                        None
+                                    )
+                                else:
+                                    kakaoForm.ListCard_Push(
+                                        '{}'.format(menu.name),
+                                        '들어온 주문 : {}개'.format(orderCount),
+                                        imageUrl,
+                                        None
+                                    )
                             else:
                                 pass
 
