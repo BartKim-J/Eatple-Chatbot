@@ -181,8 +181,53 @@ class UserAdmin(ImportExportMixin, admin.ModelAdmin):
         'gender',
         'ci',
         'ci_authenticated_at',
-        'flag_promotion',
+        'create_date',
     )
+
+    fieldsets = [
+        (
+            '기본 정보',
+            {
+                'fields': [
+                    'app_user_id',
+                    'nickname',
+                    'phonenumber',
+                    'email',
+                    'create_date',
+                ]
+            }
+        ),
+        (
+            '사용자 플래그',
+            {
+                'fields': [
+                    'type',
+                    'is_beta_tester',
+                    'flag_promotion',
+                ]
+            }
+        ),
+        (
+            '카카오 연동 정보',
+            {
+                'fields': [
+                    'birthyear',
+                    'birthday',
+                    'gender',
+                    'ci',
+                    'ci_authenticated_at',
+                ]
+            }
+        ),
+        (
+            'B2B',
+            {
+                'fields': [
+                    'company',
+                ]
+            }
+        ),
+    ]
 
     search_fields = ['nickname', 'app_user_id',
                      'phone_number', 'location__address']
@@ -195,14 +240,19 @@ class UserAdmin(ImportExportMixin, admin.ModelAdmin):
         'type',
     )
 
+    list_editable = (
+        'is_beta_tester',
+    )
+
     list_display = (
         'nickname',
-        'type',
         'app_user_id',
+        'type',
         'phonenumber',
         'email',
         'create_date',
         'address',
+        'is_beta_tester',
     )
 
     inlines = [LocationInline]

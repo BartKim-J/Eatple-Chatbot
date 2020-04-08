@@ -133,6 +133,11 @@ class KakaoUser(models.Model):
         verbose_name="프로모션 참가여부"
     )
 
+    is_beta_tester = models.BooleanField(
+        default=False,
+        verbose_name="베타 테스터"
+    )
+
     class Meta:
         abstract = True
 

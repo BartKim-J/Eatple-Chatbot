@@ -206,10 +206,10 @@ def orderUpdate(order):
             elif(order.payment_type == ORDER_PAYMENT_KAKAO_PAY):
                 order = kakaoPayOrderValidation(order)
             else:
-                order.payment_status = EATPLE_ORDER_STATUS_NOT_PUSHED
+                order.payment_status = order.payment_status
 
             if(order.payment_status == EATPLE_ORDER_STATUS_FAILED and
-               order.order_date >= dateNowByTimeZone() - datetime.timedelta(minutes=30)):
+                    order.order_date >= dateNowByTimeZone() - datetime.timedelta(minutes=30)):
                 order.payment_status = EATPLE_ORDER_STATUS_NOT_PUSHED
 
         order.save()
@@ -285,22 +285,21 @@ def orderUpdate(order):
     prevLunchOrderEditTimeEnd = orderTimeSheet.GetPrevLunchOrderEditTimeEnd()
     prevLunchOrderTimeEnd = orderTimeSheet.GetPrevLunchOrderTimeEnd()
 
-    # Dinner Order Edit Time 11:30 ~ 16:25(~ 16:30)
+    # Dinner Order Edit Time
     dinnerOrderEditTimeStart = orderTimeSheet.GetDinnerOrderEditTimeStart()
     dinnerOrderEditTimeEnd = orderTimeSheet.GetDinnerOrderEditTimeEnd()
     dinnerOrderTimeEnd = orderTimeSheet.GetDinnerOrderTimeEnd()
 
-    # Next Lunch Order Edit Time 16:30 ~ 9:30(~ 10:30)
-    # @TEST QA NEED: HOTFIX: 30 -> 25
+    # Next Lunch Order Edit Time
     nextLunchOrderEditTimeStart = orderTimeSheet.GetNextLunchOrderEditTimeStart()
     nextLunchOrderEditTimeEnd = orderTimeSheet.GetNextLunchOrderEditTimeEnd()
     nextLunchOrderTimeEnd = orderTimeSheet.GetNextLunchOrderTimeEnd()
 
-    # Lunch Order Pickup Time (10:30 ~)11:30 ~ 14:00
+    # Lunch Order Pickup Time
     lunchOrderPickupTimeStart = orderTimeSheet.GetLunchOrderPickupTimeStart()
     lunchOrderPickupTimeEnd = orderTimeSheet.GetLunchOrderPickupTimeEnd()
 
-    # Dinner Order Pickup Time (16:30 ~)17:30 ~ 21:00
+    # Dinner Order Pickup Time
     dinnerOrderPickupTimeStart = orderTimeSheet.GetDinnerOrderPickupTimeStart()
     dinnerOrderPickupTimeEnd = orderTimeSheet.GetDinnerOrderPickupTimeEnd()
 
@@ -354,7 +353,7 @@ def orderUpdate(order):
             # Invalid Time Range is Dinner Order Time ( prev phase lunch order ~ dinner order ~ next phase lunch order )
             else:
                 print("주문 완료 - ERROR")
-                order.status = ORDER_STATUS_ORDER_CONFIRMED
+                order.status = ORDER_STATUS_PICKUP_COMPLETED
 
     # Dinner Order
     elif (SELLING_TIME_DINNER == menu.selling_time) and (paymentDateWithoutTime == TODAY):

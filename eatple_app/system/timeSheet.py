@@ -68,11 +68,9 @@ class OrderTimeSheet():
             self.currentDate = setTime
         else:
             self.currentDate = dateNowByTimeZone().replace(microsecond=0)
-            
-            
+
         self.currentDateWithoutTime = self.currentDate.replace(
             hour=0, minute=0, second=0)
-        
 
         self.yesterday = self.currentDateWithoutTime + \
             datetime.timedelta(days=-1)  # Yesterday start
@@ -111,15 +109,15 @@ class OrderTimeSheet():
     # Dinner Order Edit Time
     def GetDinnerOrderEditTimeStart(self):
         return self.currentDateWithoutTime + \
-            datetime.timedelta(hours=11, minutes=30)
+            datetime.timedelta(hours=16, minutes=0)
 
     def GetDinnerOrderEditTimeEnd(self):
         return self.currentDateWithoutTime + \
-            datetime.timedelta(hours=16, minutes=0)
+            datetime.timedelta(hours=19, minutes=0)
 
     def GetDinnerOrderTimeEnd(self):
         return self.currentDateWithoutTime + \
-            datetime.timedelta(hours=16, minutes=0)
+            datetime.timedelta(hours=19, minutes=0)
 
     # Next Lunch Order Edit Time
     def GetNextLunchOrderEditTimeStart(self):
@@ -146,11 +144,11 @@ class OrderTimeSheet():
     # Dinner Order Pickup Time
     def GetDinnerOrderPickupTimeStart(self):
         return self.currentDateWithoutTime + \
-            datetime.timedelta(hours=17, minutes=30)
+            datetime.timedelta(hours=19, minutes=30)
 
     def GetDinnerOrderPickupTimeEnd(self):
         return self.currentDateWithoutTime + \
-            datetime.timedelta(hours=21, minutes=0)
+            datetime.timedelta(hours=20, minutes=30)
 
     # Backend Counter Time
     def GetInitialCountTime(self):

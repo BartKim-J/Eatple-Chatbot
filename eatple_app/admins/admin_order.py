@@ -160,14 +160,57 @@ class OrderAdmin(ImportExportMixin, admin.ModelAdmin):
     b2b_name.short_description = "소속 회사"
 
     fieldsets = [
-        ('기본 정보',            {'fields': [
-         'order_id', 'ordersheet', 'store', 'menu', 'type', ]}),
-        ('구성',                 {'fields': ['totalPrice', 'count', ]}),
-        ('상태',                 {'fields': [
-         'payment_type', 'payment_status', 'status', ]}),
-        ('부탁하기',             {'fields': ['delegate', ]}),
-        ('시간',                 {'fields': [
-         'order_date', 'payment_date', 'pickup_time', 'pickup_complete_date', 'update_date', ]}),
+        (
+            '기본 정보',
+            {
+                'fields': [
+                    'order_id',
+                    'ordersheet',
+                    'store',
+                    'menu',
+                    'type',
+                ]
+            }
+        ),
+        (
+            '구성',
+            {
+                'fields': [
+                    'totalPrice',
+                    'count',
+                ]
+            }
+        ),
+        (
+            '상태',
+            {
+                'fields': [
+                    'payment_type',
+                    'payment_status',
+                    'status',
+                ]
+            }
+        ),
+        (
+            '부탁하기',
+            {
+                'fields': [
+                    'delegate',
+                ]
+            }
+        ),
+        (
+            '시간',
+            {
+                'fields': [
+                    'order_date',
+                    'payment_date',
+                    'pickup_time',
+                    'pickup_complete_date',
+                    'update_date',
+                ]
+            }
+        ),
     ]
 
     search_fields = ['order_id', 'ordersheet__user__nickname',
