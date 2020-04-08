@@ -207,7 +207,7 @@ def kakaoView_StoreListup(kakaoPayload):
         if((area_in_flag and addressMap[2] == "신사동") or area_code == "sinsa"):
             thumbnail = {
                 "imageUrl": '{}{}'.format(HOST_URL, EATPLE_MENU_PICKUP_ZONE_FF_IMG),
-                'fixedRatio': 'False',
+                'fixedRatio': 'True',
                 'width': 800,
                 'height': 800,
             }
