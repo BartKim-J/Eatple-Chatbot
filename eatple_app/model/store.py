@@ -17,6 +17,10 @@ from eatple_app.model.utils import logo_directory_path, cover_directory_path, st
 # Coustom Model Type
 from eatple_app.system.model_type_bank import *
 
+# Models
+from eatple_app.model.menu import Menu
+from eatple_app.model.order import Order
+
 DEFAULT_LOGO_IMAGE_PATH = 'STORE_DB/images/default/logo.png'
 DEFAULT_FILE_PATH = 'STORE_DB/images/'
 
@@ -413,6 +417,23 @@ class Store(StoreInfo, StoreSetting, StoreStatus, StoreSalesInfo, StoreBankAccou
             return self.cover.url
         except ValueError:
             return DEFAULT_LOGO_IMAGE_PATH
+
+    def getCurrentStock(self):
+        currentStock = 0
+        menuList = Menu.objects.filter(store=self)
+
+        for menu in menuList:
+            currentStock += menu.getCurrentStock().count()
+
+        return currentStock
+
+    def getTotalStock(self):
+        totalStock = 0
+
+        totalStock = Order.objects.filter(
+            store=self, payment_status=EATPLE_ORDER_STATUS_PAID).count()
+
+        return totalStock
 
     def __str__(self):
         return '{name}'.format(name=self.name)

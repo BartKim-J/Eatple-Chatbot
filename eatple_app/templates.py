@@ -325,6 +325,17 @@ def getWAS(orderTimeSheet):
     return len(WAS)
 
 
+def getMenuPrice(menuList):
+    totalPrice = 0
+    for menu in menuList:
+
+        totalPrice += menu.price
+
+    result = totalPrice/menuList.count()
+
+    print(result)
+
+
 def showActiveStatus(orderTimeSheet):
     # Test
     test_start_date = dateNowByTimeZone().replace(year=2020, month=3, day=16,
@@ -450,7 +461,12 @@ def dashboard(request):
 
     menuList = Menu.objects.filter(~Q(store__type=STORE_TYPE_PROMOTION)).order_by(
         '-status', '-store__status', '-current_stock', 'store__name')
-    storeList = Store.objects.filter(~Q(type=STORE_TYPE_PROMOTION))
+    storeList = Store.objects.filter(
+        ~Q(type=STORE_TYPE_PROMOTION) &
+        ~Q(name__contains="잇플")
+    ).annotate(
+        currentStock=Sum('menu__current_stock')
+    ).filter(Q(currentStock__gt=0)).order_by('-currentStock')
 
     totalUser = User.objects.all()
     totalUserIncrease = totalUser.filter(
@@ -488,6 +504,7 @@ def dashboard(request):
     userActive = getUserActive()
 
     # showActiveStatus(orderTimeSheet)
+    # getMenuPrice(menuList)
 
     log = LogEntry.objects.all()
 
