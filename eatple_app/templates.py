@@ -26,8 +26,8 @@ def getOrderChart(orderTimeSheet):
         currentDateWithoutTime = currentDateWithoutTime + \
             datetime.timedelta(days=1)
 
-    label = ""
-    data = ""
+    label = ''
+    data = ''
 
     for i in range(21):
         checkData = currentDateWithoutTime + datetime.timedelta(days=-(20 - i))
@@ -44,11 +44,11 @@ def getOrderChart(orderTimeSheet):
              nextLunchOrderEditTimeStart.strftime('%A') == 'Sunday'):
             pass
         else:
-            label += "{} {},".format(checkData.strftime(
+            label += '{} {},'.format(checkData.strftime(
                 '%-m월 %-d일').replace('AM', '오전').replace('PM', '오후'),
                 WEEKDAY[checkData.weekday()])
 
-            data += "{},".format((
+            data += '{},'.format((
                 Order.objects.filter(
                     Q(payment_date__gte=prevLunchOrderEditTimeStart) &
                     Q(payment_date__lt=nextLunchOrderEditTimeStart) &
@@ -56,8 +56,8 @@ def getOrderChart(orderTimeSheet):
                 ).count())
             )
 
-    label = replaceRight(label, ",", "", 1)
-    data = replaceRight(data, ",", "", 1)
+    label = replaceRight(label, ',', '', 1)
+    data = replaceRight(data, ',', '', 1)
 
     return {
         'label': label,
@@ -77,8 +77,8 @@ def getPickupTimeChart(orderTimeSheet):
         currentDateWithoutTime = currentDateWithoutTime + \
             datetime.timedelta(days=1)
 
-    label = ""
-    data = ""
+    label = ''
+    data = ''
 
     checkHours = 5
     minuteInterval = 5
@@ -92,15 +92,15 @@ def getPickupTimeChart(orderTimeSheet):
         endTime = checkData + datetime.timedelta(minutes=minuteInterval)
 
         if(startTime >= currentDate):
-            label += "픽업시간이 아님,"
+            label += '픽업시간이 아님,'
         else:
-            label += "{} ~ {},".format(startTime.strftime(
+            label += '{} ~ {},'.format(startTime.strftime(
                 '%p %-I시 %-M분').replace('AM', '오전').replace('PM', '오후'),
                 endTime.strftime(
                 '%p %-I시 %-M분').replace('AM', '오전').replace('PM', '오후')
             )
 
-        data += "{},".format((
+        data += '{},'.format((
             Order.objects.filter(
                 Q(pickup_complete_date__gte=startTime) &
                 Q(pickup_complete_date__lt=endTime) &
@@ -109,8 +109,8 @@ def getPickupTimeChart(orderTimeSheet):
             ).count())
         )
 
-    label = replaceRight(label, ",", "", 1)
-    data = replaceRight(data, ",", "", 1)
+    label = replaceRight(label, ',', '', 1)
+    data = replaceRight(data, ',', '', 1)
 
     return {
         'label': label,
@@ -129,17 +129,17 @@ def getDailyOrderChart(orderTimeSheet):
     else:
         startTime = orderTimeSheet.GetNextLunchOrderEditTimeStart()
 
-    label = ""
-    data = ""
+    label = ''
+    data = ''
 
     for i in range(24):
         checkStartTime = startTime + datetime.timedelta(hours=i)
         cehckEndTime = startTime + datetime.timedelta(hours=i+1)
 
-        label += "{},".format(checkStartTime.strftime(
+        label += '{},'.format(checkStartTime.strftime(
             '%-m월 %-d일 %p %-I시 %-M분 ~').replace('AM', '오전').replace('PM', '오후'))
 
-        data += "{},".format((
+        data += '{},'.format((
             Order.objects.filter(
                 Q(payment_date__gte=checkStartTime) &
                 Q(payment_date__lt=cehckEndTime) &
@@ -147,8 +147,8 @@ def getDailyOrderChart(orderTimeSheet):
             ).count())
         )
 
-    label = replaceRight(label, ",", "", 1)
-    data = replaceRight(data, ",", "", 1)
+    label = replaceRight(label, ',', '', 1)
+    data = replaceRight(data, ',', '', 1)
 
     return {
         'label': label,
@@ -157,18 +157,18 @@ def getDailyOrderChart(orderTimeSheet):
 
 
 def getMenuStockChart(menuList):
-    label = ""
-    data = ""
+    label = ''
+    data = ''
 
     menuList = menuList.filter(Q(current_stock__gte=1) & Q(
         status=OC_OPEN) & Q(store__status=OC_OPEN))
 
     for menu in menuList:
-        data += "{},".format(menu.current_stock)
-        label += "{},".format(menu.name)
+        data += '{},'.format(menu.current_stock)
+        label += '{},'.format(menu.name)
 
-    data = replaceRight(data, ",", "", 1)
-    label = replaceRight(label, ",", "", 1)
+    data = replaceRight(data, ',', '', 1)
+    label = replaceRight(label, ',', '', 1)
 
     return {
         'data': data,
@@ -246,7 +246,7 @@ def getDAU(orderTimeSheet):
             Q(payment_status=EATPLE_ORDER_STATUS_NOT_PUSHED) |
             Q(payment_status=EATPLE_ORDER_STATUS_READY)
         )
-    ).values_list("ordersheet__user__app_user_id")
+    ).values_list('ordersheet__user__app_user_id')
 
     DAU = list(set(DAU))
 
@@ -270,7 +270,7 @@ def getWAU(orderTimeSheet):
             Q(payment_status=EATPLE_ORDER_STATUS_NOT_PUSHED) |
             Q(payment_status=EATPLE_ORDER_STATUS_READY)
         )
-    ).values_list("ordersheet__user__app_user_id")
+    ).values_list('ordersheet__user__app_user_id')
 
     WAU = list(set(WAU))
 
@@ -294,7 +294,7 @@ def getMAU(orderTimeSheet):
             Q(payment_status=EATPLE_ORDER_STATUS_NOT_PUSHED) |
             Q(payment_status=EATPLE_ORDER_STATUS_READY)
         )
-    ).values_list("ordersheet__user__app_user_id")
+    ).values_list('ordersheet__user__app_user_id')
 
     MAU = list(set(MAU))
 
@@ -318,7 +318,7 @@ def getWAS(orderTimeSheet):
             Q(payment_status=EATPLE_ORDER_STATUS_NOT_PUSHED) |
             Q(payment_status=EATPLE_ORDER_STATUS_READY)
         )
-    ).values_list("store_id")
+    ).values_list('store_id')
 
     WAS = list(set(WAS))
 
@@ -463,7 +463,7 @@ def dashboard(request):
         '-status', '-store__status', '-current_stock', 'store__name')
     storeList = Store.objects.filter(
         ~Q(type=STORE_TYPE_PROMOTION) &
-        ~Q(name__contains="잇플")
+        ~Q(name__contains='잇플')
     ).annotate(
         currentStock=Sum('menu__current_stock')
     ).filter(Q(currentStock__gt=0)).order_by('-currentStock')
@@ -491,7 +491,7 @@ def dashboard(request):
     WAU = getWAU(orderTimeSheet)
     MAU = getMAU(orderTimeSheet)
 
-    areaDataList = orderChart['data'].split(",")
+    areaDataList = orderChart['data'].split(',')
     prevTotalStock = int(areaDataList[len(areaDataList)-2])
     totalStock = 0
 
@@ -510,7 +510,7 @@ def dashboard(request):
 
     return render(request, 'dashboard/dashboard.html', {
         'log': log[:5],
-        'currentDate': "{}".format(currentDate.strftime(
+        'currentDate': '{}'.format(currentDate.strftime(
             '%Y년 %-m월 %-d일 %p %-I시 %-M분 %S초').replace('AM', '오전').replace('PM', '오후')),
         'menus': menuList,
         'stores': storeList,
@@ -553,7 +553,7 @@ def sales(request):
     menuList = Menu.objects.filter(~Q(store__type=STORE_TYPE_PROMOTION)).order_by(
         '-status', '-store__status', '-current_stock', 'store__name')
     storeList = Store.objects.filter(
-        ~Q(type=STORE_TYPE_PROMOTION) & ~Q(name__contains="잇플"))
+        ~Q(type=STORE_TYPE_PROMOTION) & ~Q(name__contains='잇플'))
 
     totalUser = User.objects.all()
     totalUserIncrease = totalUser.filter(
@@ -572,7 +572,7 @@ def sales(request):
 
     WAS = getWAS(orderTimeSheet)
 
-    areaDataList = orderChart['data'].split(",")
+    areaDataList = orderChart['data'].split(',')
     prevTotalStock = int(areaDataList[len(areaDataList)-2])
     totalStock = 0
     for menu in menuList:
@@ -582,7 +582,7 @@ def sales(request):
     orderFailed = getOrderFailed(orderTimeSheet)
 
     return render(request, 'dashboard/sales/sales.html', {
-        'currentDate': "{}".format(currentDate.strftime(
+        'currentDate': '{}'.format(currentDate.strftime(
             '%Y년 %-m월 %-d일 %p %-I시 %-M분 %S초').replace('AM', '오전').replace('PM', '오후')),
         'menus': menuList,
         'stores': storeList,
@@ -609,7 +609,7 @@ def sales_menulist(request):
     menuList = Menu.objects.filter(~Q(store__type=STORE_TYPE_PROMOTION)).order_by(
         '-status', '-store__status', '-current_stock', 'store__name')
     storeList = Store.objects.filter(
-        ~Q(type=STORE_TYPE_PROMOTION) & ~Q(name__contains="잇플"))
+        ~Q(type=STORE_TYPE_PROMOTION) & ~Q(name__contains='잇플'))
 
     totalUser = User.objects.all()
     totalUserIncrease = totalUser.filter(
@@ -628,7 +628,7 @@ def sales_menulist(request):
 
     WAS = getWAS(orderTimeSheet)
 
-    areaDataList = orderChart['data'].split(",")
+    areaDataList = orderChart['data'].split(',')
     prevTotalStock = int(areaDataList[len(areaDataList)-2])
     totalStock = 0
     for menu in menuList:
@@ -638,7 +638,7 @@ def sales_menulist(request):
     orderFailed = getOrderFailed(orderTimeSheet)
 
     return render(request, 'dashboard/sales/sales_menulist.html', {
-        'currentDate': "{}".format(currentDate.strftime(
+        'currentDate': '{}'.format(currentDate.strftime(
             '%Y년 %-m월 %-d일 %p %-I시 %-M분 %S초').replace('AM', '오전').replace('PM', '오후')),
         'menus': menuList,
         'stores': storeList,
