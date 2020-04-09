@@ -26,7 +26,7 @@ class OrderRecordInline(admin.TabularInline):
 class OrderRecordSheetAdmin(ImportExportMixin, admin.ModelAdmin):
 
     def delegate_status(self, obj):
-        if(obj.status):
+        if(obj.order.menu != None):
             return 'O'
         else:
             return 'X'

@@ -112,6 +112,8 @@ def kakaoView_OrderDetails(kakaoPayload):
                 }
 
                 if(menuList):
+                    totalCount = 0
+                    
                     for menu in menuList:
                         orderByMenu = Order.objects.filter(menu=menu).filter(
                             (
@@ -124,6 +126,8 @@ def kakaoView_OrderDetails(kakaoPayload):
                             Q(menu=menu) &
                             Q(pickup_time__gte=orderTimeSheet.GetLunchOrderPickupTimeStart())
                         )
+
+                        totalCount += orderByMenu.count()
 
                         if(orderByMenu.count() > 0):
                             imageUrl = '{}{}'.format(HOST_URL, menu.imgURL())
@@ -144,8 +148,17 @@ def kakaoView_OrderDetails(kakaoPayload):
                                 )
                         else:
                             pass
-                    if(orderByMenu.count() > 0):
+                        
+                    if(totalCount > 0):
                         kakaoForm.ListCard_Add(header)
+                    else:
+                        kakaoForm.BasicCard_Push(
+                            '오늘은 들어온 주문이 없어요.',
+                            '',
+                            {},
+                            []
+                        )
+                        kakaoForm.BasicCard_Add()
                 else:
                     pass
 
