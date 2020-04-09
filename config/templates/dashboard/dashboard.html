@@ -7,7 +7,6 @@
 {% block content %}
     <div class="container-fluid">
         <div class="card-body">
-            <!-- 6 Card -->
             <div class="row">
                 <!-- Total User Counter Card -->
                 <div class="col-xl-3 col-md-6 mb-4">
@@ -83,8 +82,6 @@
 
             </div>
 
-
-            <!-- Charts -->
             <div class="row">
                 <!-- Area Chart -->
                 <div class="col-xl-6 col-md-6 col-lg-6">
@@ -119,10 +116,9 @@
                 </div>
             </div>
 
-            <!-- Daily Area Chart -->
             <div class="row">
                 <!-- Pie Chart -->
-                <div class="col-xl-4 col-lg-5">
+                <div class="col-md-12 col-xl-3 col-lg-3">
                     <div class="card bg-dark text-white mb-4">
                         <!-- Card Header - Dropdown -->
                         <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
@@ -142,7 +138,7 @@
                     </div>
                 </div>
 
-                <div class="col-md-12 col-lg-6 col-xl-5">
+                <div class="col-md-12 col-lg-4 col-xl-4">
                     <div class="card bg-dark m-b-30">
                         <div class="card-header">                                
                             <div class="row align-items-center">
@@ -164,7 +160,7 @@
                                     <th class="m-0 font-weight-bold text-primary" scope="col ">로고</th>
                                     <th class="m-0 font-weight-bold text-primary" scope="col">매장</th>
                                     <th class="m-0 font-weight-bold text-primary" scope="col">일일 주문건</th>
-                                    <th class="m-0 font-weight-bold text-primary" scope="col">총 주문에 대한 비율</th>
+                                    <th class="m-0 font-weight-bold text-primary" scope="col">전체 주문건</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -219,7 +215,7 @@
                                             <td>
                                                 <div class="row">
                                                     <div class="col-6">
-                                                    {{ store.getPrevPrevMonthStock }} 건
+                                                    {{ store.getPrevPrevMonthStock.0 }} 건
                                                     </div>
                                                     <div class="col-6">
                                                         <p>
@@ -238,7 +234,7 @@
                                                     </div>
                                                 </row>
                                             </td>
-                                            <td>{{ store.getTotalStock }} 건({{ store.getPrevPrevMonthStock|div:store.getTotalStock }}%)</td>
+                                            <td>{{ store.getPrevPrevMonthStock.0|div:store.getPrevPrevMonthStock.1 }}%</td>
                                         </tr>
                                     {% endfor %}
                                 </tbody>
@@ -267,9 +263,9 @@
                                 <table class="table table-borderless mb-2">
                                 <thead>
                                     <tr>
-                                    <th class="m-0 font-weight-bold text-primary" scope="col ">로고</th>
+                                    <th class="m-0 font-weight-bold text-primary" scope="col">로고</th>
                                     <th class="m-0 font-weight-bold text-primary" scope="col">매장</th>
-                                    <th class="m-0 font-weight-bold text-primary" scope="col">월 주문건</th>
+                                    <th class="m-0 font-weight-bold text-primary" scope="col">월 주문건 수</th>
                                     <th class="m-0 font-weight-bold text-primary" scope="col">주문 차지 비율</th>
                                     </tr>
                                 </thead>
@@ -281,9 +277,9 @@
                                             <td>
                                                 <div class="row">
                                                     <div class="col-6">
-                                                    {{ store.getPrevMonthStock }} 건
+                                                    {{ store.getPrevMonthStock.0 }} 건
                                                     </div>
-                                                    <div class="col-6">
+                                                    <div class="col-2">
                                                         <p>
                                                             {% if  store.getPrevIncreaseStock > 0 %}
                                                             <span class="badge badge-success-inverse font-16">
@@ -300,7 +296,7 @@
                                                     </div>
                                                 </row>
                                             </td>
-                                            <td>{{ store.getTotalStock }} 건({{ store.getPrevMonthStock|div:store.getTotalStock }}%)</td>
+                                            <td>{{ store.getPrevMonthStock.0|div:store.getPrevMonthStock.1 }}%</td>
                                         </tr>
                                     {% endfor %}
                                 </tbody>
@@ -329,9 +325,9 @@
                                 <table class="table table-borderless mb-2">
                                 <thead>
                                     <tr>
-                                    <th class="m-0 font-weight-bold text-primary" scope="col ">로고</th>
+                                    <th class="m-0 font-weight-bold text-primary" scope="col">로고</th>
                                     <th class="m-0 font-weight-bold text-primary" scope="col">매장</th>
-                                    <th class="m-0 font-weight-bold text-primary" scope="col">월 주문건</th>
+                                    <th class="m-0 font-weight-bold text-primary" scope="col">월 주문건 수</th>
                                     <th class="m-0 font-weight-bold text-primary" scope="col">주문 차지 비율</th>
                                     </tr>
                                 </thead>
@@ -343,9 +339,9 @@
                                             <td>
                                                 <div class="row">
                                                     <div class="col-6">
-                                                        {{ store.getMontlyStock }} 건
+                                                        {{ store.getMontlyStock.0 }} 건
                                                     </div>
-                                                    <div class="col-6">
+                                                    <div class="col-2">
                                                         <p>
                                                             {% if  store.getCurrentIncreaseStock > 0 %}
                                                             <span class="badge badge-success-inverse font-16">
@@ -361,7 +357,7 @@
                                                         </p>
                                                     </div>
                                             </td>
-                                            <td>{{ store.getTotalStock }} 건({{ store.getMontlyStock|div:store.getTotalStock }}%)</td>
+                                            <td>{{ store.getMontlyStock.0|div:store.getMontlyStock.1 }}%</td>
                                         </tr>
                                     {% endfor %}
                                 </tbody>

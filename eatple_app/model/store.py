@@ -427,6 +427,12 @@ class Store(StoreInfo, StoreSetting, StoreStatus, StoreSalesInfo, StoreBankAccou
 
         return currentStock
 
+    def getTotalStock(self):
+        totalStock = Order.objects.filter(
+            store=self, payment_status=EATPLE_ORDER_STATUS_PAID).count()
+
+        return totalStock
+
     def getMontlyStock(self, before=0):
         orderTimeSheet = OrderTimeSheet()
 
@@ -445,16 +451,18 @@ class Store(StoreInfo, StoreSetting, StoreStatus, StoreSalesInfo, StoreBankAccou
         range_end = origin_date.replace(year=target_year, month=target_month, day=calendar.monthrange(
             target_year, target_month)[1], hour=23, minute=59, second=59)
 
-        totalStock = Order.objects.filter(
+        orderList = Order.objects.filter(
             (
                 Q(payment_date__gte=range_start) &
                 Q(payment_date__lte=range_end)
             ) &
-            Q(store=self) &
             Q(payment_status=EATPLE_ORDER_STATUS_PAID)
-        ).count()
+        )
 
-        return totalStock
+        allStock = orderList.count()
+        totalStock = orderList.filter(Q(store=self)).count()
+
+        return [totalStock, allStock]
 
     def getPrevPrevMonthStock(self):
         return self.getMontlyStock(2)
@@ -462,20 +470,14 @@ class Store(StoreInfo, StoreSetting, StoreStatus, StoreSalesInfo, StoreBankAccou
     def getPrevMonthStock(self):
         return self.getMontlyStock(1)
 
-    def getTotalStock(self):
-        totalStock = Order.objects.filter(
-            store=self, payment_status=EATPLE_ORDER_STATUS_PAID).count()
-
-        return totalStock
-
     def getPrevPrevIncreaseStock(self):
-        return self.getPrevPrevMonthStock() - self.getMontlyStock(3)
+        return self.getMontlyStock(2)[0] - self.getMontlyStock(3)[0]
 
     def getPrevIncreaseStock(self):
-        return self.getPrevMonthStock() - self.getPrevPrevMonthStock()
+        return self.getMontlyStock(1)[0] - self.getMontlyStock(2)[0]
 
     def getCurrentIncreaseStock(self):
-        return self.getMontlyStock() - self.getPrevMonthStock()
+        return self.getMontlyStock()[0] - self.getMontlyStock(1)[0]
 
     def __str__(self):
         return '{name}'.format(name=self.name)

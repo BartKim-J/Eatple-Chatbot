@@ -514,9 +514,9 @@ def dashboard(request):
             '%Y년 %-m월 %-d일 %p %-I시 %-M분 %S초').replace('AM', '오전').replace('PM', '오후')),
         'menus': menuList,
 
-        'storesOrderByPrevPrevMonth': sorted(storeList, key=(lambda i: -i.getPrevPrevMonthStock())),
-        'storesOrderByPrevMonth': sorted(storeList, key=(lambda i: -i.getPrevMonthStock())),
-        'stores': sorted(storeList, key=(lambda i: -i.getMontlyStock())),
+        'storesOrderByPrevPrevMonth': sorted(storeList, key=(lambda i: -i.getPrevPrevMonthStock()[0])),
+        'storesOrderByPrevMonth': sorted(storeList, key=(lambda i: -i.getPrevMonthStock()[0])),
+        'stores': sorted(storeList, key=(lambda i: -i.getMontlyStock()[0])),
         'storesWithStock': storeList.filter(Q(currentStock__gt=0)),
 
         'totalStockIncrease': totalStock - prevTotalStock,

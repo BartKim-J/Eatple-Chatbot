@@ -32,14 +32,14 @@ class OrderRecordSheetAdmin(ImportExportMixin, admin.ModelAdmin):
         return qs.exclude(Q(user__is_staff=True))
 
     def delegate_status(self, obj):
-        if(obj.order.menu != None):
+        if(obj.order != None and obj.order.menu != None):
             return 'O'
         else:
             return 'X'
     delegate_status.short_description = "메뉴 선택 여부"
 
     def delegate_paid(self, obj):
-        if(obj.order.payment_status == EATPLE_ORDER_STATUS_PAID):
+        if(obj.order != None and obj.order.payment_status == EATPLE_ORDER_STATUS_PAID):
             return 'O'
         else:
             return 'X'
