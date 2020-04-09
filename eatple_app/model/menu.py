@@ -111,6 +111,7 @@ class Tag(models.Model):
 
     name = models.CharField(
         max_length=WORD_LENGTH,
+        unique=True,
         verbose_name="검색 태그"
     )
 
@@ -134,6 +135,7 @@ class PickupTime(models.Model):
 
     time = models.TimeField(
         default=timezone.now,
+        unique=True,
         verbose_name="픽업 시간"
     )
 

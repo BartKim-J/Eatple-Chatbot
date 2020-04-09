@@ -202,6 +202,7 @@ class UserAdmin(ImportExportMixin, admin.ModelAdmin):
             {
                 'fields': [
                     'type',
+                    'is_staff',
                     'is_beta_tester',
                     'flag_promotion',
                 ]

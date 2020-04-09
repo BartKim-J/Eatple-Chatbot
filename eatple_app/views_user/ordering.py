@@ -885,8 +885,7 @@ def kakaoView_PickupTime(kakaoPayload):
 
         return JsonResponse(kakaoForm.GetForm())
 
-    # currentSellingTime = sellingTimeCheck()
-    currentSellingTime = SELLING_TIME_LUNCH
+    currentSellingTime = sellingTimeCheck()
 
     if (currentSellingTime == None):
         return errorView('잘못된 주문 시간', '정상적인 주문 시간대가 아닙니다.')

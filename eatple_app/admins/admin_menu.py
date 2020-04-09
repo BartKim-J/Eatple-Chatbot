@@ -111,8 +111,13 @@ class MenuAdmin(ImportExportMixin, admin.GeoModelAdmin):
         ),
     ]
 
-    search_fields = ['name', 'menu_id',
-                     'store__name', 'stocktable__company__name']
+    search_fields = [
+        'name',
+        'tag__name',
+        'menu_id',
+        'store__name',
+        'stocktable__company__name'
+    ]
 
     list_filter = (
         'store',
