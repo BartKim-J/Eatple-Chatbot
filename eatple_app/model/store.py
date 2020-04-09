@@ -441,32 +441,38 @@ class Store(StoreInfo, StoreSetting, StoreStatus, StoreSalesInfo, StoreBankAccou
 
         range_start = origin_date.replace(
             year=target_year, month=target_month, day=1, hour=0, minute=0, second=0)
-        
+
         range_end = origin_date.replace(year=target_year, month=target_month, day=calendar.monthrange(
             target_year, target_month)[1], hour=23, minute=59, second=59)
 
         totalStock = Order.objects.filter(
-                (
-                    Q(payment_date__gte=range_start) &
-                    Q(payment_date__lte=range_end)
-                ) &
-                Q(store=self) & 
-                Q(payment_status=EATPLE_ORDER_STATUS_PAID)
-            ).count()
+            (
+                Q(payment_date__gte=range_start) &
+                Q(payment_date__lte=range_end)
+            ) &
+            Q(store=self) &
+            Q(payment_status=EATPLE_ORDER_STATUS_PAID)
+        ).count()
 
         return totalStock
 
+    def getPrevPrevMonthStock(self):
+        return self.getMontlyStock(2)
+
     def getPrevMonthStock(self):
         return self.getMontlyStock(1)
-    
+
     def getTotalStock(self):
         totalStock = Order.objects.filter(
             store=self, payment_status=EATPLE_ORDER_STATUS_PAID).count()
 
         return totalStock
 
+    def getPrevPrevIncreaseStock(self):
+        return self.getPrevPrevMonthStock() - self.getMontlyStock(3)
+
     def getPrevIncreaseStock(self):
-        return self.getPrevMonthStock() - self.getMontlyStock(2)
+        return self.getPrevMonthStock() - self.getPrevPrevMonthStock()
 
     def getCurrentIncreaseStock(self):
         return self.getMontlyStock() - self.getPrevMonthStock()
