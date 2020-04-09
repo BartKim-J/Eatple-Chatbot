@@ -56,7 +56,7 @@ def SlackLogUsedOrder(order):
                     "text": {
                         "type": "mrkdwn",
                         "text": (
-                            "*{dev}{name}님이 잇플패스를 사용했습니다.* :white_check_mark:\n"
+                            "*{dev}{name}님이 잇플패스를 사용했습니다.*   :white_check_mark:\n"
                             "```\n"
                             "주문번호 [ <{host_url}/admin/eatple_app/order/{order_index}/change|{order_id}> ]\n"
                             " - 매장명 : {store}\n"
@@ -112,7 +112,7 @@ def SlackLogPayOrder(order):
                     "text": {
                         "type": "mrkdwn",
                         "text": (
-                            "*{dev}{name}님이 일반 잇플패스를 발급함* :label:\n"
+                            "*{dev}{name}님이 일반 잇플패스를 발급함*   :label:\n"
                             "```\n"
                             "주문번호 [ <{host_url}/admin/eatple_app/order/{order_index}/change|{order_id}> ]\n"
                             " - 매장명 : {store}\n"
@@ -132,11 +132,6 @@ def SlackLogPayOrder(order):
                             order_index=order.id,
                         )
                     },
-                    # "accessory": {
-                    #    "type": "image",
-                    #    "image_url": '{}{}'.format(HOST_URL, order.menu.imgURL()),
-                    #    "alt_text": "menu"
-                    # }
                 },
                 {
                     "type": "divider"
@@ -252,8 +247,6 @@ def SlackLogCancelOrder(order):
         HOST_URL = 'https://dev.eatple.com'
         DEV_LOG = '개발 서버에서 '
 
-    HOST_URL = 'https://www.eatple.com:{}'.format(SERVER_PORT)
-
     res = client.chat_postMessage(
         channel=SLACK_CHANNEL_EATPLE_LOG,
         blocks=[
@@ -265,7 +258,7 @@ def SlackLogCancelOrder(order):
                 "text": {
                     "type": "mrkdwn",
                     "text": (
-                        "*{dev}{name}님이 잇플패스를 취소함* :bangbang:\n"
+                        "*{dev}{name}님이 잇플패스를 취소함*   :bangbang:\n"
                         "```\n"
                         "주문번호 [ <{host_url}/admin/eatple_app/order/{order_index}/change|{order_id}> ]\n"
                         " - 매장명 : {store}\n"

@@ -127,6 +127,25 @@ class KakaoUser(models.Model):
         null=True
     )
 
+    class Meta:
+        abstract = True
+
+
+class User(KakaoUser, models.Model):
+    class Meta:
+        verbose_name = "유저 - 사용자"
+        verbose_name_plural = "유저 - 사용자"
+
+        ordering = ['-create_date']
+
+    company = models.ForeignKey(
+        'Company',
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+        verbose_name="소속 회사"
+    )
+
     # @PROTMOTINO
     flag_promotion = models.BooleanField(
         default=False,
@@ -147,26 +166,7 @@ class KakaoUser(models.Model):
         default=False,
         verbose_name="베타 테스터"
     )
-
-    class Meta:
-        abstract = True
-
-
-class User(KakaoUser, models.Model):
-    class Meta:
-        verbose_name = "유저 - 사용자"
-        verbose_name_plural = "유저 - 사용자"
-
-        ordering = ['-create_date']
-
-    company = models.ForeignKey(
-        'Company',
-        on_delete=models.CASCADE,
-        null=True,
-        blank=True,
-        verbose_name="소속 회사"
-    )
-
+    
     create_date = models.DateTimeField(
         auto_now_add=True,
         verbose_name="가입일자"

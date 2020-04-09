@@ -87,6 +87,16 @@ class Partner(KakaoUser, models.Model):
         verbose_name = "권한"
     )
 
+    is_inactive = models.BooleanField(
+        default=False,
+        verbose_name="비활성화"
+    )
+
+    is_staff = models.BooleanField(
+        default=False,
+        verbose_name="스태프"
+    )
+
     create_date = models.DateTimeField(
         auto_now=True,
         verbose_name = "가입일자"
