@@ -38,13 +38,11 @@ def SlackLogSignUp(user):
 
 def SlackLogPayOrder(order):
     if(settings.SETTING_ID == 'DEPLOY'):
-        SERVER_PORT = 8000
+        HOST_URL = 'https://eapi.eatple.com'
         DEV_LOG = ''
     else:
-        SERVER_PORT = 8001
+        HOST_URL = 'https://dev.eatple.com'
         DEV_LOG = '개발 서버에서 '
-
-    HOST_URL = 'https://www.eatple.com:{}'.format(SERVER_PORT)
 
     if(order.type == ORDER_TYPE_NORMAL):
         res = client.chat_postMessage(
@@ -192,10 +190,10 @@ def SlackLogPayOrder(order):
 
 def SlackLogCancelOrder(order):
     if(settings.SETTING_ID == 'DEPLOY'):
-        SERVER_PORT = 8000
+        HOST_URL = 'https://eapi.eatple.com'
         DEV_LOG = ''
     else:
-        SERVER_PORT = 8001
+        HOST_URL = 'https://dev.eatple.com'
         DEV_LOG = '개발 서버에서 '
 
     HOST_URL = 'https://www.eatple.com:{}'.format(SERVER_PORT)

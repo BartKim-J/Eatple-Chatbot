@@ -242,8 +242,7 @@ def orderUpdate(order):
             order.status = ORDER_STATUS_ORDER_CONFIRM_WAIT
             order.save()
 
-            # @SLACK LOGGER
-            SlackLogPayOrder(order)
+            order.orderPay()
 
         # @PROMOTION
         if(order.type == ORDER_TYPE_PROMOTION):
@@ -558,6 +557,15 @@ class Order(models.Model):
 
     def orderStatusUpdate(self):
         return orderUpdate(self)
+
+    def orderPay(self):
+        self.payment_status = EATPLE_ORDER_STATUS_PAID
+        self.save()
+
+        # @SLACK LOGGER
+        SlackLogPayOrder(self)
+
+        return self
 
     def orderCancel(self):
         isCancelled = False
