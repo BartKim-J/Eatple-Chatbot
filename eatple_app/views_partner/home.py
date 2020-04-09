@@ -71,29 +71,22 @@ def kakaoView_Home(partner):
     EatplusSkillLog('Home')
 
     kakaoForm = KakaoForm()
-    """
-    # UPDATE
-    kakaoForm.BasicCard_Push(
-        '📌 「{}」 v{}.{}.{}({})'.format(
-            VERSION_CODE,
-            MAJOR_VERSION,
-            MINOR_VERSION,
-            BUILD_VERSION,
-            VERSION_LEVEL,),
-        '🛠️ 업데이트 내역을 확인하세요. ➔',
-        {},
-        [],
-    )
-    
-    kakaoForm.BasicCard_Push(
-        '🔗 \'카카오 페이\' 추가',
-        '카카오 원클릭 결제가 추가되었어요.',
-        {},
-        [],
-    )
-    
-    kakaoForm.BasicCard_Add()
-    """
+
+    QUICKREPLIES_MAP = []
+
+    if(partner.is_staff):
+        QUICKREPLIES_MAP.append(            
+            {
+                'action': 'block',
+                'label': '영업 홈',
+                'messageText': KAKAO_EMOJI_LOADING,
+                'blockId': KAKAO_BLOCK_PARTNER_DEMO_HOME,
+                'extra': {
+                    KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_PARTNER_HOME
+                }
+            },
+        )
+
 
     buttons = [
         {
@@ -131,6 +124,8 @@ def kakaoView_Home(partner):
         buttons
     )
     kakaoForm.BasicCard_Add()
+
+    kakaoForm.QuickReplies_AddWithMap(QUICKREPLIES_MAP)
 
     return JsonResponse(kakaoForm.GetForm())
 
