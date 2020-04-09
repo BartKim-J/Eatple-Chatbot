@@ -36,6 +36,58 @@ def SlackLogSignUp(user):
     return res
 
 
+def SlackLogUsedOrder(order):
+    if(settings.SETTING_ID == 'DEPLOY'):
+        HOST_URL = 'https://eapi.eatple.com'
+        DEV_LOG = ''
+    else:
+        HOST_URL = 'https://dev.eatple.com'
+        DEV_LOG = '개발 서버에서 '
+
+    if(order.type == ORDER_TYPE_NORMAL):
+        res = client.chat_postMessage(
+            channel=SLACK_CHANNEL_EATPLE_LOG,
+            blocks=[
+                {
+                    "type": "divider"
+                },
+                {
+                    "type": "section",
+                    "text": {
+                        "type": "mrkdwn",
+                        "text": (
+                            "*{dev}{name}님이 잇플패스를 사용했습니다.*\n"
+                            "```\n"
+                            "주문번호 [ <{host_url}/admin/eatple_app/order/{order_index}/change|{order_id}> ]\n"
+                            " - 픽업 시간 {pickup_time}\n\n"
+                            " > <{host_url}/admin/eatple_app/order/{order_index}/change|주문 자세히 보기>\n"
+                            "```"
+                        ).format(
+                            order_id=order.order_id,
+                            dev=DEV_LOG,
+                            name=order.ordersheet.user.nickname,
+                            pickup_time=dateByTimeZone(order.pickup_time).strftime(
+                                '%-m월 %-d일 %p %-I시 %-M분').replace('AM', '오전').replace('PM', '오후'),
+                            host_url=HOST_URL,
+                            order_index=order.id,
+                        )
+                    },
+                },
+                {
+                    "type": "divider"
+                },
+            ]
+        )
+        return res
+
+    else:
+        res = client.chat_postMessage(
+            channel=SLACK_CHANNEL_EATPLE_LOG,
+            text="{name}님이 이상한 주문을 함"
+        )
+        return res
+
+
 def SlackLogPayOrder(order):
     if(settings.SETTING_ID == 'DEPLOY'):
         HOST_URL = 'https://eapi.eatple.com'

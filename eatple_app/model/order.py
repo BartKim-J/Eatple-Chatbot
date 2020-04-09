@@ -1,7 +1,7 @@
 # Define
 from eatple_app.define import *
 
-from eatple_app.apis.slack.slack_logger import SlackLogPayOrder, SlackLogCancelOrder
+from eatple_app.apis.slack.slack_logger import SlackLogPayOrder, SlackLogCancelOrder, SlackLogUsedOrder
 
 # Django Library
 from django.urls import reverse
@@ -570,9 +570,6 @@ class Order(models.Model):
     def orderCancel(self):
         isCancelled = False
 
-        # @SLACK LOGGER
-        SlackLogCancelOrder(self)
-
         # B2B User Pass
         if(self.ordersheet.user.type == USER_TYPE_B2B and
            self.ordersheet.user.company != None and
@@ -600,6 +597,9 @@ class Order(models.Model):
             orderRecordSheet.recordUpdate(
                 orderRecordSheet.user, orderRecordSheet.order, ORDER_RECORD_PAYMENT_CANCELED)
 
+            # @SLACK LOGGER
+            SlackLogCancelOrder(self)
+
         return isCancelled
 
     def orderUsed(self):
@@ -619,6 +619,9 @@ class Order(models.Model):
         orderRecordSheet.recordUpdate(
             orderRecordSheet.user, orderRecordSheet.order, ORDER_RECORD_PAYMENT_COMPLETED)
 
+        # @SLACK LOGGER
+        SlackLogUsedOrder(self)
+        
         return self
 
     def orderDelegate(self, order):
