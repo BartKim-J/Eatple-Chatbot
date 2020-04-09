@@ -95,12 +95,12 @@ def sellingTimeCheck():
 
     if(prevLunchOrderTimeEnd < currentDate) and (currentDate < dinnerOrderTimeStart):
         return SELLING_TIME_DINNER
-    elif(dinnerOrderTimeStart < currentDate) and (currentDate < dinnerOrderTimeEnd):
-        return SELLING_TIME_DINNER
     elif(prevLunchOrderTimeStart < currentDate) and (currentDate < prevLunchOrderTimeEnd):
         return SELLING_TIME_LUNCH
     elif(nextLunchOrderTimeStart < currentDate) and (currentDate < nextLunchOrderTimeEnd):
         return SELLING_TIME_LUNCH
+    elif(dinnerOrderTimeStart < currentDate) and (currentDate < dinnerOrderTimeEnd):
+        return SELLING_TIME_DINNER
     else:
         return None
 
