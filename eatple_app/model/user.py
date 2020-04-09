@@ -133,6 +133,11 @@ class KakaoUser(models.Model):
         verbose_name="프로모션 참가여부"
     )
 
+    is_inactive = models.BooleanField(
+        default=False,
+        verbose_name="비활성화"
+    )
+
     is_staff = models.BooleanField(
         default=False,
         verbose_name="스태프"

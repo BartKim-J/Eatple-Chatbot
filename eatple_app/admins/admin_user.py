@@ -202,6 +202,7 @@ class UserAdmin(ImportExportMixin, admin.ModelAdmin):
             {
                 'fields': [
                     'type',
+                    'is_inactive',
                     'is_staff',
                     'is_beta_tester',
                     'flag_promotion',
@@ -231,9 +232,9 @@ class UserAdmin(ImportExportMixin, admin.ModelAdmin):
     ]
 
     search_fields = [
-        'nickname', 
+        'nickname',
         'app_user_id',
-        'phone_number', 
+        'phone_number',
         'location__address'
     ]
 
@@ -248,6 +249,7 @@ class UserAdmin(ImportExportMixin, admin.ModelAdmin):
     list_editable = (
         'is_beta_tester',
         'is_staff',
+        'is_inactive',
     )
 
     list_display = (
@@ -260,6 +262,7 @@ class UserAdmin(ImportExportMixin, admin.ModelAdmin):
         'address',
         'is_staff',
         'is_beta_tester',
+        'is_inactive',
     )
 
     inlines = [LocationInline]

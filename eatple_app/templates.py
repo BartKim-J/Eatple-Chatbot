@@ -466,7 +466,7 @@ def dashboard(request):
         ~Q(name__contains='잇플')
     ).annotate(
         currentStock=Sum('menu__current_stock')
-    ).filter(Q(currentStock__gt=0)).order_by('-currentStock')
+    ).order_by('-currentStock')
 
     totalUser = User.objects.all()
     totalUserIncrease = totalUser.filter(
@@ -513,7 +513,9 @@ def dashboard(request):
         'currentDate': '{}'.format(currentDate.strftime(
             '%Y년 %-m월 %-d일 %p %-I시 %-M분 %S초').replace('AM', '오전').replace('PM', '오후')),
         'menus': menuList,
-        'stores': storeList,
+        'stores': sorted(storeList, key=(lambda i: -i.getMontlyStock())),
+        'storesOrderByPrevMonth': sorted(storeList, key=(lambda i: -i.getPrevMonthStock())),
+        'storesWithStock': storeList.filter(Q(currentStock__gt=0)),
 
         'totalStockIncrease': totalStock - prevTotalStock,
         'totalStock': totalStock,

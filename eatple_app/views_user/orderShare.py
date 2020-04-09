@@ -13,9 +13,12 @@ import phonenumbers
 
 def getDelegateUser(phone_number):
     try:
-        user = User.objects.get(phone_number=phone_number)
+        user = User.objects.get(
+            Q(phone_number=phone_number) &
+            Q(is_inactive=False)
+        )
         return user
-    except (User.DoesNotExist, ValueError):
+    except (User.DoesNotExist, User.MultipleObjectsReturned, ValueError):
         return None
 
 

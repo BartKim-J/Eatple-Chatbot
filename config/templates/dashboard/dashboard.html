@@ -50,7 +50,7 @@
                         <div class="card-body">
                             <div class="row no-gutters align-items-center">
                                 <div class="col mr-2">
-                                    <div class="text-xs font-weight-bold text-secondary text-uppercase mb-1">일일 판매량</div>
+                                    <div class="text-xs font-weight-bold text-secondary text-uppercase mb-1">일일 주문건</div>
                                     <div class="h6 font-weight-bold" id="TotalStockStatus"><i id="TotalStockStatusIcon" class="fas"></i> {{ totalStockIncrease }}</div>
                                     <div class="h5 mb-0 font-weight-bold text-gray-100">{{ totalStock }} 개</div>
                                 </div>
@@ -163,12 +163,12 @@
                                     <tr>
                                     <th class="m-0 font-weight-bold text-primary" scope="col ">로고</th>
                                     <th class="m-0 font-weight-bold text-primary" scope="col">매장</th>
-                                    <th class="m-0 font-weight-bold text-primary" scope="col">일일 판매량</th>
-                                    <th class="m-0 font-weight-bold text-primary" scope="col">총 판매량</th>
+                                    <th class="m-0 font-weight-bold text-primary" scope="col">일일 주문건</th>
+                                    <th class="m-0 font-weight-bold text-primary" scope="col">총 주문에 대한 비율</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {% for store in stores|slice:":10" %}
+                                    {% for store in storesWithStock|slice:":10" %}
                                         <tr>
                                             <th scope="row"><img class="store-logo" src="{{ store.logo.url }}""></th>
                                             <td>{{ store.name }}</td>
@@ -183,6 +183,131 @@
                     </div>
                 </div>
                 
+            </div>
+
+            <div class="row">
+                <div class="col-md-12 col-lg-6 col-xl-6">
+                    <div class="card bg-dark m-b-30">
+                        <div class="card-header">                                
+                            <div class="row align-items-center">
+                                <div class="col-8">
+                                    <h5 class="m-0 font-weight-bold text-primary">이전달 업체별 주문건</h5>
+                                </div>
+                                <div class="col-4">
+                                    <ul class="list-inline-group text-right mt-1 mb-0 pl-0">
+                                        <li class="list-inline-item mr-0 font-12"><i class="feather icon-more-vertical- font-20 text-primary"></i></li>
+                                    </ul>                                        
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive dash-flag-icon">
+                                <table class="table table-borderless mb-2">
+                                <thead>
+                                    <tr>
+                                    <th class="m-0 font-weight-bold text-primary" scope="col ">로고</th>
+                                    <th class="m-0 font-weight-bold text-primary" scope="col">매장</th>
+                                    <th class="m-0 font-weight-bold text-primary" scope="col">월 주문건</th>
+                                    <th class="m-0 font-weight-bold text-primary" scope="col">전체 주문에 대한 비율</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for store in storesOrderByPrevMonth|slice:":10" %}
+                                        <tr>
+                                            <th scope="row"><img class="store-logo" src="{{ store.logo.url }}""></th>
+                                            <td>{{ store.name }}</td>
+                                            <td>
+                                                <div class="row">
+                                                    <div class="col-6">
+                                                    {{ store.getPrevMonthStock }} 건
+                                                    </div>
+                                                    <div class="col-6">
+                                                        <p>
+                                                            {% if  store.getPrevIncreaseStock > 0 %}
+                                                            <span class="badge badge-success-inverse font-16">
+                                                                +{{ store.getPrevIncreaseStock }}
+                                                                <i class="fas fa-angle-double-up"></i>
+                                                            </span>
+                                                            {% else %}
+                                                            <span class="badge badge-danger-inverse font-16">
+                                                                {{ store.getPrevIncreaseStock }}
+                                                                <i class="fas fa-angle-double-down"></i>
+                                                            </span>
+                                                            {% endif %}
+                                                        </p>
+                                                    </div>
+                                                </row>
+                                            </td>
+                                            <td>{{ store.getTotalStock }} 건({{ store.getPrevMonthStock|div:store.getTotalStock }}%)</td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-12 col-lg-6 col-xl-6">
+                    <div class="card bg-dark m-b-30">
+                        <div class="card-header">                                
+                            <div class="row align-items-center">
+                                <div class="col-8">
+                                    <h5 class="m-0 font-weight-bold text-primary">이번달 업체별 주문건</h5>
+                                </div>
+                                <div class="col-4">
+                                    <ul class="list-inline-group text-right mt-1 mb-0 pl-0">
+                                        <li class="list-inline-item mr-0 font-12"><i class="feather icon-more-vertical- font-20 text-primary"></i></li>
+                                    </ul>                                        
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive dash-flag-icon">
+                                <table class="table table-borderless mb-2">
+                                <thead>
+                                    <tr>
+                                    <th class="m-0 font-weight-bold text-primary" scope="col ">로고</th>
+                                    <th class="m-0 font-weight-bold text-primary" scope="col">매장</th>
+                                    <th class="m-0 font-weight-bold text-primary" scope="col">월 주문건</th>
+                                    <th class="m-0 font-weight-bold text-primary" scope="col">전체 주문에 대한 비율</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for store in stores|slice:":10" %}
+                                        <tr>
+                                            <th scope="row"><img class="store-logo" src="{{ store.logo.url }}""></th>
+                                            <td>{{ store.name }}</td>
+                                            <td>
+                                                <div class="row">
+                                                    <div class="col-6">
+                                                        {{ store.getMontlyStock }} 건
+                                                    </div>
+                                                    <div class="col-6">
+                                                        <p>
+                                                            {% if  store.getCurrentIncreaseStock > 0 %}
+                                                            <span class="badge badge-success-inverse font-16">
+                                                                +{{ store.getCurrentIncreaseStock }}
+                                                                <i class="fas fa-angle-double-up"></i>
+                                                            </span>
+                                                            {% else %}
+                                                            <span class="badge badge-danger-inverse font-16">
+                                                                {{ store.getCurrentIncreaseStock }}
+                                                                <i class="fas fa-angle-double-down"></i>
+                                                            </span>
+                                                            {% endif %}
+                                                        </p>
+                                                    </div>
+                                            </td>
+                                            <td>{{ store.getTotalStock }} 건({{ store.getMontlyStock|div:store.getTotalStock }}%)</td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

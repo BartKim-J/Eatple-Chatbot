@@ -45,7 +45,11 @@ class UserB2BAdmin(ImportExportMixin, admin.ModelAdmin):
 
     def account_sync_flag(self, obj):
         try:
-            User.objects.get(phone_number=obj.phone_number)
+            User.objects.get(
+                Q(phone_number=phone_number) &
+                Q(is_inactive=False)
+            )
+
             return 'O'
         except (User.DoesNotExist, User.MultipleObjectsReturned):
             return 'X'
@@ -55,7 +59,10 @@ class UserB2BAdmin(ImportExportMixin, admin.ModelAdmin):
 
     def account_info(self, obj):
         try:
-            user = User.objects.get(phone_number=obj.phone_number)
+            user = User.objects.get(
+                Q(phone_number=phone_number) &
+                Q(is_inactive=False)
+            )
             return "{} : {}".format(user.nickname, user.app_user_id)
         except (User.DoesNotExist, User.MultipleObjectsReturned):
             return "미등록"
