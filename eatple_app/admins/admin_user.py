@@ -229,8 +229,12 @@ class UserAdmin(ImportExportMixin, admin.ModelAdmin):
         ),
     ]
 
-    search_fields = ['nickname', 'app_user_id',
-                     'phone_number', 'location__address']
+    search_fields = [
+        'nickname', 
+        'app_user_id',
+        'phone_number', 
+        'location__address'
+    ]
 
     list_filter = (
         ('create_date', DateRangeFilter),
@@ -242,6 +246,7 @@ class UserAdmin(ImportExportMixin, admin.ModelAdmin):
 
     list_editable = (
         'is_beta_tester',
+        'is_staff',
     )
 
     list_display = (
@@ -252,6 +257,7 @@ class UserAdmin(ImportExportMixin, admin.ModelAdmin):
         'email',
         'create_date',
         'address',
+        'is_staff',
         'is_beta_tester',
     )
 
