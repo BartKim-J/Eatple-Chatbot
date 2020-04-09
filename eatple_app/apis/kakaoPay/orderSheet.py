@@ -44,7 +44,7 @@ def GET_KAKAO_PAY_OrderSheet(request):
             return JsonResponse({'status': 300, 'message': message})
 
         # Eatple Pass Check
-        eatplePassStatus = eatplePassValidation(user, request)
+        eatplePassStatus = eatplePassValidation(user)
         if(eatplePassStatus == False):
             message = '이미 다른 주문을 하셨습니다.'
             print(message)
@@ -65,8 +65,7 @@ def GET_KAKAO_PAY_OrderSheet(request):
         order.payment_type = ORDER_PAYMENT_KAKAO_PAY
         order.save()
     except Exception as ex:
-        print(ex)
-        pass
+        return JsonResponse({'status': 400, 'message': ex})
 
     try:
         approval_url = '{}{}'.format(EATPLE_KAKAO_API_URL, '/payment/approve')
