@@ -18,19 +18,16 @@ def orderCheckTimeValidation():
     if(VALIDATION_DEBUG_MODE):
         return True
 
-    # Prev Lunch Order Time 10:30 ~ 14:00
+    # Prev Lunch Order Time
     lunchCheckTimeStart = orderTimeSheet.GetPrevLunchOrderTimeEnd()
-    lunchCheckTimeEnd = orderTimeSheet.GetLunchOrderPickupTimeEnd()
 
-    # Dinner Order Time 17:30 ~ 21:00
-    dinnerCheckTimeStart = orderTimeSheet.GetDinnerOrderPickupTimeStart()
-    dinnerCheckTimeEnd = orderTimeSheet.GetDinnerOrderPickupTimeEnd()
+    # @TEMP CODE
+    lunchCheckTimeStart = lunchCheckTimeStart - datetime.timedelta(minutes=30)
+
+    lunchCheckTimeEnd = orderTimeSheet.GetLunchOrderPickupTimeEnd()
 
     if(lunchCheckTimeStart < currentDate) and (currentDate < lunchCheckTimeEnd):
         return True
-
-    if(dinnerCheckTimeStart < currentDate) and (currentDate < dinnerCheckTimeEnd):
-        return False
 
     return False
 
@@ -113,7 +110,7 @@ def kakaoView_OrderDetails(kakaoPayload):
 
                 if(menuList):
                     totalCount = 0
-                    
+
                     for menu in menuList:
                         orderByMenu = Order.objects.filter(menu=menu).filter(
                             (
@@ -148,7 +145,7 @@ def kakaoView_OrderDetails(kakaoPayload):
                                 )
                         else:
                             pass
-                        
+
                     if(totalCount > 0):
                         kakaoForm.ListCard_Add(header)
                     else:
@@ -242,7 +239,7 @@ def kakaoView_OrderDetails(kakaoPayload):
     else:
         kakaoForm.BasicCard_Push(
             '아직 주문조회 가능시간이 아닙니다.',
-            ' 점심 주문조회 가능시간\n - 오전 10시 30분 ~ 오후 2시',
+            ' 점심 주문조회 가능시간\n - 오전 11시 ~ 오후 2시',
             {},
             []
         )

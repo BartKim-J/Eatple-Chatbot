@@ -101,11 +101,11 @@ class OrderTimeSheet():
 
     def GetPrevLunchOrderEditTimeEnd(self):
         return self.currentDateWithoutTime + \
-            datetime.timedelta(hours=10, minutes=30)
+            datetime.timedelta(hours=11, minutes=0)
 
     def GetPrevLunchOrderTimeEnd(self):
         return self.currentDateWithoutTime + \
-            datetime.timedelta(hours=10, minutes=30)
+            datetime.timedelta(hours=11, minutes=0)
 
     # Dinner Order Edit Time
     def GetDinnerOrderEditTimeStart(self):
@@ -127,11 +127,11 @@ class OrderTimeSheet():
 
     def GetNextLunchOrderEditTimeEnd(self):
         return self.currentDateWithoutTime + \
-            datetime.timedelta(hours=9, minutes=30, days=1)
+            datetime.timedelta(hours=11, minutes=0, days=1)
 
     def GetNextLunchOrderTimeEnd(self):
         return self.currentDateWithoutTime + \
-            datetime.timedelta(hours=10, minutes=30, days=1)
+            datetime.timedelta(hours=11, minutes=0, days=1)
 
     # Lunch Order Pickup Time
     def GetLunchOrderPickupTimeStart(self):

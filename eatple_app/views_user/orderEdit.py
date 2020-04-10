@@ -310,7 +310,7 @@ def kakaoView_OrderCancel(kakaoPayload):
     else:
         KakaoInstantForm().Message(
             '현재는 주문을 취소 할 수 없는 시간입니다.',
-            '취소 가능 시간 : 픽업 당일 오전 10시 30분까지',
+            '취소 가능 시간 : 픽업 당일 오전 11시까지',
             kakaoForm=kakaoForm
         )
 
@@ -365,7 +365,7 @@ def kakaoView_EditPickupTime(kakaoPayload):
             order.status != ORDER_STATUS_ORDER_CONFIRMED):
         KakaoInstantForm().Message(
             '현재는 픽업 시간을 변경 할 수 없는 시간입니다.',
-            '변경 가능 시간 : 픽업 당일 오전 10시 30분까지',
+            '변경 가능 시간 : 픽업 당일 오전 11시까지',
             kakaoForm=kakaoForm
         )
         kakaoForm.QuickReplies_AddWithMap(QUICKREPLIES_MAP)
@@ -466,7 +466,7 @@ def kakaoView_ConfirmEditPickupTime(kakaoPayload):
             order.status != ORDER_STATUS_ORDER_CONFIRMED):
         KakaoInstantForm().Message(
             '현재는 픽업 시간을 변경 할 수 없는 시간입니다.',
-            '변경 가능 시간 : 픽업 당일 오전 10시 30분까지',
+            '변경 가능 시간 : 픽업 당일 오전 11시까지',
             kakaoForm=kakaoForm
         )
         kakaoForm.QuickReplies_AddWithMap(QUICKREPLIES_MAP)

@@ -892,7 +892,7 @@ def kakaoView_PickupTime(kakaoPayload):
     elif currentSellingTime == SELLING_TIME_DINNER:
         KakaoInstantForm().Message(
             '오늘 점심은 이미 마감되었어요.',
-            '내일 점심은 오늘 오후 4시부터 내일 오전 10시 30분 까지 주문하실 수 있어요.',
+            '내일 점심은 오늘 오후 4시부터 내일 오전 10시  까지 주문하실 수 있어요.',
             kakaoForm=kakaoForm
         )
 

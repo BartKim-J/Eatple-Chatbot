@@ -342,7 +342,7 @@ def kakaoView_Home(user, address):
 
     kakaoForm.BasicCard_Push(
         '주문 가능/취소 시간',
-        '오후 4시 ~ 오전 10시 30분',
+        '오후 4시 ~ 오전 11시',
         thumbnail,
         buttons
     )
