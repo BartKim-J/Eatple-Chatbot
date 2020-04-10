@@ -14,7 +14,7 @@ from eatple_app.define import *
 WEEKDAY = ['월요일', '화요일', '수요일', '목요일', '금요일', '토요일', '일요일']
 
 
-def getOrderChart(orderTimeSheet):
+def getOrderChart(orderTimeSheet, isStaff=False):
     currentDate = orderTimeSheet.GetCurrentDate()
     currentDateWithoutTime = orderTimeSheet.GetCurrentDateWithoutTime()
 
@@ -52,7 +52,8 @@ def getOrderChart(orderTimeSheet):
                 Order.objects.filter(
                     Q(payment_date__gte=prevLunchOrderEditTimeStart) &
                     Q(payment_date__lt=nextLunchOrderEditTimeStart) &
-                    Q(payment_status=EATPLE_ORDER_STATUS_PAID)
+                    Q(payment_status=EATPLE_ORDER_STATUS_PAID) &
+                    Q(ordersheet__user__is_staff=isStaff)
                 ).count())
             )
 
@@ -118,7 +119,7 @@ def getPickupTimeChart(orderTimeSheet):
     }
 
 
-def getDailyOrderChart(orderTimeSheet):
+def getDailyOrderChart(orderTimeSheet, isStaff=False):
     currentDate = orderTimeSheet.GetCurrentDate()
     currentDateWithoutTime = orderTimeSheet.GetCurrentDateWithoutTime()
 
@@ -143,7 +144,8 @@ def getDailyOrderChart(orderTimeSheet):
             Order.objects.filter(
                 Q(payment_date__gte=checkStartTime) &
                 Q(payment_date__lt=cehckEndTime) &
-                Q(payment_status=EATPLE_ORDER_STATUS_PAID)
+                Q(payment_status=EATPLE_ORDER_STATUS_PAID) &
+                Q(ordersheet__user__is_staff=isStaff)
             ).count())
         )
 
@@ -478,9 +480,11 @@ def dashboard(request):
     totalOrderIncrease = totalUser.filter(
         create_date__gte=currentDateWithoutTime).count()
 
-    orderChart = getOrderChart(orderTimeSheet)
+    orderChart = getOrderChart(orderTimeSheet, False)
+    orderChartStaff = getOrderChart(orderTimeSheet, True)
     pickupTimeChart = getPickupTimeChart(orderTimeSheet)
-    dailyOrderChart = getDailyOrderChart(orderTimeSheet)
+    dailyOrderChart = getDailyOrderChart(orderTimeSheet, False)
+    dailyOrderChartStaff = getDailyOrderChart(orderTimeSheet, True)
     menuStockChart = getMenuStockChart(menuList)
 
     prevDAU = getDAU(orderTimeSheet)
@@ -508,6 +512,9 @@ def dashboard(request):
 
     log = LogEntry.objects.all()
 
+    print(dailyOrderChart['data'])
+    print(dailyOrderChartStaff['data'])
+    
     return render(request, 'dashboard/dashboard.html', {
         'log': log[:5],
         'currentDate': '{}'.format(currentDate.strftime(
@@ -536,12 +543,14 @@ def dashboard(request):
 
         'areaDailyLabel':  dailyOrderChart['label'],
         'areaDailyData': dailyOrderChart['data'],
+        'areaDailyDataStaff': dailyOrderChartStaff['data'],
 
         'pickupChartLabel':  pickupTimeChart['label'],
         'pickupChartData': pickupTimeChart['data'],
 
         'areaLabel': orderChart['label'],
         'areaData': orderChart['data'],
+        'areaDataStaff': orderChartStaff['data'],
 
         'pieLabel': menuStockChart['label'],
         'pieData': menuStockChart['data'],
