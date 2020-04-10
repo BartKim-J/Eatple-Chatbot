@@ -8,87 +8,12 @@
     <div class="container-fluid">
         <div class="card-body">
             <div class="row">
-                <!-- Total User Counter Card -->
-                <div class="col-xl-3 col-md-6 mb-4">
-                    <div class="card bg-dark text-white py-2">
-                        <div class="card-body">
-                            <div class="row no-gutters align-items-center">
-                                <div class="col mr-2">
-                                    <div class="text-xs font-weight-bold text-secondary text-uppercase mb-1">총 가입자 수</div>
-                                    <div class="h6 font-weight-bold" id="TotalUserStatus"><i id="TotalUserStatusIcon" class="fas"></i> {{ totalUserIncrease }}</div>
-                                    <div class="h5 mb-0 font-weight-bold text-gray-100">{{ totalUser }} 명</div>
-                                </div>
-                                <div class="col-auto">
-                                    <i class="fas fa-users fa-2x text-white"></i>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <!-- Toal Eatplepass Card  -->
-                <div class="col-xl-3 col-md-6 mb-4">
-                    <div class="card bg-dark text-white py-2">
-                        <div class="card-body">
-                            <div class="row no-gutters align-items-center">
-                                <div class="col mr-2">
-                                    <div class="text-xs font-weight-bold text-secondary text-uppercase mb-1">총 발급된 패스</div>
-                                    <div class="h6 font-weight-bold text-success"><i class="fas fa-angle-up"></i> {{ totalStock }}</div>
-                                    <div class="h5 mb-0 font-weight-bold text-gray-100">{{ totalOrder }} 패스</div>
-                                </div>
-                                <div class="col-auto">
-                                    <i class="fas fa-ticket-alt fa-2x text-white"></i>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Daily Selled Card -->
-                <div class="col-xl-3 col-md-6 mb-4">
-                    <div class="card bg-dark text-white py-2">
-                        <div class="card-body">
-                            <div class="row no-gutters align-items-center">
-                                <div class="col mr-2">
-                                    <div class="text-xs font-weight-bold text-secondary text-uppercase mb-1">일일 주문건</div>
-                                    <div class="h6 font-weight-bold" id="TotalStockStatus"><i id="TotalStockStatusIcon" class="fas"></i> {{ totalStockIncrease }}</div>
-                                    <div class="h5 mb-0 font-weight-bold text-gray-100">{{ totalStock }} 개</div>
-                                </div>
-                                <div class="col-auto">
-                                    <i class="fas fa-boxes fa-2x text-white"></i>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Earnings (Monthly) Card Example -->
-                <div class="col-xl-3 col-md-6 mb-4">
-                    <div class="card bg-dark text-white py-2">
-                        <div class="card-body">
-                            <div class="row no-gutters align-items-center">
-                                <div class="col mr-2">
-                                    <div class="text-xs font-weight-bold text-secondary text-uppercase mb-1">일일 픽업</div>
-                                    <div class="h6 font-weight-bold text-danger">
-                                        </i> <small>주문 실패</small> {{ orderFailed }} 개</div>
-                                    <div class="h5 mb-0 font-weight-bold text-gray-100">{{ totalPickuped }} 개</div>
-                                </div>
-                                <div class="col-auto">
-                                    <i class="fas fa-hand-holding-heart fa-2x text-white"></i>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-            </div>
-
-            <div class="row">
                 <!-- Area Chart -->
-                <div class="col-xl-6 col-md-6 col-lg-6">
+                <div class="col-xl-12 col-md-12 col-lg-12">
                     <div class="card bg-dark text-white mb-4">
                         <!-- Card Header - Dropdown -->
                         <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-                            <h6 class="m-0 font-weight-bold text-primary">일일 주문 현황<small class="blockquote-footer">{{ currentDate }}</small></h6>
+                            <h6 class="m-0 font-weight-bold text-primary">주문 현황<small class="blockquote-footer">{{ currentDate }}</small></h6>
                         </div>
                         <!-- Card Body -->
                         <div class="card-body">
@@ -98,47 +23,10 @@
                         </div>
                     </div>
                 </div>
-
-                <!-- Area Chart -->
-                <div class="col-xl-6 col-md-6 col-lg-6">
-                    <div class="card bg-dark text-white mb-4">
-                        <!-- Card Header - Dropdown -->
-                        <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-                            <h6 class="m-0 font-weight-bold text-primary">실시간 주문 현황<small class="blockquote-footer">{{ currentDate }}</small></h6>
-                        </div>
-                        <!-- Card Body -->
-                        <div class="card-body">
-                            <div class="chart-area">
-                                <canvas id="myDailyAreaChart"></canvas>
-                            </div>
-                        </div>
-                    </div>
-                </div>
             </div>
 
             <div class="row">
-                <!-- Pie Chart -->
-                <div class="col-md-12 col-xl-2 col-lg-2">
-                    <div class="card bg-dark text-white mb-4">
-                        <!-- Card Header - Dropdown -->
-                        <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-                            <h6 class="m-0 font-weight-bold text-primary">일일 주문 차지 비율<small class="blockquote-footer">{{ currentDate }}</small></h6>
-                        </div>
-                        <!-- Card Body -->
-                        <div class="card-body">
-                            <div class="chart-pie pt-4 pb-2">
-                                <canvas id="myPieChart"></canvas>
-                            </div>
-                            <div class="mt-4 text-center small">
-                                <span class="mr-2">
-                                    <i class="fas fa-circle text-primary"></i> 베스트 메뉴 : {{ menus.first }} {{ menus.first.current_stock }}개
-                                </span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col-md-12 col-xl-4 col-lg-4">
+                <div class="col-xl-6 col-md-6 col-lg-6 mb-4">
                     <div class="card bg-dark m-b-30">
                         <div class="card-header">                                
                             <div class="row align-items-center">
@@ -178,7 +66,100 @@
                         </div>
                     </div>
                 </div>
-                
+                <div class="col-xl-6 col-md-6 col-lg-6 mb-4">
+                    <div class="row mt-2">
+                        <!-- Total User Counter Card -->
+                        <div class="col-xl-6 col-md-6 col-lg-6 mb-4">
+                            <div class="card bg-dark text-white py-2">
+                                <div class="card-body">
+                                    <div class="row no-gutters align-items-center">
+                                        <div class="col mr-2">
+                                            <div class="text-xs font-weight-bold text-secondary text-uppercase mb-1">총 가입자 수</div>
+                                            <div class="h6 font-weight-bold" id="TotalUserStatus"><i id="TotalUserStatusIcon" class="fas"></i> {{ totalUserIncrease }}</div>
+                                            <div class="h5 mb-0 font-weight-bold text-gray-100">{{ totalUser }} 명</div>
+                                        </div>
+                                        <div class="col-auto">
+                                            <i class="fas fa-users fa-2x text-white"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Toal Eatplepass Card  -->
+                        <div class="col-xl-6 col-md-6 col-lg-6 mb-4">
+                            <div class="card bg-dark text-white py-2">
+                                <div class="card-body">
+                                    <div class="row no-gutters align-items-center">
+                                        <div class="col mr-2">
+                                            <div class="text-xs font-weight-bold text-secondary text-uppercase mb-1">총 발급된 패스</div>
+                                            <div class="h6 font-weight-bold text-success"><i class="fas fa-angle-up"></i> {{ totalStock }}</div>
+                                            <div class="h5 mb-0 font-weight-bold text-gray-100">{{ totalOrder }} 패스</div>
+                                        </div>
+                                        <div class="col-auto">
+                                            <i class="fas fa-ticket-alt fa-2x text-white"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <!-- Daily Selled Card -->
+                        <div class="col-xl-6 col-md-6 col-lg-6 mb-4">
+                            <div class="card bg-dark text-white py-2">
+                                <div class="card-body">
+                                    <div class="row no-gutters align-items-center">
+                                        <div class="col mr-2">
+                                            <div class="text-xs font-weight-bold text-secondary text-uppercase mb-1">일일 주문건</div>
+                                            <div class="h6 font-weight-bold" id="TotalStockStatus"><i id="TotalStockStatusIcon" class="fas"></i> {{ totalStockIncrease }}</div>
+                                            <div class="h5 mb-0 font-weight-bold text-gray-100">{{ totalStock }} 개</div>
+                                        </div>
+                                        <div class="col-auto">
+                                            <i class="fas fa-boxes fa-2x text-white"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Earnings (Monthly) Card Example -->
+                        <div class="col-xl-6 col-md-6 col-lg-6 mb-4">
+                            <div class="card bg-dark text-white py-2">
+                                <div class="card-body">
+                                    <div class="row no-gutters align-items-center">
+                                        <div class="col mr-2">
+                                            <div class="text-xs font-weight-bold text-secondary text-uppercase mb-1">일일 픽업</div>
+                                            <div class="h6 font-weight-bold text-danger">
+                                                </i> <small>주문 실패</small> {{ orderFailed }} 개</div>
+                                            <div class="h5 mb-0 font-weight-bold text-gray-100">{{ totalPickuped }} 개</div>
+                                        </div>
+                                        <div class="col-auto">
+                                            <i class="fas fa-hand-holding-heart fa-2x text-white"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <!-- Area Chart -->
+                <div class="col-md-12 col-xl-6 col-lg-6">
+                    <div class="card bg-dark text-white mb-4">
+                        <!-- Card Header - Dropdown -->
+                        <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                            <h6 class="m-0 font-weight-bold text-primary">실시간 주문 현황<small class="blockquote-footer">{{ currentDate }}</small></h6>
+                        </div>
+                        <!-- Card Body -->
+                        <div class="card-body">
+                            <div class="chart-area">
+                                <canvas id="myDailyAreaChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- Area Chart -->
                 <div class="col-md-12 col-xl-6 col-lg-6">
                     <div class="card bg-dark text-white mb-4">
@@ -197,7 +178,7 @@
             </div>
 
             <div class="row">
-                <div class="col-md-12 col-lg-4 col-xl-4">
+                <div class="col-md-12 col-lg-4 col-xl-4 mb-4">
                     <div class="card bg-dark m-b-30">
                         <div class="card-header">                                
                             <div class="row align-items-center">
@@ -259,7 +240,7 @@
                     </div>
                 </div>
                 
-                <div class="col-md-12 col-lg-4 col-xl-4">
+                <div class="col-md-12 col-lg-4 col-xl-4 mb-4">
                     <div class="card bg-dark m-b-30">
                         <div class="card-header">                                
                             <div class="row align-items-center">
@@ -321,7 +302,7 @@
                     </div>
                 </div>
 
-                <div class="col-md-12 col-lg-4 col-xl-4">
+                <div class="col-md-12 col-lg-4 col-xl-4 mb-4">
                     <div class="card bg-dark m-b-30">
                         <div class="card-header">                                
                             <div class="row align-items-center">
@@ -414,8 +395,7 @@
         areaDailyData = areaDailyData.split(",");
 
         areaDailyDataStaff = '{{ areaDailyDataStaff }}';
-        areaDailyDatastaff = areaDailyDataStaff.split(",");
-        console.log(areaDailyDataStaff)
+        areaDailyDataStaff = areaDailyDataStaff.split(",");
 
         areaDailyLabel = '{{ areaDailyLabel }}';
         areaDailyLabel = areaDailyLabel.split(",");
@@ -446,7 +426,6 @@
     <script type="text/javascript" src="{% static 'dashboard/js/datatables.init.js' %}"></script>
     <script type="text/javascript" src="{% static 'dashboard/js/card-status.init.js' %}"></script>
     <script type="text/javascript" src="{% static 'dashboard/js/chart-area.js' %}"></script>
-    <script type="text/javascript" src="{% static 'dashboard/js/chart-pie.js' %}"></script>
     <script type="text/javascript" src="{% static 'dashboard/js/chart-pickup.js' %}"></script>
     {% endcompress %} 
 {% endblock %}

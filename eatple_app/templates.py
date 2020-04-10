@@ -29,12 +29,20 @@ def getOrderChart(orderTimeSheet, isStaff=False):
     label = ''
     data = ''
 
-    for i in range(21):
-        checkData = currentDateWithoutTime + datetime.timedelta(days=-(20 - i))
+    checkDate = currentDateWithoutTime - datetime.timedelta(days=34)
+    print(checkDate)
+    print(WEEKDAY[checkDate.weekday()])
 
-        prevLunchOrderEditTimeStart = checkData + \
+    checkDate = checkDate + \
+        datetime.timedelta(days=(0 - checkDate.weekday()))
+
+    print(checkDate)
+    print(WEEKDAY[checkDate.weekday()])
+
+    while(not ((checkDate >= currentDateWithoutTime) and (checkDate.weekday() == 5))):
+        prevLunchOrderEditTimeStart = checkDate + \
             datetime.timedelta(hours=16, minutes=0, days=-1)
-        nextLunchOrderEditTimeStart = checkData + \
+        nextLunchOrderEditTimeStart = checkDate + \
             datetime.timedelta(hours=16, minutes=0)
 
         if(prevLunchOrderEditTimeStart.strftime('%A') == 'Friday' and
@@ -44,18 +52,25 @@ def getOrderChart(orderTimeSheet, isStaff=False):
              nextLunchOrderEditTimeStart.strftime('%A') == 'Sunday'):
             pass
         else:
-            label += '{} {},'.format(checkData.strftime(
+            label += '{} {},'.format(checkDate.strftime(
                 '%-m월 %-d일').replace('AM', '오전').replace('PM', '오후'),
-                WEEKDAY[checkData.weekday()])
+                WEEKDAY[checkDate.weekday()])
+
+            staffFilter = Q()
+            if(isStaff):
+                staffFilter.add(
+                    Q(ordersheet__user__is_staff=False), staffFilter.AND)
 
             data += '{},'.format((
                 Order.objects.filter(
                     Q(payment_date__gte=prevLunchOrderEditTimeStart) &
                     Q(payment_date__lt=nextLunchOrderEditTimeStart) &
                     Q(payment_status=EATPLE_ORDER_STATUS_PAID) &
-                    Q(ordersheet__user__is_staff=isStaff)
+                    staffFilter
                 ).count())
             )
+
+        checkDate = checkDate + datetime.timedelta(days=1)
 
     label = replaceRight(label, ',', '', 1)
     data = replaceRight(data, ',', '', 1)
@@ -140,12 +155,17 @@ def getDailyOrderChart(orderTimeSheet, isStaff=False):
         label += '{},'.format(checkStartTime.strftime(
             '%-m월 %-d일 %p %-I시 %-M분 ~').replace('AM', '오전').replace('PM', '오후'))
 
+        staffFilter = Q()
+        if(isStaff):
+            staffFilter.add(
+                Q(ordersheet__user__is_staff=False), staffFilter.AND)
+
         data += '{},'.format((
             Order.objects.filter(
                 Q(payment_date__gte=checkStartTime) &
                 Q(payment_date__lt=cehckEndTime) &
                 Q(payment_status=EATPLE_ORDER_STATUS_PAID) &
-                Q(ordersheet__user__is_staff=isStaff)
+                staffFilter
             ).count())
         )
 
@@ -512,9 +532,6 @@ def dashboard(request):
 
     log = LogEntry.objects.all()
 
-    print(dailyOrderChart['data'])
-    print(dailyOrderChartStaff['data'])
-    
     return render(request, 'dashboard/dashboard.html', {
         'log': log[:5],
         'currentDate': '{}'.format(currentDate.strftime(
