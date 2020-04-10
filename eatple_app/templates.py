@@ -30,14 +30,9 @@ def getOrderChart(orderTimeSheet, isStaff=False):
     data = ''
 
     checkDate = currentDateWithoutTime - datetime.timedelta(days=34)
-    print(checkDate)
-    print(WEEKDAY[checkDate.weekday()])
 
     checkDate = checkDate + \
         datetime.timedelta(days=(0 - checkDate.weekday()))
-
-    print(checkDate)
-    print(WEEKDAY[checkDate.weekday()])
 
     while(not ((checkDate >= currentDateWithoutTime) and (checkDate.weekday() == 5))):
         prevLunchOrderEditTimeStart = checkDate + \
@@ -502,18 +497,7 @@ def dashboard(request):
 
     orderChart = getOrderChart(orderTimeSheet, False)
     orderChartStaff = getOrderChart(orderTimeSheet, True)
-    pickupTimeChart = getPickupTimeChart(orderTimeSheet)
-    dailyOrderChart = getDailyOrderChart(orderTimeSheet, False)
-    dailyOrderChartStaff = getDailyOrderChart(orderTimeSheet, True)
     menuStockChart = getMenuStockChart(menuList)
-
-    prevDAU = getDAU(orderTimeSheet)
-    prevWAU = getWAU(orderTimeSheet)
-    prevMAU = getMAU(orderTimeSheet)
-
-    DAU = getDAU(orderTimeSheet)
-    WAU = getWAU(orderTimeSheet)
-    MAU = getMAU(orderTimeSheet)
 
     areaDataList = orderChart['data'].split(',')
     prevTotalStock = int(areaDataList[len(areaDataList)-2])
@@ -557,13 +541,6 @@ def dashboard(request):
 
         'totalOrder': totalOrder,
         'orderFailed': orderFailed,
-
-        'areaDailyLabel':  dailyOrderChart['label'],
-        'areaDailyData': dailyOrderChart['data'],
-        'areaDailyDataStaff': dailyOrderChartStaff['data'],
-
-        'pickupChartLabel':  pickupTimeChart['label'],
-        'pickupChartData': pickupTimeChart['data'],
 
         'areaLabel': orderChart['label'],
         'areaData': orderChart['data'],

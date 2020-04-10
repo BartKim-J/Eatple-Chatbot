@@ -144,40 +144,6 @@
             </div>
 
             <div class="row">
-                <!-- Area Chart -->
-                <div class="col-md-12 col-xl-6 col-lg-6">
-                    <div class="card bg-dark text-white mb-4">
-                        <!-- Card Header - Dropdown -->
-                        <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-                            <h6 class="m-0 font-weight-bold text-primary">실시간 주문 현황<small class="blockquote-footer">{{ currentDate }}</small></h6>
-                        </div>
-                        <!-- Card Body -->
-                        <div class="card-body">
-                            <div class="chart-area">
-                                <canvas id="myDailyAreaChart"></canvas>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Area Chart -->
-                <div class="col-md-12 col-xl-6 col-lg-6">
-                    <div class="card bg-dark text-white mb-4">
-                        <!-- Card Header - Dropdown -->
-                        <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-                            <h6 class="m-0 font-weight-bold text-primary">실시간 픽업 현황<small class="blockquote-footer">{{ currentDate }}</small></h6>
-                        </div>
-                        <!-- Card Body -->
-                        <div class="card-body">
-                            <div class="chart-area">
-                                <canvas id="myPickupTimeChart"></canvas>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="row">
                 <div class="col-md-12 col-lg-4 col-xl-4 mb-4">
                     <div class="card bg-dark m-b-30">
                         <div class="card-header">                                
@@ -385,21 +351,6 @@
         totalStockIncrease = '{{ totalStockIncrease }}'
         totalPriceIncrease = '{{ totalPriceIncrease }}'
 
-        pickupChartLabel = '{{ pickupChartLabel }}';
-        pickupChartLabel = pickupChartLabel.split(",");
-
-        pickupChartData = '{{ pickupChartData }}';
-        pickupChartData = pickupChartData.split(",");
-
-        areaDailyData = '{{ areaDailyData }}';
-        areaDailyData = areaDailyData.split(",");
-
-        areaDailyDataStaff = '{{ areaDailyDataStaff }}';
-        areaDailyDataStaff = areaDailyDataStaff.split(",");
-
-        areaDailyLabel = '{{ areaDailyLabel }}';
-        areaDailyLabel = areaDailyLabel.split(",");
-
         areaData = '{{ areaData }}';
         areaData = areaData.split(",");
 
@@ -426,6 +377,5 @@
     <script type="text/javascript" src="{% static 'dashboard/js/datatables.init.js' %}"></script>
     <script type="text/javascript" src="{% static 'dashboard/js/card-status.init.js' %}"></script>
     <script type="text/javascript" src="{% static 'dashboard/js/chart-area.js' %}"></script>
-    <script type="text/javascript" src="{% static 'dashboard/js/chart-pickup.js' %}"></script>
     {% endcompress %} 
 {% endblock %}
