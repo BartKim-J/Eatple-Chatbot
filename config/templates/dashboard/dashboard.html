@@ -45,16 +45,18 @@
                                 <table class="table table-borderless mb-2">
                                 <thead>
                                     <tr>
-                                    <th class="m-0 font-weight-bold text-primary" scope="col ">로고</th>
+                                    <th class="m-0 font-weight-bold text-primary" scope="col">순위</th>
+                                    <th class="m-0 font-weight-bold text-primary" scope="col"></th>
                                     <th class="m-0 font-weight-bold text-primary" scope="col">매장</th>
-                                    <th class="m-0 font-weight-bold text-primary" scope="col">일일 주문건</th>
-                                    <th class="m-0 font-weight-bold text-primary" scope="col">전체 주문건</th>
+                                    <th class="m-0 font-weight-bold text-primary" scope="col">일일 주문건 수</th>
+                                    <th class="m-0 font-weight-bold text-primary" scope="col">전체 주문건 수</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {% for store in storesWithStock|slice:":15" %}
+                                    {% for store in storesWithStock|slice:":10" %}
                                         <tr>
-                                            <th scope="row"><img class="store-logo" src="{{ store.logo.url }}""></th>
+                                            <th scope="row">{{ forloop.counter }}</th>
+                                            <td><img class="store-logo" src="{{ store.logo.url }}""></td>
                                             <td>{{ store.name }}</td>
                                             <td>{{ store.currentStock }}</td>
                                             <td>{{ store.getTotalStock }}</td>
@@ -163,16 +165,18 @@
                                 <table class="table table-borderless mb-2">
                                 <thead>
                                     <tr>
-                                    <th class="m-0 font-weight-bold text-primary" scope="col ">로고</th>
+                                    <th class="m-0 font-weight-bold text-primary" scope="col">순위</th>
+                                    <th class="m-0 font-weight-bold text-primary" scope="col "></th>
                                     <th class="m-0 font-weight-bold text-primary" scope="col">매장</th>
-                                    <th class="m-0 font-weight-bold text-primary" scope="col">월 주문건</th>
-                                    <th class="m-0 font-weight-bold text-primary" scope="col">주문 차지 비율</th>
+                                    <th class="m-0 font-weight-bold text-primary" scope="col">월 주문건 수</th>
+                                    <th class="m-0 font-weight-bold text-primary" scope="col">차지 비율</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {% for store in storesOrderByPrevPrevMonth|slice:":15" %}
+                                    {% for store in storesOrderByPrevPrevMonth|slice:":10" %}
                                         <tr>
-                                            <th scope="row"><img class="store-logo" src="{{ store.logo.url }}""></th>
+                                            <th scope="row">{{ forloop.counter }}</th>
+                                            <td><img class="store-logo" src="{{ store.logo.url }}""></td>
                                             <td>{{ store.name }}</td>
                                             <td>
                                                 <div class="row">
@@ -225,16 +229,18 @@
                                 <table class="table table-borderless mb-2">
                                 <thead>
                                     <tr>
-                                    <th class="m-0 font-weight-bold text-primary" scope="col">로고</th>
+                                    <th class="m-0 font-weight-bold text-primary" scope="col">순위</th>
+                                    <th class="m-0 font-weight-bold text-primary" scope="col"></th>
                                     <th class="m-0 font-weight-bold text-primary" scope="col">매장</th>
                                     <th class="m-0 font-weight-bold text-primary" scope="col">월 주문건 수</th>
-                                    <th class="m-0 font-weight-bold text-primary" scope="col">주문 차지 비율</th>
+                                    <th class="m-0 font-weight-bold text-primary" scope="col">차지 비율</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {% for store in storesOrderByPrevMonth|slice:":15" %}
+                                    {% for store in storesOrderByPrevMonth|slice:":10" %}
                                         <tr>
-                                            <th scope="row"><img class="store-logo" src="{{ store.logo.url }}""></th>
+                                            <th scope="row">{{ forloop.counter }}</th>
+                                            <td><img class="store-logo" src="{{ store.logo.url }}""></td>
                                             <td>{{ store.name }}</td>
                                             <td>
                                                 <div class="row">
@@ -287,16 +293,18 @@
                                 <table class="table table-borderless mb-2">
                                 <thead>
                                     <tr>
-                                    <th class="m-0 font-weight-bold text-primary" scope="col">로고</th>
+                                    <th class="m-0 font-weight-bold text-primary" scope="col">순위</th>
+                                    <th class="m-0 font-weight-bold text-primary" scope="col"></th>
                                     <th class="m-0 font-weight-bold text-primary" scope="col">매장</th>
                                     <th class="m-0 font-weight-bold text-primary" scope="col">월 주문건 수</th>
-                                    <th class="m-0 font-weight-bold text-primary" scope="col">주문 차지 비율</th>
+                                    <th class="m-0 font-weight-bold text-primary" scope="col">차지 비율</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {% for store in stores|slice:":15" %}
+                                    {% for store in stores|slice:":10" %}
                                         <tr>
-                                            <th scope="row"><img class="store-logo" src="{{ store.logo.url }}""></th>
+                                            <th scope="row">{{ forloop.counter }}</th>
+                                            <td><img class="store-logo" src="{{ store.logo.url }}""></td>
                                             <td>{{ store.name }}</td>
                                             <td>
                                                 <div class="row">

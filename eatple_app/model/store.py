@@ -429,7 +429,9 @@ class Store(StoreInfo, StoreSetting, StoreStatus, StoreSalesInfo, StoreBankAccou
 
     def getTotalStock(self):
         totalStock = Order.objects.filter(
-            store=self, payment_status=EATPLE_ORDER_STATUS_PAID).count()
+                store=self, 
+                payment_status=EATPLE_ORDER_STATUS_PAID
+            ).count()
 
         return totalStock
 
@@ -456,7 +458,8 @@ class Store(StoreInfo, StoreSetting, StoreStatus, StoreSalesInfo, StoreBankAccou
                 Q(payment_date__gte=range_start) &
                 Q(payment_date__lte=range_end)
             ) &
-            Q(payment_status=EATPLE_ORDER_STATUS_PAID)
+            Q(payment_status=EATPLE_ORDER_STATUS_PAID) & 
+            Q(ordersheet__user__is_staff=False)
         )
 
         allStock = orderList.count()
