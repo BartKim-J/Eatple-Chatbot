@@ -18,7 +18,6 @@ from eatple_app.module_kakao.kakaoPay import *
 from eatple_app.views_system.debugger import *
 
 from eatple_app.views import *
-from eatple_app.views_user.orderCheck import GET_EatplePass
 
 DEFAULT_QUICKREPLIES_MAP = [
     {
@@ -81,15 +80,15 @@ def sellingTimeCheck():
 
     currentDate = orderTimeSheet.GetCurrentDate()
 
-    # Prev Lunch Order Time 16:30 ~ 10:30
+    # Prev Lunch Order Time
     prevLunchOrderTimeStart = orderTimeSheet.GetPrevLunchOrderEditTimeStart()
     prevLunchOrderTimeEnd = orderTimeSheet.GetPrevLunchOrderEditTimeEnd()
 
-    # Dinner Order Time 10:31 ~ 16:29
+    # Dinner Order Time
     dinnerOrderTimeStart = orderTimeSheet.GetDinnerOrderEditTimeStart()
     dinnerOrderTimeEnd = orderTimeSheet.GetDinnerOrderTimeEnd()
 
-    # Next Lunch Order Time 16:30 ~ 10:30
+    # Next Lunch Order Time
     nextLunchOrderTimeStart = orderTimeSheet.GetNextLunchOrderEditTimeStart()
     nextLunchOrderTimeEnd = orderTimeSheet.GetNextLunchOrderEditTimeEnd()
 

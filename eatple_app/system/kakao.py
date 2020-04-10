@@ -68,6 +68,7 @@ KAKAO_PARAM_PREV_BLOCK_ID = 'prev_block_id'
 
 KAKAO_PARAM_MENU_CATEGORY = 'menuCategory'
 KAKAO_PARAM_PICKUP_TIME = 'pickup_time'
+KAKAO_PARAM_SELLING_TIME  = 'selling_time'
 
 # EMOJI
 

@@ -621,7 +621,7 @@ class Order(models.Model):
 
         # @SLACK LOGGER
         SlackLogUsedOrder(self)
-        
+
         return self
 
     def orderDelegate(self, order):
@@ -741,17 +741,22 @@ class OrderManager():
 
 
 class UserOrderManager(OrderManager):
-    def __init__(self, user):
+    def __init__(self, user, selling_time=None):
         self.orderList = Order.objects.filter(
             Q(ordersheet__user=user) |
             Q(delegate=user)
         )
 
+        if(selling_time != None):
+            self.orderList = self.orderList.filter(menu__selling_time=selling_time)
+
 
 class PartnerOrderManager(OrderManager):
-    def __init__(self, partner):
+    def __init__(self, partner, selling_time=None):
         self.orderList = Order.objects.filter(store=partner.store)
 
+        if(selling_time != None):
+            self.orderList = self.orderList.filter(menu__selling_time=selling_time)
 
 class OrderSheet(models.Model):
     class Meta:

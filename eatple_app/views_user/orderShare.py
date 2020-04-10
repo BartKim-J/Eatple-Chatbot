@@ -2,6 +2,9 @@
 from eatple_app.views_system.include import *
 from eatple_app.views_system.debugger import *
 
+from eatple_app.views import GET_UserHome
+
+
 import phonenumbers
 
 # # # # # # # # # # # # # # # # # # # # # # # # #
