@@ -1005,9 +1005,6 @@ def kakaoView_EatplePassIssuance(kakaoPayload):
         dataActionExtra[KAKAO_PARAM_ORDER_ID] = order.order_id
         dataActionExtra[KAKAO_PARAM_PREV_BLOCK_ID] = KAKAO_BLOCK_USER_SET_ORDER_SHEET
 
-        order.payment_date = dateNowByTimeZone()
-        order.save()
-
         KakaoInstantForm().Message(
             '잇플패스 발급이 완료되었습니다.',
             kakaoForm=kakaoForm

@@ -66,9 +66,6 @@ class OrderValidation(viewsets.ModelViewSet):
 
             if(beforeOrderStatus != EATPLE_ORDER_STATUS_PAID and
                order.payment_status == EATPLE_ORDER_STATUS_PAID):
-                order.payment_date = dateNowByTimeZone()
-                order.save()
-
                 response['error_code'] = PAYMENT_100_SUCCESS.code
                 response['error_msg'] = PAYMENT_100_SUCCESS.message
                 return Response(response)

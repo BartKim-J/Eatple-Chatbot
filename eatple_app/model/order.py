@@ -560,6 +560,7 @@ class Order(models.Model):
 
     def orderPay(self):
         self.payment_status = EATPLE_ORDER_STATUS_PAID
+        self.payment_date = dateNowByTimeZone()
         self.save()
 
         # @SLACK LOGGER
@@ -748,7 +749,8 @@ class UserOrderManager(OrderManager):
         )
 
         if(selling_time != None):
-            self.orderList = self.orderList.filter(menu__selling_time=selling_time)
+            self.orderList = self.orderList.filter(
+                menu__selling_time=selling_time)
 
 
 class PartnerOrderManager(OrderManager):
@@ -756,7 +758,9 @@ class PartnerOrderManager(OrderManager):
         self.orderList = Order.objects.filter(store=partner.store)
 
         if(selling_time != None):
-            self.orderList = self.orderList.filter(menu__selling_time=selling_time)
+            self.orderList = self.orderList.filter(
+                menu__selling_time=selling_time)
+
 
 class OrderSheet(models.Model):
     class Meta:
