@@ -149,13 +149,7 @@ def kakaoView_OrderDetails(kakaoPayload):
                     if(totalCount > 0):
                         kakaoForm.ListCard_Add(header)
                     else:
-                        kakaoForm.BasicCard_Push(
-                            '오늘은 들어온 주문이 없어요.',
-                            '',
-                            {},
-                            []
-                        )
-                        kakaoForm.BasicCard_Add()
+                        pass
                 else:
                     pass
 

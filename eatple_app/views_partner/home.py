@@ -75,7 +75,7 @@ def kakaoView_Home(partner):
     QUICKREPLIES_MAP = []
 
     if(partner.is_staff):
-        QUICKREPLIES_MAP.append(            
+        QUICKREPLIES_MAP.append(
             {
                 'action': 'block',
                 'label': '영업 홈',
@@ -86,7 +86,6 @@ def kakaoView_Home(partner):
                 }
             },
         )
-
 
     buttons = [
         {
@@ -109,15 +108,23 @@ def kakaoView_Home(partner):
         },
     ]
 
-    thumbnail = {
-        'imageUrl': '{}{}'.format(HOST_URL, partner.store.logoImgURL()),
-        'fixedRatio': 'true',
-        'width': 800,
-        'height': 800,
-    }
+    if(partner.store.coverImgURL().find('default') == -1):
+        thumbnail = {
+            'imageUrl': '{}{}'.format(HOST_URL, partner.store.coverImgURL()),
+            'fixedRatio': 'True',
+            'width': 800,
+            'height': 800,
+        }
+    else:
+        thumbnail = {
+            'imageUrl': '{}{}'.format(HOST_URL, partner.store.logoImgURL()),
+            'fixedRatio': 'true',
+            'width': 800,
+            'height': 800,
+        }
 
     kakaoForm.BasicCard_Push(
-        '{store} 매장용 카드'.format(store=partner.store.name),
+        '매장 : {store}'.format(store=partner.store.name),
         '조회 시간 : {}'.format(datetime.datetime.now().strftime(
             '%-m월 %-d일 %p %-I시 %-M분').replace('AM', '오전').replace('PM', '오후')),
         thumbnail,
