@@ -62,12 +62,12 @@ def getAdjustment(orderList, date_range):
                     supply_price = round(total_price / 1.1)
                     surtax_price = total_price - supply_price
                     if(order.type == ORDER_TYPE_B2B):
-                        fee = int(total_price * FEE_CONST)
+                        fee = round(total_price * FEE_CONST)
                     else:
                         if(dateByTimeZone(order.payment_date) < FEE_CHANGE_DATE):
-                            fee = int(total_price * FEE_CONST_BEFORE)
+                            fee = round(total_price * FEE_CONST_BEFORE)
                         else:
-                            fee = int(total_price * FEE_CONST)
+                            fee = round(total_price * FEE_CONST)
                     settlement_amount = total_price - fee
 
                     # inquiry
@@ -148,7 +148,7 @@ def getAdjustment(orderList, date_range):
     else:
         pass
 
-    return [adjustmentList, adjustmentExcel, '{}원'.format(format(adjustment_settlement_amount, ",")),]
+    return [adjustmentList, adjustmentExcel, '{}원'.format(format(adjustment_settlement_amount, ",")), ]
 
 
 def getSurtax(orderList, date_range):
@@ -186,12 +186,12 @@ def getSurtax(orderList, date_range):
             supply_price = round(total_price / 1.1)
             surtax_price = total_price - supply_price
             if(order.type == ORDER_TYPE_B2B):
-                fee = int(total_price * FEE_CONST)
+                fee = round(total_price * FEE_CONST)
             else:
                 if(dateByTimeZone(order.payment_date) < FEE_CHANGE_DATE):
-                    fee = int(total_price * FEE_CONST_BEFORE)
+                    fee = round(total_price * FEE_CONST_BEFORE)
                 else:
-                    fee = int(total_price * FEE_CONST)
+                    fee = round(total_price * FEE_CONST)
             settlement_amount = total_price - fee
 
             # all
@@ -202,8 +202,8 @@ def getSurtax(orderList, date_range):
             sales_settlement_amount += settlement_amount
 
             purchase_total_price += fee
-            purchase_supply_price += int(fee / 1.1)
-            purchase_surtax_price += fee - int(fee / 1.1)
+            purchase_supply_price += round(fee / 1.1)
+            purchase_surtax_price += fee - round(fee / 1.1)
 
             # push body on excel
             surtaxExcel.append(
@@ -460,7 +460,6 @@ class OrderViewSet(viewsets.ModelViewSet):
             infoFilter)
         adjustmentForm = getAdjustment(orderList, date_range)
 
-        print(date_range[0], date_range[1])
         surtaxOrderList = orderList.filter(
             (
                 Q(payment_date__gte=(date_range[0])) &
