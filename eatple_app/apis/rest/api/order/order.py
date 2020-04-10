@@ -148,7 +148,7 @@ def getAdjustment(orderList, date_range):
     else:
         pass
 
-    return [adjustmentList, adjustmentExcel]
+    return [adjustmentList, adjustmentExcel, '{}원'.format(format(adjustment_settlement_amount, ",")),]
 
 
 def getSurtax(orderList, date_range):
@@ -451,19 +451,27 @@ class OrderViewSet(viewsets.ModelViewSet):
         if(param_valid(store)):
             infoFilter.add(Q(store__name__contains=store), infoFilter.AND)
 
-        orderList = orderList.filter(
+        adjustmentOrderList = orderList.filter(
             (
                 Q(payment_date__gte=(date_range[0] - datetime.timedelta(days=14))) &
                 Q(payment_date__lt=(
                     date_range[1] + datetime.timedelta(days=14)))
             ) &
             infoFilter)
-
         adjustmentForm = getAdjustment(orderList, date_range)
-        surtaxForm = getSurtax(orderList, date_range)
+
+        print(date_range[0], date_range[1])
+        surtaxOrderList = orderList.filter(
+            (
+                Q(payment_date__gte=(date_range[0])) &
+                Q(payment_date__lt=(date_range[1]))
+            ) &
+            infoFilter)
+        surtaxForm = getSurtax(surtaxOrderList, date_range)
 
         response['adjustments'] = adjustmentForm[0]
         response['adjustments_excel'] = adjustmentForm[1]
+        response['adjustments_total_price'] = adjustmentForm[2]
         response['surtax'] = surtaxForm[0]
         response['surtax_excel'] = surtaxForm[1]
         response['error_code'] = 200
