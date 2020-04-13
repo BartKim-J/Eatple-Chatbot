@@ -21,8 +21,7 @@ def orderCheckTimeValidation():
     # Prev Lunch Order Time
     lunchCheckTimeStart = orderTimeSheet.GetPrevLunchOrderTimeEnd()
 
-    # @TEMP CODE
-    lunchCheckTimeStart = lunchCheckTimeStart - datetime.timedelta(minutes=30)
+    lunchCheckTimeStart = lunchCheckTimeStart
 
     lunchCheckTimeEnd = orderTimeSheet.GetLunchOrderPickupTimeEnd()
 
