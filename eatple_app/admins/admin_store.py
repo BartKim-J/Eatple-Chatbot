@@ -147,6 +147,30 @@ class MenuInline(CompactInline):
     ]
 
 
+class LunchMenuInline(MenuInline):
+    verbose_name = "점심 메뉴"
+    verbose_name_plural = "점심 메뉴"
+    
+    extra = 0
+    min_num = 0
+    max_num = 50
+
+    def get_queryset(self, request):
+            qs = Menu.objects.all()
+            return qs.filter(selling_time=SELLING_TIME_LUNCH)
+    
+class DinnerMenuInline(MenuInline):
+    verbose_name = " 저녁 메뉴"
+    verbose_name_plural = "저녁 메뉴"
+
+    extra = 0
+    min_num = 0
+    max_num = 50
+
+    def get_queryset(self, request):
+            qs = Menu.objects.all()
+            return qs.filter(selling_time=SELLING_TIME_DINNER)
+        
 class StoreResource(resources.ModelResource):
     def dehydrate_bank_code(self, obj):
         return obj.bank_type
@@ -352,4 +376,4 @@ class StoreAdmin(ImportExportMixin, admin.GeoModelAdmin):
 
     actions = ['store_open', 'store_close']
 
-    inlines = [MenuInline, RecordInline, PlaceInline, CRNInline]
+    inlines = [LunchMenuInline, DinnerMenuInline, RecordInline, PlaceInline, CRNInline]

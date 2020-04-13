@@ -233,6 +233,7 @@ class OrderAdmin(ImportExportMixin, admin.ModelAdmin):
         'payment_status',
         TypeFilter,
         'store',
+        'ordersheet__user__is_staff',
     )
 
     actions = ['make_enable']
