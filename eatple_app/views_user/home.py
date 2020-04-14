@@ -8,6 +8,7 @@ from eatple_app.views_system.debugger import *
 #
 # # # # # # # # # # # # # # # # # # # # # # # # #
 
+
 def surveyForm(kakaoForm):
     # HEADER
     surveyImg = '{}{}'.format(HOST_URL, EATPLE_SURVEY_IMG)
