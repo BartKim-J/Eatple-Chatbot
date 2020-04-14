@@ -8,62 +8,6 @@ from eatple_app.views_system.debugger import *
 #
 # # # # # # # # # # # # # # # # # # # # # # # # #
 
-
-def dinnerForm(kakaoForm, user):
-    orderManager = UserOrderManager(user)
-    orderManager.orderPenddingCleanUp()
-    orderManager.availableOrderStatusUpdate()
-
-    orderList = orderManager.getAvailableOrders().filter(Q(ordersheet__user=user))
-    orderCount = orderList.count()
-    order = orderList.first()
-
-    isOrderEnable = (orderCount != 0)
-
-    if(isOrderEnable):
-        buttons = [
-            {
-                'action': 'block',
-                'label': '주문내역 확인',
-                'messageText': KAKAO_EMOJI_LOADING,
-                'blockId': KAKAO_BLOCK_USER_EATPLE_PASS,
-                'extra': {
-                    KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_HOME
-                }
-            },
-        ]
-    else:
-        buttons = [
-            {
-                'action': 'block',
-                'label': '🌙  테이크아웃 하기',
-                'messageText': '🌙  테이크아웃 하기',
-                'blockId': KAKAO_BLOCK_USER_GET_STORE,
-                'extra': {
-                    KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_HOME
-                }
-            },
-        ]
-
-    # HEADER
-    #homeImg = '{}{}'.format(HOST_URL, EATPLE_HOME_IMG)
-    homeImg = 'https://static-s.aa-cdn.net/img/ios/320606217/405c1e4efb60677d0609c7e288e15452?v=1'
-
-    thumbnail = {
-        'imageUrl': homeImg,
-        'fixedRatio': 'true',
-        'width': 800,
-        'height': 800,
-    }
-
-    kakaoForm.BasicCard_Push(
-        '저녁 주문 가능/취소 시간',
-        '오후 4시 ~ 오후 6시 30분',
-        thumbnail,
-        buttons
-    )
-
-
 def surveyForm(kakaoForm):
     # HEADER
     surveyImg = '{}{}'.format(HOST_URL, EATPLE_SURVEY_IMG)
@@ -346,9 +290,6 @@ def kakaoView_Home(user, address):
         thumbnail,
         buttons
     )
-
-    if(user.is_beta_tester):
-        dinnerForm(kakaoForm, user)
 
     kakaoForm.BasicCard_Add()
 
