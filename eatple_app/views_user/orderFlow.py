@@ -2,7 +2,7 @@
 from eatple_app.views_system.include import *
 from eatple_app.views_system.debugger import *
 
-from eatple_app.views import GET_UserHome
+from eatple_app.views import GET_UserHome, GET_EatplePass
 
 
 # STATIC CONFIG
@@ -39,6 +39,32 @@ SERVICE_AREAS = {
 # Static View
 #
 # # # # # # # # # # # # # # # # # # # # # # # # #
+
+def isPurchase(user, kakaoPayload):
+    orderManager = UserOrderManager(user)
+    orderManager.orderPaidCheck()
+
+    orderManager.availableOrderStatusUpdate()
+
+    lunchPurchaed = orderManager.getAvailableLunchOrderPurchased().filter(
+        ordersheet__user=user).exists()
+    dinnerPurchaced = orderManager.getAvailableDinnerOrderPurchased().filter(
+        ordersheet__user=user).exists()
+
+    kakaoForm = KakaoForm()
+
+    kakaoForm.QuickReplies_AddWithMap(DEFAULT_QUICKREPLIES_MAP)
+
+    if (lunchPurchaed and dinnerPurchaced):
+        return GET_EatplePass(kakaoPayload.request)
+
+    elif (lunchPurchaed):
+        return GET_EatplePass(kakaoPayload.request)
+
+    elif (dinnerPurchaced):
+        return GET_EatplePass(kakaoPayload.request)
+
+    return None
 
 
 def kakaoView_TimeOut(blockId):
@@ -101,7 +127,7 @@ def kakaoView_SellingTime(kakaoPayload):
         return errorView('잘못된 사용자 계정', '찾을 수 없는 사용자 계정 아이디입니다.')
 
     # User's Eatple Pass Validation
-    eatplePassStatus = eatplePassValidation(user, kakaoPayload)
+    eatplePassStatus = isPurchase(user, kakaoPayload)
     if(eatplePassStatus != None):
         return eatplePassStatus
 
@@ -147,7 +173,7 @@ def kakaoView_StoreListup(kakaoPayload):
         return errorView('잘못된 사용자 계정', '찾을 수 없는 사용자 계정 아이디입니다.')
 
     # User's Eatple Pass Validation
-    eatplePassStatus = eatplePassValidation(user, kakaoPayload)
+    eatplePassStatus = isPurchase(user, kakaoPayload)
     if(eatplePassStatus != None):
         return eatplePassStatus
 
@@ -410,7 +436,7 @@ def kakaoView_PickupZone_MenuListup(kakaoPayload):
         return errorView('잘못된 주문 번호', '잘못된 주문 번호입니다.')
 
     # User's Eatple Pass Validation
-    eatplePassStatus = eatplePassValidation(user, kakaoPayload)
+    eatplePassStatus = isPurchase(user, kakaoPayload)
     if(eatplePassStatus != None):
         return eatplePassStatus
 
@@ -571,7 +597,7 @@ def kakaoView_MenuListup(kakaoPayload):
         return errorView('잘못된 주문 번호', '잘못된 주문 번호입니다.')
 
     # User's Eatple Pass Validation
-    eatplePassStatus = eatplePassValidation(user, kakaoPayload)
+    eatplePassStatus = isPurchase(user, kakaoPayload)
     if(eatplePassStatus != None):
         return eatplePassStatus
 
@@ -877,7 +903,7 @@ def kakaoView_PickupTime(kakaoPayload):
         return errorView('잘못된 주문 번호', '잘못된 주문 번호입니다.')
 
     # User's Eatple Pass Validation
-    eatplePassStatus = eatplePassValidation(user, kakaoPayload)
+    eatplePassStatus = isPurchase(user, kakaoPayload)
     if(eatplePassStatus != None):
         return eatplePassStatus
 
@@ -1060,7 +1086,7 @@ def kakaoView_OrderPayment(kakaoPayload):
         return errorView('잘못된 사용자 계정', '찾을 수 없는 사용자 계정 아이디입니다.')
 
     # User's Eatple Pass Validation
-    eatplePassStatus = eatplePassValidation(user, kakaoPayload)
+    eatplePassStatus = isPurchase(user, kakaoPayload)
     if(eatplePassStatus != None):
         return eatplePassStatus
 

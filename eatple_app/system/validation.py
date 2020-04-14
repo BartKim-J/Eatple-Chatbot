@@ -162,30 +162,3 @@ def vacationTimeCheck():
             return True
 
     return False
-
-
-def eatplePassValidation(user, kakaoPayload):
-    orderManager = UserOrderManager(user)
-    orderManager.orderPaidCheck()
-
-    orderManager.availableOrderStatusUpdate()
-
-    lunchPurchaed = orderManager.getAvailableLunchOrderPurchased().filter(
-        ordersheet__user=user).exists()
-    dinnerPurchaced = orderManager.getAvailableDinnerOrderPurchased().filter(
-        ordersheet__user=user).exists()
-
-    kakaoForm = KakaoForm()
-
-    kakaoForm.QuickReplies_AddWithMap(DEFAULT_QUICKREPLIES_MAP)
-
-    if (lunchPurchaed and dinnerPurchaced):
-        return GET_EatplePass(kakaoPayload.request)
-
-    elif (lunchPurchaed):
-        return GET_EatplePass(kakaoPayload.request)
-
-    elif (dinnerPurchaced):
-        return GET_EatplePass(kakaoPayload.request)
-
-    return None

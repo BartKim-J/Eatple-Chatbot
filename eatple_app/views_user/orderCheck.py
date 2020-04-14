@@ -14,7 +14,6 @@ ORDER_LIST_LENGTH = 8
 # # # # # # # # # # # # # # # # # # # # # # # # #
 
 
-
 def eatplePassImg(order, delegatedEatplePassCount):
     imgUrl = ''
 

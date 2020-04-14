@@ -1,15 +1,8 @@
 # User
 from eatple_app.views_user.debug import GET_Debug
+
 # Home
 from eatple_app.views_user.home import GET_UserHome
-
-# Ordeirng
-from eatple_app.views_user.orderFlow import GET_PassRouter
-from eatple_app.views_user.orderFlow import GET_SellingTime
-from eatple_app.views_user.orderFlow import GET_Store
-from eatple_app.views_user.orderFlow import GET_Menu
-from eatple_app.views_user.orderFlow import SET_PickupTime
-from eatple_app.views_user.orderFlow import SET_OrderSheet
 
 # Check
 from eatple_app.views_user.orderCheck import GET_EatplePass
@@ -27,9 +20,18 @@ from eatple_app.views_user.orderShare import GET_DelegateUserRemove
 from eatple_app.views_user.orderShare import GET_DelegateUserRemoveAll
 from eatple_app.views_user.orderShare import GET_DelegateUser
 
-# Edit Pickup Time
+# Order Edit Pickup Time
 from eatple_app.views_user.orderEdit import GET_EditPickupTime
 from eatple_app.views_user.orderEdit import SET_ConfirmEditPickupTime
+
+# Order Flow
+from eatple_app.views_user.orderFlow import GET_PassRouter
+from eatple_app.views_user.orderFlow import GET_SellingTime
+from eatple_app.views_user.orderFlow import GET_Store
+from eatple_app.views_user.orderFlow import GET_Menu
+from eatple_app.views_user.orderFlow import SET_PickupTime
+from eatple_app.views_user.orderFlow import SET_OrderSheet
+
 
 # Notify
 from eatple_app.views_user.notify import GET_UserNotify
