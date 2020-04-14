@@ -40,6 +40,7 @@ SERVICE_AREAS = {
 #
 # # # # # # # # # # # # # # # # # # # # # # # # #
 
+
 def isPurchase(user, kakaoPayload):
     orderManager = UserOrderManager(user)
     orderManager.orderPaidCheck()
@@ -321,6 +322,21 @@ def kakaoView_StoreListup(kakaoPayload):
                 buttons
             )
 
+            thumbnail = {
+                "imageUrl": '{}{}'.format(HOST_URL, EATPLE_MENU_PICKUP_ZONE_FF_SUB_IMG),
+                'fixedRatio': 'True',
+                'width': 800,
+                'height': 800,
+            }
+            buttons = [
+            ]
+            kakaoForm.BasicCard_Push(
+                '하루 15분만 걸으면 최대 2000원 할인!',
+                '*15분 = 평균 왕복 테이크아웃 시간',
+                thumbnail,
+                buttons
+            )
+
         # Menu Carousel Card Add
         for store in storeList:
             menu = Menu.objects.filter(
@@ -467,6 +483,11 @@ def kakaoView_PickupZone_MenuListup(kakaoPayload):
     menuList = Menu.objects.filter(
         Q(tag__name__contains="픽업존") &
         Q(selling_time=SELLING_TIME_LUNCH) &
+        Q(status=OC_OPEN) &
+        (
+            Q(store__status=OC_OPEN) |
+            Q(store__status=STORE_OC_VACATION)
+        ) &
         (
             Q(store__type=STORE_TYPE_B2B_AND_NORMAL) |
             Q(store__type=STORE_TYPE_NORMAL)
@@ -474,13 +495,8 @@ def kakaoView_PickupZone_MenuListup(kakaoPayload):
         (
             Q(type=MENU_TYPE_B2B_AND_NORMAL) |
             Q(type=MENU_TYPE_NORMAL)
-        ) &
-        Q(status=OC_OPEN) &
-        (
-            Q(store__status=OC_OPEN) |
-            Q(store__status=STORE_OC_VACATION)
         )
-    ).order_by(F'pickup_time', F'price')
+    ).order_by(F'price')
 
     if menuList:
         # Menu Carousel Card Add
