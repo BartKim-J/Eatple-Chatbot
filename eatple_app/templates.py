@@ -359,9 +359,9 @@ def showActiveStatus(orderTimeSheet):
                                                   hour=0, minute=0, second=0, microsecond=0)
     test_end_date = orderTimeSheet.GetCurrentDate()
 
-    WAU_Condition_Date = dateNowByTimeZone().replace(year=2020, month=1, day=7,
+    WAU_Condition_Date = dateNowByTimeZone().replace(year=2020, month=4, day=1,
                                                      hour=0, minute=0, second=0, microsecond=0)
-    MAU_Condition_Date = dateNowByTimeZone().replace(year=2020, month=2, day=1,
+    MAU_Condition_Date = dateNowByTimeZone().replace(year=2020, month=4, day=1,
                                                      hour=0, minute=0, second=0, microsecond=0)
 
     bestDAU = 0
@@ -511,7 +511,7 @@ def dashboard(request):
 
     userActive = getUserActive()
 
-    # showActiveStatus(orderTimeSheet)
+    showActiveStatus(orderTimeSheet)
     # getMenuPrice(menuList)
 
     log = LogEntry.objects.all()
