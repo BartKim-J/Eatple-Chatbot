@@ -8,6 +8,7 @@ from eatple_app.views_system.debugger import *
 #
 # # # # # # # # # # # # # # # # # # # # # # # # #
 
+
 def surveyForm(kakaoForm):
     # HEADER
     surveyImg = '{}{}'.format(HOST_URL, EATPLE_SURVEY_IMG)
@@ -231,7 +232,7 @@ def kakaoView_Home(user, address):
     addressMap = address.split()
 
     kakaoForm.BasicCard_Push(
-        '🗺️  나의 \'잇플\'레이스.',
+        '🗺️  나의 \'잇플\'레이스',
         '[{} {} {}]  인근'.format(
             addressMap[0], addressMap[1], addressMap[2]),
         {},
