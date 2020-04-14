@@ -1,4 +1,10 @@
-HOST_URL = 'https://www.eatple.com:8000'
+# Django Library
+from django.conf import settings
+
+if(settings.SETTING_ID == 'DEPLOY'):
+    HOST_URL = 'https://eapi.eatple.com'
+else:
+    HOST_URL = 'https://dev.eatple.com'
 
 # DEFAULT IMAEG URL
 # IMAGE DB PATH
@@ -9,7 +15,8 @@ PARTNER_ORDER_SHEET_IMG = '/media/STORE_DB/images/default/partnerOrderSheet.png'
 EATPLE_HOME_IMG = '/media/STORE_DB/images/default/homeBeta07.png'
 EATPLE_SURVEY_IMG = '/media/STORE_DB/images/default/surveyBeta07.png'
 
-EATPLE_MENU_PICKUP_ZONE_FF_IMG = '/media/STORE_DB/images/default/PickupZoneStoreFF_03.png'
+EATPLE_MENU_PICKUP_ZONE_FF_IMG = '/media/STORE_DB/images/default/PickupZoneStoreFF_05.png'
+EATPLE_MENU_PICKUP_ZONE_FF_SUB_IMG = '/media/STORE_DB/images/default/PickupZoneStoreFF_Sub_03.png'
 
 EATPLE_PASS_IMG_01 = '/media/STORE_DB/images/default/EatplePassImg_01.png'
 EATPLE_PASS_IMG_02 = '/media/STORE_DB/images/default/EatplePassImg_02.png'
