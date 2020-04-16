@@ -256,9 +256,8 @@ class UserAdmin(ImportExportMixin, admin.ModelAdmin):
     list_filter = (
         ('create_date', DateRangeFilter),
         UserServiceLocationFilter,
-        'gender',
-        'flag_promotion',
-        'type',
+        'is_staff',
+        'is_beta_tester',
     )
 
     list_editable = (

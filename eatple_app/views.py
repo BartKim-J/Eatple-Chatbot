@@ -32,6 +32,9 @@ from eatple_app.views_user.orderFlow import GET_Menu
 from eatple_app.views_user.orderFlow import SET_PickupTime
 from eatple_app.views_user.orderFlow import SET_OrderSheet
 
+# Event
+from eatple_app.views_user.friend_code import GET_FriendInvitation
+from eatple_app.views_user.friend_code import POST_FriendCodeSubmit
 
 # Notify
 from eatple_app.views_user.notify import GET_UserNotify

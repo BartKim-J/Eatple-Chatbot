@@ -49,12 +49,48 @@ def surveyForm(kakaoForm):
     )
 
 
-def isLocationParam(kakaoPayload):
-    try:
-        param = kakaoPayload.dataActionParams['location']['origin']
-        return True
-    except (TypeError, AttributeError, KeyError):
-        return False
+def kakaoView_SurveyApply(user, type, answer):
+    EatplusSkillLog('Survey Apply')
+
+    kakaoForm = KakaoForm()
+
+    buttons = [
+        {
+            'action': 'block',
+            'label': '확인',
+            'messageText': KAKAO_EMOJI_LOADING,
+            'blockId': KAKAO_BLOCK_USER_HOME,
+            'extra': {
+                KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_HOME
+            }
+        },
+    ]
+
+    if(
+        answer.find(KAKAO_EMOJI_LOADING) != -1 or
+        answer.find('🍽  주문하기/주문확인') != -1 or
+        answer.find('📗  매뉴얼') != -1 or
+        answer.find('🗺  위치 설정') != -1 or
+        answer.find('📖  공지사항') != -1 or
+        answer.find('📜  소개') != -1
+    ):
+        KakaoInstantForm().Message(
+            '불편한 점이 아직 입력되지 않았어요!',
+            '홈으로 돌아갈려면 확인을 눌러주세요.',
+            buttons=buttons,
+            kakaoForm=kakaoForm,
+        )
+    elif(Survey().apply(user, type, answer)):
+        KakaoInstantForm().Message(
+            '좋은 의견 감사합니다.',
+            '전달된 내용 - 「 {} 」'.format(answer),
+            buttons=buttons,
+            kakaoForm=kakaoForm,
+        )
+    else:
+        pass
+
+    return JsonResponse(kakaoForm.GetForm())
 
 
 def isSurveyStoreParam(kakaoPayload):
@@ -79,6 +115,30 @@ def isSurveyImprovementsParam(kakaoPayload):
         return True
     except (TypeError, AttributeError, KeyError):
         return False
+
+
+def kakaoView_SignUp():
+    EatplusSkillLog('Sign Up')
+
+    kakaoForm = KakaoForm()
+
+    buttons = [
+        {
+            'action': 'block',
+            'label': '가입을 시작해볼까요?',
+            'messageText': KAKAO_EMOJI_LOADING,
+            'blockId': KAKAO_BLOCK_USER_SIGNUP,
+            'extra': {
+                KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_HOME
+            }
+        },
+    ]
+
+    return KakaoInstantForm().Message(
+        '아직 잇플에 가입하지 않은 계정입니다.',
+        '',
+        buttons=buttons,
+    )
 
 
 def userLocationRegistration(user, locationData):
@@ -108,30 +168,6 @@ def userLocationRegistration(user, locationData):
         user.save()
 
     return user
-
-
-def kakaoView_SignUp():
-    EatplusSkillLog('Sign Up')
-
-    kakaoForm = KakaoForm()
-
-    buttons = [
-        {
-            'action': 'block',
-            'label': '가입을 시작해볼까요?',
-            'messageText': KAKAO_EMOJI_LOADING,
-            'blockId': KAKAO_BLOCK_USER_SIGNUP,
-            'extra': {
-                KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_HOME
-            }
-        },
-    ]
-
-    return KakaoInstantForm().Message(
-        '아직 잇플에 가입하지 않은 계정입니다.',
-        '',
-        buttons=buttons,
-    )
 
 
 def kakaoView_LocationRegistration():
@@ -167,48 +203,12 @@ def kakaoView_LocationRegistration():
     )
 
 
-def kakaoView_SurveyApply(user, type, answer):
-    EatplusSkillLog('Survey Apply')
-
-    kakaoForm = KakaoForm()
-
-    buttons = [
-        {
-            'action': 'block',
-            'label': '확인',
-            'messageText': KAKAO_EMOJI_LOADING,
-            'blockId': KAKAO_BLOCK_USER_HOME,
-            'extra': {
-                KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_HOME
-            }
-        },
-    ]
-
-    if(
-        answer.find('⌛️') != -1 or
-        answer.find('🍽  주문하기/주문확인') != -1 or
-        answer.find('📗  매뉴얼') != -1 or
-        answer.find('🗺  위치 설정') != -1 or
-        answer.find('📖  공지사항') != -1 or
-        answer.find('📜  소개') != -1
-    ):
-        KakaoInstantForm().Message(
-            '불편한 점이 아직 입력되지 않았어요!',
-            '홈으로 돌아갈려면 확인을 눌러주세요.',
-            buttons=buttons,
-            kakaoForm=kakaoForm,
-        )
-    elif(Survey().apply(user, type, answer)):
-        KakaoInstantForm().Message(
-            '좋은 의견 감사합니다.',
-            '전달된 내용 - 「 {} 」'.format(answer),
-            buttons=buttons,
-            kakaoForm=kakaoForm,
-        )
-    else:
-        pass
-
-    return JsonResponse(kakaoForm.GetForm())
+def isLocationParam(kakaoPayload):
+    try:
+        param = kakaoPayload.dataActionParams['location']['origin']
+        return True
+    except (TypeError, AttributeError, KeyError):
+        return False
 
 
 def kakaoView_Home(user, address):
@@ -232,9 +232,8 @@ def kakaoView_Home(user, address):
     addressMap = address.split()
 
     kakaoForm.BasicCard_Push(
-        '🗺️  나의 \'잇플\'레이스',
-        '[{} {} {}]  인근'.format(
-            addressMap[0], addressMap[1], addressMap[2]),
+        '🕚  주문 가능/취소 시간',
+        '오후 4시 ~ 오전 11시',
         {},
         []
     )
@@ -251,29 +250,29 @@ def kakaoView_Home(user, address):
     isOrderEnable = (orderCount != 0)
 
     if(isOrderEnable):
-        buttons = [
-            {
-                'action': 'block',
-                'label': '주문내역 확인',
-                'messageText': KAKAO_EMOJI_LOADING,
-                'blockId': KAKAO_BLOCK_USER_EATPLE_PASS,
-                'extra': {
-                    KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_HOME
-                }
-            },
-        ]
+        QUICKREPLIES_MAP.insert(0,
+                                {
+                                    'action': 'block',
+                                    'label': '주문내역 확인',
+                                    'messageText': KAKAO_EMOJI_LOADING,
+                                    'blockId': KAKAO_BLOCK_USER_EATPLE_PASS,
+                                    'extra': {
+                                        KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_HOME
+                                    }
+                                },
+                                )
     else:
-        buttons = [
-            {
-                'action': 'block',
-                'label': '🥡  테이크아웃 하기',
-                'messageText': '🥡  테이크아웃 하기',
-                'blockId': KAKAO_BLOCK_USER_GET_STORE,
-                'extra': {
-                    KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_HOME
-                }
-            },
-        ]
+        QUICKREPLIES_MAP.insert(0,
+                                {
+                                    'action': 'block',
+                                    'label': '테이크아웃 하기',
+                                    'messageText': KAKAO_EMOJI_LOADING,
+                                    'blockId': KAKAO_BLOCK_USER_GET_STORE,
+                                    'extra': {
+                                        KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_HOME
+                                    }
+                                },
+                                )
 
     # HEADER
     homeImg = '{}{}'.format(HOST_URL, EATPLE_HOME_IMG)
@@ -285,9 +284,55 @@ def kakaoView_Home(user, address):
         'height': 800,
     }
 
+    buttons = []
+
     kakaoForm.BasicCard_Push(
-        '주문 가능/취소 시간',
-        '오후 4시 ~ 오전 11시',
+        '🗺️  나의 \'잇플\'레이스',
+        '[{} {} {}]  인근'.format(
+            addressMap[0], addressMap[1], addressMap[2]),
+        thumbnail,
+        buttons
+    )
+
+    kakaoForm.BasicCard_Add()
+
+    kakaoForm.QuickReplies_AddWithMap(QUICKREPLIES_MAP)
+
+    return JsonResponse(kakaoForm.GetForm())
+
+
+def kakaoView_FriendCode(user):
+    kakaoForm = KakaoForm()
+
+    KakaoInstantForm().Message(
+        '모든 가입이 완료되었습니다.',
+        kakaoForm=kakaoForm
+    )
+
+    buttons = [
+        {
+            'action': 'block',
+            'label': '입력하기',
+            'messageText': KAKAO_EMOJI_LOADING,
+            'blockId': KAKAO_BLOCK_USER_FRIEND_CODE_SUBMIT,
+            'extra': {
+                KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_HOME
+            }
+        },
+        {
+            'action': 'block',
+            'label': '건너뛰기',
+            'messageText': KAKAO_EMOJI_LOADING,
+            'blockId': KAKAO_BLOCK_USER_GET_STORE,
+            'extra': {
+                KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_HOME
+            }
+        },
+    ]
+
+    kakaoForm.BasicCard_Push(
+        '친구 코드가 있다면 입력하기를 눌러 입력해주세요.',
+        '',
         thumbnail,
         buttons
     )
@@ -352,7 +397,7 @@ def GET_UserHome(request):
 
                     return kakaoView_Route_Home(user)
 
-                return kakaoView_LocationRegistration()
+                return kakaoView_Route_Home(user)
             except (RuntimeError, TypeError, NameError, KeyError) as ex:
                 print(ex)
                 return kakaoView_LocationRegistration()

@@ -133,7 +133,7 @@ def kakaoView_SellingTime(kakaoPayload):
         return eatplePassStatus
 
     thumbnail = {
-        "imageUrl": None,
+        'imageUrl': None,
         'fixedRatio': 'True',
         'width': 800,
         'height': 800,
@@ -289,15 +289,25 @@ def kakaoView_StoreListup(kakaoPayload):
     sellingOutList = []
 
     if storeList:
-        KakaoInstantForm().Message(
-            '매장 확인 후 \'메뉴판 보기\'에서 메뉴를 확인하세요',
-            kakaoForm=kakaoForm
-        )
+        if(user.friend_discount_count > 0):
+            KakaoInstantForm().Message(
+                '모든 메뉴에 할인이 적용되었습니다.',
+                '할인 쿠폰이 {}회 남았습니다.'.format(
+                    user.friend_discount_count
+                ),
+                kakaoForm=kakaoForm
+            )
+        else:
+            KakaoInstantForm().Message(
+                '매장 확인 후 \'메뉴판 보기\'에서 메뉴를 확인하세요',
+                kakaoForm=kakaoForm
+            )
+            
 
         # @PROMOTION
-        if((area_in_flag and addressMap[2] == "신사동") or area_code == "sinsa"):
+        if((area_in_flag and addressMap[2] == '신사동') or area_code == 'sinsa'):
             thumbnail = {
-                "imageUrl": '{}{}'.format(HOST_URL, EATPLE_MENU_PICKUP_ZONE_FF_IMG),
+                'imageUrl': '{}{}'.format(HOST_URL, EATPLE_MENU_PICKUP_ZONE_FF_IMG),
                 'fixedRatio': 'True',
                 'width': 800,
                 'height': 800,
@@ -323,7 +333,7 @@ def kakaoView_StoreListup(kakaoPayload):
             )
 
             thumbnail = {
-                "imageUrl": '{}{}'.format(HOST_URL, EATPLE_MENU_PICKUP_ZONE_FF_SUB_IMG),
+                'imageUrl': '{}{}'.format(HOST_URL, EATPLE_MENU_PICKUP_ZONE_FF_SUB_IMG),
                 'fixedRatio': 'True',
                 'width': 800,
                 'height': 800,
@@ -341,7 +351,7 @@ def kakaoView_StoreListup(kakaoPayload):
         for store in storeList:
             menu = Menu.objects.filter(
                 Q(store=store) &
-                ~Q(tag__name__contains="픽업존") &
+                ~Q(tag__name__contains='픽업존') &
                 Q(selling_time=currentSellingTime) &
                 (
                     Q(type=MENU_TYPE_B2B_AND_NORMAL) |
@@ -481,7 +491,7 @@ def kakaoView_PickupZone_MenuListup(kakaoPayload):
     sellingOutList = []
 
     menuList = Menu.objects.filter(
-        Q(tag__name__contains="픽업존") &
+        Q(tag__name__contains='픽업존') &
         Q(selling_time=SELLING_TIME_LUNCH) &
         Q(status=OC_OPEN) &
         (
@@ -669,7 +679,7 @@ def kakaoView_MenuListup(kakaoPayload):
                           user.location.point) * 100 * 1000,
     ).filter(
         Q(store=store) &
-        ~Q(tag__name__contains="픽업존") &
+        ~Q(tag__name__contains='픽업존') &
         Q(selling_time=currentSellingTime) &
         (
             Q(store__type=STORE_TYPE_B2B_AND_NORMAL) |
@@ -745,7 +755,7 @@ def kakaoView_MenuListup(kakaoPayload):
                 sellingOutList.extend(list(Menu.objects.filter(id=menu.id)))
 
         for menu in sellingOutList:
-            delivery = menu.tag.filter(name="픽업존").exists()
+            delivery = menu.tag.filter(name='픽업존').exists()
 
             if(delivery):
                 status = '픽업존'
@@ -839,7 +849,7 @@ def kakaoView_MenuListupWithAreaOut(kakaoPayload):
         distance=Distance(F('store__place__point'),
                           user.location.point) * 100 * 1000,
     ).filter(
-        ~Q(tag__name__contains="픽업존") &
+        ~Q(tag__name__contains='픽업존') &
         Q(selling_time=currentSellingTime) &
         (
             Q(store__type=STORE_TYPE_B2B_AND_NORMAL) |
@@ -880,7 +890,7 @@ def kakaoView_MenuListupWithAreaOut(kakaoPayload):
 
                 KakaoInstantForm().MenuList(
                     menu,
-                    "서비스 지역 아님",
+                    '서비스 지역 아님',
                     thumbnail,
                     buttons,
                     kakaoForm
@@ -1012,7 +1022,7 @@ def kakaoView_PickupTime(kakaoPayload):
 
     order = orderValidation(kakaoPayload)
 
-    isCafe = store.category.filter(name="카페").exists()
+    isCafe = store.category.filter(name='카페').exists()
     if(isCafe):
         KakaoInstantForm().Message(
             '🛎  상시픽업이 가능한 매장입니다.',
@@ -1046,7 +1056,7 @@ def kakaoView_PickupTime(kakaoPayload):
 
         kakaoForm.QuickReplies_Add(
             'block',
-            "오전 11시 30분 ~ 오후 4시",
+            '오전 11시 30분 ~ 오후 4시',
             KAKAO_EMOJI_LOADING,
             KAKAO_BLOCK_USER_SET_ORDER_SHEET,
             dataActionExtra
@@ -1066,7 +1076,7 @@ def kakaoView_PickupTime(kakaoPayload):
 
             kakaoForm.QuickReplies_Add(
                 'block',
-                "{}".format(pickupTime.time.strftime(
+                '{}'.format(pickupTime.time.strftime(
                     '%p %-I시 %-M분').replace('AM', '오전').replace('PM', '오후')),
                 KAKAO_EMOJI_LOADING,
                 KAKAO_BLOCK_USER_SET_ORDER_SHEET,
@@ -1168,7 +1178,7 @@ def kakaoView_OrderPayment(kakaoPayload):
         }
     ]
 
-    isCafe = store.category.filter(name="카페").exists()
+    isCafe = store.category.filter(name='카페').exists()
     if(isCafe):
         profile = {
             'nickname': '픽업 시간 : {pickup_time}'.format(pickup_time=order.pickup_time.strftime(
@@ -1315,12 +1325,12 @@ def kakaoView_OrderPaymentCheck(kakaoPayload):
     except OrderRecordSheet.DoesNotExist:
         orderRecordSheet = OrderRecordSheet()
 
-    """
+    '''
     if (orderRecordSheet.timeoutValidation()):
         orderRecordSheet.recordUpdate(user, order, ORDER_RECORD_TIMEOUT)
         return kakaoView_TimeOut(KAKAO_BLOCK_USER_SET_ORDER_SHEET)
         else:
-    """
+    '''
     orderRecordSheet.recordUpdate(user, order, ORDER_RECORD_PAYMENT_CONFIRM)
 
     if(order.payment_status == EATPLE_ORDER_STATUS_CANCELLED):
@@ -1538,7 +1548,7 @@ def GET_Store(request):
 
     # User Case
     addressMap = user.location.address.split()
-    if(addressMap[0] == "서울"):
+    if(addressMap[0] == '서울'):
         return kakaoView_StoreListup(kakaoPayload)
     else:
         return kakaoView_MenuListupWithAreaOut(kakaoPayload)
@@ -1557,7 +1567,7 @@ def GET_Menu(request):
 
     # User Case
     addressMap = user.location.address.split()
-    if(addressMap[0] == "서울"):
+    if(addressMap[0] == '서울'):
         return kakaoView_MenuListup(kakaoPayload)
     else:
         return kakaoView_MenuListupWithAreaOut(kakaoPayload)
