@@ -47,9 +47,9 @@ def isPurchase(user, kakaoPayload):
 
     orderManager.availableOrderStatusUpdate()
 
-    lunchPurchaed = orderManager.getAvailableLunchOrderPurchased().filter(
+    lunchPurchaed = orderManager.getAvailableLunchOrder().filter(
         ordersheet__user=user).exists()
-    dinnerPurchaced = orderManager.getAvailableDinnerOrderPurchased().filter(
+    dinnerPurchaced = orderManager.getAvailableDinnerOrder().filter(
         ordersheet__user=user).exists()
 
     kakaoForm = KakaoForm()
@@ -96,63 +96,6 @@ def kakaoView_PassRouter(kakaoPayload):
     return None
 
 
-def kakaoView_SellingTime(kakaoPayload):
-    kakaoForm = KakaoForm()
-
-    QUICKREPLIES_MAP = [
-        {
-            'action': 'block',
-            'label': '점심 테이크아웃 하기',
-            'messageText': KAKAO_EMOJI_LOADING,
-            'blockId': KAKAO_BLOCK_USER_GET_MENU,
-            'extra': {
-                KAKAO_PARAM_SELLING_TIME: SELLING_TIME_LUNCH,
-                KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_GET_STORE
-            }
-        },
-        {
-            'action': 'block',
-            'label': '저녁 테이크아웃 하기',
-            'messageText': KAKAO_EMOJI_LOADING,
-            'blockId': KAKAO_BLOCK_USER_GET_MENU,
-            'extra': {
-                KAKAO_PARAM_SELLING_TIME: SELLING_TIME_DINNER,
-                KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_GET_STORE
-            }
-        },
-    ]
-
-    # User Validation
-    user = userValidation(kakaoPayload)
-    if (user == None):
-        return errorView('잘못된 사용자 계정', '찾을 수 없는 사용자 계정 아이디입니다.')
-
-    # User's Eatple Pass Validation
-    eatplePassStatus = isPurchase(user, kakaoPayload)
-    if(eatplePassStatus != None):
-        return eatplePassStatus
-
-    thumbnail = {
-        'imageUrl': None,
-        'fixedRatio': 'True',
-        'width': 800,
-        'height': 800,
-    }
-    buttons = []
-
-    kakaoForm.BasicCard_Push(
-        '언제 테이크아웃을 하고 싶으신가요?',
-        '⏱️  점심 : 오후 4시 ~ 오전 11시\n⏱️  저녁 : 오후 5시 ~ 오후 6시 30분',
-        thumbnail,
-        buttons
-    )
-    kakaoForm.BasicCard_Add()
-
-    kakaoForm.QuickReplies_AddWithMap(QUICKREPLIES_MAP)
-
-    return JsonResponse(kakaoForm.GetForm())
-
-
 def kakaoView_StoreListup(kakaoPayload):
     kakaoForm = KakaoForm()
 
@@ -177,6 +120,9 @@ def kakaoView_StoreListup(kakaoPayload):
     eatplePassStatus = isPurchase(user, kakaoPayload)
     if(eatplePassStatus != None):
         return eatplePassStatus
+
+    # @BETA Dinner Beta
+    currentSellingTime = sellingTimeValidation(kakaoPayload)
 
     order = orderValidation(kakaoPayload)
 
@@ -214,10 +160,6 @@ def kakaoView_StoreListup(kakaoPayload):
         orderRecordSheet = OrderRecordSheet()
         orderRecordSheet.recordUpdate(user, order, ORDER_RECORD_GET_STORE)
 
-    # @BETA alway show lunch menu
-    # currentSellingTime = sellingTimeCheck()
-    currentSellingTime = SELLING_TIME_LUNCH
-
     distance_condition = DEFAULT_DISTANCE_CONDITION
     area_in_flag = DEFAULT_AREA_IN_FLAG
     area_code = DEFAULT_AREA_CODE
@@ -233,6 +175,7 @@ def kakaoView_StoreListup(kakaoPayload):
             'messageText': KAKAO_EMOJI_LOADING,
             'blockId': KAKAO_BLOCK_USER_GET_STORE,
             'extra': {
+                KAKAO_PARAM_SELLING_TIME: currentSellingTime,
                 KAKAO_PARAM_ORDER_ID: order.order_id,
                 KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_GET_STORE,
                 'distance_condition': DEFAULT_DISTANCE_CONDITION,
@@ -250,6 +193,7 @@ def kakaoView_StoreListup(kakaoPayload):
                 'messageText': KAKAO_EMOJI_LOADING,
                 'blockId': KAKAO_BLOCK_USER_GET_STORE,
                 'extra': {
+                    KAKAO_PARAM_SELLING_TIME: currentSellingTime,
                     KAKAO_PARAM_ORDER_ID: order.order_id,
                     KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_GET_STORE,
                     'distance_condition': DEFAULT_DISTANCE_CONDITION,
@@ -260,7 +204,7 @@ def kakaoView_StoreListup(kakaoPayload):
 
     storeList = Store.objects.annotate(
         distance=Distance(F('place__point'),
-                          user.location.point) * 100 * 1000,
+                          user.location.point) * 100 * 1000
     ).filter(
         (
             Q(type=STORE_TYPE_B2B_AND_NORMAL) |
@@ -286,8 +230,6 @@ def kakaoView_StoreListup(kakaoPayload):
 
         storeList = storeList.filter(Q(distance__lte=distance_condition))
 
-    sellingOutList = []
-
     if storeList:
         if(user.friend_discount_count > 0):
             KakaoInstantForm().Message(
@@ -302,10 +244,9 @@ def kakaoView_StoreListup(kakaoPayload):
                 '매장 확인 후 \'메뉴판 보기\'에서 메뉴를 확인하세요',
                 kakaoForm=kakaoForm
             )
-            
 
         # @PROMOTION
-        if((area_in_flag and addressMap[2] == '신사동') or area_code == 'sinsa'):
+        if((SELLING_TIME_LUNCH == currentSellingTime) and ((area_in_flag and addressMap[2] == '신사동') or (area_code == 'sinsa'))):
             thumbnail = {
                 'imageUrl': '{}{}'.format(HOST_URL, EATPLE_MENU_PICKUP_ZONE_FF_IMG),
                 'fixedRatio': 'True',
@@ -347,6 +288,7 @@ def kakaoView_StoreListup(kakaoPayload):
                 buttons
             )
 
+        onDisplayStore = 0
         # Menu Carousel Card Add
         for store in storeList:
             menu = Menu.objects.filter(
@@ -361,6 +303,7 @@ def kakaoView_StoreListup(kakaoPayload):
             ).first()
 
             if(menu):
+                onDisplayStore += 1
                 currentStock = menu.getCurrentStock()
 
                 distance = store.distance
@@ -434,6 +377,14 @@ def kakaoView_StoreListup(kakaoPayload):
             else:
                 # Store have don't exist menu
                 pass
+
+        if(onDisplayStore < 1):
+            kakaoForm.BasicCard_Push(
+                '근처에 제휴된 매장이 없습니다..',
+                '빠른 시일안에 이 지역 매장을 늘려볼게요!',
+                {},
+                []
+            )
 
         kakaoForm.BasicCard_Add()
 
@@ -1005,7 +956,7 @@ def kakaoView_PickupTime(kakaoPayload):
 
     if (currentSellingTime == None):
         return errorView('잘못된 주문 시간', '정상적인 주문 시간대가 아닙니다.')
-    elif currentSellingTime == SELLING_TIME_DINNER:
+    elif (currentSellingTime == SELLING_TIME_DINNER):
         KakaoInstantForm().Message(
             '오늘 점심은 이미 마감되었어요.',
             '내일 점심은 오늘 오후 4시부터 내일 오전 11시 까지 주문하실 수 있어요.',
@@ -1519,20 +1470,6 @@ def GET_PassRouter(request):
         return GET_UserHome(request)
 
     return kakaoView_PassRouter(kakaoPayload)
-
-
-@csrf_exempt
-def GET_SellingTime(request):
-    EatplusSkillLog('GET_SellingTime')
-
-    kakaoPayload = KakaoPayLoad(request)
-
-    # User Validation
-    user = userValidation(kakaoPayload)
-    if (user == None):
-        return GET_UserHome(request)
-
-    return kakaoView_SellingTime(kakaoPayload)
 
 
 @csrf_exempt

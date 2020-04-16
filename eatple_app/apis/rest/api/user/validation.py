@@ -9,14 +9,15 @@ from eatple_app.models import *
 # Define
 from eatple_app.define import *
 
+
 def eatplePassValidation(user):
     orderManager = UserOrderManager(user)
     orderManager.orderPaidCheck()
 
     orderManager.availableOrderStatusUpdate()
 
-    lunchPurchaed = orderManager.getAvailableLunchOrderPurchased().exists()
-    dinnerPurchaced = orderManager.getAvailableDinnerOrderPurchased().exists()
+    lunchPurchaed = orderManager.getAvailableLunchOrder().exists()
+    dinnerPurchaced = orderManager.getAvailableDinnerOrder().exists()
 
     if (lunchPurchaed and dinnerPurchaced):
         return False

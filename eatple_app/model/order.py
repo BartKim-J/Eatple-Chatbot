@@ -724,7 +724,7 @@ class OrderManager():
 
         return availableOrders
 
-    def getAvailableLunchOrderPurchased(self):
+    def getAvailableLunchOrder(self):
         availableOrders = self.getAvailableOrders()
         lunchOrders = availableOrders.filter(
             menu__selling_time=SELLING_TIME_LUNCH
@@ -732,7 +732,7 @@ class OrderManager():
 
         return lunchOrders
 
-    def getAvailableDinnerOrderPurchased(self):
+    def getAvailableDinnerOrder(self):
         availableOrders = self.getAvailableOrders()
         dinnerOrders = availableOrders.filter(
             menu__selling_time=SELLING_TIME_DINNER

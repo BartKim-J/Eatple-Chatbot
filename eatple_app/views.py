@@ -26,7 +26,6 @@ from eatple_app.views_user.orderEdit import SET_ConfirmEditPickupTime
 
 # Order Flow
 from eatple_app.views_user.orderFlow import GET_PassRouter
-from eatple_app.views_user.orderFlow import GET_SellingTime
 from eatple_app.views_user.orderFlow import GET_Store
 from eatple_app.views_user.orderFlow import GET_Menu
 from eatple_app.views_user.orderFlow import SET_PickupTime

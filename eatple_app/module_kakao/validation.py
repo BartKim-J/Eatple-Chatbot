@@ -56,6 +56,14 @@ def storeValidation(kakaoPayload):
         return None
 
 
+def sellingTimeValidation(kakaoPayload):
+    try:
+        sellingTime = kakaoPayload.dataActionExtra[KAKAO_PARAM_SELLING_TIME]
+        return sellingTime
+    except (TypeError, AttributeError, KeyError):
+        return None
+
+
 def orderValidation(kakaoPayload):
     try:
         order_id = kakaoPayload.dataActionExtra[KAKAO_PARAM_ORDER_ID]

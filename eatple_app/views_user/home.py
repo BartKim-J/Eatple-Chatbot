@@ -211,6 +211,110 @@ def isLocationParam(kakaoPayload):
         return False
 
 
+def component_LunchHome(kakaoForm, orderManager, user):
+    orderList = orderManager.getAvailableOrders().filter(Q(ordersheet__user=user))
+    orderCount = orderList.count()
+    order = orderList.first()
+
+    lunchPurchaed = orderManager.getAvailableLunchOrder().filter(
+        Q(ordersheet__user=user)).exists()
+
+    if(lunchPurchaed):
+        buttons = [
+            {
+                'action': 'block',
+                'label': '주문내역 확인',
+                'messageText': KAKAO_EMOJI_LOADING,
+                'blockId': KAKAO_BLOCK_USER_EATPLE_PASS,
+                'extra': {
+                    KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_HOME
+                }
+            },
+        ]
+    else:
+        buttons = [
+            {
+                'action': 'block',
+                'label': '점심 주문하기',
+                'messageText': KAKAO_EMOJI_LOADING,
+                'blockId': KAKAO_BLOCK_USER_GET_STORE,
+                'extra': {
+                    KAKAO_PARAM_SELLING_TIME: SELLING_TIME_LUNCH,
+                    KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_HOME
+                }
+            },
+        ]
+
+    # LUNCH HEADER
+    lunchHomeImg = '{}{}'.format(HOST_URL, EATPLE_HOME_IMG)
+
+    thumbnail = {
+        'imageUrl': lunchHomeImg,
+        'fixedRatio': 'true',
+        'width': 800,
+        'height': 800,
+    }
+
+    kakaoForm.BasicCard_Push(
+        '점심 주문 가능/취소 시간',
+        '오후 4시 ~ 오전 11시',
+        thumbnail,
+        buttons
+    )
+
+
+def component_DinnerHome(kakaoForm, orderManager, user):
+    orderList = orderManager.getAvailableOrders().filter(Q(ordersheet__user=user))
+    orderCount = orderList.count()
+    order = orderList.first()
+
+    dinnerPurchaced = orderManager.getAvailableDinnerOrder().filter(
+        Q(ordersheet__user=user)).exists()
+
+    if(dinnerPurchaced):
+        buttons = [
+            {
+                'action': 'block',
+                'label': '주문내역 확인',
+                'messageText': KAKAO_EMOJI_LOADING,
+                'blockId': KAKAO_BLOCK_USER_EATPLE_PASS,
+                'extra': {
+                    KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_HOME
+                }
+            },
+        ]
+    else:
+        buttons = [
+            {
+                'action': 'block',
+                'label': '저녁 주문하기',
+                'messageText': KAKAO_EMOJI_LOADING,
+                'blockId': KAKAO_BLOCK_USER_GET_STORE,
+                'extra': {
+                    KAKAO_PARAM_SELLING_TIME: SELLING_TIME_DINNER,
+                    KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_HOME
+                }
+            },
+        ]
+
+    # DINNER HEADER
+    dinnerHomeImg = '{}{}'.format(HOST_URL, EATPLE_HOME_IMG)
+
+    thumbnail = {
+        'imageUrl': dinnerHomeImg,
+        'fixedRatio': 'true',
+        'width': 800,
+        'height': 800,
+    }
+
+    kakaoForm.BasicCard_Push(
+        '저녁 주문 가능/취소 시간',
+        '오후 2시 ~ 오후 6시',
+        thumbnail,
+        buttons
+    )
+
+
 def kakaoView_Home(user, address):
     EatplusSkillLog('Home')
 
@@ -232,8 +336,9 @@ def kakaoView_Home(user, address):
     addressMap = address.split()
 
     kakaoForm.BasicCard_Push(
-        '🕚  주문 가능/취소 시간',
-        '오후 4시 ~ 오전 11시',
+        '🗺️  나의 \'잇플\'레이스',
+        '[{} {} {}]  인근'.format(
+            addressMap[0], addressMap[1], addressMap[2]),
         {},
         []
     )
@@ -243,56 +348,8 @@ def kakaoView_Home(user, address):
     orderManager.orderPenddingCleanUp()
     orderManager.availableOrderStatusUpdate()
 
-    orderList = orderManager.getAvailableOrders().filter(Q(ordersheet__user=user))
-    orderCount = orderList.count()
-    order = orderList.first()
-
-    isOrderEnable = (orderCount != 0)
-
-    if(isOrderEnable):
-        QUICKREPLIES_MAP.insert(0,
-                                {
-                                    'action': 'block',
-                                    'label': '주문내역 확인',
-                                    'messageText': KAKAO_EMOJI_LOADING,
-                                    'blockId': KAKAO_BLOCK_USER_EATPLE_PASS,
-                                    'extra': {
-                                        KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_HOME
-                                    }
-                                },
-                                )
-    else:
-        QUICKREPLIES_MAP.insert(0,
-                                {
-                                    'action': 'block',
-                                    'label': '테이크아웃 하기',
-                                    'messageText': KAKAO_EMOJI_LOADING,
-                                    'blockId': KAKAO_BLOCK_USER_GET_STORE,
-                                    'extra': {
-                                        KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_HOME
-                                    }
-                                },
-                                )
-
-    # HEADER
-    homeImg = '{}{}'.format(HOST_URL, EATPLE_HOME_IMG)
-
-    thumbnail = {
-        'imageUrl': homeImg,
-        'fixedRatio': 'true',
-        'width': 800,
-        'height': 800,
-    }
-
-    buttons = []
-
-    kakaoForm.BasicCard_Push(
-        '🗺️  나의 \'잇플\'레이스',
-        '[{} {} {}]  인근'.format(
-            addressMap[0], addressMap[1], addressMap[2]),
-        thumbnail,
-        buttons
-    )
+    component_LunchHome(kakaoForm, orderManager, user)
+    component_DinnerHome(kakaoForm, orderManager, user)
 
     kakaoForm.BasicCard_Add()
 
