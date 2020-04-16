@@ -167,14 +167,19 @@ class UserAdmin(ImportExportMixin, admin.ModelAdmin):
             return obj.location.address
     address.short_description = "주소"
 
-    def phonenumber(self, obj):
+    def field_phone_number(self, obj):
         return obj.phone_number.as_national
-    phonenumber.short_description = "전화번호"
+    field_phone_number.short_description = "전화번호"
+
+    def field_friend_code(self, obj):
+        return obj.get_friend_code()
+    field_friend_code.short_description = "친구코드"
 
     readonly_fields = (
         'app_user_id',
         'nickname',
-        'phonenumber',
+        'field_phone_number',
+        'field_friend_code',
         'email',
         'birthyear',
         'birthday',
@@ -191,7 +196,7 @@ class UserAdmin(ImportExportMixin, admin.ModelAdmin):
                 'fields': [
                     'app_user_id',
                     'nickname',
-                    'phonenumber',
+                    'field_phone_number',
                     'email',
                     'create_date',
                 ]
@@ -206,6 +211,16 @@ class UserAdmin(ImportExportMixin, admin.ModelAdmin):
                     'is_staff',
                     'is_beta_tester',
                     'flag_promotion',
+                ]
+            }
+        ),
+        (
+            '친구코드',
+            {
+                'fields': [
+                    'field_friend_code',
+                    'friend_discount_count',
+                    'is_apply_friend_code',
                 ]
             }
         ),
@@ -256,7 +271,7 @@ class UserAdmin(ImportExportMixin, admin.ModelAdmin):
         'nickname',
         'app_user_id',
         'type',
-        'phonenumber',
+        'field_phone_number',
         'email',
         'create_date',
         'address',
