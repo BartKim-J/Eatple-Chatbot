@@ -78,6 +78,9 @@ class Location(models.Model):
 
 
 class KakaoUser(models.Model):
+    class Meta:
+        abstract = True
+
     app_user_id = models.IntegerField(
         default=0,
         verbose_name="카카오 고유 번호"
@@ -127,11 +130,77 @@ class KakaoUser(models.Model):
         null=True
     )
 
+
+class FriendEvent(models.Model):
     class Meta:
         abstract = True
 
+    friend_code = models.CharField(
+        default=None,
+        max_length=WORD_LENGTH,
+        null=True,
+        unique=True,
+        verbose_name="친구코드"
+    )
 
-class User(KakaoUser, models.Model):
+    friend_discount_count = models.IntegerField(
+        default=0,
+        verbose_name="할인쿠폰(개)"
+    )
+
+    is_apply_friend_code = models.BooleanField(
+        default=False,
+        verbose_name="이벤트 참가 여부"
+    )
+
+    def get_friend_code(self):
+        if(self.friend_code == None):
+            self.friend_code = '%8x' % random.getrandbits(16*2)
+            self.friend_code = self.friend_code.upper()
+            self.save()
+        else:
+            pass
+
+        return self.friend_code
+
+    def apply_friend_code(self, friend_code):
+        status = False
+
+        if(self.is_apply_friend_code == False):
+            try:
+                invitationUser = User.objects.get(friend_code=friend_code)
+                invitationUser.gain_friend_discount()
+
+                self.gain_friend_discount()
+                self.is_apply_friend_code = True
+
+                status = True
+            except Exception as ex:
+                print(ex)
+                pass
+        else:
+            # ALREADY APPLIED
+            pass
+
+        return status
+
+    def gain_friend_discount(self):
+        self.friend_discount_count += 1
+        self.save()
+
+        return self.friend_discount_count
+
+    def use_friend_discount(self):
+        if(self.friend_discount_count > 0):
+            self.friend_discount_count -= 1
+            self.save()
+        else:
+            return None
+
+        return self.friend_discount_count
+
+
+class User(KakaoUser, FriendEvent, models.Model):
     class Meta:
         verbose_name = "유저 - 사용자"
         verbose_name_plural = "유저 - 사용자"
@@ -166,7 +235,7 @@ class User(KakaoUser, models.Model):
         default=False,
         verbose_name="베타 테스터"
     )
-    
+
     create_date = models.DateTimeField(
         auto_now_add=True,
         verbose_name="가입일자"

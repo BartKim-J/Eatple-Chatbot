@@ -52,6 +52,24 @@ class OrderShareFlagFilter(SimpleListFilter):
             return queryset.filter(Q(delegate=None))
 
 
+class OrderPickupZoneFilter(SimpleListFilter):
+    title = '픽업존'
+    parameter_name = '픽업존'
+
+    def lookups(self, request, model_admin):
+        return [
+            ('on', '픽업존'),
+            ('off', '테이크아웃'),
+        ]
+
+    def queryset(self, request, queryset):
+        if self.value() == 'on':
+            return queryset.filter(Q(menu__tag__name="픽업존"))
+
+        if self.value() == 'off':
+            return queryset.filter(~Q(menu__tag__name="픽업존"))
+
+
 class OrderResource(resources.ModelResource):
     def dehydrate_b2b_name(self, obj):
         if(obj.ordersheet.user.company != None):
@@ -118,7 +136,6 @@ class OrderAdmin(ImportExportMixin, admin.ModelAdmin):
     def get_queryset(self, request):
         qs = super(OrderAdmin, self).get_queryset(request)
 
-        # return qs.exclude(Q(store=None) & Q(menu=None))
         return qs
 
     def make_enable(self, request, queryset):
@@ -213,8 +230,11 @@ class OrderAdmin(ImportExportMixin, admin.ModelAdmin):
         ),
     ]
 
-    search_fields = ['order_id', 'ordersheet__user__nickname',
-                     'ordersheet__user__app_user_id']
+    search_fields = [
+        'order_id',
+        'ordersheet__user__nickname',
+        'ordersheet__user__app_user_id'
+    ]
 
     readonly_fields = (
         'update_date',
@@ -227,18 +247,16 @@ class OrderAdmin(ImportExportMixin, admin.ModelAdmin):
     list_filter = (
         ('payment_date', DateRangeFilter),
         ('pickup_time', DateRangeFilter),
-        OrderShareFlagFilter,
-        'ordersheet__user__company',
+        OrderPickupZoneFilter,
         'status',
         'payment_status',
-        TypeFilter,
         'store',
         'ordersheet__user__is_staff',
     )
 
     actions = ['make_enable']
 
-    list_display = ('order_id', 'field_owner', 'field_owner_id',  'store', 'menu', 'type', 'b2b_name',
-                    'payment_type', 'payment_status', 'status', 'field_delegate_flag', 'pickup_time', 'payment_date', 'pickup_complete_date')
+    list_display = ('order_id', 'field_owner', 'field_owner_id',  'store', 'menu', 'type',
+                    'payment_type', 'payment_status', 'status', 'field_delegate_flag', 'payment_date',)
 
     inlines = [KakaoPayInline]
