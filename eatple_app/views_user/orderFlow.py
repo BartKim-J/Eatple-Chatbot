@@ -41,7 +41,7 @@ SERVICE_AREAS = {
 # # # # # # # # # # # # # # # # # # # # # # # # #
 
 
-def isPurchase(user, kakaoPayload):
+def isPurchase(user, sellingTime, kakaoPayload):
     orderManager = UserOrderManager(user)
     orderManager.orderPaidCheck()
 
@@ -116,13 +116,13 @@ def kakaoView_StoreListup(kakaoPayload):
     if (user == None):
         return errorView('잘못된 사용자 계정', '찾을 수 없는 사용자 계정 아이디입니다.')
 
-    # User's Eatple Pass Validation
-    eatplePassStatus = isPurchase(user, kakaoPayload)
-    if(eatplePassStatus != None):
-        return eatplePassStatus
-
     # @BETA Dinner Beta
     currentSellingTime = sellingTimeValidation(kakaoPayload)
+
+    # User's Eatple Pass Validation
+    eatplePassStatus = isPurchase(user, currentSellingTime, kakaoPayload)
+    if(eatplePassStatus != None):
+        return eatplePassStatus
 
     order = orderValidation(kakaoPayload)
 
@@ -245,14 +245,15 @@ def kakaoView_StoreListup(kakaoPayload):
                 kakaoForm=kakaoForm
             )
 
-        # @PROMOTION
-        if((SELLING_TIME_LUNCH == currentSellingTime) and ((area_in_flag and addressMap[2] == '신사동') or (area_code == 'sinsa'))):
-            thumbnail = {
-                'imageUrl': '{}{}'.format(HOST_URL, EATPLE_MENU_PICKUP_ZONE_FF_IMG),
-                'fixedRatio': 'True',
-                'width': 800,
-                'height': 800,
-            }
+        # HEADER
+        if(SELLING_TIME_LUNCH == currentSellingTime):
+            if(((area_in_flag and addressMap[2] == '신사동') or (area_code == 'sinsa'))):
+                thumbnail = {
+                    'imageUrl': '{}{}'.format(HOST_URL, EATPLE_MENU_PICKUP_ZONE_FF_IMG),
+                    'fixedRatio': 'True',
+                    'width': 800,
+                    'height': 800,
+                }
             buttons = [
                 {
                     'action': 'block',
@@ -287,6 +288,10 @@ def kakaoView_StoreListup(kakaoPayload):
                 thumbnail,
                 buttons
             )
+        elif(SELLING_TIME_DINNER == currentSellingTime):
+            pass
+        else:
+            pass
 
         onDisplayStore = 0
         # Menu Carousel Card Add
@@ -350,6 +355,7 @@ def kakaoView_StoreListup(kakaoPayload):
                         'messageText': KAKAO_EMOJI_LOADING,
                         'blockId': KAKAO_BLOCK_USER_GET_MENU,
                         'extra': {
+                            KAKAO_PARAM_SELLING_TIME: currentSellingTime,
                             KAKAO_PARAM_STORE_ID: store.store_id,
                             KAKAO_PARAM_ORDER_ID: order.order_id,
                             KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_GET_STORE
@@ -412,8 +418,11 @@ def kakaoView_PickupZone_MenuListup(kakaoPayload):
     if(order == None):
         return errorView('잘못된 주문 번호', '잘못된 주문 번호입니다.')
 
+    # @BETA Dinner Beta
+    currentSellingTime = sellingTimeValidation(kakaoPayload)
+
     # User's Eatple Pass Validation
-    eatplePassStatus = isPurchase(user, kakaoPayload)
+    eatplePassStatus = isPurchase(user, currentSellingTime, kakaoPayload)
     if(eatplePassStatus != None):
         return eatplePassStatus
 
@@ -484,6 +493,7 @@ def kakaoView_PickupZone_MenuListup(kakaoPayload):
                         'messageText': KAKAO_EMOJI_LOADING,
                         'blockId': KAKAO_BLOCK_USER_SET_PICKUP_TIME,
                         'extra': {
+                            KAKAO_PARAM_SELLING_TIME: currentSellingTime,
                             KAKAO_PARAM_STORE_ID: menu.store.store_id,
                             KAKAO_PARAM_MENU_ID: menu.menu_id,
                             KAKAO_PARAM_ORDER_ID: order.order_id,
@@ -573,8 +583,11 @@ def kakaoView_MenuListup(kakaoPayload):
     if(order == None):
         return errorView('잘못된 주문 번호', '잘못된 주문 번호입니다.')
 
+    # @BETA Dinner Beta
+    currentSellingTime = sellingTimeValidation(kakaoPayload)
+
     # User's Eatple Pass Validation
-    eatplePassStatus = isPurchase(user, kakaoPayload)
+    eatplePassStatus = isPurchase(user, currentSellingTime, kakaoPayload)
     if(eatplePassStatus != None):
         return eatplePassStatus
 
@@ -598,6 +611,7 @@ def kakaoView_MenuListup(kakaoPayload):
             'messageText': KAKAO_EMOJI_LOADING,
             'blockId': KAKAO_BLOCK_USER_GET_STORE,
             'extra': {
+                KAKAO_PARAM_SELLING_TIME: currentSellingTime,
                 KAKAO_PARAM_STORE_ID: store.store_id,
                 KAKAO_PARAM_ORDER_ID: order.order_id,
                 KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_GET_MENU
@@ -879,8 +893,11 @@ def kakaoView_PickupTime(kakaoPayload):
     if(order == None):
         return errorView('잘못된 주문 번호', '잘못된 주문 번호입니다.')
 
+    # @BETA Dinner Beta
+    currentSellingTime = sellingTimeValidation(kakaoPayload)
+
     # User's Eatple Pass Validation
-    eatplePassStatus = isPurchase(user, kakaoPayload)
+    eatplePassStatus = isPurchase(user, currentSellingTime, kakaoPayload)
     if(eatplePassStatus != None):
         return eatplePassStatus
 
@@ -905,6 +922,7 @@ def kakaoView_PickupTime(kakaoPayload):
             'messageText': KAKAO_EMOJI_LOADING,
             'blockId': KAKAO_BLOCK_USER_GET_STORE,
             'extra': {
+                KAKAO_PARAM_STORE_ID: store.store_id,
                 KAKAO_PARAM_STORE_ID: store.store_id,
                 KAKAO_PARAM_ORDER_ID: order.order_id,
                 KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_GET_MENU
@@ -944,7 +962,7 @@ def kakaoView_PickupTime(kakaoPayload):
     if(isClosedDay or isVacationDay):
         KakaoInstantForm().Message(
             '📌  안내사항',
-            '월요일 점심 주문은 일요일 오후 4시부터 가능합니다.',
+            '월요일 점심 주문은 일요일 오후 9시부터 가능합니다.',
             kakaoForm=kakaoForm
         )
 
@@ -959,7 +977,7 @@ def kakaoView_PickupTime(kakaoPayload):
     elif (currentSellingTime == SELLING_TIME_DINNER):
         KakaoInstantForm().Message(
             '오늘 점심은 이미 마감되었어요.',
-            '내일 점심은 오늘 오후 4시부터 내일 오전 11시 까지 주문하실 수 있어요.',
+            '내일 점심은 오늘 오후 9시부터 내일 오전 11시 까지 주문하실 수 있어요.',
             kakaoForm=kakaoForm
         )
 
@@ -977,7 +995,7 @@ def kakaoView_PickupTime(kakaoPayload):
     if(isCafe):
         KakaoInstantForm().Message(
             '🛎  상시픽업이 가능한 매장입니다.',
-            '오전 11시 30분 부터 오후 4시 까지 언제든 방문하여 메뉴를 픽업할 수 있습니다.',
+            '오전 11시 30분 부터 오후 2시 까지 언제든 방문하여 메뉴를 픽업할 수 있습니다.',
             kakaoForm=kakaoForm
         )
     else:
@@ -998,6 +1016,7 @@ def kakaoView_PickupTime(kakaoPayload):
 
     if(isCafe):
         dataActionExtra = {
+            KAKAO_PARAM_SELLING_TIME: currentSellingTime,
             KAKAO_PARAM_STORE_ID: menu.store.store_id,
             KAKAO_PARAM_MENU_ID: menu.menu_id,
             KAKAO_PARAM_ORDER_ID: order.order_id,
@@ -1007,7 +1026,7 @@ def kakaoView_PickupTime(kakaoPayload):
 
         kakaoForm.QuickReplies_Add(
             'block',
-            '오전 11시 30분 ~ 오후 4시',
+            '오전 11시 30분 ~ 오후 2시',
             KAKAO_EMOJI_LOADING,
             KAKAO_BLOCK_USER_SET_ORDER_SHEET,
             dataActionExtra
@@ -1015,6 +1034,7 @@ def kakaoView_PickupTime(kakaoPayload):
     else:
         for pickupTime in pickupTimes:
             dataActionExtra = {
+                KAKAO_PARAM_SELLING_TIME: currentSellingTime,
                 KAKAO_PARAM_STORE_ID: menu.store.store_id,
                 KAKAO_PARAM_MENU_ID: menu.menu_id,
                 KAKAO_PARAM_ORDER_ID: order.order_id,
@@ -1062,8 +1082,11 @@ def kakaoView_OrderPayment(kakaoPayload):
     if (user == None):
         return errorView('잘못된 사용자 계정', '찾을 수 없는 사용자 계정 아이디입니다.')
 
+    # @BETA Dinner Beta
+    currentSellingTime = sellingTimeValidation(kakaoPayload)
+
     # User's Eatple Pass Validation
-    eatplePassStatus = isPurchase(user, kakaoPayload)
+    eatplePassStatus = isPurchase(user, currentSellingTime, kakaoPayload)
     if(eatplePassStatus != None):
         return eatplePassStatus
 
@@ -1133,7 +1156,7 @@ def kakaoView_OrderPayment(kakaoPayload):
     if(isCafe):
         profile = {
             'nickname': '픽업 시간 : {pickup_time}'.format(pickup_time=order.pickup_time.strftime(
-                '%-m월 %-d일 오전 11시 30분 ~ 오후 4시')),
+                '%-m월 %-d일 오전 11시 30분 ~ 오후 2시')),
             'imageUrl': '{}{}'.format(HOST_URL, store.logoImgURL()),
         }
     else:

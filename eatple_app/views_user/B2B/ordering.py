@@ -537,7 +537,7 @@ def kakaoView_PickupTime(kakaoPayload):
     elif currentSellingTime == SELLING_TIME_DINNER:
         KakaoInstantForm().Message(
             '오늘 점심은 이미 마감되었어요.',
-            '내일 점심은 오늘 오후 4시 부터 내일 오전 11시까지 주문하실 수 있어요.',
+            '내일 점심은 오늘 오후 9시 부터 내일 오전 11시까지 주문하실 수 있어요.',
             kakaoForm=kakaoForm
         )
 
@@ -555,7 +555,7 @@ def kakaoView_PickupTime(kakaoPayload):
     if(isCafe):
         KakaoInstantForm().Message(
             '🛎  상시픽업이 가능한 매장입니다.',
-            '오전 11시 30분 부터 오후 4시 까지 언제든 방문하여 메뉴를 픽업할 수 있습니다.',
+            '오전 11시 30분 부터 오후 2시 까지 언제든 방문하여 메뉴를 픽업할 수 있습니다.',
             kakaoForm=kakaoForm
         )
     else:
@@ -585,7 +585,7 @@ def kakaoView_PickupTime(kakaoPayload):
 
         kakaoForm.QuickReplies_Add(
             'block',
-            "오전 11시 30분 ~ 오후 4시",
+            "오전 11시 30분 ~ 오후 2시",
             KAKAO_EMOJI_LOADING,
             KAKAO_BLOCK_USER_SET_ORDER_SHEET,
             dataActionExtra
@@ -712,7 +712,7 @@ def kakaoView_OrderPayment(kakaoPayload):
     if(isCafe):
         profile = {
             'nickname': '픽업 시간 : {pickup_time}'.format(pickup_time=dateByTimeZone(order.pickup_time).strftime(
-                '%-m월 %-d일 오전 11시 30분 ~ 오후 4시')),
+                '%-m월 %-d일 오전 11시 30분 ~ 오후 2시')),
             'imageUrl': '{}{}'.format(HOST_URL, store.logoImgURL()),
         }
     else:
@@ -1414,7 +1414,7 @@ def kakaoView_B2B_PickupTime(kakaoPayload):
     elif currentSellingTime == SELLING_TIME_DINNER:
         KakaoInstantForm().Message(
             '오늘 점심은 이미 마감되었어요.',
-            '내일 점심은 오늘 오후 4시 부터 내일 오전 11시까지 주문하실 수 있어요.',
+            '내일 점심은 오늘 오후 2시 부터 내일 오전 11시까지 주문하실 수 있어요.',
             kakaoForm=kakaoForm
         )
 
@@ -1432,7 +1432,7 @@ def kakaoView_B2B_PickupTime(kakaoPayload):
     if(isCafe):
         KakaoInstantForm().Message(
             '🛎  상시픽업이 가능한 매장입니다.',
-            '오전 11시 30분 부터 오후 4시 까지 언제든 방문하여 메뉴를 픽업할 수 있습니다.',
+            '오전 11시 30분 부터 오후 2시 까지 언제든 방문하여 메뉴를 픽업할 수 있습니다.',
             kakaoForm=kakaoForm
         )
     else:
@@ -1462,7 +1462,7 @@ def kakaoView_B2B_PickupTime(kakaoPayload):
 
         kakaoForm.QuickReplies_Add(
             'block',
-            "오전 11시 30분 ~ 오후 4시",
+            "오전 11시 30분 ~ 오후 2시",
             KAKAO_EMOJI_LOADING,
             KAKAO_BLOCK_USER_SET_ORDER_SHEET,
             dataActionExtra
@@ -1593,7 +1593,7 @@ def kakaoView_B2B_OrderPaymentCheck(kakaoPayload):
     elif currentSellingTime == SELLING_TIME_DINNER:
         KakaoInstantForm().Message(
             '오늘 점심은 이미 마감되었어요.',
-            '내일 점심은 오늘 오후 4시부터 내일 오전 11시까지 주문하실 수 있어요.',
+            '내일 점심은 오늘 오후 9시부터 내일 오전 11시까지 주문하실 수 있어요.',
             kakaoForm=kakaoForm
         )
 

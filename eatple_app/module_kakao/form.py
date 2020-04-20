@@ -70,7 +70,7 @@ class KakaoInstantForm():
         isCafe = order.store.category.filter(name="카페").exists()
         if(isCafe):
             pickupTimeStr = dateByTimeZone(order.pickup_time).strftime(
-                '%-m월 %-d일 오전 11시 30분 ~ 오후 4시')
+                '%-m월 %-d일 오전 11시 30분 ~ 오후 2시')
         else:
             pickupTimeStr = dateByTimeZone(order.pickup_time).strftime(
                 '%-m월 %-d일 %p %-I시 %-M분').replace('AM', '오전').replace('PM', '오후')
@@ -124,7 +124,7 @@ class KakaoInstantForm():
                 ]
             )
             kakaoForm.BasicCard_Add()
-        else:
+        elif(order.menu.selling_time == SELLING_TIME_LUNCH):
             kakaoForm.BasicCard_Push(
                 '직접 픽업이 어려울땐, “픽업 부탁하기”로 함께 주문한 동료에게 부탁해보세요',
                 '',
@@ -148,7 +148,11 @@ class KakaoInstantForm():
                 ]
             )
             kakaoForm.BasicCard_Add()
-
+        elif(order.menu.selling_time == SELLING_TIME_DINNER):
+            pass
+        else:
+            pass
+            
         kakaoForm.QuickReplies_AddWithMap(ORDER_LIST_QUICKREPLIES_MAP)
 
         return JsonResponse(kakaoForm.GetForm())
@@ -171,7 +175,7 @@ class KakaoInstantForm():
         isCafe = order.store.category.filter(name="카페").exists()
         if(isCafe):
             pickupTimeStr = dateByTimeZone(order.pickup_time).strftime(
-                '%-m월 %-d일 오전 11시 30분 ~ 오후 4시')
+                '%-m월 %-d일 오전 11시 30분 ~ 오후 2시')
         else:
             pickupTimeStr = dateByTimeZone(order.pickup_time).strftime(
                 '%-m월 %-d일 %p %-I시 %-M분').replace('AM', '오전').replace('PM', '오후')

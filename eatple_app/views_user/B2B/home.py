@@ -350,7 +350,7 @@ def kakaoView_Order_Home(user, order, address):
     isCafe = order.store.category.filter(name="카페").exists()
     if(isCafe):
         pickupTimeStr = dateByTimeZone(order.pickup_time).strftime(
-            '%-m월 %-d일 오전 11시 30분 ~ 오후 4시')
+            '%-m월 %-d일 오전 11시 30분 ~ 오후 2시')
     else:
         pickupTimeStr = dateByTimeZone(order.pickup_time).strftime(
             '%-m월 %-d일 %p %-I시 %-M분').replace('AM', '오전').replace('PM', '오후')

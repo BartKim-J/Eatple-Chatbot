@@ -39,7 +39,7 @@ def eatplePass(order, ownEatplePass, delegatedEatplePassCount, delegatedEatplePa
     isCafe = order.store.category.filter(name="카페").exists()
     if(isCafe):
         pickupTimeStr = dateByTimeZone(order.pickup_time).strftime(
-            '%-m월 %-d일 오전 11시 30분 ~ 오후 4시')
+            '%-m월 %-d일 오전 11시 30분 ~ 오후 2시')
     else:
         pickupTimeStr = dateByTimeZone(order.pickup_time).strftime(
             '%-m월 %-d일 %p %-I시 %-M분').replace('AM', '오전').replace('PM', '오후')
@@ -179,7 +179,7 @@ def eatplePassDelegated(order, ownEatplePass, delegatedEatplePassCount, delegate
     isCafe = order.store.category.filter(name="카페").exists()
     if(isCafe):
         pickupTimeStr = dateByTimeZone(order.pickup_time).strftime(
-            '%-m월 %-d일 오전 11시 30분 ~ 오후 4시')
+            '%-m월 %-d일 오전 11시 30분 ~ 오후 2시')
     else:
         pickupTimeStr = dateByTimeZone(order.pickup_time).strftime(
             '%-m월 %-d일 %p %-I시 %-M분').replace('AM', '오전').replace('PM', '오후')
@@ -323,7 +323,7 @@ def kakaoView_EatplePass(kakaoPayload):
                         buttons=buttons,
                         kakaoForm=kakaoForm
                     )
-                else:
+                elif(order.menu.selling_time == SELLING_TIME_LUNCH):
                     buttons = [
                         {
                             'action': 'webLink',
@@ -352,6 +352,10 @@ def kakaoView_EatplePass(kakaoPayload):
                         buttons=buttons,
                         kakaoForm=kakaoForm
                     )
+                elif(order.menu.selling_time == SELLING_TIME_DINNER):
+                    pass
+                else:
+                    pass
             else:
                 eatplePassDelegated(
                     order,
