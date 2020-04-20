@@ -71,7 +71,7 @@ def isB2BUser(user):
     return False
 
 
-def sellingTimeCheck():
+def sellingTimeCheck(include=False):
     # DEBUG
     if(VALIDATION_DEBUG_MODE):
         return SELLING_TIME_LUNCH
@@ -93,7 +93,15 @@ def sellingTimeCheck():
     nextLunchOrderTimeEnd = orderTimeSheet.GetNextLunchOrderEditTimeEnd()
 
     if(prevLunchOrderTimeEnd < currentDate) and (currentDate < dinnerOrderTimeStart):
-        return SELLING_TIME_DINNER
+        if(include):
+            return SELLING_TIME_DINNER
+        else:
+            return None
+    elif(dinnerOrderTimeEnd < currentDate) and (currentDate < nextLunchOrderTimeStart):
+        if(include):
+            return SELLING_TIME_LUNCH
+        else:
+            return None
     elif(prevLunchOrderTimeStart < currentDate) and (currentDate < prevLunchOrderTimeEnd):
         return SELLING_TIME_LUNCH
     elif(nextLunchOrderTimeStart < currentDate) and (currentDate < nextLunchOrderTimeEnd):

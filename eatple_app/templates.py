@@ -511,7 +511,7 @@ def dashboard(request):
 
     userActive = getUserActive()
 
-    showActiveStatus(orderTimeSheet)
+    # showActiveStatus(orderTimeSheet)
     # getMenuPrice(menuList)
 
     log = LogEntry.objects.all()

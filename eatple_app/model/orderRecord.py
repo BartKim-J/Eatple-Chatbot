@@ -103,9 +103,13 @@ class OrderRecordSheet(models.Model):
     def timeoutValidation(self):
         timeOut = False
 
-        deadline = dateByTimeZone(self.update_date) + \
-            datetime.timedelta(minutes=30)
-
+        if(ORDER_TIME_CHECK_DEBUG_MODE):
+            deadline = dateNowByTimeZone() + \
+                datetime.timedelta(minutes=30)
+        else:
+            deadline = dateByTimeZone(self.update_date) + \
+                datetime.timedelta(minutes=30)
+                
         current_date = dateNowByTimeZone()
 
         if (deadline < current_date):

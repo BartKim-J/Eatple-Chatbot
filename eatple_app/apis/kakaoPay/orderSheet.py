@@ -51,10 +51,11 @@ def GET_KAKAO_PAY_OrderSheet(request):
             return JsonResponse({'status': 300, 'message': message})
 
         # Time Check
+        sellingTime = order.menu.selling_time
         currentSellingTime = sellingTimeCheck()
         isClosedDay = weekendTimeCheck()
 
-        if(currentSellingTime != order.menu.selling_time or isClosedDay == True):
+        if(currentSellingTime != sellingTime or isClosedDay == True):
             message = '현재 주문 가능시간이 아닙니다.'
             return JsonResponse({'status': 301, 'message': message})
 

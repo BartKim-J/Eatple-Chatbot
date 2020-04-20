@@ -56,7 +56,7 @@ def isPurchase(user, sellingTime, kakaoPayload):
 
     kakaoForm.QuickReplies_AddWithMap(DEFAULT_QUICKREPLIES_MAP)
 
-    if (lunchPurchaed and dinnerPurchaced):
+    if (lunchPurchaed or dinnerPurchaced):
         return GET_EatplePass(kakaoPayload.request)
 
     elif (lunchPurchaed):
@@ -92,10 +92,6 @@ def kakaoView_TimeOut(blockId):
     return JsonResponse(kakaoForm.GetForm())
 
 
-def kakaoView_PassRouter(kakaoPayload):
-    return None
-
-
 def kakaoView_StoreListup(kakaoPayload):
     kakaoForm = KakaoForm()
 
@@ -117,10 +113,13 @@ def kakaoView_StoreListup(kakaoPayload):
         return errorView('잘못된 사용자 계정', '찾을 수 없는 사용자 계정 아이디입니다.')
 
     # @BETA Dinner Beta
-    currentSellingTime = sellingTimeValidation(kakaoPayload)
+    sellingTime = sellingTimeValidation(kakaoPayload)
+    currentSellingTime = sellingTimeCheck()
 
+    if(sellingTime == None):
+        sellingTime = sellingTimeCheck(True)
     # User's Eatple Pass Validation
-    eatplePassStatus = isPurchase(user, currentSellingTime, kakaoPayload)
+    eatplePassStatus = isPurchase(user, sellingTime, kakaoPayload)
     if(eatplePassStatus != None):
         return eatplePassStatus
 
@@ -138,9 +137,9 @@ def kakaoView_StoreListup(kakaoPayload):
 
         if (orderRecordSheet.timeoutValidation()):
             orderRecordSheet.recordUpdate(user, order, ORDER_RECORD_TIMEOUT)
-            return kakaoView_TimeOut(KAKAO_BLOCK_USER_SET_PICKUP_TIME)
+            return kakaoView_TimeOut(KAKAO_BLOCK_USER_GET_STORE)
         else:
-            orderRecordSheet.recordUpdate(user, order, ORDER_RECORD_GET_MENU)
+            orderRecordSheet.recordUpdate(user, order, ORDER_RECORD_GET_STORE)
 
         pass
     else:
@@ -175,7 +174,7 @@ def kakaoView_StoreListup(kakaoPayload):
             'messageText': KAKAO_EMOJI_LOADING,
             'blockId': KAKAO_BLOCK_USER_GET_STORE,
             'extra': {
-                KAKAO_PARAM_SELLING_TIME: currentSellingTime,
+                KAKAO_PARAM_SELLING_TIME: sellingTime,
                 KAKAO_PARAM_ORDER_ID: order.order_id,
                 KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_GET_STORE,
                 'distance_condition': DEFAULT_DISTANCE_CONDITION,
@@ -193,7 +192,7 @@ def kakaoView_StoreListup(kakaoPayload):
                 'messageText': KAKAO_EMOJI_LOADING,
                 'blockId': KAKAO_BLOCK_USER_GET_STORE,
                 'extra': {
-                    KAKAO_PARAM_SELLING_TIME: currentSellingTime,
+                    KAKAO_PARAM_SELLING_TIME: sellingTime,
                     KAKAO_PARAM_ORDER_ID: order.order_id,
                     KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_GET_STORE,
                     'distance_condition': DEFAULT_DISTANCE_CONDITION,
@@ -239,14 +238,15 @@ def kakaoView_StoreListup(kakaoPayload):
                 ),
                 kakaoForm=kakaoForm
             )
-        else:
-            KakaoInstantForm().Message(
-                '매장 확인 후 \'메뉴판 보기\'에서 메뉴를 확인하세요',
-                kakaoForm=kakaoForm
-            )
+
+        KakaoInstantForm().Message(
+            '\'메뉴판 보기\'에서 메뉴를 확인하세요',
+            '',
+            kakaoForm=kakaoForm
+        )
 
         # HEADER
-        if(SELLING_TIME_LUNCH == currentSellingTime):
+        if(SELLING_TIME_LUNCH == sellingTime):
             if(((area_in_flag and addressMap[2] == '신사동') or (area_code == 'sinsa'))):
                 thumbnail = {
                     'imageUrl': '{}{}'.format(HOST_URL, EATPLE_MENU_PICKUP_ZONE_FF_IMG),
@@ -288,7 +288,7 @@ def kakaoView_StoreListup(kakaoPayload):
                 thumbnail,
                 buttons
             )
-        elif(SELLING_TIME_DINNER == currentSellingTime):
+        elif(SELLING_TIME_DINNER == sellingTime):
             pass
         else:
             pass
@@ -299,7 +299,7 @@ def kakaoView_StoreListup(kakaoPayload):
             menu = Menu.objects.filter(
                 Q(store=store) &
                 ~Q(tag__name__contains='픽업존') &
-                Q(selling_time=currentSellingTime) &
+                Q(selling_time=sellingTime) &
                 (
                     Q(type=MENU_TYPE_B2B_AND_NORMAL) |
                     Q(type=MENU_TYPE_NORMAL)
@@ -355,7 +355,7 @@ def kakaoView_StoreListup(kakaoPayload):
                         'messageText': KAKAO_EMOJI_LOADING,
                         'blockId': KAKAO_BLOCK_USER_GET_MENU,
                         'extra': {
-                            KAKAO_PARAM_SELLING_TIME: currentSellingTime,
+                            KAKAO_PARAM_SELLING_TIME: sellingTime,
                             KAKAO_PARAM_STORE_ID: store.store_id,
                             KAKAO_PARAM_ORDER_ID: order.order_id,
                             KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_GET_STORE
@@ -370,7 +370,7 @@ def kakaoView_StoreListup(kakaoPayload):
                         pickupTimeList += ', '
 
                     pickupTimeList += pickup_time.time.strftime(
-                        '%p %-I:%-M').replace('AM', '오전').replace('PM', '오후')
+                        '%p %-I:%M').replace('AM', '오전').replace('PM', '오후')
 
                 KakaoInstantForm().StoreList(
                     store,
@@ -394,12 +394,28 @@ def kakaoView_StoreListup(kakaoPayload):
 
         kakaoForm.BasicCard_Add()
 
+        if(currentSellingTime == sellingTime):
+            KakaoInstantForm().Message(
+                '🟢  주문 가능 시간입니다.',
+                '마감되기 전에 얼른 주문하세요!',
+                kakaoForm=kakaoForm
+            )
+        else:
+            KakaoInstantForm().Message(
+                '🛑  주문 가능 시간이 아닙니다.',
+                '메뉴는 자유롭게 볼 수 있어요!',
+                kakaoForm=kakaoForm
+            )
+
     else:
-        KakaoInstantForm().Message(
+        kakaoForm.BasicCard_Push(
             '근처에 제휴된 매장이 없습니다..',
             '빠른 시일안에 이 지역 매장을 늘려볼게요!',
-            kakaoForm=kakaoForm
+            {},
+            []
         )
+
+        kakaoForm.BasicCard_Add()
 
     kakaoForm.QuickReplies_AddWithMap(QUICKREPLIES_MAP)
 
@@ -419,10 +435,10 @@ def kakaoView_PickupZone_MenuListup(kakaoPayload):
         return errorView('잘못된 주문 번호', '잘못된 주문 번호입니다.')
 
     # @BETA Dinner Beta
-    currentSellingTime = sellingTimeValidation(kakaoPayload)
+    sellingTime = sellingTimeValidation(kakaoPayload)
 
     # User's Eatple Pass Validation
-    eatplePassStatus = isPurchase(user, currentSellingTime, kakaoPayload)
+    eatplePassStatus = isPurchase(user, sellingTime, kakaoPayload)
     if(eatplePassStatus != None):
         return eatplePassStatus
 
@@ -493,7 +509,7 @@ def kakaoView_PickupZone_MenuListup(kakaoPayload):
                         'messageText': KAKAO_EMOJI_LOADING,
                         'blockId': KAKAO_BLOCK_USER_SET_PICKUP_TIME,
                         'extra': {
-                            KAKAO_PARAM_SELLING_TIME: currentSellingTime,
+                            KAKAO_PARAM_SELLING_TIME: sellingTime,
                             KAKAO_PARAM_STORE_ID: menu.store.store_id,
                             KAKAO_PARAM_MENU_ID: menu.menu_id,
                             KAKAO_PARAM_ORDER_ID: order.order_id,
@@ -572,7 +588,6 @@ def kakaoView_MenuListup(kakaoPayload):
         else:
             pass
     except Exception as ex:
-        print(ex)
         pass
 
     store = storeValidation(kakaoPayload)
@@ -584,10 +599,10 @@ def kakaoView_MenuListup(kakaoPayload):
         return errorView('잘못된 주문 번호', '잘못된 주문 번호입니다.')
 
     # @BETA Dinner Beta
-    currentSellingTime = sellingTimeValidation(kakaoPayload)
+    sellingTime = sellingTimeValidation(kakaoPayload)
 
     # User's Eatple Pass Validation
-    eatplePassStatus = isPurchase(user, currentSellingTime, kakaoPayload)
+    eatplePassStatus = isPurchase(user, sellingTime, kakaoPayload)
     if(eatplePassStatus != None):
         return eatplePassStatus
 
@@ -611,7 +626,7 @@ def kakaoView_MenuListup(kakaoPayload):
             'messageText': KAKAO_EMOJI_LOADING,
             'blockId': KAKAO_BLOCK_USER_GET_STORE,
             'extra': {
-                KAKAO_PARAM_SELLING_TIME: currentSellingTime,
+                KAKAO_PARAM_SELLING_TIME: sellingTime,
                 KAKAO_PARAM_STORE_ID: store.store_id,
                 KAKAO_PARAM_ORDER_ID: order.order_id,
                 KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_GET_MENU
@@ -631,10 +646,6 @@ def kakaoView_MenuListup(kakaoPayload):
     else:
         orderRecordSheet.recordUpdate(user, order, ORDER_RECORD_GET_MENU)
 
-    # @BETA alway show lunch menu
-    # currentSellingTime = sellingTimeCheck()
-    currentSellingTime = SELLING_TIME_LUNCH
-
     distance_condition = DEFAULT_DISTANCE_CONDITION
     area_in_flag = DEFAULT_AREA_IN_FLAG
     area_code = DEFAULT_AREA_CODE
@@ -645,7 +656,7 @@ def kakaoView_MenuListup(kakaoPayload):
     ).filter(
         Q(store=store) &
         ~Q(tag__name__contains='픽업존') &
-        Q(selling_time=currentSellingTime) &
+        Q(selling_time=sellingTime) &
         (
             Q(store__type=STORE_TYPE_B2B_AND_NORMAL) |
             Q(store__type=STORE_TYPE_NORMAL)
@@ -700,6 +711,7 @@ def kakaoView_MenuListup(kakaoPayload):
                         'messageText': KAKAO_EMOJI_LOADING,
                         'blockId': KAKAO_BLOCK_USER_SET_PICKUP_TIME,
                         'extra': {
+                            KAKAO_PARAM_SELLING_TIME: sellingTime,
                             KAKAO_PARAM_STORE_ID: store.store_id,
                             KAKAO_PARAM_MENU_ID: menu.menu_id,
                             KAKAO_PARAM_ORDER_ID: order.order_id,
@@ -806,16 +818,12 @@ def kakaoView_MenuListupWithAreaOut(kakaoPayload):
     if (user == None):
         return errorView('잘못된 사용자 계정', '찾을 수 없는 사용자 계정 아이디입니다.')
 
-    # @BETA alway show lunch menu
-    # currentSellingTime = sellingTimeCheck()
-    currentSellingTime = SELLING_TIME_LUNCH
-
     menuList = Menu.objects.annotate(
         distance=Distance(F('store__place__point'),
                           user.location.point) * 100 * 1000,
     ).filter(
         ~Q(tag__name__contains='픽업존') &
-        Q(selling_time=currentSellingTime) &
+        Q(selling_time=sellingTime) &
         (
             Q(store__type=STORE_TYPE_B2B_AND_NORMAL) |
             Q(store__type=STORE_TYPE_NORMAL)
@@ -894,10 +902,10 @@ def kakaoView_PickupTime(kakaoPayload):
         return errorView('잘못된 주문 번호', '잘못된 주문 번호입니다.')
 
     # @BETA Dinner Beta
-    currentSellingTime = sellingTimeValidation(kakaoPayload)
+    sellingTime = sellingTimeValidation(kakaoPayload)
 
     # User's Eatple Pass Validation
-    eatplePassStatus = isPurchase(user, currentSellingTime, kakaoPayload)
+    eatplePassStatus = isPurchase(user, sellingTime, kakaoPayload)
     if(eatplePassStatus != None):
         return eatplePassStatus
 
@@ -947,7 +955,7 @@ def kakaoView_PickupTime(kakaoPayload):
 
     if(menu.max_stock <= menu.current_stock):
         KakaoInstantForm().Message(
-            '이 메뉴는 이미 매진됬습니다.',
+            '⛔  이 메뉴는 이미 매진됬습니다.',
             '아쉽지만 다른 메뉴를 주문해주세요!',
             kakaoForm=kakaoForm
         )
@@ -970,20 +978,82 @@ def kakaoView_PickupTime(kakaoPayload):
 
         return JsonResponse(kakaoForm.GetForm())
 
-    currentSellingTime = sellingTimeCheck()
+    if(sellingTimeCheck() == None):
+        currentSellingTime = sellingTimeCheck(True)
 
-    if (currentSellingTime == None):
-        return errorView('잘못된 주문 시간', '정상적인 주문 시간대가 아닙니다.')
-    elif (currentSellingTime == SELLING_TIME_DINNER):
-        KakaoInstantForm().Message(
-            '오늘 점심은 이미 마감되었어요.',
-            '내일 점심은 오늘 오후 9시부터 내일 오전 11시 까지 주문하실 수 있어요.',
-            kakaoForm=kakaoForm
-        )
+        if (currentSellingTime == None):
+            return errorView('잘못된 주문 시간', '정상적인 주문 시간대가 아닙니다.')
 
-        kakaoForm.QuickReplies_AddWithMap(QUICKREPLIES_MAP)
+        if (currentSellingTime == SELLING_TIME_DINNER):
+            KakaoInstantForm().Message(
+                '🛑  현재는 주문 가능 시간이 아닙니다.',
+                '점심(당일) - 마감되었습니다.\n저녁(당일) - 오늘 오후 2시부터',
+                kakaoForm=kakaoForm
+            )
+            kakaoForm.QuickReplies_AddWithMap(QUICKREPLIES_MAP)
 
-        return JsonResponse(kakaoForm.GetForm())
+            return JsonResponse(kakaoForm.GetForm())
+        elif (currentSellingTime == SELLING_TIME_LUNCH):
+            KakaoInstantForm().Message(
+                '🛑  현재는 주문 가능 시간이 아닙니다.',
+                '점심(내일) - 오늘 오후 9시부터\n저녁(당일) - 마감되었습니다.',
+                kakaoForm=kakaoForm
+            )
+
+            kakaoForm.QuickReplies_AddWithMap(QUICKREPLIES_MAP)
+
+            return JsonResponse(kakaoForm.GetForm())
+
+    else:
+        currentSellingTime = sellingTimeCheck()
+
+        QUICKREPLIES_MAP = [
+            {
+                'action': 'block',
+                'label': '🏠  홈',
+                'messageText': '🏠  홈',
+                'blockId': KAKAO_BLOCK_USER_HOME,
+                'extra': {
+                    KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_GET_MENU
+                }
+            },
+        ]
+
+        if(sellingTime != currentSellingTime):
+            QUICKREPLIES_MAP.append(
+                {
+                    'action': 'block',
+                    'label': '{} 주문 하기'.format(dict(SELLING_TIME_CATEGORY)[currentSellingTime]),
+                    'messageText': KAKAO_EMOJI_LOADING,
+                    'blockId': KAKAO_BLOCK_USER_GET_STORE,
+                    'extra': {
+                        KAKAO_PARAM_SELLING_TIME: currentSellingTime,
+                        KAKAO_PARAM_STORE_ID: store.store_id,
+                        KAKAO_PARAM_ORDER_ID: order.order_id,
+                        KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_GET_MENU
+                    }
+                },
+            )
+            if (sellingTime == SELLING_TIME_DINNER):
+                KakaoInstantForm().Message(
+                    '🛑  오늘 저녁은 이미 마감되었어요.',
+                    '저녁 주문 가능 시간은 오후 2시부터 오후 6시까지입니다.',
+                    kakaoForm=kakaoForm
+                )
+
+                kakaoForm.QuickReplies_AddWithMap(QUICKREPLIES_MAP)
+
+                return JsonResponse(kakaoForm.GetForm())
+            elif (sellingTime == SELLING_TIME_LUNCH):
+                KakaoInstantForm().Message(
+                    '🛑  오늘 점심은 이미 마감되었어요.',
+                    '내일 점심은 오늘 오후 9시부터 주문 할 수 있어요.',
+                    kakaoForm=kakaoForm
+                )
+
+                kakaoForm.QuickReplies_AddWithMap(QUICKREPLIES_MAP)
+
+                return JsonResponse(kakaoForm.GetForm())
 
     PICKUP_TIME_QUICKREPLIES_MAP = []
 
@@ -1016,7 +1086,7 @@ def kakaoView_PickupTime(kakaoPayload):
 
     if(isCafe):
         dataActionExtra = {
-            KAKAO_PARAM_SELLING_TIME: currentSellingTime,
+            KAKAO_PARAM_SELLING_TIME: sellingTime,
             KAKAO_PARAM_STORE_ID: menu.store.store_id,
             KAKAO_PARAM_MENU_ID: menu.menu_id,
             KAKAO_PARAM_ORDER_ID: order.order_id,
@@ -1034,7 +1104,7 @@ def kakaoView_PickupTime(kakaoPayload):
     else:
         for pickupTime in pickupTimes:
             dataActionExtra = {
-                KAKAO_PARAM_SELLING_TIME: currentSellingTime,
+                KAKAO_PARAM_SELLING_TIME: sellingTime,
                 KAKAO_PARAM_STORE_ID: menu.store.store_id,
                 KAKAO_PARAM_MENU_ID: menu.menu_id,
                 KAKAO_PARAM_ORDER_ID: order.order_id,
@@ -1083,10 +1153,10 @@ def kakaoView_OrderPayment(kakaoPayload):
         return errorView('잘못된 사용자 계정', '찾을 수 없는 사용자 계정 아이디입니다.')
 
     # @BETA Dinner Beta
-    currentSellingTime = sellingTimeValidation(kakaoPayload)
+    sellingTime = sellingTimeValidation(kakaoPayload)
 
     # User's Eatple Pass Validation
-    eatplePassStatus = isPurchase(user, currentSellingTime, kakaoPayload)
+    eatplePassStatus = isPurchase(user, sellingTime, kakaoPayload)
     if(eatplePassStatus != None):
         return eatplePassStatus
 
@@ -1179,10 +1249,7 @@ def kakaoView_OrderPayment(kakaoPayload):
         place=order.store.place
     )
 
-    if(ORDERING_DEBUG_MODE):
-        server_url = 'http://localhost:3000'
-    else:
-        server_url = 'https://www.eatple.com'
+    host_url = 'https://www.eatple.com'
 
     oneclick_url = 'kakaotalk://bizplugin?plugin_id={api_id}&oneclick_id={order_id}'.format(
         api_id=KAKAO_PAY_ONE_CLICK_API_ID,
@@ -1204,8 +1271,8 @@ def kakaoView_OrderPayment(kakaoPayload):
             'label': '신용카드 결제',
             'messageText': KAKAO_EMOJI_LOADING,
             'extra': dataActionExtra,
-            'webLinkUrl': '{server_url}/payment?merchant_uid={merchant_uid}'.format(
-                server_url=server_url,
+            'webLinkUrl': '{host_url}/payment?merchant_uid={merchant_uid}'.format(
+                host_url=host_url,
                 merchant_uid=order.order_id,
             )
         },
@@ -1325,10 +1392,7 @@ def kakaoView_OrderPaymentCheck(kakaoPayload):
     if(order.payment_status == EATPLE_ORDER_STATUS_PAID):
         return kakaoView_EatplePassIssuance(kakaoPayload)
     else:
-        if(ORDERING_DEBUG_MODE):
-            server_url = 'http://localhost:3000'
-        else:
-            server_url = 'https://www.eatple.com'
+        host_url = 'https://eapi.eatple.com'
 
         oneclick_url = 'kakaotalk://bizplugin?plugin_id={api_id}&oneclick_id={order_id}'.format(
             api_id=KAKAO_PAY_ONE_CLICK_API_ID,
@@ -1357,8 +1421,8 @@ def kakaoView_OrderPaymentCheck(kakaoPayload):
                 'label': '신용카드 결제',
                 'messageText': KAKAO_EMOJI_LOADING,
                 'extra': dataActionExtra,
-                'webLinkUrl': '{server_url}/payment?merchant_uid={merchant_uid}'.format(
-                    server_url=server_url,
+                'webLinkUrl': '{host_url}/payment?merchant_uid={merchant_uid}'.format(
+                    host_url=host_url,
                     merchant_uid=order.order_id,
                 )
             },
@@ -1479,20 +1543,6 @@ def kakaoView_EatplePassIssuance(kakaoPayload):
 # External View
 #
 # # # # # # # # # # # # # # # # # # # # # # # # #
-
-
-@csrf_exempt
-def GET_PassRouter(request):
-    EatplusSkillLog('GET_PassRouter')
-
-    kakaoPayload = KakaoPayLoad(request)
-
-    # User Validation
-    user = userValidation(kakaoPayload)
-    if (user == None):
-        return GET_UserHome(request)
-
-    return kakaoView_PassRouter(kakaoPayload)
 
 
 @csrf_exempt

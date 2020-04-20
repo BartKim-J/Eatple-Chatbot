@@ -24,7 +24,7 @@ def dateNowByTimeZone():
     # Time QA DEBUG
     if(ORDER_TIME_CHECK_DEBUG_MODE):
         DEBUG_DAYS = int(datetime.datetime.now().strftime("%d"))
-        DEBUG_HOUR = 11
+        DEBUG_HOUR = 18
         DEBUG_MIN = 25
         DEBUG_SEC = 0
 
@@ -97,7 +97,7 @@ class OrderTimeSheet():
     # Prev Lunch Order Edit Time
     def GetPrevLunchOrderEditTimeStart(self):
         return self.currentDateWithoutTime + \
-            datetime.timedelta(hours=16, minutes=0, days=-1)
+            datetime.timedelta(hours=21, minutes=0, days=-1)
 
     def GetPrevLunchOrderEditTimeEnd(self):
         return self.currentDateWithoutTime + \
@@ -110,20 +110,20 @@ class OrderTimeSheet():
     # Dinner Order Edit Time
     def GetDinnerOrderEditTimeStart(self):
         return self.currentDateWithoutTime + \
-            datetime.timedelta(hours=16, minutes=0)
+            datetime.timedelta(hours=14, minutes=0)
 
     def GetDinnerOrderEditTimeEnd(self):
         return self.currentDateWithoutTime + \
-            datetime.timedelta(hours=19, minutes=0)
+            datetime.timedelta(hours=18, minutes=0)
 
     def GetDinnerOrderTimeEnd(self):
         return self.currentDateWithoutTime + \
-            datetime.timedelta(hours=19, minutes=0)
+            datetime.timedelta(hours=18, minutes=0)
 
     # Next Lunch Order Edit Time
     def GetNextLunchOrderEditTimeStart(self):
         return self.currentDateWithoutTime + \
-            datetime.timedelta(hours=16, minutes=0)
+            datetime.timedelta(hours=21, minutes=0)
 
     def GetNextLunchOrderEditTimeEnd(self):
         return self.currentDateWithoutTime + \
@@ -140,12 +140,12 @@ class OrderTimeSheet():
 
     def GetLunchOrderPickupTimeEnd(self):
         return self.currentDateWithoutTime + \
-            datetime.timedelta(hours=16, minutes=0)
+            datetime.timedelta(hours=14, minutes=0)
 
     # Dinner Order Pickup Time
     def GetDinnerOrderPickupTimeStart(self):
         return self.currentDateWithoutTime + \
-            datetime.timedelta(hours=19, minutes=30)
+            datetime.timedelta(hours=18, minutes=30)
 
     def GetDinnerOrderPickupTimeEnd(self):
         return self.currentDateWithoutTime + \
@@ -153,8 +153,11 @@ class OrderTimeSheet():
 
     # Backend Counter Time
     def GetInitialCountTime(self):
-        return self.currentDateWithoutTime + \
-            datetime.timedelta(hours=16, minutes=0)
+        return self.GetDinnerOrderEditTimeStart()
+
+    # Backend Counter Time
+    def GetDinnerInitialCountTime(self):
+        return self.GetNextLunchOrderEditTimeStart()
 
     def GetOrderExpireDate(self):
         return self.currentDate + datetime.timedelta(hours=-24)
