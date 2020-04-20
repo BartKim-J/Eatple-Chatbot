@@ -12,7 +12,8 @@ PATH_IMG_DB = 'STORE_DB/images'
 
 PARTNER_ORDER_SHEET_IMG = '/media/STORE_DB/images/default/partnerOrderSheet.png'
 
-EATPLE_HOME_IMG = '/media/STORE_DB/images/default/homeBeta07.png'
+EATPLE_HOME_LUNCH_IMG = '/media/STORE_DB/images/default/homeLunch_01.png'
+EATPLE_HOME_DINNER_IMG = '/media/STORE_DB/images/default/homeDinner_01.png'
 EATPLE_SURVEY_IMG = '/media/STORE_DB/images/default/surveyBeta07.png'
 
 EATPLE_FRIEND_INVITATION_IMG = '/media/STORE_DB/images/default/FriendInvitation_01.png'

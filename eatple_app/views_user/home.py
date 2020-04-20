@@ -246,7 +246,7 @@ def component_LunchHome(kakaoForm, orderManager, user):
         ]
 
     # LUNCH HEADER
-    lunchHomeImg = '{}{}'.format(HOST_URL, EATPLE_HOME_IMG)
+    lunchHomeImg = '{}{}'.format(HOST_URL, EATPLE_HOME_LUNCH_IMG)
 
     thumbnail = {
         'imageUrl': lunchHomeImg,
@@ -298,7 +298,7 @@ def component_DinnerHome(kakaoForm, orderManager, user):
         ]
 
     # DINNER HEADER
-    dinnerHomeImg = '{}{}'.format(HOST_URL, EATPLE_HOME_IMG)
+    dinnerHomeImg = '{}{}'.format(HOST_URL, EATPLE_HOME_DINNER_IMG)
 
     thumbnail = {
         'imageUrl': dinnerHomeImg,

@@ -1036,8 +1036,8 @@ def kakaoView_PickupTime(kakaoPayload):
             )
             if (sellingTime == SELLING_TIME_DINNER):
                 KakaoInstantForm().Message(
-                    '🛑  오늘 저녁은 이미 마감되었어요.',
-                    '저녁 주문 가능 시간은 오후 2시부터 오후 6시까지입니다.',
+                    '🛑 저녁은 준비중 또는 마감됬어요.',
+                    '점심(내일) - 주문 받는 중!\n저녁 - 준비중 또는 마감되었습니다.',
                     kakaoForm=kakaoForm
                 )
 
@@ -1047,7 +1047,7 @@ def kakaoView_PickupTime(kakaoPayload):
             elif (sellingTime == SELLING_TIME_LUNCH):
                 KakaoInstantForm().Message(
                     '🛑  오늘 점심은 이미 마감되었어요.',
-                    '내일 점심은 오늘 오후 9시부터 주문 할 수 있어요.',
+                    '점심(내일) - 오늘 오후 9시부터\n저녁(당일) - 주문 받는 중!',
                     kakaoForm=kakaoForm
                 )
 
