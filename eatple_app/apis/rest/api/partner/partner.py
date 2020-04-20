@@ -3,6 +3,7 @@ from eatple_app.apis.rest.define import *
 from eatple_app.apis.rest.serializer.partner import PartnerSerializer
 from eatple_app.apis.rest.serializer.store import StoreSerializer
 
+
 class PartnerViewSet(viewsets.ModelViewSet):
     queryset = Partner.objects.all()
     serializer_class = PartnerSerializer
@@ -76,6 +77,7 @@ class PartnerViewSet(viewsets.ModelViewSet):
             return Response(response)
 
         response['token'] = partner.ci
+        response['token_at'] = partner.ci_authenticated_at
         response['error_code'] = PARTNER_LOGIN_200_SUCCESS.code
         response['error_msg'] = PARTNER_LOGIN_200_SUCCESS.message
 
@@ -90,12 +92,16 @@ class PartnerViewSet(viewsets.ModelViewSet):
             received_json_data = json.loads(json_str)
 
             token = received_json_data['token']
+            token_at = received_json_data['token_at']
         except Exception as ex:
             print(ex)
             return JsonResponse({'status': 400, })
 
         try:
-            partner = Partner.objects.get(ci=token)
+            partner = Partner.objects.get(
+                ci=token,
+                ci_authenticated_at=token_at,
+            )
         except Partner.DoesNotExist as ex:
             response['error_code'] = PARTNER_LOGIN_301_INVALID_TOKEN.code
             response['error_msg'] = PARTNER_LOGIN_301_INVALID_TOKEN.message
