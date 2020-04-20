@@ -153,11 +153,8 @@ class OrderTimeSheet():
 
     # Backend Counter Time
     def GetInitialCountTime(self):
-        return self.GetDinnerOrderEditTimeStart()
-
-    # Backend Counter Time
-    def GetDinnerInitialCountTime(self):
         return self.GetNextLunchOrderEditTimeStart()
+
 
     def GetOrderExpireDate(self):
         return self.currentDate + datetime.timedelta(hours=-24)

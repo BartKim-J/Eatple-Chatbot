@@ -31,7 +31,7 @@
                         <div class="card-header">                                
                             <div class="row align-items-center">
                                 <div class="col-8">
-                                    <h5 class="m-0 font-weight-bold text-primary">일일 판매 업체</h5>
+                                    <h5 class="m-0 font-weight-bold text-primary">일일 점심 주문</h5>
                                 </div>
                                 <div class="col-4">
                                     <ul class="list-inline-group text-right mt-1 mb-0 pl-0">
@@ -53,12 +53,12 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {% for store in storesWithStock|slice:":10" %}
+                                    {% for store in storesLunch|slice:":10" %}
                                         <tr>
                                             <th scope="row">{{ forloop.counter }}</th>
                                             <td><img class="store-logo" src="{{ store.logo.url }}""></td>
                                             <td>{{ store.name }}</td>
-                                            <td>{{ store.currentStock }}</td>
+                                            <td>{{ store.getLucnhCurrentStock }}</td>
                                             <td>{{ store.getTotalStock }}</td>
                                         </tr>
                                     {% endfor %}
@@ -69,75 +69,113 @@
                     </div>
                 </div>
                 <div class="col-xl-6 col-md-6 col-lg-6 mb-4">
-                    <div class="row mt-2">
-                        <!-- Total User Counter Card -->
-                        <div class="col-xl-6 col-md-6 col-lg-6 mb-4">
-                            <div class="card bg-dark text-white py-2">
-                                <div class="card-body">
-                                    <div class="row no-gutters align-items-center">
-                                        <div class="col mr-2">
-                                            <div class="text-xs font-weight-bold text-secondary text-uppercase mb-1">총 가입자 수</div>
-                                            <div class="h6 font-weight-bold" id="TotalUserStatus"><i id="TotalUserStatusIcon" class="fas"></i> {{ totalUserIncrease }}</div>
-                                            <div class="h5 mb-0 font-weight-bold text-gray-100">{{ totalUser }} 명</div>
-                                        </div>
-                                        <div class="col-auto">
-                                            <i class="fas fa-users fa-2x text-white"></i>
-                                        </div>
-                                    </div>
+                    <div class="card bg-dark m-b-30">
+                        <div class="card-header">                                
+                            <div class="row align-items-center">
+                                <div class="col-8">
+                                    <h5 class="m-0 font-weight-bold text-primary">일일 저녁 주문</h5>
+                                </div>
+                                <div class="col-4">
+                                    <ul class="list-inline-group text-right mt-1 mb-0 pl-0">
+                                        <li class="list-inline-item mr-0 font-12"><i class="feather icon-more-vertical- font-20 text-primary"></i></li>
+                                    </ul>                                        
                                 </div>
                             </div>
                         </div>
-                        <!-- Toal Eatplepass Card  -->
-                        <div class="col-xl-6 col-md-6 col-lg-6 mb-4">
-                            <div class="card bg-dark text-white py-2">
-                                <div class="card-body">
-                                    <div class="row no-gutters align-items-center">
-                                        <div class="col mr-2">
-                                            <div class="text-xs font-weight-bold text-secondary text-uppercase mb-1">총 발급된 패스</div>
-                                            <div class="h6 font-weight-bold text-success"><i class="fas fa-angle-up"></i> {{ totalStock }}</div>
-                                            <div class="h5 mb-0 font-weight-bold text-gray-100">{{ totalOrder }} 패스</div>
-                                        </div>
-                                        <div class="col-auto">
-                                            <i class="fas fa-ticket-alt fa-2x text-white"></i>
-                                        </div>
-                                    </div>
+                        <div class="card-body">
+                            <div class="table-responsive dash-flag-icon">
+                                <table class="table table-borderless mb-2">
+                                <thead>
+                                    <tr>
+                                    <th class="m-0 font-weight-bold text-primary" scope="col">순위</th>
+                                    <th class="m-0 font-weight-bold text-primary" scope="col"></th>
+                                    <th class="m-0 font-weight-bold text-primary" scope="col">매장</th>
+                                    <th class="m-0 font-weight-bold text-primary" scope="col">일일 주문건 수</th>
+                                    <th class="m-0 font-weight-bold text-primary" scope="col">전체 주문건 수</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for store in storesDinner|slice:":10" %}
+                                        <tr>
+                                            <th scope="row">{{ forloop.counter }}</th>
+                                            <td><img class="store-logo" src="{{ store.logo.url }}""></td>
+                                            <td>{{ store.name }}</td>
+                                            <td>{{ store.getDinnerCurrentStock }}</td>
+                                            <td>{{ store.getTotalStock }}</td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <!-- Total User Counter Card -->
+                <div class="col-xl-3 col-md-3 col-lg-3 mb-4">
+                    <div class="card bg-dark text-white py-2">
+                        <div class="card-body">
+                            <div class="row no-gutters align-items-center">
+                                <div class="col mr-2">
+                                    <div class="text-xs font-weight-bold text-secondary text-uppercase mb-1">총 가입자 수</div>
+                                    <div class="h6 font-weight-bold" id="TotalUserStatus"><i id="TotalUserStatusIcon" class="fas"></i> {{ totalUserIncrease }}</div>
+                                    <div class="h5 mb-0 font-weight-bold text-gray-100">{{ totalUser }} 명</div>
+                                </div>
+                                <div class="col-auto">
+                                    <i class="fas fa-users fa-2x text-white"></i>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    <div class="row">
-                        <!-- Daily Selled Card -->
-                        <div class="col-xl-6 col-md-6 col-lg-6 mb-4">
-                            <div class="card bg-dark text-white py-2">
-                                <div class="card-body">
-                                    <div class="row no-gutters align-items-center">
-                                        <div class="col mr-2">
-                                            <div class="text-xs font-weight-bold text-secondary text-uppercase mb-1">일일 주문건</div>
-                                            <div class="h6 font-weight-bold" id="TotalStockStatus"><i id="TotalStockStatusIcon" class="fas"></i> {{ totalStockIncrease }}</div>
-                                            <div class="h5 mb-0 font-weight-bold text-gray-100">{{ totalStock }} 개</div>
-                                        </div>
-                                        <div class="col-auto">
-                                            <i class="fas fa-boxes fa-2x text-white"></i>
-                                        </div>
-                                    </div>
+                </div>
+                <!-- Toal Eatplepass Card  -->
+                <div class="col-xl-3 col-md-3 col-lg-3 mb-4">
+                    <div class="card bg-dark text-white py-2">
+                        <div class="card-body">
+                            <div class="row no-gutters align-items-center">
+                                <div class="col mr-2">
+                                    <div class="text-xs font-weight-bold text-secondary text-uppercase mb-1">총 발급된 패스</div>
+                                    <div class="h6 font-weight-bold text-success"><i class="fas fa-angle-up"></i> {{ totalStock }}</div>
+                                    <div class="h5 mb-0 font-weight-bold text-gray-100">{{ totalOrder }} 패스</div>
+                                </div>
+                                <div class="col-auto">
+                                    <i class="fas fa-ticket-alt fa-2x text-white"></i>
                                 </div>
                             </div>
                         </div>
-                        <!-- Earnings (Monthly) Card Example -->
-                        <div class="col-xl-6 col-md-6 col-lg-6 mb-4">
-                            <div class="card bg-dark text-white py-2">
-                                <div class="card-body">
-                                    <div class="row no-gutters align-items-center">
-                                        <div class="col mr-2">
-                                            <div class="text-xs font-weight-bold text-secondary text-uppercase mb-1">일일 픽업</div>
-                                            <div class="h6 font-weight-bold text-danger">
-                                                </i> <small>주문 실패</small> {{ orderFailed }} 개</div>
-                                            <div class="h5 mb-0 font-weight-bold text-gray-100">{{ totalPickuped }} 개</div>
-                                        </div>
-                                        <div class="col-auto">
-                                            <i class="fas fa-hand-holding-heart fa-2x text-white"></i>
-                                        </div>
-                                    </div>
+                    </div>
+                </div>
+                <!-- Daily Selled Card -->
+                <div class="col-xl-3 col-md-3 col-lg-3 mb-4">
+                    <div class="card bg-dark text-white py-2">
+                        <div class="card-body">
+                            <div class="row no-gutters align-items-center">
+                                <div class="col mr-2">
+                                    <div class="text-xs font-weight-bold text-secondary text-uppercase mb-1">일일 주문건</div>
+                                    <div class="h6 font-weight-bold" id="TotalStockStatus"><i id="TotalStockStatusIcon" class="fas"></i> {{ totalStockIncrease }}</div>
+                                    <div class="h5 mb-0 font-weight-bold text-gray-100">{{ totalStock }} 개</div>
+                                </div>
+                                <div class="col-auto">
+                                    <i class="fas fa-boxes fa-2x text-white"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Earnings (Monthly) Card Example -->
+                <div class="col-xl-3 col-md-3 col-lg-3 mb-4">
+                    <div class="card bg-dark text-white py-2">
+                        <div class="card-body">
+                            <div class="row no-gutters align-items-center">
+                                <div class="col mr-2">
+                                    <div class="text-xs font-weight-bold text-secondary text-uppercase mb-1">일일 픽업</div>
+                                    <div class="h6 font-weight-bold text-danger">
+                                        </i> <small>주문 실패</small> {{ orderFailed }} 개</div>
+                                    <div class="h5 mb-0 font-weight-bold text-gray-100">{{ totalPickuped }} 개</div>
+                                </div>
+                                <div class="col-auto">
+                                    <i class="fas fa-hand-holding-heart fa-2x text-white"></i>
                                 </div>
                             </div>
                         </div>

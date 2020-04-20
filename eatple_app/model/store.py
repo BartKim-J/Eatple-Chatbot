@@ -418,9 +418,24 @@ class Store(StoreInfo, StoreSetting, StoreStatus, StoreSalesInfo, StoreBankAccou
         except ValueError:
             return DEFAULT_LOGO_IMAGE_PATH
 
-    def getCurrentStock(self):
+    def getLucnhCurrentStock(self):
         currentStock = 0
-        menuList = Menu.objects.filter(store=self)
+        menuList = Menu.objects.filter(
+            store=self,
+            selling_time=SELLING_TIME_LUNCH,
+        )
+
+        for menu in menuList:
+            currentStock += menu.getCurrentStock().count()
+
+        return currentStock
+
+    def getDinnerCurrentStock(self):
+        currentStock = 0
+        menuList = Menu.objects.filter(
+            store=self,
+            selling_time=SELLING_TIME_DINNER,
+        )
 
         for menu in menuList:
             currentStock += menu.getCurrentStock().count()
@@ -429,9 +444,9 @@ class Store(StoreInfo, StoreSetting, StoreStatus, StoreSalesInfo, StoreBankAccou
 
     def getTotalStock(self):
         totalStock = Order.objects.filter(
-                store=self, 
-                payment_status=EATPLE_ORDER_STATUS_PAID
-            ).count()
+            store=self,
+            payment_status=EATPLE_ORDER_STATUS_PAID
+        ).count()
 
         return totalStock
 
@@ -458,7 +473,7 @@ class Store(StoreInfo, StoreSetting, StoreStatus, StoreSalesInfo, StoreBankAccou
                 Q(payment_date__gte=range_start) &
                 Q(payment_date__lte=range_end)
             ) &
-            Q(payment_status=EATPLE_ORDER_STATUS_PAID) & 
+            Q(payment_status=EATPLE_ORDER_STATUS_PAID) &
             Q(ordersheet__user__is_staff=False)
         )
 

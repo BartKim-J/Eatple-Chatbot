@@ -36,9 +36,9 @@ def getOrderChart(orderTimeSheet, isStaff=False):
 
     while(not ((checkDate >= currentDateWithoutTime) and (checkDate.weekday() == 5))):
         prevLunchOrderEditTimeStart = checkDate + \
-            datetime.timedelta(hours=16, minutes=0, days=-1)
+            datetime.timedelta(hours=21, minutes=0, days=-1)
         nextLunchOrderEditTimeStart = checkDate + \
-            datetime.timedelta(hours=16, minutes=0)
+            datetime.timedelta(hours=21, minutes=0)
 
         if(prevLunchOrderEditTimeStart.strftime('%A') == 'Friday' and
            nextLunchOrderEditTimeStart.strftime('%A') == 'Saturday'):
@@ -206,9 +206,9 @@ def getTotalPickuped(orderTimeSheet):
             datetime.timedelta(days=1)
 
     prevLunchOrderEditTimeStart = currentDateWithoutTime + \
-        datetime.timedelta(hours=16, minutes=0, days=-1)
+        datetime.timedelta(hours=21, minutes=0, days=-1)
     nextLunchOrderEditTimeStart = currentDateWithoutTime + \
-        datetime.timedelta(hours=16, minutes=0)
+        datetime.timedelta(hours=21, minutes=0)
 
     totalPickuped = Order.objects.filter(
         Q(payment_status=EATPLE_ORDER_STATUS_PAID) &
@@ -233,9 +233,9 @@ def getOrderFailed(orderTimeSheet):
             datetime.timedelta(days=1)
 
     prevLunchOrderEditTimeStart = currentDateWithoutTime + \
-        datetime.timedelta(hours=16, minutes=0, days=-1)
+        datetime.timedelta(hours=21, minutes=0, days=-1)
     nextLunchOrderEditTimeStart = currentDateWithoutTime + \
-        datetime.timedelta(hours=16, minutes=0)
+        datetime.timedelta(hours=21, minutes=0)
 
     orderFailed = Order.objects.filter(
         Q(payment_status=EATPLE_ORDER_STATUS_FAILED) &
@@ -355,7 +355,7 @@ def getMenuPrice(menuList):
 
 def showActiveStatus(orderTimeSheet):
     # Test
-    test_start_date = dateNowByTimeZone().replace(year=2020, month=3, day=16,
+    test_start_date = dateNowByTimeZone().replace(year=2020, month=3, day=21,
                                                   hour=0, minute=0, second=0, microsecond=0)
     test_end_date = orderTimeSheet.GetCurrentDate()
 
@@ -525,7 +525,8 @@ def dashboard(request):
         'storesOrderByPrevPrevMonth': sorted(storeList, key=(lambda i: -i.getPrevPrevMonthStock()[0])),
         'storesOrderByPrevMonth': sorted(storeList, key=(lambda i: -i.getPrevMonthStock()[0])),
         'stores': sorted(storeList, key=(lambda i: -i.getMontlyStock()[0])),
-        'storesWithStock': storeList.filter(Q(currentStock__gt=0)),
+        'storesLunch': filter(lambda i: i.getLucnhCurrentStock() > 0, sorted(storeList, key=(lambda i: -i.getLucnhCurrentStock()))),
+        'storesDinner': filter(lambda i: i.getDinnerCurrentStock() > 0, sorted(storeList, key=(lambda i: -i.getDinnerCurrentStock()))),
 
         'totalStockIncrease': totalStock - prevTotalStock,
         'totalStock': totalStock,
