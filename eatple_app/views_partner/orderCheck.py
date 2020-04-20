@@ -74,14 +74,15 @@ def kakaoView_OrderDetails(kakaoPayload):
                 store=partner.store).filter(tag__name="픽업존")
             pickupTimes = PickupTime.objects.all()
 
-            if(isCafe or isPickupZone):
+            if(isPickupZone):
                 orderTimeSheet = OrderTimeSheet()
 
                 for pickupTime in pickupTimes:
                     menuList = Menu.objects.filter(
-                        store=partner.store, pickup_time=pickupTime, status=OC_OPEN).filter(
-                            Q(tag__name="픽업존") |
-                            Q(tag__name="카페")
+                        tag__name="픽업존",
+                        store=partner.store, 
+                        pickup_time=pickupTime, 
+                        status=OC_OPEN
                     )
 
                     refPickupTime = [x.strip()
@@ -93,29 +94,23 @@ def kakaoView_OrderDetails(kakaoPayload):
                         microsecond=0
                     )
 
-                    if(isPickupZone):
-                        time = '오전 11시 30분'
-
-                        # @Temporary Code
-                        if(partner.store.name == '봉된장'):
-                            time = datetime.timedelta(minute=20)
-
-                        else:
-                            if(partner.store.area == STORE_AREA_C_1 or
-                               partner.store.area == STORE_AREA_C_2 or
-                               partner.store.area == STORE_AREA_C_3):
-                                time = datetime.timedelta(minutes=40)
-                            elif(partner.store.area == STORE_AREA_C_5):
-                                time = datetime.timedelta(minutes=20)
-
-                        delivery_pickup_time = datetime_pickup_time - time
-                        title = '{pickupTime}'.format(
-                            pickupTime=delivery_pickup_time.strftime(
-                                '%-m월 %-d일 %p %-I시 %-M분').replace('AM', '오전').replace('PM', '오후')
-                        )
-
+                    if(partner.store.name == '봉된장'):
+                        time = datetime.timedelta(minute=20)
                     else:
-                        title = '상시 픽업'
+                        if(partner.store.area == STORE_AREA_C_1 or
+                                partner.store.area == STORE_AREA_C_2 or
+                                partner.store.area == STORE_AREA_C_3):
+                            time = datetime.timedelta(minutes=40)
+                        elif(partner.store.area == STORE_AREA_C_5):
+                            time = datetime.timedelta(minutes=20)
+                        else:
+                            time = datetime.timedelta(minutes=0)
+
+                    delivery_pickup_time = datetime_pickup_time - time
+                    title = '{pickupTime}'.format(
+                        pickupTime=delivery_pickup_time.strftime(
+                            '%-m월 %-d일 %p %-I시 %-M분').replace('AM', '오전').replace('PM', '오후')
+                    )
 
                     header = {
                         'title': title,
@@ -168,7 +163,9 @@ def kakaoView_OrderDetails(kakaoPayload):
                 else:
                     pass
 
-            if(isNormalMenu):
+            elif(isCafe):
+                pass
+            elif(isNormalMenu):
                 for pickupTime in pickupTimes:
                     menuList = Menu.objects.filter(
                         store=partner.store, pickup_time=pickupTime, status=OC_OPEN).filter(
