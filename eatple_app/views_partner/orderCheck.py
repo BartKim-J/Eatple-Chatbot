@@ -77,81 +77,94 @@ def kakaoView_OrderDetails(kakaoPayload):
             if(isCafe or isPickupZone):
                 orderTimeSheet = OrderTimeSheet()
 
-                menuList = Menu.objects.filter(
-                    store=partner.store, status=OC_OPEN).filter(
-                        Q(tag__name="픽업존") |
-                        Q(tag__name="카페")
-                )
-
-                if(isPickupZone):
-                    time = '오전 11시 30분'
-
-                    # @Temporary Code
-                    if(partner.store.name == '봉된장'):
-                        time = '오전 11시 50분'
-                    else:
-                        if(partner.store.area == STORE_AREA_C_1 or
-                           partner.store.area == STORE_AREA_C_2 or
-                           partner.store.area == STORE_AREA_C_3):
-                            time = '오전 11시 30분'
-                        elif(partner.store.area == STORE_AREA_C_5):
-                            time = '오전 11시 50분'
-
-                    title = '{} {}'.format(
-                        datetime.datetime.now().strftime("%-m월 %-d일"),
-                        time
+                for pickupTime in pickupTimes:
+                    menuList = Menu.objects.filter(
+                        store=partner.store, pickup_time=pickupTime, status=OC_OPEN).filter(
+                            Q(tag__name="픽업존") |
+                            Q(tag__name="카페")
                     )
 
-                else:
-                    title = '상시 픽업'
+                    refPickupTime = [x.strip()
+                                     for x in str(pickupTime.time).split(':')]
+                    datetime_pickup_time = currentTime.replace(
+                        hour=int(refPickupTime[0]),
+                        minute=int(refPickupTime[1]),
+                        second=0,
+                        microsecond=0
+                    )
 
-                header = {
-                    'title': title,
-                    'imageUrl': '{}{}'.format(HOST_URL, PARTNER_ORDER_SHEET_IMG),
-                }
+                    if(isPickupZone):
+                        time = '오전 11시 30분'
 
-                if(menuList):
-                    totalCount = 0
+                        # @Temporary Code
+                        if(partner.store.name == '봉된장'):
+                            time = datetime.timedelta(minute=20)
 
-                    for menu in menuList:
-                        orderByMenu = Order.objects.filter(menu=menu).filter(
-                            (
-                                Q(status=ORDER_STATUS_PICKUP_COMPLETED) |
-                                Q(status=ORDER_STATUS_PICKUP_WAIT) |
-                                Q(status=ORDER_STATUS_PICKUP_PREPARE) |
-                                Q(status=ORDER_STATUS_ORDER_CONFIRM_WAIT) |
-                                Q(status=ORDER_STATUS_ORDER_CONFIRMED)
-                            ) &
-                            Q(menu=menu) &
-                            Q(pickup_time__gte=orderTimeSheet.GetLunchOrderPickupTimeStart())
+                        else:
+                            if(partner.store.area == STORE_AREA_C_1 or
+                               partner.store.area == STORE_AREA_C_2 or
+                               partner.store.area == STORE_AREA_C_3):
+                                time = datetime.timedelta(minutes=40)
+                            elif(partner.store.area == STORE_AREA_C_5):
+                                time = datetime.timedelta(minutes=20)
+
+                        delivery_pickup_time = datetime_pickup_time - time
+                        title = '{pickupTime}'.format(
+                            pickupTime=delivery_pickup_time.strftime(
+                                '%-m월 %-d일 %p %-I시 %-M분').replace('AM', '오전').replace('PM', '오후')
                         )
 
-                        totalCount += orderByMenu.count()
+                    else:
+                        title = '상시 픽업'
 
-                        if(orderByMenu.count() > 0):
-                            imageUrl = '{}{}'.format(HOST_URL, menu.imgURL())
-                            if(partner.store.name == '마치래빗샐러드'):
-                                kakaoForm.ListCard_Push(
-                                    '{}'.format(menu.name),
-                                    '들어온 주문 : {}개 / {}원'.format(
-                                        orderByMenu.count(), format(orderByMenu.first().totalPrice * orderByMenu.count(), ',')),
-                                    imageUrl,
-                                    None
-                                )
+                    header = {
+                        'title': title,
+                        'imageUrl': '{}{}'.format(HOST_URL, PARTNER_ORDER_SHEET_IMG),
+                    }
+
+                    if(menuList):
+                        totalCount = 0
+
+                        for menu in menuList:
+                            orderByMenu = Order.objects.filter(menu=menu).filter(
+                                (
+                                    Q(status=ORDER_STATUS_PICKUP_COMPLETED) |
+                                    Q(status=ORDER_STATUS_PICKUP_WAIT) |
+                                    Q(status=ORDER_STATUS_PICKUP_PREPARE) |
+                                    Q(status=ORDER_STATUS_ORDER_CONFIRM_WAIT) |
+                                    Q(status=ORDER_STATUS_ORDER_CONFIRMED)
+                                ) &
+                                Q(pickup_time=datetime_pickup_time)
+                            )
+
+                            totalCount += orderByMenu.count()
+
+                            if(orderByMenu.count() > 0):
+                                imageUrl = '{}{}'.format(
+                                    HOST_URL, menu.imgURL())
+                                if(partner.store.name == '마치래빗샐러드'):
+                                    kakaoForm.ListCard_Push(
+                                        '{}'.format(menu.name),
+                                        '들어온 주문 : {}개 / {}원'.format(
+                                            orderByMenu.count(), format(orderByMenu.first().totalPrice * orderByMenu.count(), ',')),
+                                        imageUrl,
+                                        None
+                                    )
+                                else:
+                                    kakaoForm.ListCard_Push(
+                                        '{}'.format(menu.name),
+                                        '들어온 주문 : {}개'.format(
+                                            orderByMenu.count()),
+                                        imageUrl,
+                                        None
+                                    )
                             else:
-                                kakaoForm.ListCard_Push(
-                                    '{}'.format(menu.name),
-                                    '들어온 주문 : {}개'.format(orderByMenu.count()),
-                                    imageUrl,
-                                    None
-                                )
+                                pass
+
+                        if(totalCount > 0):
+                            kakaoForm.ListCard_Add(header)
                         else:
                             pass
-
-                    if(totalCount > 0):
-                        kakaoForm.ListCard_Add(header)
-                    else:
-                        pass
                 else:
                     pass
 
