@@ -80,8 +80,8 @@ def kakaoView_OrderDetails(kakaoPayload):
                 for pickupTime in pickupTimes:
                     menuList = Menu.objects.filter(
                         tag__name="픽업존",
-                        store=partner.store, 
-                        pickup_time=pickupTime, 
+                        store=partner.store,
+                        pickup_time=pickupTime,
                         status=OC_OPEN
                     )
 
