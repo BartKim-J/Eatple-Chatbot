@@ -300,7 +300,7 @@ def kakaoView_StoreListup(kakaoPayload):
                 ]
                 kakaoForm.BasicCard_Push(
                     '픽업존: 패파 신사점 3층',
-                    '⏱️  픽업가능 시간\n - 오후12:10,  오후1:10',
+                    '⏱️  픽업가능 시간\n - 오후12:10, 1:10',
                     thumbnail,
                     buttons
                 )
@@ -415,8 +415,10 @@ def kakaoView_StoreListup(kakaoPayload):
                     if(menu.pickup_time.first() != pickup_time):
                         pickupTimeList += ', '
 
-                    pickupTimeList += pickup_time.time.strftime(
-                        '%p %-I:%M').replace('AM', '오전').replace('PM', '오후')
+                        pickupTimeList += pickup_time.time.strftime('%-I:%M')
+                    else:
+                        pickupTimeList += pickup_time.time.strftime(
+                            '%p %-I:%M').replace('AM', '오전').replace('PM', '오후')
 
                 KakaoInstantForm().StoreList(
                     store,
@@ -1078,7 +1080,6 @@ def kakaoView_PickupTime(kakaoPayload):
             kakaoForm.QuickReplies_AddWithMap(QUICKREPLIES_MAP)
 
             return JsonResponse(kakaoForm.GetForm())
-
     else:
         currentSellingTime = sellingTimeCheck()
 
@@ -1190,10 +1191,16 @@ def kakaoView_PickupTime(kakaoPayload):
             if(order != None):
                 dataActionExtra[KAKAO_PARAM_ORDER_ID] = order.order_id
 
+            if(pickupTime.time.minute == 0):
+                pickupTimeQR = '{}'.format(pickupTime.time.strftime(
+                    '%p %-I시').replace('AM', '오전').replace('PM', '오후'))
+            else:
+                pickupTimeQR = '{}'.format(pickupTime.time.strftime(
+                    '%p %-I시 %M분').replace('AM', '오전').replace('PM', '오후'))
+                    
             kakaoForm.QuickReplies_Add(
                 'block',
-                '{}'.format(pickupTime.time.strftime(
-                    '%p %-I시 %-M분').replace('AM', '오전').replace('PM', '오후')),
+                pickupTimeQR,
                 KAKAO_EMOJI_LOADING,
                 KAKAO_BLOCK_USER_SET_ORDER_SHEET,
                 dataActionExtra
