@@ -525,6 +525,7 @@ def dashboard(request):
         'storesOrderByPrevPrevMonth': sorted(storeList, key=(lambda i: -i.getPrevPrevMonthStock()[0])),
         'storesOrderByPrevMonth': sorted(storeList, key=(lambda i: -i.getPrevMonthStock()[0])),
         'stores': sorted(storeList, key=(lambda i: -i.getMontlyStock()[0])),
+        
         'storesLunch': filter(lambda i: i.getLucnhCurrentStock() > 0, sorted(storeList, key=(lambda i: -i.getLucnhCurrentStock()))),
         'storesDinner': filter(lambda i: i.getDinnerCurrentStock() > 0, sorted(storeList, key=(lambda i: -i.getDinnerCurrentStock()))),
 

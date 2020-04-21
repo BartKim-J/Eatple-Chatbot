@@ -1111,14 +1111,21 @@ def kakaoView_PickupTime(kakaoPayload):
                 },
             )
             if (sellingTime == SELLING_TIME_DINNER):
-                KakaoInstantForm().Message(
-                    '🛑 저녁은 준비중 또는 마감됬어요.',
-                    '점심(내일) - 주문 받는 중!\n저녁 - 준비중 또는 마감되었습니다.',
-                    kakaoForm=kakaoForm
-                )
+                if(dateNowByTimeZone().hour <= 5):
+                    KakaoInstantForm().Message(
+                        '🛑  오늘 저녁은 아직 준비중입니다.',
+                        '점심(내일) - 주문 받는 중!\n저녁 - 마감되었습니다.',
+                        kakaoForm=kakaoForm
+                    )
+                else:
+                    KakaoInstantForm().Message(
+                        '🛑  오늘 저녁은 이미 마감됬어요.',
+                        '점심(내일) - 주문 받는 중!\n저녁 - 마감되었습니다.',
+                        kakaoForm=kakaoForm
+                    )
 
                 kakaoForm.QuickReplies_AddWithMap(QUICKREPLIES_MAP)
-
+    
                 return JsonResponse(kakaoForm.GetForm())
             elif (sellingTime == SELLING_TIME_LUNCH):
                 KakaoInstantForm().Message(
