@@ -362,6 +362,14 @@ class StoreAdmin(ImportExportMixin, admin.GeoModelAdmin):
         return False
     field_status_flag.short_description = "상태"
 
+    def field_id(self, obj):
+        return obj.crn.CRN_id
+    field_id.short_description = "아이디"
+
+    def field_passwod(self, obj):
+        return obj.phone_number.as_national.split('-')[2]
+    field_passwod.short_description = "패스워드"
+
     list_filter = (
         'status',
         'area',
@@ -372,6 +380,8 @@ class StoreAdmin(ImportExportMixin, admin.GeoModelAdmin):
         'name',
         'store_id',
         'crn',
+        'field_id',
+        'field_passwod',
         'type',
         'area',
         'field_status_flag',
