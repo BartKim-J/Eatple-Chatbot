@@ -363,11 +363,17 @@ class StoreAdmin(ImportExportMixin, admin.GeoModelAdmin):
     field_status_flag.short_description = "상태"
 
     def field_id(self, obj):
-        return obj.crn.CRN_id
+        if(obj.crn == None):
+            return '미등록'
+        else:
+            return obj.crn.CRN_id
     field_id.short_description = "아이디"
 
     def field_passwod(self, obj):
-        return obj.phone_number.as_national.split('-')[2]
+        if(obj.phone_number == None):
+            return '미등록'
+        else:
+            return obj.phone_number.as_national.split('-')[2]
     field_passwod.short_description = "패스워드"
 
     list_filter = (
