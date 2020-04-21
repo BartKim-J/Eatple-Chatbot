@@ -112,7 +112,7 @@ def sellingTimeCheck(include=False):
         return None
 
 
-def weekendTimeCheck():
+def weekendTimeCheck(sellingTime):
     orderTimeSheet = OrderTimeSheet()
     currentDate = orderTimeSheet.GetCurrentDate()
     currentDateWithoutTime = orderTimeSheet.GetCurrentDateWithoutTime()
@@ -121,23 +121,41 @@ def weekendTimeCheck():
     if(VALIDATION_DEBUG_MODE):
         return False
 
-    closedDateStart = orderTimeSheet.GetPrevLunchOrderTimeEnd()
-    closedDateEnd = orderTimeSheet.GetNextLunchOrderEditTimeStart()
+    if(sellingTime == SELLING_TIME_LUNCH):
+        closedDateStart = orderTimeSheet.GetPrevLunchOrderTimeEnd()
+        closedDateEnd = orderTimeSheet.GetNextLunchOrderEditTimeStart()
 
-    if(currentDate.strftime('%A') == 'Friday'):
-        if(currentDate >= closedDateStart):
+        if(currentDate.strftime('%A') == 'Friday'):
+            if(currentDate >= closedDateStart):
+                return True
+            else:
+                return False
+        elif(currentDate.strftime('%A') == 'Saturday'):
             return True
+        elif(currentDate.strftime('%A') == 'Sunday'):
+            if(currentDate <= closedDateEnd):
+                return True
+            else:
+                return False
         else:
             return False
-    elif(currentDate.strftime('%A') == 'Saturday'):
-        return True
-    elif(currentDate.strftime('%A') == 'Sunday'):
-        if(currentDate <= closedDateEnd):
+    elif(sellingTime == SELLING_TIME_DINNER):
+        dinnerTimeStart = orderTimeSheet.GetDinnerOrderEditTimeStart()
+        dinnerTimeEnd = orderTimeSheet.GetDinnerOrderTimeEnd()
+
+        if(currentDate.strftime('%A') == 'Friday'):
+            if(currentDate >= dinnerTimeEnd):
+                return True
+            else:
+                return False
+        elif(currentDate.strftime('%A') == 'Saturday'):
+            return True
+        elif(currentDate.strftime('%A') == 'Sunday'):
             return True
         else:
             return False
     else:
-        return False
+        return True
 
 
 def vacationTimeCheck():

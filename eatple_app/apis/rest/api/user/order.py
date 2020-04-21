@@ -86,7 +86,7 @@ class OrderValidation(viewsets.ModelViewSet):
 
         # Time Check
         currentSellingTime = sellingTimeCheck()
-        isClosedDay = weekendTimeCheck()
+        isClosedDay = weekendTimeCheck(SELLING_TIME_LUNCH)
 
         if(currentSellingTime != order.menu.selling_time or isClosedDay == True):
             response['error_code'] = PAYMENT_206_SELLING_TIME_INVALID.code

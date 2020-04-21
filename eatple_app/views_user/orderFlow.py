@@ -247,49 +247,95 @@ def kakaoView_StoreListup(kakaoPayload):
 
         # HEADER
         if(SELLING_TIME_LUNCH == sellingTime):
-            if(((area_in_flag and addressMap[2] == '신사동') or (area_code == 'sinsa'))):
+            # LUNCH HEADER
+            headerImg = '{}{}'.format(HOST_URL, EATPLE_HOME_LUNCH_IMG)
+
+            thumbnail = {
+                'imageUrl': headerImg,
+                'fixedRatio': 'true',
+                'width': 800,
+                'height': 800,
+            }
+
+            buttons = [
+                {
+                    'action': 'block',
+                    'label': '저녁 구경하러 가기',
+                    'messageText': KAKAO_EMOJI_LOADING,
+                    'blockId': KAKAO_BLOCK_USER_GET_STORE,
+                    'extra': {
+                        KAKAO_PARAM_SELLING_TIME: SELLING_TIME_DINNER,
+                        KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_HOME
+                    }
+                },
+            ]
+
+            kakaoForm.BasicCard_Push(
+                '점심 주문 가능/취소 시간',
+                '전날 오후 9시 부터 오전 11시 까지',
+                thumbnail,
+                buttons
+            )
+
+            if((area_in_flag and addressMap[2] == '신사동') or (area_code == 'sinsa')):
                 thumbnail = {
                     'imageUrl': '{}{}'.format(HOST_URL, EATPLE_MENU_PICKUP_ZONE_FF_IMG),
                     'fixedRatio': 'True',
                     'width': 800,
                     'height': 800,
                 }
-            buttons = [
-                {
-                    'action': 'block',
-                    'label': '📋 픽업존 메뉴판 보기',
-                    'messageText': KAKAO_EMOJI_LOADING,
-                    'blockId': KAKAO_BLOCK_USER_GET_MENU,
-                    'extra': {
-                        'pickupZoneStore': True,
-                        KAKAO_PARAM_ORDER_ID: order.order_id,
-                        KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_GET_STORE
-                    }
-                },
-            ]
-            kakaoForm.BasicCard_Push(
-                '픽업존: 패파 신사점 3층',
-                '⏱️  픽업가능 시간\n - 오후12:10,  오후1:10',
-                thumbnail,
-                buttons
-            )
+                buttons = [
+                    {
+                        'action': 'block',
+                        'label': '📋 픽업존 메뉴판 보기',
+                        'messageText': KAKAO_EMOJI_LOADING,
+                        'blockId': KAKAO_BLOCK_USER_GET_MENU,
+                        'extra': {
+                            KAKAO_PARAM_SELLING_TIME: sellingTime,
+                            KAKAO_PARAM_ORDER_ID: order.order_id,
+                            KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_GET_STORE,
+                            'pickupZoneStore': True,
+                        }
+                    },
+                ]
+                kakaoForm.BasicCard_Push(
+                    '픽업존: 패파 신사점 3층',
+                    '⏱️  픽업가능 시간\n - 오후12:10,  오후1:10',
+                    thumbnail,
+                    buttons
+                )
+
+
+        elif(SELLING_TIME_DINNER == sellingTime):
+            # DINNER HEADER
+            dinnerHomeImg = '{}{}'.format(HOST_URL, EATPLE_HOME_DINNER_IMG)
 
             thumbnail = {
-                'imageUrl': '{}{}'.format(HOST_URL, EATPLE_MENU_PICKUP_ZONE_FF_SUB_IMG),
-                'fixedRatio': 'True',
+                'imageUrl': dinnerHomeImg,
+                'fixedRatio': 'true',
                 'width': 800,
                 'height': 800,
             }
+
             buttons = [
+                {
+                    'action': 'block',
+                    'label': '점심 구경하러 가기',
+                    'messageText': KAKAO_EMOJI_LOADING,
+                    'blockId': KAKAO_BLOCK_USER_GET_STORE,
+                    'extra': {
+                        KAKAO_PARAM_SELLING_TIME: SELLING_TIME_LUNCH,
+                        KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_HOME
+                    }
+                },
             ]
+
             kakaoForm.BasicCard_Push(
-                '하루 15분만 걸으면 최대 2000원 할인!',
-                '*15분 = 평균 왕복 테이크아웃 시간',
+                '저녁 주문 가능/취소 시간',
+                '당일 오후 2시부터 오후 6시까지',
                 thumbnail,
                 buttons
             )
-        elif(SELLING_TIME_DINNER == sellingTime):
-            pass
         else:
             pass
 
@@ -394,7 +440,11 @@ def kakaoView_StoreListup(kakaoPayload):
 
         kakaoForm.BasicCard_Add()
 
-        if(currentSellingTime == sellingTime):
+        print(weekendTimeCheck(sellingTime))
+        if(
+            (currentSellingTime == sellingTime) and
+            (weekendTimeCheck(sellingTime) == False)
+        ):
             KakaoInstantForm().Message(
                 '🟢  주문 가능 시간입니다.',
                 '마감되기 전에 얼른 주문하세요!',
@@ -458,6 +508,7 @@ def kakaoView_PickupZone_MenuListup(kakaoPayload):
             'messageText': KAKAO_EMOJI_LOADING,
             'blockId': KAKAO_BLOCK_USER_GET_STORE,
             'extra': {
+                KAKAO_PARAM_SELLING_TIME: sellingTime,
                 KAKAO_PARAM_ORDER_ID: order.order_id,
                 KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_GET_MENU
             }
@@ -930,6 +981,7 @@ def kakaoView_PickupTime(kakaoPayload):
             'messageText': KAKAO_EMOJI_LOADING,
             'blockId': KAKAO_BLOCK_USER_GET_STORE,
             'extra': {
+                KAKAO_PARAM_SELLING_TIME: sellingTime,
                 KAKAO_PARAM_STORE_ID: store.store_id,
                 KAKAO_PARAM_STORE_ID: store.store_id,
                 KAKAO_PARAM_ORDER_ID: order.order_id,
@@ -965,12 +1017,35 @@ def kakaoView_PickupTime(kakaoPayload):
         return JsonResponse(kakaoForm.GetForm())
 
     isVacationDay = vacationTimeCheck()
-    isClosedDay = weekendTimeCheck()
+    isLunchClosedDay = weekendTimeCheck(SELLING_TIME_LUNCH)
+    isDinnerClosedDay = weekendTimeCheck(SELLING_TIME_DINNER)
 
-    if(isClosedDay or isVacationDay):
+    if(isVacationDay):
+        KakaoInstantForm().Message(
+            '📌  안내사항',
+            '잇플 휴무일입니다.',
+            kakaoForm=kakaoForm
+        )
+
+        kakaoForm.QuickReplies_AddWithMap(QUICKREPLIES_MAP)
+
+        return JsonResponse(kakaoForm.GetForm())
+    
+    if((sellingTime == SELLING_TIME_LUNCH) and isLunchClosedDay):
         KakaoInstantForm().Message(
             '📌  안내사항',
             '월요일 점심 주문은 일요일 오후 9시부터 가능합니다.',
+            kakaoForm=kakaoForm
+        )
+
+        kakaoForm.QuickReplies_AddWithMap(QUICKREPLIES_MAP)
+
+        return JsonResponse(kakaoForm.GetForm())
+
+    if((sellingTime == SELLING_TIME_DINNER) and isDinnerClosedDay):
+        KakaoInstantForm().Message(
+            '📌  안내사항',
+            '월요일 저녁 주문은 월요일 오후 2시부터 가능합니다.',
             kakaoForm=kakaoForm
         )
 

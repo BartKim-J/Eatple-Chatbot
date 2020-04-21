@@ -53,7 +53,7 @@ def GET_KAKAO_PAY_OrderSheet(request):
         # Time Check
         sellingTime = order.menu.selling_time
         currentSellingTime = sellingTimeCheck()
-        isClosedDay = weekendTimeCheck()
+        isClosedDay = weekendTimeCheck(SELLING_TIME_LUNCH)
 
         if(currentSellingTime != sellingTime or isClosedDay == True):
             message = '현재 주문 가능시간이 아닙니다.'
