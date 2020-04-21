@@ -165,7 +165,8 @@ def kakaoView_OrderDetails(kakaoPayload):
 
             elif(isCafe):
                 pass
-            elif(isNormalMenu):
+
+            if(isNormalMenu):
                 for pickupTime in pickupTimes:
                     menuList = Menu.objects.filter(
                         store=partner.store, pickup_time=pickupTime, status=OC_OPEN).filter(
