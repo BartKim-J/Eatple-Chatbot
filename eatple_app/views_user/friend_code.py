@@ -91,7 +91,7 @@ def kakaoView_FriendCodeSubmit(kakaoPayload):
                 kakaoForm=kakaoForm
             )
             KakaoInstantForm().Message(
-                '잇플은 위치 기반으로 주변 맛집을 추천해드리고 있습니다.\n\n자주 사용할 위치를 등록해주세요!',
+                '잇플은 위치 기반으로 주변 맛집을 추천해드리고 있습니다.\n\n자주 사용할 위치를 등록해주세요.',
                 '패스트파이브 신사점의 경우 신사동으로 핀 위치설정해주세요',
                 kakaoForm=kakaoForm
             )

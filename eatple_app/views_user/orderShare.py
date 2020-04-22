@@ -47,7 +47,7 @@ def kakaoView_GetDelegateUser(kakaoPayload):
     # Block Validation
     prev_block_id = prevBlockValidation(kakaoPayload)
     if(prev_block_id != KAKAO_BLOCK_USER_EATPLE_PASS and prev_block_id != KAKAO_BLOCK_USER_ORDER_SHARING_START):
-        return errorView('Invalid Block ID', '정상적이지 않은 경로로 블럭에 들어왔습니다.\n주문을 다시 해주세요!')
+        return errorView('Invalid Block ID', '정상적이지 않은 경로로 블럭에 들어왔습니다.\n주문을 다시 해주세요.')
 
     # User Validation
     user = userValidation(kakaoPayload)
@@ -56,7 +56,7 @@ def kakaoView_GetDelegateUser(kakaoPayload):
 
     order = orderValidation(kakaoPayload)
     if(order == None):
-        return errorView('잘못된 블럭 경로', '정상적이지 않은 경로거나, 잘못된 주문번호입니다.\n홈으로 돌아가 다시 주문해주세요!')
+        return errorView('잘못된 블럭 경로', '정상적이지 않은 경로거나, 잘못된 주문번호입니다.\n홈으로 돌아가 다시 주문해주세요.')
     else:
         order.orderStatusUpdate()
 
@@ -64,7 +64,7 @@ def kakaoView_GetDelegateUser(kakaoPayload):
 
     if(order.status == ORDER_STATUS_ORDER_CANCELED):
         KakaoInstantForm().Message(
-            ' - 주의! -',
+            ' - 주의 -',
             '이미 취소된 잇플패스입니다. 다시 주문을 정확히 확인해주세요.',
             kakaoForm=kakaoForm
         )
@@ -74,7 +74,7 @@ def kakaoView_GetDelegateUser(kakaoPayload):
 
     elif(order.status == ORDER_STATUS_PICKUP_COMPLETED):
         KakaoInstantForm().Message(
-            ' - 주의! -',
+            ' - 주의 -',
             '이미 사용된 잇플패스입니다. 다시 주문을 정확히 확인해주세요.',
             kakaoForm=kakaoForm
         )
@@ -84,7 +84,7 @@ def kakaoView_GetDelegateUser(kakaoPayload):
 
     elif(order.status == ORDER_STATUS_ORDER_FAILED):
         KakaoInstantForm().Message(
-            ' - 주의! -',
+            ' - 주의 -',
             '결제 실패한 잇플패스입니다. 다시 주문을 확인해주세요',
             kakaoForm=kakaoForm
         )
@@ -134,7 +134,7 @@ def kakaoView_GetDelegateUser(kakaoPayload):
         Q(ordersheet__user=delegateUser)).first()
     if(delegateUserOrder == None):
         KakaoInstantForm().Message(
-            '부탁 할 유저가 아직 주문을 하지 않았어요!',
+            '부탁 할 유저가 아직 주문을 하지 않았어요.',
             '부탁하기는 주문한 유저에게만 요청 할 수 있어요.',
             kakaoForm=kakaoForm
         )
@@ -172,7 +172,7 @@ def kakaoView_GetDelegateUser(kakaoPayload):
         ]
         KakaoInstantForm().Message(
             '자기 자신에게 부탁하기를 할 수 없습니다.',
-            '정확한 전화번호를 입력해주세요!',
+            '정확한 전화번호를 입력해주세요.',
             buttons=buttons,
             kakaoForm=kakaoForm
         )
@@ -218,7 +218,7 @@ def kakaoView_GetDelegateUser(kakaoPayload):
                     )
             else:
                 KakaoInstantForm().Message(
-                    '부탁 할 유저가 아직 주문을 하지 않았어요!',
+                    '부탁 할 유저가 아직 주문을 하지 않았어요.',
                     '부탁하기는 주문한 유저에게만 요청 할 수 있어요.',
                     kakaoForm=kakaoForm
                 )
@@ -273,7 +273,7 @@ def kakaoView_DelegateUserRemove(kakaoPayload):
     # Block Validation
     prev_block_id = prevBlockValidation(kakaoPayload)
     if(prev_block_id != KAKAO_BLOCK_USER_EATPLE_PASS):
-        return errorView('Invalid Block ID', '정상적이지 않은 경로로 블럭에 들어왔습니다.\n주문을 다시 해주세요!')
+        return errorView('Invalid Block ID', '정상적이지 않은 경로로 블럭에 들어왔습니다.\n주문을 다시 해주세요.')
 
     # User Validation
     user = userValidation(kakaoPayload)
@@ -282,7 +282,7 @@ def kakaoView_DelegateUserRemove(kakaoPayload):
 
     order = orderValidation(kakaoPayload)
     if(order == None):
-        return errorView('잘못된 블럭 경로', '정상적이지 않은 경로거나, 잘못된 주문번호입니다.\n홈으로 돌아가 다시 주문해주세요!')
+        return errorView('잘못된 블럭 경로', '정상적이지 않은 경로거나, 잘못된 주문번호입니다.\n홈으로 돌아가 다시 주문해주세요.')
     else:
         order.orderStatusUpdate()
 
@@ -349,7 +349,7 @@ def kakaoView_DelegateUserRemoveAll(kakaoPayload):
     # Block Validation
     prev_block_id = prevBlockValidation(kakaoPayload)
     if(prev_block_id != KAKAO_BLOCK_USER_EATPLE_PASS):
-        return errorView('Invalid Block ID', '정상적이지 않은 경로로 블럭에 들어왔습니다.\n주문을 다시 해주세요!')
+        return errorView('Invalid Block ID', '정상적이지 않은 경로로 블럭에 들어왔습니다.\n주문을 다시 해주세요.')
 
     # User Validation
     user = userValidation(kakaoPayload)
@@ -358,7 +358,7 @@ def kakaoView_DelegateUserRemoveAll(kakaoPayload):
 
     order = orderValidation(kakaoPayload)
     if(order == None):
-        return errorView('잘못된 블럭 경로', '정상적이지 않은 경로거나, 잘못된 주문번호입니다.\n홈으로 돌아가 다시 주문해주세요!')
+        return errorView('잘못된 블럭 경로', '정상적이지 않은 경로거나, 잘못된 주문번호입니다.\n홈으로 돌아가 다시 주문해주세요.')
     else:
         order.orderStatusUpdate()
 

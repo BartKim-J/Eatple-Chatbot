@@ -2,6 +2,7 @@
 from eatple_app.views_system.include import *
 from eatple_app.views_system.debugger import *
 
+from eatple_app.views_user.b2b.home import kakaoView_B2B_Home
 # # # # # # # # # # # # # # # # # # # # # # # # #
 #
 # Static View
@@ -43,7 +44,7 @@ def surveyForm(kakaoForm):
 
     kakaoForm.BasicCard_Push(
         '사용하시는데 불편함이 있으신가요?',
-        '말씀해주시면 반영해드릴게요!',
+        '말씀해주시면 반영해드릴게요.',
         thumbnail,
         buttons
     )
@@ -75,7 +76,7 @@ def kakaoView_SurveyApply(user, type, answer):
         answer.find('📜  소개') != -1
     ):
         KakaoInstantForm().Message(
-            '불편한 점이 아직 입력되지 않았어요!',
+            '불편한 점이 아직 입력되지 않았어요.',
             '홈으로 돌아갈려면 확인을 눌러주세요.',
             buttons=buttons,
             kakaoForm=kakaoForm,
@@ -198,7 +199,7 @@ def kakaoView_LocationRegistration():
 
     return KakaoInstantForm().Message(
         '잇플은 위치 기반으로 주변 맛집을 추천해드리고 있습니다.',
-        '자주 사용할 위치를 등록해주세요!\n(패스트파이브 신사점의 경우, 인우빌딩으로 등록해주세요)',
+        '자주 사용할 위치를 등록해주세요.\n(패스트파이브 신사점의 경우, 인우빌딩으로 등록해주세요)',
         buttons=buttons,
     )
 
@@ -235,7 +236,7 @@ def component_LunchHome(kakaoForm, orderManager, user):
         buttons = [
             {
                 'action': 'block',
-                'label': '점심 주문하기',
+                'label': '🌤️  점심 주문하기',
                 'messageText': KAKAO_EMOJI_LOADING,
                 'blockId': KAKAO_BLOCK_USER_GET_STORE,
                 'extra': {
@@ -257,7 +258,7 @@ def component_LunchHome(kakaoForm, orderManager, user):
 
     kakaoForm.BasicCard_Push(
         '점심 주문 가능/취소 시간',
-        '전날 오후 9시 부터 오전 11시 까지',
+        '전날 오후 9시부터 당일 오전 11시까지',
         thumbnail,
         buttons
     )
@@ -287,7 +288,7 @@ def component_DinnerHome(kakaoForm, orderManager, user):
         buttons = [
             {
                 'action': 'block',
-                'label': '저녁 주문하기',
+                'label': '🌙  저녁 주문하기',
                 'messageText': KAKAO_EMOJI_LOADING,
                 'blockId': KAKAO_BLOCK_USER_GET_STORE,
                 'extra': {
@@ -419,7 +420,10 @@ def kakaoView_Route_Home(user):
 
         address = user.location.address
 
-    return kakaoView_Home(user, address)
+    if(isB2BUser(user)):
+        return kakaoView_B2B_Home(user, address)
+    else:
+        return kakaoView_Home(user, address)
 
 # # # # # # # # # # # # # # # # # # # # # # # # #
 #

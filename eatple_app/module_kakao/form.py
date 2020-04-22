@@ -125,34 +125,38 @@ class KakaoInstantForm():
             )
             kakaoForm.BasicCard_Add()
         elif(order.menu.selling_time == SELLING_TIME_LUNCH):
-            kakaoForm.BasicCard_Push(
-                '직접 픽업이 어려울땐, “픽업 부탁하기”로 함께 주문한 동료에게 부탁해보세요',
-                '',
-                {},
-                [
-                    {
-                        'action': 'block',
-                        'label': '픽업 부탁하기',
-                        'messageText': KAKAO_EMOJI_LOADING,
-                        'blockId': KAKAO_BLOCK_USER_ORDER_SHARING_START,
-                        'extra': {
-                            KAKAO_PARAM_ORDER_ID: order.order_id,
-                            KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_EATPLE_PASS
+            # @B2B
+            if(isB2BUser(order.ordersheet.user)):
+                pass
+            else:
+                kakaoForm.BasicCard_Push(
+                    '직접 픽업이 어려울땐, “픽업 부탁하기”로 함께 주문한 동료에게 부탁해보세요',
+                    '',
+                    {},
+                    [
+                        {
+                            'action': 'block',
+                            'label': '픽업 부탁하기',
+                            'messageText': KAKAO_EMOJI_LOADING,
+                            'blockId': KAKAO_BLOCK_USER_ORDER_SHARING_START,
+                            'extra': {
+                                KAKAO_PARAM_ORDER_ID: order.order_id,
+                                KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_EATPLE_PASS
+                            }
+                        },
+                        {
+                            'action': 'webLink',
+                            'label': '📍  매장 위치',
+                            'webLinkUrl': kakaoMapUrl,
                         }
-                    },
-                    {
-                        'action': 'webLink',
-                        'label': '📍  매장 위치',
-                        'webLinkUrl': kakaoMapUrl,
-                    }
-                ]
-            )
-            kakaoForm.BasicCard_Add()
+                    ]
+                )
+                kakaoForm.BasicCard_Add()
         elif(order.menu.selling_time == SELLING_TIME_DINNER):
             pass
         else:
             pass
-            
+
         kakaoForm.QuickReplies_AddWithMap(ORDER_LIST_QUICKREPLIES_MAP)
 
         return JsonResponse(kakaoForm.GetForm())

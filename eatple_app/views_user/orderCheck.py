@@ -324,34 +324,40 @@ def kakaoView_EatplePass(kakaoPayload):
                         kakaoForm=kakaoForm
                     )
                 elif(order.menu.selling_time == SELLING_TIME_LUNCH):
-                    buttons = [
-                        {
-                            'action': 'webLink',
-                            'label': '📍  매장 위치',
-                            'webLinkUrl': kakaoMapUrl,
-                        }
-                    ]
-                    if (order.status == ORDER_STATUS_ORDER_CONFIRM_WAIT or
-                        order.status == ORDER_STATUS_ORDER_CONFIRMED or
-                            order.status == ORDER_STATUS_PICKUP_PREPARE):
-                        buttons.insert(
-                            0,
+                    #@B2B
+                    if(isB2BUser(user)):
+                        pass
+                    else:
+                        buttons = [
                             {
-                                'action': 'block',
-                                'label': '픽업 부탁하기',
-                                'messageText': KAKAO_EMOJI_LOADING,
-                                'blockId': KAKAO_BLOCK_USER_ORDER_SHARING_START,
-                                'extra': {
-                                    KAKAO_PARAM_ORDER_ID: order.order_id,
-                                    KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_EATPLE_PASS
-                                }
+                                'action': 'webLink',
+                                'label': '📍  매장 위치',
+                                'webLinkUrl': kakaoMapUrl,
                             }
+                        ]
+
+                        if (order.status == ORDER_STATUS_ORDER_CONFIRM_WAIT or
+                            order.status == ORDER_STATUS_ORDER_CONFIRMED or
+                                order.status == ORDER_STATUS_PICKUP_PREPARE):
+                            buttons.insert(
+                                0,
+                                {
+                                    'action': 'block',
+                                    'label': '픽업 부탁하기',
+                                    'messageText': KAKAO_EMOJI_LOADING,
+                                    'blockId': KAKAO_BLOCK_USER_ORDER_SHARING_START,
+                                    'extra': {
+                                        KAKAO_PARAM_ORDER_ID: order.order_id,
+                                        KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_EATPLE_PASS
+                                    }
+                                }
+                            )
+
+                        KakaoInstantForm().Message(
+                            '직접 픽업이 어려울땐, “픽업 부탁하기”로 함께 주문한 동료에게 부탁해보세요',
+                            buttons=buttons,
+                            kakaoForm=kakaoForm
                         )
-                    KakaoInstantForm().Message(
-                        '직접 픽업이 어려울땐, “픽업 부탁하기”로 함께 주문한 동료에게 부탁해보세요',
-                        buttons=buttons,
-                        kakaoForm=kakaoForm
-                    )
                 elif(order.menu.selling_time == SELLING_TIME_DINNER):
                     pass
                 else:
@@ -372,7 +378,7 @@ def kakaoView_EatplePass(kakaoPayload):
     else:
         KakaoInstantForm().Message(
             '현재 조회 가능한 잇플패스가 없습니다.',
-            '주문이 처음이시라면 사용 매뉴얼을 읽어주세요!',
+            '주문이 처음이시라면 사용 매뉴얼을 읽어주세요.',
             kakaoForm=kakaoForm
         )
 
@@ -397,7 +403,7 @@ def kakaoView_OrderDetails(kakaoPayload):
     # Block Validation
     prev_block_id = prevBlockValidation(kakaoPayload)
     if(prev_block_id != KAKAO_BLOCK_USER_HOME and prev_block_id != KAKAO_BLOCK_USER_ORDER_DETAILS):
-        return errorView('Invalid Block ID', '정상적이지 않은 경로거나, 오류가 발생했습니다.\n다시 주문해주세요!')
+        return errorView('Invalid Block ID', '정상적이지 않은 경로거나, 오류가 발생했습니다.\n다시 주문해주세요.')
 
     # User Validation
     user = userValidation(kakaoPayload)
@@ -425,7 +431,7 @@ def kakaoView_OrderDetails(kakaoPayload):
     else:
         KakaoInstantForm().Message(
             '이런.. 주문 내역이 없군요.',
-            '주문이 처음이시라면 사용 매뉴얼을 읽어주세요!',
+            '주문이 처음이시라면 사용 매뉴얼을 읽어주세요.',
             kakaoForm=kakaoForm
         )
 

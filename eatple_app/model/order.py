@@ -109,14 +109,21 @@ def kakaoPayOrderCancel(order):
             cancel_amount=order.totalPrice,
             cancel_tax_free_amount=0,
         )
-        print(response)
+        return True
     except Order.order_kakaopay.RelatedObjectDoesNotExist as ex:
-        if(order.payment_status != EATPLE_ORDER_STATUS_FAILED):
-            order.payment_status = EATPLE_ORDER_STATUS_NOT_PUSHED
-            order.save()
+        order.payment_status = EATPLE_ORDER_STATUS_FAILED
+        order.save()
 
-            return order
+        return False
 
+    return False
+
+
+def eatplePayPassOrderCancel(order):
+    order.payment_status = EATPLE_ORDER_STATUS_CANCELLED
+    order.save()
+
+    return True
 
 # @PROMOTION
 
@@ -188,31 +195,25 @@ def promotionOrderUpdate(order):
 
 def orderUpdate(order):
     print('주문 상태 =>')
-    # B2B User Pass
-    if(order.ordersheet.user.type == USER_TYPE_B2B and
-       order.ordersheet.user.company != None and
-       order.ordersheet.user.company.status != OC_CLOSE
-       ):
-        order.payment_status = order.payment_status
-        order.save()
 
     # Normal User Pass
+    if(order.menu == None or order.store == None):
+        order.payment_status = EATPLE_ORDER_STATUS_NOT_PUSHED
     else:
-        if(order.menu == None or order.store == None):
-            order.payment_status = EATPLE_ORDER_STATUS_NOT_PUSHED
+        if(order.payment_type == ORDER_PAYMENT_INI_PAY):
+            order = iamportOrderValidation(order)
+        elif(order.payment_type == ORDER_PAYMENT_KAKAO_PAY):
+            order = kakaoPayOrderValidation(order)
+        elif(order.payment_type == ORDER_PAYMENT_PAY_PASS):
+            order.payment_status = order.payment_status
         else:
-            if(order.payment_type == ORDER_PAYMENT_INI_PAY):
-                order = iamportOrderValidation(order)
-            elif(order.payment_type == ORDER_PAYMENT_KAKAO_PAY):
-                order = kakaoPayOrderValidation(order)
-            else:
-                order.payment_status = order.payment_status
+            order.payment_status = order.payment_status
 
-            if(order.payment_status == EATPLE_ORDER_STATUS_FAILED and
-                    order.order_date >= dateNowByTimeZone() - datetime.timedelta(minutes=30)):
-                order.payment_status = EATPLE_ORDER_STATUS_NOT_PUSHED
+        if(order.payment_status == EATPLE_ORDER_STATUS_FAILED and
+                order.order_date >= dateNowByTimeZone() - datetime.timedelta(minutes=30)):
+            order.payment_status = EATPLE_ORDER_STATUS_NOT_PUSHED
 
-        order.save()
+    order.save()
 
     # Payment State Update
     if(order.payment_status == EATPLE_ORDER_STATUS_CANCELLED):
@@ -561,6 +562,10 @@ class Order(models.Model):
     def orderPay(self):
         self.payment_status = EATPLE_ORDER_STATUS_PAID
         self.payment_date = dateNowByTimeZone()
+
+        if(self.payment_type == ORDER_PAYMENT_PAY_PASS):
+            self.status = ORDER_STATUS_ORDER_CONFIRM_WAIT
+
         self.save()
 
         # @SLACK LOGGER
@@ -571,19 +576,14 @@ class Order(models.Model):
     def orderCancel(self):
         isCancelled = False
 
-        # B2B User Pass
-        if(self.ordersheet.user.type == USER_TYPE_B2B and
-           self.ordersheet.user.company != None and
-           self.ordersheet.user.company.status != OC_CLOSE):
-            self.payment_status = EATPLE_ORDER_STATUS_CANCELLED
-            self.save()
-
-            isCancelled = True
+        if(self.payment_type == ORDER_PAYMENT_INI_PAY):
+            isCancelled = iamportOrderCancel(self)
+        elif(self.payment_type == ORDER_PAYMENT_KAKAO_PAY):
+            isCancelled = kakaoPayOrderCancel(self)
+        elif(self.payment_type == ORDER_PAYMENT_PAY_PASS):
+            isCancelled = eatplePayPassOrderCancel(self)
         else:
-            if(self.payment_type == ORDER_PAYMENT_INI_PAY):
-                isCancelled = iamportOrderCancel(self)
-            else:
-                isCancelled = kakaoPayOrderCancel(self)
+            isCancelled = False
 
         if(isCancelled):
             # Order Record

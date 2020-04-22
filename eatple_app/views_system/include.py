@@ -15,6 +15,9 @@ from eatple_app.models import *
 # Define
 from eatple_app.define import *
 
+# System
+from eatple_app.system.validation import *
+
 # Modules
 from eatple_app.module_kakao.responseForm import *
 from eatple_app.module_kakao.requestForm import *
@@ -23,5 +26,3 @@ from eatple_app.module_kakao.kakao import *
 from eatple_app.module_kakao.form import *
 from eatple_app.module_kakao.validation import *
 
-# System
-from eatple_app.system.validation import *

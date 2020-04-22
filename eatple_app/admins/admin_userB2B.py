@@ -46,7 +46,7 @@ class UserB2BAdmin(ImportExportMixin, admin.ModelAdmin):
     def account_sync_flag(self, obj):
         try:
             User.objects.get(
-                Q(phone_number=phone_number) &
+                Q(phone_number=obj.phone_number) &
                 Q(is_inactive=False)
             )
 
@@ -60,7 +60,7 @@ class UserB2BAdmin(ImportExportMixin, admin.ModelAdmin):
     def account_info(self, obj):
         try:
             user = User.objects.get(
-                Q(phone_number=phone_number) &
+                Q(phone_number=obj.phone_number) &
                 Q(is_inactive=False)
             )
             return "{} : {}".format(user.nickname, user.app_user_id)

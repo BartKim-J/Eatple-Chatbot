@@ -32,7 +32,7 @@ def kakaoView_UseEatplePass(kakaoPayload):
     # Block Validation
     prev_block_id = prevBlockValidation(kakaoPayload)
     if(prev_block_id != KAKAO_BLOCK_USER_GET_USE_EATPLE_PASS_CONFIRM):
-        return errorView('잘못된 블럭 경로', '정상적이지 않은 경로거나, 오류가 발생했습니다.\n다시 주문해주세요!')
+        return errorView('잘못된 블럭 경로', '정상적이지 않은 경로거나, 오류가 발생했습니다.\n다시 주문해주세요.')
 
     # User Validation
     user = userValidation(kakaoPayload)
@@ -87,8 +87,8 @@ def kakaoView_UseEatplePass(kakaoPayload):
         )
     else:
         KakaoInstantForm().Message(
-            '사용 가능한 픽업 시간이 아닙니다!',
-            '잇플패스의 픽업 시간을 확인해주세요!',
+            '사용 가능한 픽업 시간이 아닙니다.',
+            '잇플패스의 픽업 시간을 확인해주세요.',
             kakaoForm=kakaoForm
         )
 
@@ -142,7 +142,7 @@ def kakaoView_ConfirmUseEatplePass(kakaoPayload):
     if(order.delegate != None):
         KakaoInstantForm().Message(
             '타인에게 부탁한 잇플패스는 사용이 불가능합니다.',
-            '사용하시고 싶다면 \'부탁하기 취소\'를 한 다음 사용해주세요!',
+            '사용하시고 싶다면 \'부탁하기 취소\'를 한 다음 사용해주세요.',
             kakaoForm=kakaoForm
         )
 
@@ -210,8 +210,8 @@ def kakaoView_ConfirmUseEatplePass(kakaoPayload):
             )
     else:
         KakaoInstantForm().Message(
-            '사용 가능한 픽업 시간이 아닙니다!',
-            '잇플패스의 픽업 시간을 확인해주세요!',
+            '사용 가능한 픽업 시간이 아닙니다.',
+            '잇플패스의 픽업 시간을 확인해주세요.',
             kakaoForm=kakaoForm
         )
 
@@ -246,7 +246,7 @@ def kakaoView_OrderCancel(kakaoPayload):
     # Block Validation
     prev_block_id = prevBlockValidation(kakaoPayload)
     if(prev_block_id != KAKAO_BLOCK_USER_EATPLE_PASS and prev_block_id != KAKAO_BLOCK_USER_SET_ORDER_SHEET):
-        return errorView('잘못된 블럭 경로', '정상적이지 않은 경로거나, 오류가 발생했습니다.\n다시 주문해주세요!')
+        return errorView('잘못된 블럭 경로', '정상적이지 않은 경로거나, 오류가 발생했습니다.\n다시 주문해주세요.')
 
     # User Validation
     user = userValidation(kakaoPayload)
@@ -338,7 +338,7 @@ def kakaoView_EditPickupTime(kakaoPayload):
     # Block Validation
     prev_block_id = prevBlockValidation(kakaoPayload)
     if(prev_block_id != KAKAO_BLOCK_USER_EATPLE_PASS):
-        return errorView('잘못된 블럭 경로', '정상적이지 않은 경로거나, 오류가 발생했습니다.\n다시 주문해주세요!')
+        return errorView('잘못된 블럭 경로', '정상적이지 않은 경로거나, 오류가 발생했습니다.\n다시 주문해주세요.')
 
     # User Validation
     user = userValidation(kakaoPayload)
@@ -438,7 +438,7 @@ def kakaoView_ConfirmEditPickupTime(kakaoPayload):
     # Block Validation
     prev_block_id = prevBlockValidation(kakaoPayload)
     if(prev_block_id != KAKAO_BLOCK_USER_EDIT_PICKUP_TIME):
-        return errorView('잘못된 블럭 경로', '정상적이지 않은 경로거나, 오류가 발생했습니다.\n다시 주문해주세요!')
+        return errorView('잘못된 블럭 경로', '정상적이지 않은 경로거나, 오류가 발생했습니다.\n다시 주문해주세요.')
 
     # User Validation
     user = userValidation(kakaoPayload)

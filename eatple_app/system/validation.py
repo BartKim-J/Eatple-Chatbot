@@ -1,23 +1,8 @@
-# Django Library
-from django.shortcuts import render
-from django.views.decorators.csrf import csrf_exempt
-from django.http import JsonResponse
-
 # Models
 from eatple_app.models import *
 
 # Define
 from eatple_app.define import *
-
-# Modules
-from eatple_app.module_kakao.responseForm import *
-from eatple_app.module_kakao.requestForm import *
-from eatple_app.module_kakao.kakaoPay import *
-
-# View-System
-from eatple_app.views_system.debugger import *
-
-from eatple_app.views import *
 
 DEFAULT_QUICKREPLIES_MAP = [
     {
