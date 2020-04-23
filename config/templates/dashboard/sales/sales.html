@@ -109,7 +109,18 @@
                                 {% for menu in menus %}
                                     {% if menu.store.name == store.name %}
                                     <tr class="small row text-white">
-                                    <td class="col-md-4">{{ menu.name }}</td>
+                                    <td class="col-md-4">
+                                        {% if menu.selling_time == 'dinner' %}
+                                            <span>
+                                                저녁
+                                            </span>
+                                        {% else %}
+                                            <span>
+                                                점심
+                                            </span>
+                                        {% endif %}
+                                        - {{ menu.name }}
+                                    </td>
                                     <td class="col-md-2">{{ menu.current_stock }}개</td>
                                     <td class="col-md-2">{{ menu.max_stock }}개</td>
                                     <td class="col-md-3">

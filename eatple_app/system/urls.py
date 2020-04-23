@@ -13,7 +13,7 @@ PATH_IMG_DB = 'STORE_DB/images'
 PARTNER_ORDER_SHEET_IMG = '/media/STORE_DB/images/default/partnerOrderSheet.png'
 
 EATPLE_HOME_LUNCH_IMG = '/media/STORE_DB/images/default/homeLunch_03.png'
-EATPLE_HOME_DINNER_IMG = '/media/STORE_DB/images/default/homeDinner_03.png'
+EATPLE_HOME_DINNER_IMG = '/media/STORE_DB/images/default/homeDinner_04.png'
 
 
 EATPLE_HEADER_LUNCH_IMG = '/media/STORE_DB/images/default/headerLunch_03.png'
