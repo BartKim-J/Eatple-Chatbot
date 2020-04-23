@@ -32,6 +32,7 @@ EATPLE_PASS_IMG_02 = '/media/STORE_DB/images/default/EatplePass_02.png'
 EATPLE_PASS_IMG_03 = '/media/STORE_DB/images/default/EatplePass_03.png'
 EATPLE_PASS_IMG_04 = '/media/STORE_DB/images/default/EatplePass_04.png'
 EATPLE_PASS_IMG_05 = '/media/STORE_DB/images/default/EatplePass_05.png'
+EATPLE_PASS_IMG_DINNER = '/media/STORE_DB/images/default/EatplePass_Dinner.png'
 EATPLE_PASS_IMG_MORE = '/media/STORE_DB/images/default/EatplePass_More.png'
 EATPLE_PASS_IMG_NULL = '/media/STORE_DB/images/default/EatplePass_Null.png'
 

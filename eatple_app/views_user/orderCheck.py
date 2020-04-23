@@ -17,20 +17,23 @@ ORDER_LIST_LENGTH = 8
 def eatplePassImg(order, delegatedEatplePassCount):
     imgUrl = ''
 
-    if(order.delegate != None):
-        imgUrl = '{}{}'.format(HOST_URL, EATPLE_PASS_IMG_NULL)
-    elif(delegatedEatplePassCount == 0):
-        imgUrl = '{}{}'.format(HOST_URL, EATPLE_PASS_IMG_01)
-    elif(delegatedEatplePassCount == 1):
-        imgUrl = '{}{}'.format(HOST_URL, EATPLE_PASS_IMG_02)
-    elif(delegatedEatplePassCount == 2):
-        imgUrl = '{}{}'.format(HOST_URL, EATPLE_PASS_IMG_03)
-    elif(delegatedEatplePassCount == 3):
-        imgUrl = '{}{}'.format(HOST_URL, EATPLE_PASS_IMG_04)
-    elif(delegatedEatplePassCount == 4):
-        imgUrl = '{}{}'.format(HOST_URL, EATPLE_PASS_IMG_05)
+    if(order.menu.selling_time == SELLING_TIME_LUNCH):
+        if(order.delegate != None):
+            imgUrl = '{}{}'.format(HOST_URL, EATPLE_PASS_IMG_NULL)
+        elif(delegatedEatplePassCount == 0):
+            imgUrl = '{}{}'.format(HOST_URL, EATPLE_PASS_IMG_01)
+        elif(delegatedEatplePassCount == 1):
+            imgUrl = '{}{}'.format(HOST_URL, EATPLE_PASS_IMG_02)
+        elif(delegatedEatplePassCount == 2):
+            imgUrl = '{}{}'.format(HOST_URL, EATPLE_PASS_IMG_03)
+        elif(delegatedEatplePassCount == 3):
+            imgUrl = '{}{}'.format(HOST_URL, EATPLE_PASS_IMG_04)
+        elif(delegatedEatplePassCount == 4):
+            imgUrl = '{}{}'.format(HOST_URL, EATPLE_PASS_IMG_05)
+        else:
+            imgUrl = '{}{}'.format(HOST_URL, EATPLE_PASS_IMG_MORE)
     else:
-        imgUrl = '{}{}'.format(HOST_URL, EATPLE_PASS_IMG_MORE)
+        imgUrl = '{}{}'.format(HOST_URL, EATPLE_PASS_IMG_DINNER)
 
     return imgUrl
 

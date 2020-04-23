@@ -29,8 +29,13 @@ class KakaoInstantForm():
             place=order.store.place
         )
 
+        if(order.menu.selling_time == SELLING_TIME_LUNCH):
+            eatplePassImgUrl = '{}{}'.format(HOST_URL, EATPLE_PASS_IMG_01)
+        else:
+            eatplePassImgUrl = '{}{}'.format(HOST_URL, EATPLE_PASS_IMG_DINNER)
+
         thumbnail = {
-            'imageUrl': '{}{}'.format(HOST_URL, EATPLE_PASS_IMG_01),
+            'imageUrl': eatplePassImgUrl,
         }
 
         buttons = [
