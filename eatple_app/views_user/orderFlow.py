@@ -268,7 +268,7 @@ def kakaoView_StoreListup(kakaoPayload):
                 }
             }
 
-            QUICKREPLIES_MAP.insert(0, {
+            QUICKREPLIES_MAP.insert(1, {
                 'action': 'block',
                 'label': '저녁 메뉴 보러가기',
                 'messageText': KAKAO_EMOJI_LOADING,
@@ -319,7 +319,7 @@ def kakaoView_StoreListup(kakaoPayload):
                 }
             }
 
-            QUICKREPLIES_MAP.insert(0, {
+            QUICKREPLIES_MAP.insert(1, {
                 'action': 'block',
                 'label': '점심 메뉴 보러가기',
                 'messageText': KAKAO_EMOJI_LOADING,

@@ -149,7 +149,8 @@ def eatplePass(order, ownEatplePass, delegatedEatplePassCount, delegatedEatplePa
                     selling_time=order.menu.selling_time)
 
                 if(pickupTimes.count() > 1):
-                    QUICKREPLIES_MAP.append(
+                    QUICKREPLIES_MAP.insert(
+                        0,
                         {
                             'action': 'block',
                             'label': '픽업 시간 변경',
