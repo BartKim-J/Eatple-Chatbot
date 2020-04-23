@@ -314,13 +314,13 @@ class Menu(MenuInfo, MenuStatus, MenuSetting):
     def imgURL(self):
         try:
             return self.image.url
-        except ValueError:
+        except Exception as ex:
             return DEFAULT_MENU_IMAGE_PATH
 
     def soldOutImgURL(self):
         try:
             return self.soldout_image.url
-        except ValueError:
+        except Exception as ex:
             return DEFAULT_MENU_IMAGE_PATH
 
     def __str__(self):

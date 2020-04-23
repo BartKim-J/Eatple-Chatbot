@@ -433,7 +433,6 @@ def kakaoView_StoreListup(kakaoPayload):
             )
 
         kakaoForm.BasicCard_Add(header)
-
         if(
             (currentSellingTime == sellingTime) and
             (weekendTimeCheck(sellingTime) == False)

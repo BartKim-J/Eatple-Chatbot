@@ -146,6 +146,7 @@ class MenuInline(CompactInline):
         ),
     ]
 
+
 class PickupZoneMenuInline(MenuInline):
     verbose_name = " 픽업존 메뉴"
     verbose_name_plural = "픽업존 메뉴"
@@ -155,27 +156,29 @@ class PickupZoneMenuInline(MenuInline):
     max_num = 50
 
     def get_queryset(self, request):
-            qs = Menu.objects.all()
-            return qs.filter(
-                Q(selling_time=SELLING_TIME_LUNCH) &
-                Q(tag__name='픽업존')
-            )
-        
+        qs = Menu.objects.all()
+        return qs.filter(
+            Q(selling_time=SELLING_TIME_LUNCH) &
+            Q(tag__name='픽업존')
+        )
+
+
 class LunchMenuInline(MenuInline):
     verbose_name = "점심 메뉴"
     verbose_name_plural = "점심 메뉴"
-    
+
     extra = 0
     min_num = 0
     max_num = 50
 
     def get_queryset(self, request):
-            qs = Menu.objects.all()
-            return qs.filter(
-                Q(selling_time=SELLING_TIME_LUNCH) &
-                ~Q(tag__name='픽업존')
-            )
-    
+        qs = Menu.objects.all()
+        return qs.filter(
+            Q(selling_time=SELLING_TIME_LUNCH) &
+            ~Q(tag__name='픽업존')
+        )
+
+
 class DinnerMenuInline(MenuInline):
     verbose_name = " 저녁 메뉴"
     verbose_name_plural = "저녁 메뉴"
@@ -185,9 +188,10 @@ class DinnerMenuInline(MenuInline):
     max_num = 50
 
     def get_queryset(self, request):
-            qs = Menu.objects.all()
-            return qs.filter(selling_time=SELLING_TIME_DINNER)
-        
+        qs = Menu.objects.all()
+        return qs.filter(selling_time=SELLING_TIME_DINNER)
+
+
 class StoreResource(resources.ModelResource):
     def dehydrate_bank_code(self, obj):
         return obj.bank_type
@@ -409,4 +413,5 @@ class StoreAdmin(ImportExportMixin, admin.GeoModelAdmin):
 
     actions = ['store_open', 'store_close']
 
-    inlines = [PickupZoneMenuInline, LunchMenuInline, DinnerMenuInline, RecordInline, PlaceInline, CRNInline]
+    inlines = [PickupZoneMenuInline, LunchMenuInline,
+               DinnerMenuInline, RecordInline, PlaceInline, CRNInline]
