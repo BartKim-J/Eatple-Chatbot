@@ -36,8 +36,12 @@ ALLOWED_HOSTS = [
     'eatple.com',
     'www.eatple.com',
     'pt.eatple.com',
+
     'admin.eatple.com',
+
+    'test.eatple.com',
     'dev.eatple.com',
+
     'localhost'
 ]
 
