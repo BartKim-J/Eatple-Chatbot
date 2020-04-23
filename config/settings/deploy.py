@@ -35,8 +35,14 @@ DEBUG = False
 ALLOWED_HOSTS = [
     'eatple.com',
     'www.eatple.com',
+
+    'pt.eatple.com',
+
     'admin.eatple.com',
+
+    'live.eatple.com',
     'skill.eatple.com',
+
     'kapi.eatple.com',
     'eapi.eatple.com',
 ]
