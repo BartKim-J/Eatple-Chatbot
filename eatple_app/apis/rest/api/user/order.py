@@ -44,7 +44,7 @@ class OrderValidation(viewsets.ModelViewSet):
             return Response(response)
 
         if(order.payment_status == EATPLE_ORDER_STATUS_FAILED):
-            order.status = ORDER_RECORD_GET_MENU
+            order.status = ORDER_STATUS_MENU_CHOCIED
             order.payment_status = EATPLE_ORDER_STATUS_READY
             order.save()
 
