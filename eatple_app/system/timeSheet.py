@@ -24,8 +24,8 @@ def dateNowByTimeZone():
     # Time QA DEBUG
     if(ORDER_TIME_CHECK_DEBUG_MODE):
         DEBUG_DAYS = int(datetime.datetime.now().strftime("%d"))
-        DEBUG_HOUR = 16
-        DEBUG_MIN = 0
+        DEBUG_HOUR = 15
+        DEBUG_MIN = 00
         DEBUG_SEC = 0
 
         if settings.USE_TZ:
@@ -149,7 +149,7 @@ class OrderTimeSheet():
 
     def GetDinnerOrderPickupTimeEnd(self):
         return self.currentDateWithoutTime + \
-            datetime.timedelta(hours=20, minutes=30)
+            datetime.timedelta(hours=21, minutes=00)
 
     # Backend Counter Time
     def GetInitialCountTime(self):

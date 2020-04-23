@@ -77,21 +77,22 @@ def sellingTimeCheck(include=False):
     nextLunchOrderTimeStart = orderTimeSheet.GetNextLunchOrderEditTimeStart()
     nextLunchOrderTimeEnd = orderTimeSheet.GetNextLunchOrderEditTimeEnd()
 
-    if(prevLunchOrderTimeEnd < currentDate) and (currentDate < dinnerOrderTimeStart):
+    if(prevLunchOrderTimeEnd <= currentDate) and (currentDate < dinnerOrderTimeStart):
         if(include):
             return SELLING_TIME_DINNER
         else:
             return None
-    elif(dinnerOrderTimeEnd < currentDate) and (currentDate < nextLunchOrderTimeStart):
+
+    elif(dinnerOrderTimeEnd <= currentDate) and (currentDate < nextLunchOrderTimeStart):
         if(include):
             return SELLING_TIME_LUNCH
         else:
             return None
-    elif(prevLunchOrderTimeStart < currentDate) and (currentDate < prevLunchOrderTimeEnd):
+    elif(prevLunchOrderTimeStart <= currentDate) and (currentDate < prevLunchOrderTimeEnd):
         return SELLING_TIME_LUNCH
-    elif(nextLunchOrderTimeStart < currentDate) and (currentDate < nextLunchOrderTimeEnd):
+    elif(nextLunchOrderTimeStart <= currentDate) and (currentDate < nextLunchOrderTimeEnd):
         return SELLING_TIME_LUNCH
-    elif(dinnerOrderTimeStart < currentDate) and (currentDate < dinnerOrderTimeEnd):
+    elif(dinnerOrderTimeStart <= currentDate) and (currentDate < dinnerOrderTimeEnd):
         return SELLING_TIME_DINNER
     else:
         return None

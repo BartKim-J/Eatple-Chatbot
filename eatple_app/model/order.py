@@ -310,12 +310,12 @@ def orderUpdate(order):
         ((PICKUP_YESTER_DAY <= paymentDateWithoutTime) and
             (TODAY <= PICKUP_DAY)):
 
-        # Pickup Prepare Time 10:30:00  ~ 11:29:59
+        # Pickup Prepare Time
         if(prevLunchOrderTimeEnd <= currentDate) and (currentDate < lunchOrderPickupTimeStart) and \
                 (TODAY == PICKUP_DAY):
             print("픽업 준비중 - A")
             order.status = ORDER_STATUS_PICKUP_PREPARE
-        # PickupTime Waiting Time 11:30:00 ~ 14:29:59
+        # PickupTime Waiting Time
         elif(lunchOrderPickupTimeStart <= currentDate) and (currentDate < lunchOrderPickupTimeEnd) and \
                 (TODAY == PICKUP_DAY):
             # Over Order Pickup Time
@@ -327,7 +327,7 @@ def orderUpdate(order):
                 order.status = ORDER_STATUS_PICKUP_PREPARE
         # Order Time Range
         else:
-            # prev phase Order YD 16:25:00 ~ TD 10:29:59
+            # prev phase Order
             if(prevLunchOrderEditTimeStart <= currentDate) and (currentDate < prevLunchOrderTimeEnd):
                 if currentDate <= prevLunchOrderEditTimeEnd:
                     print("주문 완료 - A")
@@ -336,7 +336,7 @@ def orderUpdate(order):
                     print("픽업 준비중 - C")
                     order.status = ORDER_STATUS_PICKUP_PREPARE
 
-            # next phase Lunch order 16:25:00 ~ TD 10:29:59
+            # next phase Lunch order
             elif (nextLunchOrderEditTimeStart <= currentDate) and \
                  (currentDate < nextLunchOrderEditTimeEnd) and \
                  (nextLunchOrderEditTimeStart <= paymentDate):
@@ -354,29 +354,29 @@ def orderUpdate(order):
 
             # Invalid Time Range is Dinner Order Time ( prev phase lunch order ~ dinner order ~ next phase lunch order )
             else:
-                print("주문 완료 - ERROR")
+                print("픽업 완료 - ERROR")
                 order.status = ORDER_STATUS_PICKUP_COMPLETED
 
     # Dinner Order
     elif (SELLING_TIME_DINNER == menu.selling_time) and (paymentDateWithoutTime == TODAY):
         # Meal Pre-
-        if(dinnerOrderTimeEnd <= currentDate) and (currentDate <= dinnerOrderPickupTimeStart):
+        if(dinnerOrderTimeEnd <= currentDate) and (currentDate < dinnerOrderPickupTimeStart):
             print("픽업 준비중 - A")
             order.status = ORDER_STATUS_PICKUP_PREPARE
         # PickupTime Range
-        elif(dinnerOrderPickupTimeStart <= currentDate) and (currentDate <= dinnerOrderPickupTimeEnd):
+        elif(dinnerOrderPickupTimeStart <= currentDate) and (currentDate < dinnerOrderPickupTimeEnd):
             # Over Order Pickup Time
-            if(currentDate >= orderPickupTime):
+            if(order.pickup_time + datetime.timedelta(minutes=-15) <= currentDate):
                 print("픽업 대기중 - A")
                 order.status = ORDER_STATUS_PICKUP_WAIT
             else:
                 print("픽업 준비중 - B")
                 order.status = ORDER_STATUS_PICKUP_PREPARE
+
         else:
             # Today Order
-            if(dinnerOrderEditTimeStart < currentDate) and (currentDate < dinnerOrderTimeEnd):
-
-                if paymentDate <= dinnerOrderEditTimeEnd:
+            if(dinnerOrderEditTimeStart <= currentDate) and (currentDate <= dinnerOrderTimeEnd):
+                if currentDate <= dinnerOrderEditTimeEnd:
                     print("주문 완료 - A")
                     order.status = ORDER_STATUS_ORDER_CONFIRMED
                 else:

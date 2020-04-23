@@ -56,11 +56,15 @@ def isPurchase(user, sellingTime, kakaoPayload):
 
     kakaoForm.QuickReplies_AddWithMap(DEFAULT_QUICKREPLIES_MAP)
 
-    if (lunchPurchaed and sellingTime == SELLING_TIME_LUNCH):
-        return GET_EatplePass(kakaoPayload.request)
+    if(sellingTime == None):
+        if (lunchPurchaed or dinnerPurchaced):
+            return GET_EatplePass(kakaoPayload.request)
+    else:
+        if (lunchPurchaed and sellingTime == SELLING_TIME_LUNCH):
+            return GET_EatplePass(kakaoPayload.request)
 
-    if (dinnerPurchaced and sellingTime == SELLING_TIME_DINNER):
-        return GET_EatplePass(kakaoPayload.request)
+        if (dinnerPurchaced and sellingTime == SELLING_TIME_DINNER):
+            return GET_EatplePass(kakaoPayload.request)
 
     return None
 
@@ -122,12 +126,13 @@ def kakaoView_StoreListup(kakaoPayload):
     sellingTime = sellingTimeValidation(kakaoPayload)
     currentSellingTime = sellingTimeCheck()
 
-    if(sellingTime == None):
-        sellingTime = sellingTimeCheck(True)
     # User's Eatple Pass Validation
     eatplePassStatus = isPurchase(user, sellingTime, kakaoPayload)
     if(eatplePassStatus != None):
         return eatplePassStatus
+
+    if(sellingTime == None):
+        sellingTime = sellingTimeCheck(True)
 
     order = orderValidation(kakaoPayload)
 

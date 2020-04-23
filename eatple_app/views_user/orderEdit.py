@@ -398,10 +398,16 @@ def kakaoView_EditPickupTime(kakaoPayload):
                     KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_EDIT_PICKUP_TIME
                 }
 
+                if(pickupTime.time.minute == 0):
+                    pickupTimeQR = '{}'.format(pickupTime.time.strftime(
+                        '%p %-I시').replace('AM', '오전').replace('PM', '오후'))
+                else:
+                    pickupTimeQR = '{}'.format(pickupTime.time.strftime(
+                        '%p %-I시 %M분').replace('AM', '오전').replace('PM', '오후'))
+
                 kakaoForm.QuickReplies_Add(
                     'block',
-                    pickupTime.time.strftime(
-                        '%p %-I시 %-M분').replace('AM', '오전').replace('PM', '오후'),
+                    pickupTimeQR,
                     KAKAO_EMOJI_LOADING,
                     KAKAO_BLOCK_USER_EDIT_PICKUP_TIME_CONFIRM,
                     dataActionExtra

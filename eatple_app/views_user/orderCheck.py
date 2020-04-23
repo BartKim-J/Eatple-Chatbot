@@ -35,7 +35,7 @@ def eatplePassImg(order, delegatedEatplePassCount):
     return imgUrl
 
 
-def eatplePass(order, ownEatplePass, delegatedEatplePassCount, delegatedEatplePass, nicknameList, ORDER_LIST_QUICKREPLIES_MAP, kakaoForm):
+def eatplePass(order, ownEatplePass, delegatedEatplePassCount, delegatedEatplePass, nicknameList, QUICKREPLIES_MAP, kakaoForm):
     isCafe = order.store.category.filter(name="카페").exists()
     if(isCafe):
         pickupTimeStr = dateByTimeZone(order.pickup_time).strftime(
@@ -115,13 +115,12 @@ def eatplePass(order, ownEatplePass, delegatedEatplePassCount, delegatedEatplePa
         kakaoForm.BasicCard_Push(
             '총 잇플패스 : {}개'.format(
                 delegatedEatplePass.count() + ownEatplePass.count()),
-            '주문번호: {}\n - 주문자: {}\n\n메뉴 내역\n{}\n - 주문 상태: {}\n\n - 픽업 시간: {}\n * 주문취소 가능시간: 오전 11시까지'.format(
+            '주문번호: {}\n - 주문자: {}\n\n메뉴 내역\n{}\n - 주문 상태: {}\n\n - 픽업 시간: {}'.format(
                 order.order_id,
                 nicknameList,
                 menuNameList,
-                order.store.addr,
+                dict(ORDER_STATUS)[order.status],
                 pickupTimeStr,
-                dict(ORDER_STATUS)[order.status]
             ),
             thumbnail,
             buttons
@@ -147,7 +146,7 @@ def eatplePass(order, ownEatplePass, delegatedEatplePassCount, delegatedEatplePa
                     selling_time=order.menu.selling_time)
 
                 if(pickupTimes.count() > 1):
-                    ORDER_LIST_QUICKREPLIES_MAP.append(
+                    QUICKREPLIES_MAP.append(
                         {
                             'action': 'block',
                             'label': '픽업 시간 변경',
@@ -162,7 +161,7 @@ def eatplePass(order, ownEatplePass, delegatedEatplePassCount, delegatedEatplePa
 
         kakaoForm.BasicCard_Push(
             '{}'.format(order.menu.name),
-            '주문번호: {}\n - 주문자: {}({})\n\n - 매장: {}\n - 주문 상태: {}\n\n - 픽업 시간: {}\n * 주문취소 가능시간: 오전 11시까지'.format(
+            '주문번호: {}\n - 주문자: {}({})\n\n - 매장: {}\n - 주문 상태: {}\n\n - 픽업 시간: {}'.format(
                 order.order_id,
                 order.ordersheet.user.nickname,
                 str(order.ordersheet.user.phone_number)[9:13],
@@ -175,7 +174,7 @@ def eatplePass(order, ownEatplePass, delegatedEatplePassCount, delegatedEatplePa
         )
 
 
-def eatplePassDelegated(order, ownEatplePass, delegatedEatplePassCount, delegatedEatplePass, nicknameList, ORDER_LIST_QUICKREPLIES_MAP, kakaoForm):
+def eatplePassDelegated(order, ownEatplePass, delegatedEatplePassCount, delegatedEatplePass, nicknameList, QUICKREPLIES_MAP, kakaoForm):
     isCafe = order.store.category.filter(name="카페").exists()
     if(isCafe):
         pickupTimeStr = dateByTimeZone(order.pickup_time).strftime(
@@ -221,7 +220,7 @@ def eatplePassDelegated(order, ownEatplePass, delegatedEatplePassCount, delegate
 
     kakaoForm.BasicCard_Push(
         '{}님에게 부탁된 잇플패스 입니다.'.format(order.delegate.nickname),
-        '주문번호: {}\n - 소유자: {}({})\n\n - 위임자: {}({})\n\n - 매장: {}\n - 주문 상태: {}\n\n - 픽업 시간: {}\n * 주문취소 가능시간: 오전 11시까지'.format(
+        '주문번호: {}\n - 소유자: {}({})\n\n - 위임자: {}({})\n\n - 매장: {}\n - 주문 상태: {}\n\n - 픽업 시간: {}'.format(
             order.order_id,
             order.ordersheet.user.nickname,
             str(order.ordersheet.user.phone_number)[9:13],
@@ -239,14 +238,7 @@ def eatplePassDelegated(order, ownEatplePass, delegatedEatplePassCount, delegate
 def kakaoView_EatplePass(kakaoPayload):
     kakaoForm = KakaoForm()
 
-    ORDER_LIST_QUICKREPLIES_MAP = [
-        {
-            'action': 'block',
-            'label': '새로고침',
-            'messageText': KAKAO_EMOJI_LOADING,
-            'blockId': KAKAO_BLOCK_USER_EATPLE_PASS,
-            'extra': {}
-        },
+    QUICKREPLIES_MAP = [
         {
             'action': 'block',
             'label': '🏠  홈',
@@ -281,6 +273,29 @@ def kakaoView_EatplePass(kakaoPayload):
 
     # Listup EatplePass
     if ownEatplePass:
+        if(ownEatplePass.first().menu.selling_time == SELLING_TIME_LUNCH):
+            QUICKREPLIES_MAP.insert(0, {
+                'action': 'block',
+                'label': '저녁 메뉴 보러가기',
+                'messageText': KAKAO_EMOJI_LOADING,
+                'blockId': KAKAO_BLOCK_USER_GET_STORE,
+                'extra': {
+                    KAKAO_PARAM_SELLING_TIME: SELLING_TIME_DINNER,
+                    KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_GET_STORE,
+                }
+            })
+        else:
+            QUICKREPLIES_MAP.insert(0, {
+                'action': 'block',
+                'label': '점심 메뉴 보러가기',
+                'messageText': KAKAO_EMOJI_LOADING,
+                'blockId': KAKAO_BLOCK_USER_GET_STORE,
+                'extra': {
+                    KAKAO_PARAM_SELLING_TIME: SELLING_TIME_LUNCH,
+                    KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_GET_STORE,
+                }
+            })
+
         for order in ownEatplePass:
             if(order.delegate == None):
                 eatplePass(
@@ -289,7 +304,7 @@ def kakaoView_EatplePass(kakaoPayload):
                     delegatedEatplePassCount,
                     delegatedEatplePass,
                     nicknameList,
-                    ORDER_LIST_QUICKREPLIES_MAP,
+                    QUICKREPLIES_MAP,
                     kakaoForm
                 )
                 kakaoForm.BasicCard_Add()
@@ -324,7 +339,7 @@ def kakaoView_EatplePass(kakaoPayload):
                         kakaoForm=kakaoForm
                     )
                 elif(order.menu.selling_time == SELLING_TIME_LUNCH):
-                    #@B2B
+                    # @B2B
                     if(isB2BUser(user)):
                         pass
                     else:
@@ -369,7 +384,7 @@ def kakaoView_EatplePass(kakaoPayload):
                     delegatedEatplePassCount,
                     delegatedEatplePass,
                     nicknameList,
-                    ORDER_LIST_QUICKREPLIES_MAP,
+                    QUICKREPLIES_MAP,
                     kakaoForm
                 )
                 kakaoForm.BasicCard_Add()
@@ -382,7 +397,7 @@ def kakaoView_EatplePass(kakaoPayload):
             kakaoForm=kakaoForm
         )
 
-    kakaoForm.QuickReplies_AddWithMap(ORDER_LIST_QUICKREPLIES_MAP)
+    kakaoForm.QuickReplies_AddWithMap(QUICKREPLIES_MAP)
 
     return JsonResponse(kakaoForm.GetForm())
 
@@ -390,7 +405,7 @@ def kakaoView_EatplePass(kakaoPayload):
 def kakaoView_OrderDetails(kakaoPayload):
     kakaoForm = KakaoForm()
 
-    ORDER_LIST_QUICKREPLIES_MAP = [
+    QUICKREPLIES_MAP = [
         {
             'action': 'block',
             'label': '🏠  홈',
@@ -435,7 +450,7 @@ def kakaoView_OrderDetails(kakaoPayload):
             kakaoForm=kakaoForm
         )
 
-    kakaoForm.QuickReplies_AddWithMap(ORDER_LIST_QUICKREPLIES_MAP)
+    kakaoForm.QuickReplies_AddWithMap(QUICKREPLIES_MAP)
 
     return JsonResponse(kakaoForm.GetForm())
 
