@@ -35,6 +35,7 @@ DEBUG = True
 ALLOWED_HOSTS = [
     'eatple.com',
     'www.eatple.com',
+
     'pt.eatple.com',
 
     'admin.eatple.com',

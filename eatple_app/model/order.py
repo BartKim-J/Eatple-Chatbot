@@ -226,6 +226,8 @@ def orderUpdate(order):
         print('주문 취소됨')
 
     if(order.payment_status == EATPLE_ORDER_STATUS_READY):
+        order.status = ORDER_STATUS_MENU_CHOCIED
+        order.save()
         print('주문 미결제 또는 진행중')
 
     if(order.payment_status == EATPLE_ORDER_STATUS_FAILED):
@@ -244,12 +246,12 @@ def orderUpdate(order):
             order.save()
 
             order.orderPay()
+            print('주문 결제됨')
 
         # @PROMOTION
         if(order.type == ORDER_TYPE_PROMOTION):
             order.ordersheet.user.applyPromotion()
-
-        print('주문 결제됨')
+            print('주문 결제됨')
 
     if(order.payment_status != EATPLE_ORDER_STATUS_PAID):
         return order
