@@ -438,21 +438,66 @@ def kakaoView_StoreListup(kakaoPayload):
             )
 
         kakaoForm.BasicCard_Add(header)
-        if(
-            (currentSellingTime == sellingTime) and
-            (weekendTimeCheck(sellingTime) == False)
-        ):
+
+        if(weekendTimeCheck(sellingTime)):
+            KakaoInstantForm().Message(
+                '🔴  주문 가능 시간이 아닙니다.',
+                '',
+                kakaoForm=kakaoForm
+            )
+        elif(currentSellingTime == sellingTime):
             KakaoInstantForm().Message(
                 '🟢  주문 가능 시간입니다.',
-                '마감되기 전에 얼른 주문하세요.',
+                '',
                 kakaoForm=kakaoForm
             )
         else:
-            KakaoInstantForm().Message(
-                '🔴  주문 가능 시간이 아닙니다.',
-                '메뉴는 자유롭게 볼 수 있어요.',
-                kakaoForm=kakaoForm
-            )
+            if(sellingTimeCheck() == None):
+                currentSellingTime = sellingTimeCheck(True)
+
+                if (currentSellingTime == None):
+                    return errorView('잘못된 주문 시간', '정상적인 주문 시간대가 아닙니다.')
+
+                if (currentSellingTime == SELLING_TIME_DINNER):
+                    if (sellingTime == SELLING_TIME_DINNER):
+                        KakaoInstantForm().Message(
+                            '🔴  주문은 오후 2시부터 가능합니다.',
+                            '',
+                            kakaoForm=kakaoForm
+                        )
+                    else:
+                        KakaoInstantForm().Message(
+                            '🔴  금일 점심 주문이 마감되었습니다.',
+                            '',
+                            kakaoForm=kakaoForm
+                        )
+
+                elif (currentSellingTime == SELLING_TIME_LUNCH):
+                    if (sellingTime == SELLING_TIME_DINNER):
+                        KakaoInstantForm().Message(
+                            '🔴  금일 저녁 주문이 마감되었습니다.',
+                            '',
+                            kakaoForm=kakaoForm
+                        )
+                    else:
+                        KakaoInstantForm().Message(
+                            '🔴  주문은 오후 9시부터 가능합니다.',
+                            '',
+                            kakaoForm=kakaoForm
+                        )
+            else:
+                if (sellingTime == SELLING_TIME_DINNER):
+                    KakaoInstantForm().Message(
+                        '🔴  주문 가능 시간이 아닙니다.',
+                        '',
+                        kakaoForm=kakaoForm
+                    )
+                elif (sellingTime == SELLING_TIME_LUNCH):
+                    KakaoInstantForm().Message(
+                        '🔴  주문 가능 시간이 아닙니다.',
+                        '',
+                        kakaoForm=kakaoForm
+                    )
 
     else:
         kakaoForm.BasicCard_Push(
