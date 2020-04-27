@@ -46,7 +46,7 @@ def kakaoView_notifiy(kakaoPayload):
         'title': '공지사항',
         'imageUrl': '{}{}'.format(HOST_URL, PARTNER_ORDER_SHEET_IMG),
     }
-    kakaoForm.ListCard_Push('저녁 주문이(신시자역) 오픈되었습니다.',
+    kakaoForm.ListCard_Push('저녁 주문이(신사자역) 오픈되었습니다.',
                             '2020.04.27',
                             None,
                             None
