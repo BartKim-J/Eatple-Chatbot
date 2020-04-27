@@ -354,14 +354,18 @@ def getMenuPrice(menuList):
 
 
 def showActiveStatus(orderTimeSheet):
+
+    MONTH = 4
+    DAY = 13
+
     # Test
-    test_start_date = dateNowByTimeZone().replace(year=2020, month=3, day=21,
+    test_start_date = dateNowByTimeZone().replace(year=2020, month=MONTH, day=DAY,
                                                   hour=0, minute=0, second=0, microsecond=0)
     test_end_date = orderTimeSheet.GetCurrentDate()
 
-    WAU_Condition_Date = dateNowByTimeZone().replace(year=2020, month=4, day=1,
+    WAU_Condition_Date = dateNowByTimeZone().replace(year=2020, month=MONTH, day=DAY,
                                                      hour=0, minute=0, second=0, microsecond=0)
-    MAU_Condition_Date = dateNowByTimeZone().replace(year=2020, month=4, day=1,
+    MAU_Condition_Date = dateNowByTimeZone().replace(year=2020, month=MONTH, day=DAY,
                                                      hour=0, minute=0, second=0, microsecond=0)
 
     bestDAU = 0
@@ -384,10 +388,12 @@ def showActiveStatus(orderTimeSheet):
             bestDAU = DAU
             bestDAUDate = test_start_date
 
+        # print('WAU D -', WAU, test_start_date)
         if(bestWAU < WAU and test_start_date > WAU_Condition_Date):
             bestWAU = WAU
             bestWAUDate = test_start_date
 
+        # print('MAU D -', MAU, test_start_date)
         if(bestMAU < MAU and test_start_date > MAU_Condition_Date):
             bestMAU = MAU
             bestMAUDate = test_start_date
@@ -525,7 +531,7 @@ def dashboard(request):
         'storesOrderByPrevPrevMonth': sorted(storeList, key=(lambda i: -i.getPrevPrevMonthStock()[0])),
         'storesOrderByPrevMonth': sorted(storeList, key=(lambda i: -i.getPrevMonthStock()[0])),
         'stores': sorted(storeList, key=(lambda i: -i.getMontlyStock()[0])),
-        
+
         'storesLunch': filter(lambda i: i.getLucnhCurrentStock() > 0, sorted(storeList, key=(lambda i: -i.getLucnhCurrentStock()))),
         'storesDinner': filter(lambda i: i.getDinnerCurrentStock() > 0, sorted(storeList, key=(lambda i: -i.getDinnerCurrentStock()))),
 

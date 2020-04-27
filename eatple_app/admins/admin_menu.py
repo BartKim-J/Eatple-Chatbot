@@ -121,7 +121,8 @@ class MenuAdmin(ImportExportMixin, admin.GeoModelAdmin):
 
     list_filter = (
         'store',
-        'stocktable__company__name',
+        'store__area',
+        # 'stocktable__company__name',
         'status',
         'selling_time',
     )
