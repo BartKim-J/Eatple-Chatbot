@@ -13,6 +13,44 @@ from django.core import validators
 from django.utils.translation import ugettext_lazy as _
 from django.utils.safestring import mark_safe
 
+from django.contrib.admin import SimpleListFilter
+
+
+class MenuPickupZoneFilter(SimpleListFilter):
+    title = '픽업존'
+    parameter_name = '픽업존'
+
+    def lookups(self, request, model_admin):
+        return [
+            ('on', '픽업존'),
+            ('off', '테이크아웃'),
+        ]
+
+    def queryset(self, request, queryset):
+        if self.value() == 'on':
+            return queryset.filter(Q(tag__name="픽업존"))
+
+        if self.value() == 'off':
+            return queryset.filter(~Q(tag__name="픽업존"))
+
+
+class MenuStockFilter(SimpleListFilter):
+    title = '주문 여부'
+    parameter_name = '주문 여부'
+
+    def lookups(self, request, model_admin):
+        return [
+            ('on', '주문 있음'),
+            ('off', '주문 없음'),
+        ]
+
+    def queryset(self, request, queryset):
+        if self.value() == 'on':
+            return queryset.filter(Q(current_stock__gt=0))
+
+        if self.value() == 'off':
+            return queryset.filter(~Q(current_stock=0))
+
 
 class TypeFilter(MultipleChoiceListFilter):
     title = '유형'
@@ -43,6 +81,10 @@ class MenuAdmin(ImportExportMixin, admin.GeoModelAdmin):
 
     readonly_fields = ('menu_id', "image_preview",
                        "image_soldout_preview", "current_stock", "pickuped_stock", "store")
+
+    def stock_status(self, obj):
+        return '{} / {}'.format(obj.getCurrentStock().count(), obj.max_stock)
+    stock_status.short_description = "일일 재고 상태"
 
     def image_preview(self, obj):
         return mark_safe('<img src="{url}" width="{width}" height={height} /><a href="{url}" download>다운로드</a>'.format(
@@ -122,6 +164,8 @@ class MenuAdmin(ImportExportMixin, admin.GeoModelAdmin):
     list_filter = (
         'store',
         'store__area',
+        MenuPickupZoneFilter,
+        MenuStockFilter,
         # 'stocktable__company__name',
         'status',
         'selling_time',
@@ -129,12 +173,12 @@ class MenuAdmin(ImportExportMixin, admin.GeoModelAdmin):
 
     list_display = (
         'name',
-        'store',
         'selling_time',
         'price',
         'price_origin',
-        'max_stock',
+        'stock_status',
         'status',
+        'store',
     )
 
     list_editable = (

@@ -169,6 +169,20 @@ class OrderAdmin(ImportExportMixin, admin.ModelAdmin):
         return False
     field_delegate_flag.short_description = "부탁하기"
 
+    def field_totalPrice(self, obj):
+        if(obj.totalPrice > 0):
+            return '{}원'.format(obj.totalPrice)
+        else:
+            return '미결제'
+    field_totalPrice.short_description = "결제 금액"
+
+    def field_menu(self, obj):
+        if(obj.menu != None):
+            return '{}-{}'.format(obj.store.name, obj.menu.name)
+        else:
+            return '선택중'
+    field_menu.short_description = "메뉴"
+
     def b2b_name(self, obj):
         if(obj.ordersheet.user.company != None and obj.type == ORDER_TYPE_B2B):
             return obj.ordersheet.user.company.name
@@ -256,7 +270,18 @@ class OrderAdmin(ImportExportMixin, admin.ModelAdmin):
 
     actions = ['make_enable']
 
-    list_display = ('order_id', 'field_owner', 'field_owner_id',  'store', 'menu', 'type',
-                    'payment_type', 'payment_status', 'status', 'field_delegate_flag', 'payment_date',)
+    list_display = (
+        'order_id',
+        'field_owner',
+        # 'field_owner_id',
+        'type',
+        'payment_type',
+        'payment_status',
+        'status',
+        'field_menu',
+        'field_totalPrice',
+        # 'field_delegate_flag',
+        'payment_date',
+    )
 
     inlines = [KakaoPayInline]
