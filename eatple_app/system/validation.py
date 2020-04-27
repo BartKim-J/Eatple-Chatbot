@@ -151,16 +151,10 @@ def vacationTimeCheck():
 
     vacationMap = [
         {
-            'from_month': 1,
-            'from_days': 1,
-            'to_month': 1,
+            'from_month': 4,
+            'from_days': 30,
+            'to_month': 5,
             'to_days': 1
-        },
-        {
-            'from_month': 1,
-            'from_days': 24,
-            'to_month': 1,
-            'to_days': 27
         },
     ]
 

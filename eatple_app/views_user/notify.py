@@ -46,23 +46,21 @@ def kakaoView_notifiy(kakaoPayload):
         'title': '공지사항',
         'imageUrl': '{}{}'.format(HOST_URL, PARTNER_ORDER_SHEET_IMG),
     }
+    kakaoForm.ListCard_Push('저녁 주문이(신시자역) 오픈되었습니다.',
+                            '2020.04.27',
+                            None,
+                            None
+                            )
+    kakaoForm.ListCard_Push('4월30일, 5월1일은 휴무입니다',
+                            '2020.04.27',
+                            None,
+                            None
+                            )
     kakaoForm.ListCard_Push('주문가능시간 11시로 연장되었습니다.',
                             '2020.04.10',
                             None,
                             None
                             )
-    kakaoForm.ListCard_Push(
-        '신사 지역 매장들이 오픈되었습니다.',
-        '2020.03.11',
-        None,
-        None
-    )
-    kakaoForm.ListCard_Push(
-        '카카오 페이 결제가 추가되었습니다.',
-        '2020.03.10',
-        None,
-        None
-    )
     kakaoForm.ListCard_Add(header)
 
     kakaoForm.QuickReplies_AddWithMap(QUICKREPLIES_MAP)
