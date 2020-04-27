@@ -292,7 +292,7 @@ def kakaoView_StoreListup(kakaoPayload):
                 buttons = [
                     {
                         'action': 'block',
-                        'label': '📋 픽업존 메뉴판 보기',
+                        'label': '📋 픽업존 주문하기',
                         'messageText': KAKAO_EMOJI_LOADING,
                         'blockId': KAKAO_BLOCK_USER_GET_MENU,
                         'extra': {
@@ -305,7 +305,7 @@ def kakaoView_StoreListup(kakaoPayload):
                 ]
                 kakaoForm.BasicCard_Push(
                     '픽업존: 패파 신사점 3층',
-                    '⏱️  픽업가능 시간\n - 오후12:10, 1:10',
+                    '⏱️  픽업존 운영 시간\n - 오후12:10, 1:10',
                     thumbnail,
                     buttons
                 )
@@ -405,7 +405,7 @@ def kakaoView_StoreListup(kakaoPayload):
                     },
                 ]
 
-                pickupTimeList = '⏱️  픽업가능 시간\n - '
+                pickupTimeList = '⏱️  매장 방문 픽업가능 시간\n - '
 
                 for pickup_time in menu.pickup_time.all():
                     if(menu.pickup_time.first() != pickup_time):
@@ -446,9 +446,14 @@ def kakaoView_StoreListup(kakaoPayload):
                 kakaoForm=kakaoForm
             )
         elif(currentSellingTime == sellingTime):
+            if(sellingTime == SELLING_TIME_LUNCH):
+                subtext = '픽업 전날 오후 9시부터 오전 11시까지'
+            else:
+                subtext = '픽업 당일 오후 2시부터 오후 6시까지'
+
             KakaoInstantForm().Message(
                 '🟢  주문 가능 시간입니다.',
-                '',
+                subtext,
                 kakaoForm=kakaoForm
             )
         else:
