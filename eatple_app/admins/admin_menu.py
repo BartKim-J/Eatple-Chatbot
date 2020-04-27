@@ -86,6 +86,49 @@ class MenuAdmin(ImportExportMixin, admin.GeoModelAdmin):
         return '{} / {}'.format(obj.getCurrentStock().count(), obj.max_stock)
     stock_status.short_description = "일일 재고 상태"
 
+    def stock_by_pickup(self, obj):
+        pickupTimes = obj.pickup_time.all()
+        stockList = ''
+        onDisplay = 0
+
+        for pickupTime in pickupTimes:
+            refPickupTime = [x.strip()
+                             for x in str(pickupTime.time).split(':')]
+            datetime_pickup_time = dateNowByTimeZone().replace(
+                hour=int(refPickupTime[0]),
+                minute=int(refPickupTime[1]),
+                second=0,
+                microsecond=0
+            )
+
+            orderByPickupTime = Order.objects.filter(menu=obj).filter(
+                (
+                    Q(status=ORDER_STATUS_PICKUP_COMPLETED) |
+                    Q(status=ORDER_STATUS_PICKUP_WAIT) |
+                    Q(status=ORDER_STATUS_PICKUP_PREPARE) |
+                    Q(status=ORDER_STATUS_ORDER_CONFIRM_WAIT) |
+                    Q(status=ORDER_STATUS_ORDER_CONFIRMED)
+                ) &
+                Q(pickup_time=datetime_pickup_time)
+            )
+
+            orderCount = orderByPickupTime.count()
+            if(orderCount > 0):
+                stockList += '{}개({})'.format(
+                    orderCount,
+                    pickupTime.time.strftime(
+                        '%p %-I시 %-M분').replace('AM', '오전').replace('PM', '오후')
+                )
+                onDisplay += orderCount
+
+                if(pickupTime != pickupTimes.last()):
+                    stockList += ', '
+
+        if(onDisplay == 0):
+            stockList = '주문 없음'
+        return stockList
+    stock_by_pickup.short_description = "일일 재고 상태"
+
     def image_preview(self, obj):
         return mark_safe('<img src="{url}" width="{width}" height={height} /><a href="{url}" download>다운로드</a>'.format(
             url=obj.image.url,
@@ -177,6 +220,7 @@ class MenuAdmin(ImportExportMixin, admin.GeoModelAdmin):
         'price',
         'price_origin',
         'stock_status',
+        'stock_by_pickup',
         'status',
         'store',
     )
