@@ -13,13 +13,19 @@
         <div class="row">
 
             <!-- Daily Selled Card -->
-            <div class="col-xl-4 col-md-6 mb-4">
+            <div class="col-xl-3 col-md-3 mb-3">
             <div class="card bg-dark text-white py-2">
                 <div class="card-body">
                 <div class="row no-gutters align-items-center">
                     <div class="col mr-2">
                     <div class="text-xs font-weight-bold text-secondary text-uppercase mb-1">일일 판매량</div>
-                    <div class="h6 font-weight-bold" id="TotalStockStatus"><i id="TotalStockStatusIcon" class="fas"></i> {{ totalStockIncrease }}</div>
+
+                    {% if totalStockIncrease >= 0 %}
+                    <div class="h6 font-weight-bold text-success"><i class="fas fa-angle-up"></i> {{ totalStockIncrease }}</div>
+                    {% else %}
+                    <div class="h6 font-weight-bold text-danger"><i class="fas fa-angle-down"></i> {{ totalStockIncrease }}</div>
+                    {% endif %}
+
                     <div class="h5 mb-0 font-weight-bold text-gray-100">{{ totalStock }}개</div>
                     </div>
                     <div class="col-auto">
@@ -30,26 +36,78 @@
             </div>
             </div>
 
-            <!-- Earnings (Monthly) Card Example -->
-            <div class="col-xl-4 col-md-6 mb-4">
-            <div class="card bg-dark text-white py-2">
-                <div class="card-body">
-                <div class="row no-gutters align-items-center">
-                    <div class="col mr-2">
-                    <div class="text-xs font-weight-bold text-secondary text-uppercase mb-1">일일 픽업</div>
-                    <div class="h6 font-weight-bold text-danger"></i> <small>주문 실패</small> : {{ orderFailed }}개</div>
-                    <div class="h5 mb-0 font-weight-bold text-gray-100">{{ totalPickuped }} 개</div>
-                    </div>
-                    <div class="col-auto">
-                    <i class="fas fa-inbox fa-2x text-white"></i>
+            <!-- Daily Selled Card -->
+            <div class="col-xl-2 col-md-2 col-lg-2 mb-4">
+                <div class="card bg-dark text-white py-2">
+                    <div class="card-body">
+                        <div class="row no-gutters align-items-center">
+                            <div class="col mr-2">
+                                <div class="text-xs font-weight-bold text-secondary text-uppercase mb-1">일일 주문건</div>
+
+                                {% if totalStockIncrease >= 0 %}
+                                <div class="h6 font-weight-bold text-success"><i class="fas fa-angle-up"></i> {{ totalStockIncrease }}</div>
+                                {% else %}
+                                <div class="h6 font-weight-bold text-danger"><i class="fas fa-angle-down"></i> {{ totalStockIncrease }}</div>
+                                {% endif %}
+
+                                <div class="h5 mb-0 font-weight-bold text-gray-100">{{ totalStock }} 개</div>
+                            </div>
+                            <div class="col-auto">
+                                <i class="fas fa-boxes fa-2x text-white"></i>
+                            </div>
+                        </div>
                     </div>
                 </div>
+            </div>
+            <!-- Daily Selled Card -->
+            <div class="col-xl-2 col-md-2 col-lg-2 mb-4">
+                <div class="card bg-dark text-white py-2">
+                    <div class="card-body">
+                        <div class="row no-gutters align-items-center">
+                            <div class="col mr-2">
+                                <div class="text-xs font-weight-bold text-secondary text-uppercase mb-1">점심 주문건</div>
+
+                                {% if lunchStockIncrease >= 0 %}
+                                <div class="h6 font-weight-bold text-success"><i class="fas fa-angle-up"></i> {{ lunchStockIncrease }}</div>
+                                {% else %}
+                                <div class="h6 font-weight-bold text-danger"><i class="fas fa-angle-down"></i> {{ lunchStockIncrease }}</div>
+                                {% endif %}
+
+                                <div class="h5 mb-0 font-weight-bold text-gray-100">{{ lunchStock }} 개</div>
+                            </div>
+                            <div class="col-auto">
+                                <i class="fas fa-boxes fa-2x text-white"></i>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
+            <!-- Daily Selled Card -->
+            <div class="col-xl-2 col-md-2 col-lg-2 mb-4">
+                <div class="card bg-dark text-white py-2">
+                    <div class="card-body">
+                        <div class="row no-gutters align-items-center">
+                            <div class="col mr-2">
+                                <div class="text-xs font-weight-bold text-secondary text-uppercase mb-1">저녁 주문건</div>
+
+                                {% if dinnerStockIncrease >= 0 %}
+                                <div class="h6 font-weight-bold text-success"><i class="fas fa-angle-up"></i> {{ dinnerStockIncrease }}</div>
+                                {% else %}
+                                <div class="h6 font-weight-bold text-danger"><i class="fas fa-angle-down"></i> {{ dinnerStockIncrease }}</div>
+                                {% endif %}
+
+                                <div class="h5 mb-0 font-weight-bold text-gray-100">{{ dinnerStock }} 개</div>
+                            </div>
+                            <div class="col-auto">
+                                <i class="fas fa-boxes fa-2x text-white"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
-                            
+            
             <!-- Daily Earning Card -->
-            <div class="col-xl-4 col-md-6 mb-4">
+            <div class="col-xl-3 col-md-3 mb-3">
             <div class="card bg-dark text-white py-2">
                 <div class="card-body">
                 <div class="row no-gutters align-items-center">

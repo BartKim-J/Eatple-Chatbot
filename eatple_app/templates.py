@@ -193,59 +193,6 @@ def getMenuStockChart(menuList):
     }
 
 
-def getTotalPickuped(orderTimeSheet):
-    currentDate = orderTimeSheet.GetCurrentDate()
-    currentDateWithoutTime = orderTimeSheet.GetCurrentDateWithoutTime()
-
-    deadline = orderTimeSheet.GetInitialCountTime()
-
-    if(currentDate < deadline):
-        currentDateWithoutTime = currentDateWithoutTime
-    else:
-        currentDateWithoutTime = currentDateWithoutTime + \
-            datetime.timedelta(days=1)
-
-    prevLunchOrderEditTimeStart = currentDateWithoutTime + \
-        datetime.timedelta(hours=21, minutes=0, days=-1)
-    nextLunchOrderEditTimeStart = currentDateWithoutTime + \
-        datetime.timedelta(hours=21, minutes=0)
-
-    totalPickuped = Order.objects.filter(
-        Q(payment_status=EATPLE_ORDER_STATUS_PAID) &
-        Q(status=ORDER_STATUS_PICKUP_COMPLETED) &
-        Q(payment_date__gte=prevLunchOrderEditTimeStart) &
-        Q(payment_date__lt=nextLunchOrderEditTimeStart)
-    ).count()
-
-    return totalPickuped
-
-
-def getOrderFailed(orderTimeSheet):
-    currentDate = orderTimeSheet.GetCurrentDate()
-    currentDateWithoutTime = orderTimeSheet.GetCurrentDateWithoutTime()
-
-    deadline = orderTimeSheet.GetInitialCountTime()
-
-    if(currentDate < deadline):
-        currentDateWithoutTime = currentDateWithoutTime
-    else:
-        currentDateWithoutTime = currentDateWithoutTime + \
-            datetime.timedelta(days=1)
-
-    prevLunchOrderEditTimeStart = currentDateWithoutTime + \
-        datetime.timedelta(hours=21, minutes=0, days=-1)
-    nextLunchOrderEditTimeStart = currentDateWithoutTime + \
-        datetime.timedelta(hours=21, minutes=0)
-
-    orderFailed = Order.objects.filter(
-        Q(payment_status=EATPLE_ORDER_STATUS_FAILED) &
-        Q(payment_date__gte=prevLunchOrderEditTimeStart) &
-        Q(payment_date__lt=nextLunchOrderEditTimeStart)
-    ).count()
-
-    return orderFailed
-
-
 def getDAU(orderTimeSheet):
     currentDate = orderTimeSheet.GetCurrentDate() + datetime.timedelta(days=-1)
     currentDateWithoutTime = orderTimeSheet.GetCurrentDateWithoutTime()
@@ -340,17 +287,6 @@ def getWAS(orderTimeSheet):
     WAS = list(set(WAS))
 
     return len(WAS)
-
-
-def getMenuPrice(menuList):
-    totalPrice = 0
-    for menu in menuList:
-
-        totalPrice += menu.price
-
-    result = totalPrice/menuList.count()
-
-    print(result)
 
 
 def showActiveStatus(orderTimeSheet):
@@ -496,29 +432,29 @@ def dashboard(request):
         create_date__gte=currentDateWithoutTime).count()
 
     totalOrder = Order.objects.filter(
-        Q(payment_status=EATPLE_ORDER_STATUS_PAID)).count()
+        Q(payment_status=EATPLE_ORDER_STATUS_PAID) |
+        Q(payment_status=EATPLE_ORDER_STATUS_CANCELLED)).count()
 
-    totalOrderIncrease = totalUser.filter(
-        create_date__gte=currentDateWithoutTime).count()
+    dailyOrder = Order.objects.filter(
+        Q(payment_status=EATPLE_ORDER_STATUS_PAID) &
+        Q(pickup_time__gte=currentDateWithoutTime.replace(hour=0, minute=0)),
+    )
+    dailyOrderPrev = Order.objects.filter(
+        Q(payment_status=EATPLE_ORDER_STATUS_PAID) &
+        Q(pickup_time__gte=currentDateWithoutTime.replace(
+            hour=0, minute=0) - datetime.timedelta(days=1)) &
+        Q(pickup_time__lte=currentDateWithoutTime.replace(
+            hour=0, minute=0) - datetime.timedelta(days=1))
+    )
 
     orderChart = getOrderChart(orderTimeSheet, False)
     orderChartStaff = getOrderChart(orderTimeSheet, True)
     menuStockChart = getMenuStockChart(menuList)
 
     areaDataList = orderChart['data'].split(',')
-    prevTotalStock = int(areaDataList[len(areaDataList)-2])
-    totalStock = 0
 
-    for menu in menuList:
-        totalStock += menu.current_stock
-
-    totalPickuped = getTotalPickuped(orderTimeSheet)
-    orderFailed = getOrderFailed(orderTimeSheet)
-
-    userActive = getUserActive()
-
+    # userActive = getUserActive()
     # showActiveStatus(orderTimeSheet)
-    # getMenuPrice(menuList)
 
     log = LogEntry.objects.all()
 
@@ -535,27 +471,23 @@ def dashboard(request):
         'storesLunch': filter(lambda i: i.getLucnhCurrentStock() > 0, sorted(storeList, key=(lambda i: -i.getLucnhCurrentStock()))),
         'storesDinner': filter(lambda i: i.getDinnerCurrentStock() > 0, sorted(storeList, key=(lambda i: -i.getDinnerCurrentStock()))),
 
-        'totalStockIncrease': totalStock - prevTotalStock,
-        'totalStock': totalStock,
+        'totalStockIncrease': dailyOrder.count() - dailyOrderPrev.count(),
+        'totalStock': dailyOrder.count(),
 
-        'totalPickuped': totalPickuped,
+        'dinnerStockIncrease': dailyOrder.filter(menu__selling_time=SELLING_TIME_DINNER).count() - dailyOrderPrev.filter(menu__selling_time=SELLING_TIME_DINNER).count(),
+        'dinnerStock': dailyOrder.filter(menu__selling_time=SELLING_TIME_DINNER).count(),
 
-        'totalPriceIncrease': (totalStock * 6000) - (prevTotalStock * 6000),
-        'totalPrice': totalStock * 6000,
+        'lunchStockIncrease': dailyOrder.filter(menu__selling_time=SELLING_TIME_LUNCH).count() - dailyOrderPrev.filter(menu__selling_time=SELLING_TIME_LUNCH).count(),
+        'lunchStock': dailyOrder.filter(menu__selling_time=SELLING_TIME_LUNCH).count(),
 
         'totalUserIncrease': totalUserIncrease,
         'totalUser': totalUser.count(),
-        'userInService': userActive['userInService'],
 
         'totalOrder': totalOrder,
-        'orderFailed': orderFailed,
 
         'areaLabel': orderChart['label'],
         'areaData': orderChart['data'],
         'areaDataStaff': orderChartStaff['data'],
-
-        'pieLabel': menuStockChart['label'],
-        'pieData': menuStockChart['data'],
     })
 
 
@@ -578,13 +510,21 @@ def sales(request):
         Q(payment_status=EATPLE_ORDER_STATUS_PAID) |
         Q(payment_status=EATPLE_ORDER_STATUS_CANCELLED)).count()
 
-    totalOrderIncrease = totalUser.filter(
-        create_date__gte=currentDateWithoutTime).count()
+    dailyOrder = Order.objects.filter(
+        Q(payment_status=EATPLE_ORDER_STATUS_PAID) &
+        Q(pickup_time__gte=currentDateWithoutTime.replace(hour=0, minute=0)),
+    )
+    dailyOrderPrev = Order.objects.filter(
+        Q(payment_status=EATPLE_ORDER_STATUS_PAID) &
+        Q(pickup_time__gte=currentDateWithoutTime.replace(
+            hour=0, minute=0) - datetime.timedelta(days=1)) &
+        Q(pickup_time__lte=currentDateWithoutTime.replace(
+            hour=0, minute=0) - datetime.timedelta(days=1))
+    )
 
     orderChart = getOrderChart(orderTimeSheet)
 
     prevWAS = getWAS(orderTimeSheet)
-
     WAS = getWAS(orderTimeSheet)
 
     areaDataList = orderChart['data'].split(',')
@@ -592,9 +532,6 @@ def sales(request):
     totalStock = 0
     for menu in menuList:
         totalStock += menu.current_stock
-
-    totalPickuped = getTotalPickuped(orderTimeSheet)
-    orderFailed = getOrderFailed(orderTimeSheet)
 
     return render(request, 'dashboard/sales/sales.html', {
         'currentDate': '{}'.format(currentDate.strftime(
@@ -605,13 +542,17 @@ def sales(request):
         'WASIncrease': WAS - prevWAS,
         'WAS': WAS,
 
-        'totalStockIncrease': totalStock - prevTotalStock,
-        'totalStock': totalStock,
+        'totalStockIncrease': dailyOrder.count() - dailyOrderPrev.count(),
+        'totalStock': dailyOrder.count(),
 
-        'totalPickuped': totalPickuped,
+        'dinnerStockIncrease': dailyOrder.filter(menu__selling_time=SELLING_TIME_DINNER).count() - dailyOrderPrev.filter(menu__selling_time=SELLING_TIME_DINNER).count(),
+        'dinnerStock': dailyOrder.filter(menu__selling_time=SELLING_TIME_DINNER).count(),
+
+        'lunchStockIncrease': dailyOrder.filter(menu__selling_time=SELLING_TIME_LUNCH).count() - dailyOrderPrev.filter(menu__selling_time=SELLING_TIME_LUNCH).count(),
+        'lunchStock': dailyOrder.filter(menu__selling_time=SELLING_TIME_LUNCH).count(),
+
 
         'totalOrder': totalOrder,
-        'orderFailed': orderFailed,
     })
 
 
@@ -634,23 +575,24 @@ def sales_menulist(request):
         Q(payment_status=EATPLE_ORDER_STATUS_PAID) |
         Q(payment_status=EATPLE_ORDER_STATUS_CANCELLED)).count()
 
-    totalOrderIncrease = totalUser.filter(
-        create_date__gte=currentDateWithoutTime).count()
+    dailyOrder = Order.objects.filter(
+        Q(payment_status=EATPLE_ORDER_STATUS_PAID) &
+        Q(pickup_time__gte=currentDateWithoutTime.replace(hour=0, minute=0)),
+    )
+    dailyOrderPrev = Order.objects.filter(
+        Q(payment_status=EATPLE_ORDER_STATUS_PAID) &
+        Q(pickup_time__gte=currentDateWithoutTime.replace(
+            hour=0, minute=0) - datetime.timedelta(days=1)) &
+        Q(pickup_time__lte=currentDateWithoutTime.replace(
+            hour=0, minute=0) - datetime.timedelta(days=1))
+    )
 
     orderChart = getOrderChart(orderTimeSheet)
 
     prevWAS = getWAS(orderTimeSheet)
-
     WAS = getWAS(orderTimeSheet)
 
     areaDataList = orderChart['data'].split(',')
-    prevTotalStock = int(areaDataList[len(areaDataList)-2])
-    totalStock = 0
-    for menu in menuList:
-        totalStock += menu.current_stock
-
-    totalPickuped = getTotalPickuped(orderTimeSheet)
-    orderFailed = getOrderFailed(orderTimeSheet)
 
     return render(request, 'dashboard/sales/sales_menulist.html', {
         'currentDate': '{}'.format(currentDate.strftime(
@@ -661,13 +603,17 @@ def sales_menulist(request):
         'WASIncrease': WAS - prevWAS,
         'WAS': WAS,
 
-        'totalStockIncrease': totalStock - prevTotalStock,
-        'totalStock': totalStock,
+        'totalStockIncrease': dailyOrder.count() - dailyOrderPrev.count(),
+        'totalStock': dailyOrder.count(),
 
-        'totalPickuped': totalPickuped,
+        'dinnerStockIncrease': dailyOrder.filter(menu__selling_time=SELLING_TIME_DINNER).count() - dailyOrderPrev.filter(menu__selling_time=SELLING_TIME_DINNER).count(),
+        'dinnerStock': dailyOrder.filter(menu__selling_time=SELLING_TIME_DINNER).count(),
+
+        'lunchStockIncrease': dailyOrder.filter(menu__selling_time=SELLING_TIME_LUNCH).count() - dailyOrderPrev.filter(menu__selling_time=SELLING_TIME_LUNCH).count(),
+        'lunchStock': dailyOrder.filter(menu__selling_time=SELLING_TIME_LUNCH).count(),
+
 
         'totalOrder': totalOrder,
-        'orderFailed': orderFailed,
     })
 
 
