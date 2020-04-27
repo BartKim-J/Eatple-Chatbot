@@ -246,11 +246,11 @@ def kakaoView_OrderDetails(kakaoPayload):
             )
             kakaoForm.BasicCard_Add()
     else:
-        if(orderCheckTimeValidation() == SELLING_TIME_LUNCH):
+        if(dateNowByTimeZone() <= dateNowByTimeZone().replace(hour=12)):
             subtext = ' 점심 주문조회 가능시간\n - 오전 11시 ~ 오후 2시'
         else:
-            subtext = ' 저녁 주문조회 가능시간\n - 오후 2시 ~ 오후 6시'
-            
+            subtext = ' 저녁 주문조회 가능시간\n - 오후 6시 ~ 오후 9시'
+
         kakaoForm.BasicCard_Push(
             '아직 주문조회 가능시간이 아닙니다.',
             subtext,
