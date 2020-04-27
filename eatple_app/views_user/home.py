@@ -258,7 +258,7 @@ def component_LunchHome(kakaoForm, orderManager, user):
 
     kakaoForm.BasicCard_Push(
         '점심 주문 가능/취소 시간',
-        '전날 오후 9시부터 당일 오전 11시까지',
+        '픽업 전날 오후 9시부터 오전 11시까지',
         thumbnail,
         buttons
     )
@@ -310,7 +310,7 @@ def component_DinnerHome(kakaoForm, orderManager, user):
 
     kakaoForm.BasicCard_Push(
         '저녁 주문 가능/취소 시간',
-        '당일 오후 2시부터 오후 6시까지',
+        '픽업 당일 오후 2시부터 오후 6시까지',
         thumbnail,
         buttons
     )
