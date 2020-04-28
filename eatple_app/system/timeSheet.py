@@ -53,7 +53,9 @@ def dateByTimeZone(UTC):
 
             localeTime = UTC.replace(tzinfo=KST) + timeDiffrence
 
-        return localeTime  # TO Korea
+            return localeTime  # TO Korea
+        else:
+            return UTC
 
 
 def dateByUTC(KOR):
