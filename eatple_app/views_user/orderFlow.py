@@ -36,6 +36,19 @@ SERVICE_AREAS = {
     },
 }
 
+
+def isServiceArea(user):
+    addressMap = user.location.address.split()
+
+    for code, area in SERVICE_AREAS.items():
+        print(code, area)
+        if(addressMap[2].find(area['name']) != -1):
+            return True
+        else:
+            pass
+
+    return False
+
 # # # # # # # # # # # # # # # # # # # # # # # # #
 #
 # Static View
@@ -945,6 +958,15 @@ def kakaoView_MenuListupWithAreaOut(kakaoPayload):
     QUICKREPLIES_MAP = [
         {
             'action': 'block',
+            'label': '위치 변경',
+            'messageText': KAKAO_EMOJI_LOADING,
+            'blockId': KAKAO_BLOCK_USER_EDIT_LOCATION_AT_STORE,
+            'extra': {
+                KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_GET_STORE
+            }
+        },
+        {
+            'action': 'block',
             'label': '🏠  홈',
             'messageText': '🏠  홈',
             'blockId': KAKAO_BLOCK_USER_HOME,
@@ -1769,8 +1791,7 @@ def GET_Store(request):
     if(isB2BUser(user)):
         return GET_B2B_Store(request)
     else:
-        addressMap = user.location.address.split()
-        if(addressMap[0] == '서울'):
+        if(isServiceArea(user)):
             return kakaoView_StoreListup(kakaoPayload)
         else:
             return kakaoView_MenuListupWithAreaOut(kakaoPayload)
@@ -1791,8 +1812,7 @@ def GET_Menu(request):
     if(isB2BUser(user)):
         return GET_B2B_Menu(request)
     else:
-        addressMap = user.location.address.split()
-        if(addressMap[0] == '서울'):
+        if(isServiceArea(user)):
             return kakaoView_MenuListup(kakaoPayload)
         else:
             return kakaoView_MenuListupWithAreaOut(kakaoPayload)
