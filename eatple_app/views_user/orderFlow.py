@@ -1755,7 +1755,7 @@ def kakaoView_EatplePassIssuance(kakaoPayload):
         dataActionExtra[KAKAO_PARAM_PREV_BLOCK_ID] = KAKAO_BLOCK_USER_SET_ORDER_SHEET
 
         KakaoInstantForm().Message(
-            '주문이 완료되었습니다.',
+            '주문이 확인되었습니다.',
             kakaoForm=kakaoForm
         )
 
