@@ -46,10 +46,12 @@ def dateByTimeZone(UTC):
         tz = pytz.timezone(settings.TIME_ZONE)
         return tz.localize(UTC)
     except ValueError as ex:
-        timeDiffrence = datetime.timedelta(hours=9)
-        KST = datetime.timezone(timeDiffrence)
+        print(UTC.tzinfo)
+        if(UTC.tzinfo == UTC):
+            timeDiffrence = datetime.timedelta(hours=9)
+            KST = datetime.timezone(timeDiffrence)
 
-        localeTime = UTC.replace(tzinfo=KST) + timeDiffrence
+            localeTime = UTC.replace(tzinfo=KST) + timeDiffrence
 
         return localeTime  # TO Korea
 
