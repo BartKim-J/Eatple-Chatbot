@@ -82,7 +82,7 @@ class OrderDiscountFilter(SimpleListFilter):
 
     def queryset(self, request, queryset):
         if self.value() == 'on':
-            return queryset.filter(Q(discount_gt=0))
+            return queryset.filter(Q(discount__gt=0))
 
         if self.value() == 'off':
             return queryset.filter(Q(discount=0))
@@ -191,7 +191,7 @@ class OrderAdmin(ImportExportMixin, admin.ModelAdmin):
     def field_totalPrice(self, obj):
         if(obj.totalPrice > 0):
             if((obj.discount - (obj.menu.price_origin - obj.menu.price)) > 0):
-                return '{}원 - {}원 할인됨'.format(obj.totalPrice, obj.discount - (obj.menu.price_origin - obj.menu.price))
+                return '{}원 - {}원 할인됨'.format(obj.totalPrice, obj.discount)
             else:
                 return '{}원'.format(obj.totalPrice)
         else:
