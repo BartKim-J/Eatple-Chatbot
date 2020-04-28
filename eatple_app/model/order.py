@@ -198,7 +198,7 @@ def orderUpdate(order):
     # Ordering State Update
     menu = order.menu
 
-    paymentDate = dateByTimeZone(order.payment_date)
+    paymentDate = order.payment_date
     paymentDateWithoutTime = paymentDate.replace(
         hour=0, minute=0, second=0, microsecond=0)
 
@@ -238,6 +238,7 @@ def orderUpdate(order):
     dinnerOrderPickupTimeEnd = orderTimeSheet.GetDinnerOrderPickupTimeEnd()
 
     print(menu.selling_time)
+    print(paymentDate)
     print((paymentDateWithoutTime == TODAY), paymentDateWithoutTime, TODAY, )
     # Lunch Order
     if (SELLING_TIME_LUNCH == menu.selling_time) and \
