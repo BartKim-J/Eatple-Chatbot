@@ -190,7 +190,7 @@ class OrderAdmin(ImportExportMixin, admin.ModelAdmin):
 
     def field_totalPrice(self, obj):
         if(obj.totalPrice > 0):
-            if(obj.discount - (obj.menu.price_origin - obj.menu.price)):
+            if((obj.discount - (obj.menu.price_origin - obj.menu.price)) > 0):
                 return '{}원({}원 할인됨)'.format(obj.totalPrice, obj.discount - (obj.menu.price_origin - obj.menu.price))
             else:
                 return '{}원'.format(obj.totalPrice)
