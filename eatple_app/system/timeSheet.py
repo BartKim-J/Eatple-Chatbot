@@ -42,20 +42,17 @@ def dateNowByTimeZone():
 
 
 def dateByTimeZone(UTC):
-    try:
-        tz = pytz.timezone(settings.TIME_ZONE)
-        return tz.localize(UTC)
-    except ValueError as ex:
-        if(UTC.tzinfo != datetime.timezone(
-                datetime.timedelta(hours=9))):
-            timeDiffrence = datetime.timedelta(hours=9)
-            KST = datetime.timezone(timeDiffrence)
+    TZ_KST = datetime.timezone(datetime.timedelta(hours=9))
 
-            localeTime = UTC.replace(tzinfo=KST) + timeDiffrence
+    if(UTC.tzinfo == datetime.timezone.utc or UTC.tzinfo == pytz.utc):
+        timeDiffrence = datetime.timedelta(hours=9)
+        KST = datetime.timezone(timeDiffrence)
 
-            return localeTime  # TO Korea
-        else:
-            return UTC
+        localeTime = UTC.replace(tzinfo=KST) + timeDiffrence
+
+        return localeTime  # TO Korea
+    else:
+        return UTC
 
 
 def dateByUTC(KST):
