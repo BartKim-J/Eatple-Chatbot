@@ -238,7 +238,7 @@ def orderUpdate(order):
     dinnerOrderPickupTimeEnd = orderTimeSheet.GetDinnerOrderPickupTimeEnd()
 
     print(menu.selling_time)
-    print((paymentDateWithoutTime == TODAY))
+    print((paymentDateWithoutTime == TODAY), paymentDateWithoutTime, TODAY, )
     # Lunch Order
     if (SELLING_TIME_LUNCH == menu.selling_time) and \
         ((PICKUP_YESTER_DAY <= paymentDateWithoutTime) and
