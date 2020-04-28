@@ -127,73 +127,6 @@ def eatplePayPassOrderCancel(order):
 
     return True
 
-# @PROMOTION
-
-
-def promotionOrderUpdate(order):
-    paymentDate = dateByTimeZone(order.payment_date)
-    paymentDateWithoutTime = paymentDate.replace(
-        hour=0, minute=0, second=0, microsecond=0)
-
-    currentDate = dateNowByTimeZone()
-    currentDateWithoutTime = currentDate.replace(
-        hour=0, minute=0, second=0, microsecond=0)
-
-    promotion_month = 12
-    promotion_day = int(order.menu.name[0:2])
-
-    PROMOTION_DAY = currentDate.replace(
-        month=promotion_month, day=promotion_day, hour=0, minute=0, second=0, microsecond=0)
-    TOMORROW = PROMOTION_DAY + datetime.timedelta(days=1)
-    YESTERDAY = PROMOTION_DAY + datetime.timedelta(days=-1)  # Yesterday start
-
-    # Order Edit Time 16:30 ~ 10:25(~ 10:30)
-    OrderEditTimeStart = PROMOTION_DAY + datetime.timedelta(days=-14)
-    OrderEditTimeEnd = PROMOTION_DAY + \
-        datetime.timedelta(hours=17, minutes=55, days=-1)
-    OrderTimeEnd = PROMOTION_DAY + \
-        datetime.timedelta(hours=18, minutes=0, days=-1)
-
-    # Pickup Time (10:30 ~)11:00 ~ 16:00
-    PickupTimeStart = PROMOTION_DAY + datetime.timedelta(hours=11, minutes=0)
-    PickupTimeEnd = TOMORROW
-
-    # Lunch Order
-    if((currentDate <= TOMORROW)):
-        # Order Lunch
-        if(OrderTimeEnd <= currentDate) and (currentDate < PickupTimeStart):
-            order.status = ORDER_STATUS_PICKUP_PREPARE
-            order.save()
-
-        elif(PickupTimeStart <= currentDate) and (currentDate < PickupTimeEnd):
-            if(currentDate >= order.pickup_time + datetime.timedelta(minutes=-15)):
-                order.status = ORDER_STATUS_PICKUP_WAIT
-                order.save()
-            else:
-                order.status = ORDER_STATUS_PICKUP_PREPARE
-                order.save()
-        # Order Prepare
-        else:
-            if(OrderEditTimeStart <= currentDate) and (currentDate < OrderTimeEnd):
-                if currentDate <= OrderEditTimeEnd:
-                    order.status = ORDER_STATUS_ORDER_CONFIRMED
-                    order.save()
-                else:
-                    order.status = ORDER_STATUS_PICKUP_PREPARE
-                    order.save()
-
-            # Invalid Time Range is Dinner Order Time ( prev phase lunch order ~ dinner order ~ next phase lunch order )
-            else:
-                order.status = ORDER_STATUS_ORDER_EXPIRED
-                order.save()
-
-    # Promotion Expire
-    else:
-        order.status = ORDER_STATUS_ORDER_EXPIRED
-        order.save()
-
-    return order
-
 
 def orderUpdate(order):
     print('주문 상태 =>')
@@ -262,10 +195,6 @@ def orderUpdate(order):
     if(order.status == ORDER_STATUS_PICKUP_COMPLETED or order.status == ORDER_STATUS_ORDER_EXPIRED):
         return order
 
-    # @PROMOTION
-    if(order.type == ORDER_TYPE_PROMOTION):
-        return promotionOrderUpdate(order)
-
     # Ordering State Update
     menu = order.menu
 
@@ -308,6 +237,8 @@ def orderUpdate(order):
     dinnerOrderPickupTimeStart = orderTimeSheet.GetDinnerOrderPickupTimeStart()
     dinnerOrderPickupTimeEnd = orderTimeSheet.GetDinnerOrderPickupTimeEnd()
 
+    print(menu.selling_time)
+    print((paymentDateWithoutTime == TODAY))
     # Lunch Order
     if (SELLING_TIME_LUNCH == menu.selling_time) and \
         ((PICKUP_YESTER_DAY <= paymentDateWithoutTime) and
@@ -361,7 +292,7 @@ def orderUpdate(order):
                 order.status = ORDER_STATUS_PICKUP_COMPLETED
 
     # Dinner Order
-    elif (SELLING_TIME_DINNER == menu.selling_time) and (paymentDateWithoutTime == TODAY):
+    elif ((SELLING_TIME_DINNER == menu.selling_time) and (paymentDateWithoutTime == TODAY)):
         # Meal Pre-
         if(dinnerOrderTimeEnd <= currentDate) and (currentDate < dinnerOrderPickupTimeStart):
             print("픽업 준비중 - A")
@@ -475,7 +406,7 @@ class Order(models.Model):
         default=0,
         verbose_name="총 금액"
     )
-    
+
     discount = models.IntegerField(
         default=0,
         verbose_name="할인액"
