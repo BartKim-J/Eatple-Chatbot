@@ -475,6 +475,11 @@ class Order(models.Model):
         default=0,
         verbose_name="총 금액"
     )
+    
+    discount = models.IntegerField(
+        default=0,
+        verbose_name="할인액"
+    )
 
     count = models.IntegerField(
         default=1,
