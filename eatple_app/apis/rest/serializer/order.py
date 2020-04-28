@@ -30,7 +30,8 @@ class OrderSerializer(serializers.ModelSerializer):
         return obj.payment_date
 
     def get_totalPrice(self, obj):
-        return '{}원'.format(format(obj.totalPrice, ","))
+        # return '{}원'.format(format(obj.totalPrice, ","))
+        return '{}원'.format(format(obj.menu.origin_price, ","))
 
     def get_user(self, obj):
         return obj.ordersheet.user.nickname
