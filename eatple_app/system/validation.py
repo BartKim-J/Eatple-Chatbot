@@ -156,6 +156,12 @@ def vacationTimeCheck():
             'to_month': 5,
             'to_days': 1
         },
+        {
+            'from_month': 5,
+            'from_days': 5,
+            'to_month': 5,
+            'to_days': 5
+        },
     ]
 
     for vacation in vacationMap:
