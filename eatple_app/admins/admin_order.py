@@ -285,6 +285,7 @@ class OrderAdmin(ImportExportMixin, admin.ModelAdmin):
         ('payment_date', DateRangeFilter),
         ('pickup_time', DateRangeFilter),
         OrderPickupZoneFilter,
+        OrderDiscountFilter,
         'status',
         'payment_status',
         'store',
