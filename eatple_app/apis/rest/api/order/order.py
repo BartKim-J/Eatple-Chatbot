@@ -58,7 +58,7 @@ def getAdjustment(orderList, date_range):
 
             if(date_range_start <= settlement_date and settlement_date <= date_range_end):
                 for order in inquiryOrderList:
-                    total_price = order.totalPrice
+                    total_price = order.menu.price
                     supply_price = round(total_price / 1.1)
                     surtax_price = total_price - supply_price
                     if(order.type == ORDER_TYPE_B2B):
@@ -101,7 +101,7 @@ def getAdjustment(orderList, date_range):
                             '정산금액': settlement_amount,
                         })
                     )
-                    total_price += order.totalPrice
+                    total_price += order.menu.price
 
                 if(inquiryOrderList):
                     adjustmentList.append(
@@ -182,7 +182,7 @@ def getSurtax(orderList, date_range):
             settlement_date = end_date.replace(
                 hour=0, minute=0, second=0, microsecond=0) + datetime.timedelta(days=10)
 
-            total_price = order.totalPrice
+            total_price = order.menu.price
             supply_price = round(total_price / 1.1)
             surtax_price = total_price - supply_price
             if(order.type == ORDER_TYPE_B2B):
@@ -388,7 +388,7 @@ class OrderViewSet(viewsets.ModelViewSet):
 
         total_amount = 0
         for order in orderList.filter(Q(payment_status=EATPLE_ORDER_STATUS_PAID)):
-            total_amount += order.totalPrice
+            total_amount += order.menu.price
 
         response['total_amount'] = total_amount
         response['total'] = orderList.count()
