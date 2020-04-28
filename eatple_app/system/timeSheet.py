@@ -2,6 +2,7 @@
 import calendar
 import datetime
 import pytz
+from pytz import timezone
 
 ###########################################################################################
 # System
@@ -42,12 +43,13 @@ def dateNowByTimeZone():
 
 
 def dateByTimeZone(UTC):
+    from pytz import timezone
+
     try:
         tz = pytz.timezone(settings.TIME_ZONE)
         return tz.localize(UTC)
     except ValueError as ex:
-        print(UTC.tzinfo, UTC.tzinfo == timezone.utc)
-        if(True):
+        if(UTC.tzinfo == timezone('UTC')):
             timeDiffrence = datetime.timedelta(hours=9)
             KST = datetime.timezone(timeDiffrence)
 
@@ -58,13 +60,16 @@ def dateByTimeZone(UTC):
             return UTC
 
 
-def dateByUTC(KOR):
-    timeDiffrence = datetime.timedelta(hours=-9)
-    UTC = datetime.timezone(datetime.timedelta(hours=0))
+def dateByUTC(KST):
+    if(UTC.tzinfo == timezone(TIME_ZONE)):
+        timeDiffrence = datetime.timedelta(hours=-9)
+        UTC = datetime.timezone(datetime.timedelta(hours=0))
 
-    localeTime = KOR.replace(tzinfo=UTC) + timeDiffrence
+        localeTime = KOR.replace(tzinfo=UTC) + timeDiffrence
 
-    return localeTime  # TO Korea
+        return localeTime  # TO UTC
+    else:
+        return KST
 
 
 class OrderTimeSheet():
