@@ -1448,7 +1448,7 @@ def kakaoView_OrderPayment(kakaoPayload):
     # Menu Carousel Card Add
     thumbnails = [
         {
-            'imageUrl': '{}{}'.format(HOST_URL, menu.imgURL()),
+            'imageUrl': None,
             'fixedRatio': 'true',
             'width': 800,
             'height': 800,
@@ -1457,17 +1457,16 @@ def kakaoView_OrderPayment(kakaoPayload):
 
     isCafe = store.category.filter(name='카페').exists()
     if(isCafe):
-        profile = {
-            'nickname': '픽업 시간 : {pickup_time}'.format(pickup_time=order.pickup_time.strftime(
-                '%-m월 %-d일 오전 11시 30분 ~ 오후 2시')),
-            'imageUrl': '{}{}'.format(HOST_URL, store.logoImgURL()),
-        }
+        description = '픽업 시간 : {pickup_time}'.format(pickup_time=order.pickup_time.strftime(
+            '%-m월 %-d일 오전 11시 30분 ~ 오후 2시'))
     else:
-        profile = {
-            'nickname': '픽업 시간 : {pickup_time}'.format(pickup_time=order.pickup_time.strftime(
-                '%p %-I시 %-M분').replace('AM', '오전').replace('PM', '오후'),),
-            'imageUrl': '{}{}'.format(HOST_URL, store.logoImgURL()),
-        }
+        description = '픽업 시간 : {pickup_time}'.format(pickup_time=order.pickup_time.strftime(
+            '%p %-I시 %-M분').replace('AM', '오전').replace('PM', '오후'))
+
+    profile = {
+        'nickname': '{} - {}'.format(menu.store.name, menu.name),
+        'imageUrl': '{}{}'.format(HOST_URL, store.logoImgURL()),
+    }
 
     host_url = 'https://www.eatple.com'
 
@@ -1504,7 +1503,7 @@ def kakaoView_OrderPayment(kakaoPayload):
         discount = menu.price_origin - menu.price
 
     kakaoForm.ComerceCard_Push(
-        menu.description,
+        description,
         menu.price_origin,
         discount,
         thumbnails,
@@ -1517,7 +1516,7 @@ def kakaoView_OrderPayment(kakaoPayload):
     buttons = [
         {
             'action': 'block',
-            'label': '주문 완료하기',
+            'label': '주문 확인하기',
             'messageText': KAKAO_EMOJI_LOADING,
             'blockId': KAKAO_BLOCK_USER_SET_ORDER_SHEET,
             'extra': dataActionExtra,
@@ -1525,7 +1524,7 @@ def kakaoView_OrderPayment(kakaoPayload):
     ]
 
     KakaoInstantForm().Message(
-        '결제 완료 후 아래 \'주문 완료하기\' 버튼을 눌러주세요.',
+        '결제 완료 후 주문을 확인해주세요.',
         buttons=buttons,
         kakaoForm=kakaoForm
     )
@@ -1669,14 +1668,14 @@ def kakaoView_OrderPaymentCheck(kakaoPayload):
 
         buttons = {
             'action': 'block',
-            'label': '주문 완료하기',
+            'label': '주문 확인하기',
             'messageText': KAKAO_EMOJI_LOADING,
             'blockId': KAKAO_BLOCK_USER_SET_ORDER_SHEET,
             'extra': dataActionExtra,
         },
 
         KakaoInstantForm().Message(
-            '결제 완료 후 아래 \'주문 완료하기\' 버튼을 눌러주세요.',
+            '결제 완료 후 주문을 확인해주세요.',
             buttons=buttons,
             kakaoForm=kakaoForm
         )
