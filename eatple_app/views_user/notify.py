@@ -51,7 +51,7 @@ def kakaoView_notifiy(kakaoPayload):
                             None,
                             None
                             )
-    kakaoForm.ListCard_Push('4월30일, 5월1일은 휴무입니다',
+    kakaoForm.ListCard_Push('4월30일, 5월1일, 5월5일은 휴무입니다',
                             '2020.04.27',
                             None,
                             None
