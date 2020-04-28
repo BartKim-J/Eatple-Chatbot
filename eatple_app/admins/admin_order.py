@@ -70,6 +70,24 @@ class OrderPickupZoneFilter(SimpleListFilter):
             return queryset.filter(~Q(menu__tag__name="픽업존"))
 
 
+class OrderDiscountFilter(SimpleListFilter):
+    title = '할인'
+    parameter_name = '할인'
+
+    def lookups(self, request, model_admin):
+        return [
+            ('on', '할인'),
+            ('off', '미할인'),
+        ]
+
+    def queryset(self, request, queryset):
+        if self.value() == 'on':
+            return queryset.filter(Q(discount_gt=0))
+
+        if self.value() == 'off':
+            return queryset.filter(Q(discount=0))
+
+
 class OrderResource(resources.ModelResource):
     def dehydrate_b2b_name(self, obj):
         if(obj.ordersheet.user.company != None):
