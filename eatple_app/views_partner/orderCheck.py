@@ -97,7 +97,7 @@ def kakaoView_OrderDetails(kakaoPayload):
                     )
 
                     if(partner.store.name == '봉된장'):
-                        time = datetime.timedelta(minute=20)
+                        time = datetime.timedelta(minutes=20)
                     else:
                         if(partner.store.area == STORE_AREA_C_1 or
                                 partner.store.area == STORE_AREA_C_2 or
