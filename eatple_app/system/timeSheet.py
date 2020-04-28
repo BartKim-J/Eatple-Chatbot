@@ -2,7 +2,6 @@
 import calendar
 import datetime
 import pytz
-from pytz import timezone
 
 ###########################################################################################
 # System
@@ -43,13 +42,11 @@ def dateNowByTimeZone():
 
 
 def dateByTimeZone(UTC):
-    from pytz import timezone
-
     try:
         tz = pytz.timezone(settings.TIME_ZONE)
         return tz.localize(UTC)
     except ValueError as ex:
-        if(UTC.tzinfo == timezone('UTC')):
+        if(UTC.tzinfo == datetime.timezone.utc):
             timeDiffrence = datetime.timedelta(hours=9)
             KST = datetime.timezone(timeDiffrence)
 
@@ -61,7 +58,7 @@ def dateByTimeZone(UTC):
 
 
 def dateByUTC(KST):
-    if(UTC.tzinfo == timezone(TIME_ZONE)):
+    if(UTC.tzinfo == datetime.timezone(datetime.timedelta(hours=9))):
         timeDiffrence = datetime.timedelta(hours=-9)
         UTC = datetime.timezone(datetime.timedelta(hours=0))
 
