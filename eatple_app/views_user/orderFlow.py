@@ -1403,7 +1403,7 @@ def kakaoView_OrderPayment(kakaoPayload):
         order.store = store
         order.pickup_time = order.pickupTimeToDateTime(pickup_time)
         order.totalPrice = menu.price_origin - discount
-        order.discount = discount
+        order.discount = discount - (menu.price_origin - menu.price)
         order.count = 1
         order.type = ORDER_TYPE_NORMAL
         # @TODO: NOW KAKAO PAY ONLY
