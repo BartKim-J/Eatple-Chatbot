@@ -70,6 +70,24 @@ class OrderPickupZoneFilter(SimpleListFilter):
             return queryset.filter(~Q(menu__tag__name="픽업존"))
 
 
+class OrderDiscountFilter(SimpleListFilter):
+    title = '픽업존'
+    parameter_name = '픽업존'
+
+    def lookups(self, request, model_admin):
+        return [
+            ('on', '할인'),
+            ('off', '미할인'),
+        ]
+
+    def queryset(self, request, queryset):
+        if self.value() == 'on':
+            return queryset.filter(Q(discount_gt=0))
+
+        if self.value() == 'off':
+            return queryset.filter(Q(discount=0))
+
+
 class OrderResource(resources.ModelResource):
     def dehydrate_b2b_name(self, obj):
         if(obj.ordersheet.user.company != None):
@@ -116,6 +134,7 @@ class OrderResource(resources.ModelResource):
     b2b_name = Field(column_name='B2B')
     payment_status = Field(column_name='결제 상태')
     totalPrice = Field(attribute='totalPrice', column_name='총 결제금액')
+    discount = Field(attribute='discount', column_name='할인액')
     field_phone_number = Field(column_name='전화번호')
     order_date = Field(column_name='주문 시간')
     payment_date = Field(column_name='결제 완료 시간')
@@ -171,7 +190,10 @@ class OrderAdmin(ImportExportMixin, admin.ModelAdmin):
 
     def field_totalPrice(self, obj):
         if(obj.totalPrice > 0):
-            return '{}원'.format(obj.totalPrice)
+            if(obj.discount > 0):
+                return '{}원({}원 할인됨)'.format(obj.totalPrice, obj.discount)
+            else:
+                return '{}원'.format(obj.totalPrice)
         else:
             return '미결제'
     field_totalPrice.short_description = "결제 금액"
@@ -208,6 +230,7 @@ class OrderAdmin(ImportExportMixin, admin.ModelAdmin):
             {
                 'fields': [
                     'totalPrice',
+                    'discount',
                     'count',
                 ]
             }

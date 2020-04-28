@@ -758,7 +758,7 @@ class OrderSheet(models.Model):
     def save(self, *args, **kwargs):
         super().save()
 
-    def pushOrder(self, user, store, menu, pickup_time, totalPrice, count, type):
+    def pushOrder(self, user, store, menu, pickup_time, totalPrice, discount, count, type):
         self.user = user
         super().save()
 
@@ -779,6 +779,7 @@ class OrderSheet(models.Model):
         order.pickup_time = order.pickupTimeToDateTime(pickup_time)
 
         order.totalPrice = totalPrice
+        order.discount = discount
         order.count = count
         order.type = type
         order.save()
