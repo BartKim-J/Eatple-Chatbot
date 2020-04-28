@@ -33,3 +33,8 @@ VERSION_LEVEL = "Beta"
 MAJOR_VERSION = 1
 MINOR_VERSION = 0
 BUILD_VERSION = 0
+
+###########################################################################################
+# Event Variable
+
+FRIEND_DISCOUNT = 2000

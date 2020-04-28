@@ -14,6 +14,8 @@ from eatple_app.model.orderRecord import OrderRecordSheet, OrderRecord
 from eatple_app.module_kakao.kakaoPay import *
 from eatple_app.module_iamport.iamport import *
 
+FRIEND_DISCOUNT = 2000
+
 
 def iamportOrderValidation(order):
     iamport = Iamport()
@@ -568,6 +570,9 @@ class Order(models.Model):
         if(self.payment_type == ORDER_PAYMENT_PAY_PASS):
             self.status = ORDER_STATUS_ORDER_CONFIRM_WAIT
 
+        if(self.orderSheet.user.friend_discount_count > 0):
+            self.orderSheet.user.use_friend_discount()
+
         self.save()
 
         # @SLACK LOGGER
@@ -588,6 +593,9 @@ class Order(models.Model):
             isCancelled = False
 
         if(isCancelled):
+            if((self.menu.price - self.totalPrice) >= FRIEND_DISCOUNT):
+                self.orderSheet.user.cancel_friend_discount()
+
             # Order Record
             try:
                 orderRecordSheet = OrderRecordSheet.objects.get(order=self)

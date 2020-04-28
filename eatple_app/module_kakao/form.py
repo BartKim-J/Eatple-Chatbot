@@ -199,7 +199,7 @@ class KakaoInstantForm():
             []
         )
 
-    def MenuList(self, menu, subText='', thumbnail={}, buttons=[], kakaoForm=None, prev_block_id=None):
+    def MenuList(self, menu, subText='', discount=0, thumbnail={}, buttons=[], kakaoForm=None, prev_block_id=None):
         if(kakaoForm == None):
             kakaoForm = KakaoForm()
 
@@ -215,11 +215,9 @@ class KakaoInstantForm():
             thumbnail,
         ]
 
-        discount = menu.price_origin - menu.price
-
         kakaoForm.ComerceCard_Push(
             _description=menu.description,
-            _price=menu.price + discount,
+            _price=menu.price_origin,
             _discount=discount,
             _thumbnails=thumbnails,
             _profile=profile,

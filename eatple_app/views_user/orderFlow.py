@@ -11,6 +11,8 @@ DEFAULT_DISTANCE_CONDITION = 800
 DEFAULT_AREA_IN_FLAG = True
 DEFAULT_AREA_CODE = None
 
+FRIEND_DISCOUNT = 2000
+
 SERVICE_AREAS = {
     'yeoksam': {
         'name': '역삼',
@@ -245,18 +247,18 @@ def kakaoView_StoreListup(kakaoPayload):
     if storeList:
         if(user.friend_discount_count > 0):
             KakaoInstantForm().Message(
-                '모든 메뉴에 할인이 적용되었습니다.',
-                '할인 쿠폰이 {}회 남았습니다.'.format(
+                '🏷  할인 쿠폰이 자동으로 적용됩니다.',
+                '할인 쿠폰을 {}회 사용할 수 있습니다.'.format(
                     user.friend_discount_count
                 ),
                 kakaoForm=kakaoForm
             )
-
-        KakaoInstantForm().Message(
-            '\'메뉴판 보기\'에서 메뉴를 확인하세요',
-            '',
-            kakaoForm=kakaoForm
-        )
+        else:
+            KakaoInstantForm().Message(
+                '\'메뉴판 보기\'에서 메뉴를 확인하세요',
+                '',
+                kakaoForm=kakaoForm
+            )
 
         # HEADER
         if(SELLING_TIME_LUNCH == sellingTime):
@@ -616,9 +618,16 @@ def kakaoView_PickupZone_MenuListup(kakaoPayload):
                     },
                 ]
 
+                if(user.friend_discount_count > 0):
+                    discount = FRIEND_DISCOUNT + \
+                        (menu.price_origin - menu.price)
+                else:
+                    discount = menu.price_origin - menu.price
+
                 KakaoInstantForm().MenuList(
                     menu,
                     '픽업존',
+                    discount,
                     thumbnail,
                     buttons,
                     kakaoForm
@@ -648,9 +657,16 @@ def kakaoView_PickupZone_MenuListup(kakaoPayload):
                 },
             ]
 
+            if(user.friend_discount_count > 0):
+                discount = FRIEND_DISCOUNT + \
+                    (menu.price_origin - menu.price)
+            else:
+                discount = menu.price_origin - menu.price
+
             KakaoInstantForm().MenuList(
                 menu,
                 '매진',
+                discount,
                 thumbnail,
                 buttons,
                 kakaoForm
@@ -773,6 +789,12 @@ def kakaoView_MenuListup(kakaoPayload):
     sellingOutList = []
 
     if menuList:
+        if(user.friend_discount_count > 0):
+            KakaoInstantForm().Message(
+                '🏷  할인 쿠폰이 적용되었습니다.',
+                '할인 금액 : 2000원 + 잇플 할인',
+                kakaoForm=kakaoForm
+            )
         # Menu Carousel Card Add
         for menu in menuList:
             currentStock = menu.getCurrentStock()
@@ -818,9 +840,16 @@ def kakaoView_MenuListup(kakaoPayload):
                     },
                 ]
 
+                if(user.friend_discount_count > 0):
+                    discount = FRIEND_DISCOUNT + \
+                        (menu.price_origin - menu.price)
+                else:
+                    discount = menu.price_origin - menu.price
+
                 KakaoInstantForm().MenuList(
                     menu,
                     walkTime,
+                    discount,
                     thumbnail,
                     buttons,
                     kakaoForm
@@ -851,9 +880,16 @@ def kakaoView_MenuListup(kakaoPayload):
                 buttons = [
                 ]
 
+                if(user.friend_discount_count > 0):
+                    discount = FRIEND_DISCOUNT + \
+                        (menu.price_origin - menu.price)
+                else:
+                    discount = menu.price_origin - menu.price
+
                 KakaoInstantForm().MenuList(
                     menu,
                     '휴무중',
+                    discount,
                     thumbnail,
                     buttons,
                     kakaoForm
@@ -874,9 +910,16 @@ def kakaoView_MenuListup(kakaoPayload):
                     },
                 ]
 
+                if(user.friend_discount_count > 0):
+                    discount = FRIEND_DISCOUNT + \
+                        (menu.price_origin - menu.price)
+                else:
+                    discount = menu.price_origin - menu.price
+
                 KakaoInstantForm().MenuList(
                     menu,
                     status,
+                    discount,
                     thumbnail,
                     buttons,
                     kakaoForm
@@ -959,9 +1002,16 @@ def kakaoView_MenuListupWithAreaOut(kakaoPayload):
                 buttons = [
                 ]
 
+                if(user.friend_discount_count > 0):
+                    discount = FRIEND_DISCOUNT + \
+                        (menu.price_origin - menu.price)
+                else:
+                    discount = menu.price_origin - menu.price
+
                 KakaoInstantForm().MenuList(
                     menu,
                     '서비스 지역 아님',
+                    discount,
                     thumbnail,
                     buttons,
                     kakaoForm
@@ -1321,11 +1371,16 @@ def kakaoView_OrderPayment(kakaoPayload):
     if(order == None):
         return errorView('잘못된 주문 번호', '잘못된 주문 번호입니다.')
     else:
+        if(user.friend_discount_count > 0):
+            discount = FRIEND_DISCOUNT + (menu.price_origin - menu.price)
+        else:
+            discount = menu.price_origin - menu.price
+
         order.user = user
         order.menu = menu
         order.store = store
         order.pickup_time = order.pickupTimeToDateTime(pickup_time)
-        order.totalPrice = menu.price
+        order.totalPrice = menu.price_origin - discount
         order.count = 1
         order.type = ORDER_TYPE_NORMAL
         # @TODO: NOW KAKAO PAY ONLY
@@ -1362,6 +1417,13 @@ def kakaoView_OrderPayment(kakaoPayload):
 
         return JsonResponse(kakaoForm.GetForm())
 
+    if(user.friend_discount_count > 0):
+        KakaoInstantForm().Message(
+            '🏷  할인 쿠폰이 적용되었습니다.',
+            '할인 금액 : 2000원 + 잇플 할인',
+            kakaoForm=kakaoForm
+        )
+
     # Menu Carousel Card Add
     thumbnails = [
         {
@@ -1385,19 +1447,6 @@ def kakaoView_OrderPayment(kakaoPayload):
                 '%p %-I시 %-M분').replace('AM', '오전').replace('PM', '오후'),),
             'imageUrl': '{}{}'.format(HOST_URL, store.logoImgURL()),
         }
-
-    kakaoMapUrl = 'https://map.kakao.com/link/map/{name},{place}'.format(
-        name=order.store.name,
-        place=order.store.place
-    )
-
-    kakaoMapUrlAndriod = 'http://m.map.kakao.com/scheme/route?ep={place}&by=FOOT'.format(
-        place=order.store.place
-    )
-
-    kakaoMapUrlIOS = 'http://m.map.kakao.com/scheme/route?ep={place}&by=FOOT'.format(
-        place=order.store.place
-    )
 
     host_url = 'https://www.eatple.com'
 
@@ -1428,11 +1477,14 @@ def kakaoView_OrderPayment(kakaoPayload):
         },
     ]
 
-    discount = menu.price_origin - menu.price
+    if(user.friend_discount_count > 0):
+        discount = FRIEND_DISCOUNT + (menu.price_origin - menu.price)
+    else:
+        discount = menu.price_origin - menu.price
 
     kakaoForm.ComerceCard_Push(
         menu.description,
-        menu.price + discount,
+        menu.price_origin,
         discount,
         thumbnails,
         profile,
@@ -1542,7 +1594,7 @@ def kakaoView_OrderPaymentCheck(kakaoPayload):
     if(order.payment_status == EATPLE_ORDER_STATUS_PAID):
         return kakaoView_EatplePassIssuance(kakaoPayload)
     else:
-        host_url = 'https://eapi.eatple.com'
+        host_url = 'https://www.eatple.com'
 
         oneclick_url = 'kakaotalk://bizplugin?plugin_id={api_id}&oneclick_id={order_id}'.format(
             api_id=KAKAO_PAY_ONE_CLICK_API_ID,
@@ -1577,6 +1629,13 @@ def kakaoView_OrderPaymentCheck(kakaoPayload):
                 )
             },
         ]
+
+        if(user.friend_discount_count > 0):
+            KakaoInstantForm().Message(
+                '🏷  할인 쿠폰이 적용되었습니다.',
+                '할인 금액 : 2000원 + 잇플 할인',
+                kakaoForm=kakaoForm
+            )
 
         KakaoInstantForm().Message(
             '🛑  아직 결제가 완료되지 않았어요.',
