@@ -200,7 +200,7 @@ class FriendEvent(models.Model):
         return self.friend_discount_count
 
     def cancel_friend_discount(self):
-        return self.friend_discount()
+        return self.gain_friend_discount()
 
 
 class User(KakaoUser, FriendEvent, models.Model):

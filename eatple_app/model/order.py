@@ -243,8 +243,9 @@ def orderUpdate(order):
         print('메뉴 선택중')
 
     if(order.payment_status == EATPLE_ORDER_STATUS_PAID):
-        if(order.status == ORDER_STATUS_MENU_CHOCIED):
-            order.status = ORDER_STATUS_ORDER_CONFIRM_WAIT
+        print(order.status, ORDER_STATUS_MENU_CHOCIED)
+        if(order.status == ORDER_STATUS_MENU_CHOCIED or order.status == ORDER_STATUS_ORDER_CONFIRM_WAIT):
+            order.status = ORDER_STATUS_ORDER_CONFIRMED
             order.save()
 
             order.orderPay()
@@ -568,10 +569,10 @@ class Order(models.Model):
         self.payment_date = dateNowByTimeZone()
 
         if(self.payment_type == ORDER_PAYMENT_PAY_PASS):
-            self.status = ORDER_STATUS_ORDER_CONFIRM_WAIT
+            self.status = ORDER_STATUS_ORDER_CONFIRMED
 
-        if(self.orderSheet.user.friend_discount_count > 0):
-            self.orderSheet.user.use_friend_discount()
+        if(self.ordersheet.user.friend_discount_count > 0):
+            self.ordersheet.user.use_friend_discount()
 
         self.save()
 
@@ -594,7 +595,7 @@ class Order(models.Model):
 
         if(isCancelled):
             if((self.menu.price - self.totalPrice) >= FRIEND_DISCOUNT):
-                self.orderSheet.user.cancel_friend_discount()
+                self.ordersheet.user.cancel_friend_discount()
 
             # Order Record
             try:
