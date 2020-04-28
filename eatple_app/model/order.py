@@ -198,7 +198,7 @@ def orderUpdate(order):
     # Ordering State Update
     menu = order.menu
 
-    paymentDate = order.payment_date
+    paymentDate = dateByTimeZone(order.payment_date)
     paymentDateWithoutTime = paymentDate.replace(
         hour=0, minute=0, second=0, microsecond=0)
 
