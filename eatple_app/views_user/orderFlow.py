@@ -51,9 +51,11 @@ def isServiceArea(user):
 
 
 def applyDiscount(user, menu):
+    addressMap = user.location.address.split()
+
     discount = 0
 
-    if(PERCENT_DISCOUNT > 0):
+    if(PERCENT_DISCOUNT > 0 and addressMap[2].find('신사') != -1):
         eatple_discount = menu.price_origin - menu.price
         percent_discount = (menu.price_origin / 2)
 
