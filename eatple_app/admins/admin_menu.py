@@ -79,8 +79,10 @@ class MenuAdmin(ImportExportMixin, admin.GeoModelAdmin):
     min_num = 1
     max_num = 5
 
+    save_as = True
+
     readonly_fields = ('menu_id', "image_preview",
-                       "image_soldout_preview", "current_stock", "pickuped_stock", "store")
+                       "image_soldout_preview", "current_stock", "pickuped_stock")
 
     def stock_status(self, obj):
         return '{} / {}'.format(obj.getCurrentStock().count(), obj.max_stock)

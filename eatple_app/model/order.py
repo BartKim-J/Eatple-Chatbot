@@ -15,6 +15,7 @@ from eatple_app.module_kakao.kakaoPay import *
 from eatple_app.module_iamport.iamport import *
 
 FRIEND_DISCOUNT = 2000
+PERCENT_DISCOUNT = 50
 
 
 def iamportOrderValidation(order):
@@ -418,7 +419,7 @@ class PaymentDetails(models.Model):
 
         if((self.totalPrice > 0) and (self.payment_status == EATPLE_ORDER_STATUS_PAID)):
             self.discount_eatple = self.menu.price_origin - self.menu.price
-            self.vat = self.totalPrice - int(self.totalPrice / 1.1)
+            self.vat = self.menu.price - int(self.menu.price / 1.1)
 
             # PG FEE UPDATE
             if(self.payment_type == ORDER_PAYMENT_KAKAO_PAY):
@@ -428,7 +429,7 @@ class PaymentDetails(models.Model):
             else:
                 self.pg_fee = 0
 
-            self.profit = self.totalPrice - (self.pg_fee + self.vat)
+            self.profit = self.totalPrice - self.pg_fee
 
             self.save()
         else:
@@ -590,8 +591,10 @@ class Order(PaymentDetails, models.Model):
             isCancelled = False
 
         if(isCancelled):
+            # Friend Event Code
             if((self.menu.price - self.totalPrice) >= FRIEND_DISCOUNT):
-                self.ordersheet.user.cancel_friend_discount()
+                # self.ordersheet.user.cancel_friend_discount()
+                pass
 
             # Order Record
             try:

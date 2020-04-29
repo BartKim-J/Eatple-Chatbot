@@ -12,6 +12,7 @@ DEFAULT_AREA_IN_FLAG = True
 DEFAULT_AREA_CODE = None
 
 FRIEND_DISCOUNT = 2000
+PERCENT_DISCOUNT = 50
 
 SERVICE_AREAS = {
     'yeoksam': {
@@ -47,6 +48,25 @@ def isServiceArea(user):
             pass
 
     return False
+
+
+def applyDiscount(user, menu):
+    discount = 0
+
+    if(PERCENT_DISCOUNT > 0):
+        eatple_discount = menu.price_origin - menu.price
+        percent_discount = (menu.price_origin / 2)
+
+        discount = percent_discount
+    else:
+        # Friend Event Code
+        if(user.friend_discount_count > 0):
+            discount = FRIEND_DISCOUNT + \
+                (menu.price_origin - menu.price)
+        else:
+            discount = menu.price_origin - menu.price
+
+    return discount
 
 # # # # # # # # # # # # # # # # # # # # # # # # #
 #
@@ -279,7 +299,7 @@ def kakaoView_StoreListup(kakaoPayload):
             header = {
                 "title": "",
                 "thumbnail": {
-                    "imageUrl": '{}{}'.format(HOST_URL, EATPLE_HEADER_LUNCH_EVENT_IMG)
+                    "imageUrl": '{}{}'.format(HOST_URL, EATPLE_HEADER_LUNCH_IMG)
                 }
             }
 
@@ -298,12 +318,21 @@ def kakaoView_StoreListup(kakaoPayload):
             })
 
             if((area_in_flag and addressMap[2] == '신사동') or (area_code == 'sinsa')):
+                header = {
+                    "title": "",
+                    "thumbnail": {
+                        "imageUrl": '{}{}'.format(HOST_URL, EATPLE_HEADER_LUNCH_EVENT_IMG)
+                    }
+                }
+
+                '''
                 thumbnail = {
                     'imageUrl': '{}{}'.format(HOST_URL, EATPLE_MENU_PICKUP_ZONE_FF_IMG),
                     'fixedRatio': 'True',
                     'width': 800,
                     'height': 800,
                 }
+                
                 buttons = [
                     {
                         'action': 'block',
@@ -318,19 +347,21 @@ def kakaoView_StoreListup(kakaoPayload):
                         }
                     },
                 ]
+                
                 kakaoForm.BasicCard_Push(
                     '픽업존: 패파 신사점 3층',
                     '⏱️  픽업존 운영 시간\n - 오후12:10, 1:10',
                     thumbnail,
                     buttons
                 )
+                '''
 
         elif(SELLING_TIME_DINNER == sellingTime):
             # DINNER HEADER
             header = {
                 "title": "",
                 "thumbnail": {
-                    "imageUrl": '{}{}'.format(HOST_URL, EATPLE_HEADER_DINNER_EVENT_IMG)
+                    "imageUrl": '{}{}'.format(HOST_URL, EATPLE_HEADER_DINNER_IMG)
                 }
             }
 
@@ -347,6 +378,14 @@ def kakaoView_StoreListup(kakaoPayload):
                     'area_in_flag': True,
                 }
             })
+
+            if((area_in_flag and addressMap[2] == '신사동') or (area_code == 'sinsa')):
+                header = {
+                    "title": "",
+                    "thumbnail": {
+                        "imageUrl": '{}{}'.format(HOST_URL, EATPLE_HEADER_DINNER_EVENT_IMG)
+                    }
+                }
         else:
             pass
 
@@ -631,11 +670,7 @@ def kakaoView_PickupZone_MenuListup(kakaoPayload):
                     },
                 ]
 
-                if(user.friend_discount_count > 0):
-                    discount = FRIEND_DISCOUNT + \
-                        (menu.price_origin - menu.price)
-                else:
-                    discount = menu.price_origin - menu.price
+                discount = applyDiscount(user, menu)
 
                 KakaoInstantForm().MenuList(
                     menu,
@@ -670,11 +705,7 @@ def kakaoView_PickupZone_MenuListup(kakaoPayload):
                 },
             ]
 
-            if(user.friend_discount_count > 0):
-                discount = FRIEND_DISCOUNT + \
-                    (menu.price_origin - menu.price)
-            else:
-                discount = menu.price_origin - menu.price
+            discount = applyDiscount(user, menu)
 
             KakaoInstantForm().MenuList(
                 menu,
@@ -853,11 +884,7 @@ def kakaoView_MenuListup(kakaoPayload):
                     },
                 ]
 
-                if(user.friend_discount_count > 0):
-                    discount = FRIEND_DISCOUNT + \
-                        (menu.price_origin - menu.price)
-                else:
-                    discount = menu.price_origin - menu.price
+                discount = applyDiscount(user, menu)
 
                 KakaoInstantForm().MenuList(
                     menu,
@@ -893,11 +920,7 @@ def kakaoView_MenuListup(kakaoPayload):
                 buttons = [
                 ]
 
-                if(user.friend_discount_count > 0):
-                    discount = FRIEND_DISCOUNT + \
-                        (menu.price_origin - menu.price)
-                else:
-                    discount = menu.price_origin - menu.price
+                discount = applyDiscount(user, menu)
 
                 KakaoInstantForm().MenuList(
                     menu,
@@ -923,11 +946,7 @@ def kakaoView_MenuListup(kakaoPayload):
                     },
                 ]
 
-                if(user.friend_discount_count > 0):
-                    discount = FRIEND_DISCOUNT + \
-                        (menu.price_origin - menu.price)
-                else:
-                    discount = menu.price_origin - menu.price
+                discount = applyDiscount(user, menu)
 
                 KakaoInstantForm().MenuList(
                     menu,
@@ -1024,11 +1043,7 @@ def kakaoView_MenuListupWithAreaOut(kakaoPayload):
                 buttons = [
                 ]
 
-                if(user.friend_discount_count > 0):
-                    discount = FRIEND_DISCOUNT + \
-                        (menu.price_origin - menu.price)
-                else:
-                    discount = menu.price_origin - menu.price
+                discount = applyDiscount(user, menu)
 
                 KakaoInstantForm().MenuList(
                     menu,
@@ -1393,10 +1408,7 @@ def kakaoView_OrderPayment(kakaoPayload):
     if(order == None):
         return errorView('잘못된 주문 번호', '잘못된 주문 번호입니다.')
     else:
-        if(user.friend_discount_count > 0):
-            discount = FRIEND_DISCOUNT + (menu.price_origin - menu.price)
-        else:
-            discount = menu.price_origin - menu.price
+        discount = applyDiscount(user, menu)
 
         order.user = user
         order.menu = menu
@@ -1499,10 +1511,7 @@ def kakaoView_OrderPayment(kakaoPayload):
         },
     ]
 
-    if(user.friend_discount_count > 0):
-        discount = FRIEND_DISCOUNT + (menu.price_origin - menu.price)
-    else:
-        discount = menu.price_origin - menu.price
+    discount = applyDiscount(user, menu)
 
     kakaoForm.ComerceCard_Push(
         description,
