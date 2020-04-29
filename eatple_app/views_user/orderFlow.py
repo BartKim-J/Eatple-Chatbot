@@ -279,7 +279,7 @@ def kakaoView_StoreListup(kakaoPayload):
             header = {
                 "title": "",
                 "thumbnail": {
-                    "imageUrl": '{}{}'.format(HOST_URL, EATPLE_HEADER_LUNCH_IMG)
+                    "imageUrl": '{}{}'.format(HOST_URL, EATPLE_HEADER_LUNCH_EVENT_IMG)
                 }
             }
 
@@ -330,7 +330,7 @@ def kakaoView_StoreListup(kakaoPayload):
             header = {
                 "title": "",
                 "thumbnail": {
-                    "imageUrl": '{}{}'.format(HOST_URL, EATPLE_HEADER_DINNER_IMG)
+                    "imageUrl": '{}{}'.format(HOST_URL, EATPLE_HEADER_DINNER_EVENT_IMG)
                 }
             }
 
