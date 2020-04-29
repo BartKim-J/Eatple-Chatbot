@@ -650,6 +650,7 @@ def kakaoView_OrderPayment(kakaoPayload):
 
     order.payment_type = ORDER_PAYMENT_PAY_PASS
     order.orderPay()
+    order.paymentDetailUpdate()
 
     if(order.payment_status == EATPLE_ORDER_STATUS_PAID):
         return kakaoView_EatplePassIssuance(kakaoPayload)

@@ -212,26 +212,52 @@ class OrderAdmin(ImportExportMixin, admin.ModelAdmin):
             return ''
     b2b_name.short_description = "소속 회사"
 
+    def price_origin(self, obj):
+        return obj.menu.price_origin
+    price_origin.short_description = "매장가"
+
+    def price_eatple(self, obj):
+        return obj.menu.price
+    price_eatple.short_description = "잇플가"
+
+    def profit_margin(self, obj):
+        eatple_price = obj.menu.price
+        vat = obj.menu.price - int(obj.menu.price / 1.1)
+
+        # PG FEE UPDATE
+        if(obj.payment_type == ORDER_PAYMENT_KAKAO_PAY):
+            pg_fee = int(eatple_price * 3.3/100)
+        elif(obj.payment_type == ORDER_PAYMENT_INI_PAY):
+            pg_fee = int(eatple_price * 3.52/100)
+        else:
+            pg_fee = 0
+
+        eatple_profit = eatple_price - (pg_fee + vat)
+
+        return obj.profit - eatple_profit
+    profit_margin.short_description = "실수령 차액"
+
     fieldsets = [
         (
             '기본 정보',
             {
                 'fields': [
-                    'order_id',
+                    ('order_id', 'type'),
+                    ('store', 'menu'),
                     'ordersheet',
-                    'store',
-                    'menu',
-                    'type',
                 ]
             }
         ),
         (
-            '구성',
+            '결제 내역',
             {
                 'fields': [
+                    # 'count',
+                    ('price_origin', 'discount_eatple'),
+                    ('price_eatple', 'discount'),
                     'totalPrice',
-                    'discount',
-                    'count',
+                    ('vat', 'pg_fee'),
+                    ('profit', 'profit_margin'),
                 ]
             }
         ),
@@ -239,9 +265,7 @@ class OrderAdmin(ImportExportMixin, admin.ModelAdmin):
             '상태',
             {
                 'fields': [
-                    'payment_type',
-                    'payment_status',
-                    'status',
+                    ('payment_type', 'payment_status', 'status'),
                 ]
             }
         ),
@@ -274,7 +298,19 @@ class OrderAdmin(ImportExportMixin, admin.ModelAdmin):
     ]
 
     readonly_fields = (
+        'order_id',
+        'type',
         'update_date',
+        'price_origin',
+        'price_eatple',
+        'count',
+        'totalPrice',
+        'discount',
+        'discount_eatple',
+        'vat',
+        'pg_fee',
+        'profit',
+        'profit_margin',
     )
 
     list_editable = (

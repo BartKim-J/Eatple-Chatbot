@@ -182,6 +182,8 @@ def orderUpdate(order):
             order.save()
 
             order.orderPay()
+            order.paymentDetailUpdate()
+
             print('주문 결제됨')
 
         # @PROMOTION
@@ -368,7 +370,71 @@ class Order_KakaoPay(models.Model):
         return self.order
 
 
-class Order(models.Model):
+class PaymentDetails(models.Model):
+    class Meta:
+        verbose_name = "결제 내역"
+        verbose_name_plural = "결제 내역"
+
+        abstract = True
+
+    count = models.IntegerField(
+        default=1,
+        verbose_name="주문 개수"
+    )
+
+    discount_eatple = models.IntegerField(
+        default=0,
+        verbose_name="잇플 할인액"
+    )
+
+    discount = models.IntegerField(
+        default=0,
+        verbose_name="할인액"
+    )
+
+    totalPrice = models.IntegerField(
+        default=0,
+        verbose_name="결제금액"
+    )
+
+    vat = models.IntegerField(
+        default=0,
+        verbose_name="부가세"
+    )
+
+    pg_fee = models.IntegerField(
+        default=0,
+        verbose_name="PG 수수료"
+    )
+
+    profit = models.IntegerField(
+        default=0,
+        verbose_name="실수령액"
+    )
+
+    def paymentDetailUpdate(self):
+        if((self.totalPrice > 0) and (self.payment_status == EATPLE_ORDER_STATUS_PAID)):
+            self.discount_eatple = self.menu.price_origin - self.menu.price
+            self.vat = self.totalPrice - int(self.totalPrice / 1.1)
+
+            # PG FEE UPDATE
+            if(self.payment_type == ORDER_PAYMENT_KAKAO_PAY):
+                self.pg_fee = int(self.totalPrice * 3.3/100)
+            elif(self.payment_type == ORDER_PAYMENT_INI_PAY):
+                self.pg_fee = int(self.totalPrice * 3.52/100)
+            else:
+                self.pg_fee = 0
+
+            self.profit = self.totalPrice - (self.pg_fee + self.vat)
+
+            self.save()
+        else:
+            pass
+
+        return self
+
+
+class Order(PaymentDetails, models.Model):
     class Meta:
         verbose_name = "주문 내역"
         verbose_name_plural = "주문 내역"
@@ -401,21 +467,6 @@ class Order(models.Model):
         on_delete=models.CASCADE,
         null=True,
         verbose_name="메뉴"
-    )
-
-    totalPrice = models.IntegerField(
-        default=0,
-        verbose_name="총 금액"
-    )
-
-    discount = models.IntegerField(
-        default=0,
-        verbose_name="할인액"
-    )
-
-    count = models.IntegerField(
-        default=1,
-        verbose_name="주문 개수"
     )
 
     pickup_time = models.DateTimeField(
@@ -477,6 +528,11 @@ class Order(models.Model):
         default=timezone.now,
         verbose_name="픽업 완료 시간"
     )
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        self.paymentDetailUpdate()
 
     def save(self, *args, **kwargs):
         super().save()
