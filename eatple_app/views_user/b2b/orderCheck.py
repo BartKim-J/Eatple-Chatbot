@@ -3,7 +3,6 @@ from eatple_app.views_system.include import *
 from eatple_app.views_system.debugger import *
 
 from eatple_app.views import GET_UserHome
-from eatple_app.views_user.b2b.orderCheck import GET_B2B_OrderDetails, GET_B2B_EatplePass
 
 # STATIC EP_define
 ORDER_LIST_LENGTH = 8
@@ -53,16 +52,6 @@ def eatplePass(order, ownEatplePass, delegatedEatplePassCount, delegatedEatplePa
     }
 
     buttons = [
-        {
-            'action': 'block',
-            'label': '사장님께 확인받기',
-            'messageText': KAKAO_EMOJI_LOADING,
-            'blockId': KAKAO_BLOCK_USER_GET_USE_EATPLE_PASS_CONFIRM,
-            'extra': {
-                KAKAO_PARAM_ORDER_ID: order.order_id,
-                KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_EATPLE_PASS
-            }
-        },
     ]
 
     if(delegatedEatplePass.count() > 0):
@@ -278,29 +267,6 @@ def kakaoView_EatplePass(kakaoPayload):
 
     # Listup EatplePass
     if ownEatplePass:
-        if(ownEatplePass.first().menu.selling_time == SELLING_TIME_LUNCH):
-            QUICKREPLIES_MAP.insert(0, {
-                'action': 'block',
-                'label': '저녁 메뉴 보러가기',
-                'messageText': KAKAO_EMOJI_LOADING,
-                'blockId': KAKAO_BLOCK_USER_GET_STORE,
-                'extra': {
-                    KAKAO_PARAM_SELLING_TIME: SELLING_TIME_DINNER,
-                    KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_GET_STORE,
-                }
-            })
-        else:
-            QUICKREPLIES_MAP.insert(0, {
-                'action': 'block',
-                'label': '점심 메뉴 보러가기',
-                'messageText': KAKAO_EMOJI_LOADING,
-                'blockId': KAKAO_BLOCK_USER_GET_STORE,
-                'extra': {
-                    KAKAO_PARAM_SELLING_TIME: SELLING_TIME_LUNCH,
-                    KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_GET_STORE,
-                }
-            })
-
         for order in ownEatplePass:
             if(order.delegate == None):
                 eatplePass(
@@ -467,7 +433,7 @@ def kakaoView_OrderDetails(kakaoPayload):
 
 
 @csrf_exempt
-def GET_OrderDetails(request):
+def GET_B2B_OrderDetails(request):
     EatplusSkillLog('GET_OrderDetails')
     try:
         kakaoPayload = KakaoPayLoad(request)
@@ -477,17 +443,14 @@ def GET_OrderDetails(request):
         if (user == None):
             return GET_UserHome(request)
 
-        if(isB2BUser(user)):
-            return GET_B2B_OrderDetails(request)
-        else:
-            return kakaoView_OrderDetails(kakaoPayload)
+        return kakaoView_OrderDetails(kakaoPayload)
 
     except (RuntimeError, TypeError, NameError, KeyError) as ex:
         return errorView('{} '.format(ex))
 
 
 @csrf_exempt
-def GET_EatplePass(request):
+def GET_B2B_EatplePass(request):
     EatplusSkillLog('GET_EatplePass')
 
     try:
@@ -498,9 +461,6 @@ def GET_EatplePass(request):
         if (user == None):
             return GET_UserHome(request)
 
-        if(isB2BUser(user)):
-            return GET_B2B_EatplePass(request)
-        else:
-            return kakaoView_EatplePass(kakaoPayload)
+        return kakaoView_EatplePass(kakaoPayload)
     except (RuntimeError, TypeError, NameError, KeyError) as ex:
         return errorView('{} '.format(ex))

@@ -41,16 +41,6 @@ class KakaoInstantForm():
         buttons = [
             {
                 'action': 'block',
-                'label': '사장님께 확인받기',
-                'messageText': KAKAO_EMOJI_LOADING,
-                'blockId': KAKAO_BLOCK_USER_GET_USE_EATPLE_PASS_CONFIRM,
-                'extra': {
-                    KAKAO_PARAM_ORDER_ID: order.order_id,
-                    KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_EATPLE_PASS
-                }
-            },
-            {
-                'action': 'block',
                 'label': '주문취소',
                 'messageText': KAKAO_EMOJI_LOADING,
                 'blockId': KAKAO_BLOCK_USER_POST_ORDER_CANCEL,
@@ -60,6 +50,23 @@ class KakaoInstantForm():
                 }
             }
         ]
+
+        if(isB2BUser(order.ordersheet.user)):
+            pass
+        else:
+            buttons.insert(
+                0,
+                {
+                    'action': 'block',
+                    'label': '사장님께 확인받기',
+                    'messageText': KAKAO_EMOJI_LOADING,
+                    'blockId': KAKAO_BLOCK_USER_GET_USE_EATPLE_PASS_CONFIRM,
+                    'extra': {
+                        KAKAO_PARAM_ORDER_ID: order.order_id,
+                        KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_EATPLE_PASS
+                    }
+                },
+            )
 
         ORDER_LIST_QUICKREPLIES_MAP = [
             {
@@ -84,7 +91,7 @@ class KakaoInstantForm():
                 selling_time=order.menu.selling_time)
 
             if(pickupTimes.count() > 1):
-                ORDER_LIST_QUICKREPLIES_MAP.append({
+                ORDER_LIST_QUICKREPLIES_MAP.insert(0, {
                     'action': 'block',
                     'label': '픽업 시간 변경',
                     'messageText': KAKAO_EMOJI_LOADING,

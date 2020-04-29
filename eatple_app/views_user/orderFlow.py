@@ -60,13 +60,11 @@ def applyDiscount(user, menu):
         percent_discount = (menu.price_origin / 2)
 
         discount = percent_discount
-    else:
-        # Friend Event Code
-        if(user.friend_discount_count > 0):
+    elif(user.friend_discount_count > 0):
             discount = FRIEND_DISCOUNT + \
                 (menu.price_origin - menu.price)
-        else:
-            discount = menu.price_origin - menu.price
+    else:
+        discount = menu.price_origin - menu.price
 
     return discount
 

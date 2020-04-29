@@ -33,7 +33,7 @@ def component_B2B_Home(kakaoForm, orderManager, user):
         buttons = [
             {
                 'action': 'block',
-                'label': '주문하기',
+                'label': '점심 보러가기',
                 'messageText': KAKAO_EMOJI_LOADING,
                 'blockId': KAKAO_BLOCK_USER_GET_STORE,
                 'extra': {

@@ -34,6 +34,38 @@ SERVICE_AREAS = {
     },
 }
 
+
+def isServiceArea(user):
+    addressMap = user.location.address.split()
+
+    for code, area in SERVICE_AREAS.items():
+        if(addressMap[2].find(area['name']) != -1):
+            return True
+        else:
+            pass
+
+    return False
+
+
+def applyDiscount(user, menu):
+    addressMap = user.location.address.split()
+
+    discount = 0
+
+    if(PERCENT_DISCOUNT > 0 and addressMap[2].find('신사') != -1):
+        eatple_discount = menu.price_origin - menu.price
+        percent_discount = (menu.price_origin / 2)
+
+        discount = percent_discount
+    elif(user.friend_discount_count > 0):
+        discount = FRIEND_DISCOUNT + \
+            (menu.price_origin - menu.price)
+
+    else:
+        discount = menu.price_origin - menu.price
+
+    return discount
+
 # # # # # # # # # # # # # # # # # # # # # # # # #
 #
 # Static View
@@ -202,8 +234,8 @@ def kakaoView_MenuListup(kakaoPayload):
 
     if menuList:
         KakaoInstantForm().Message(
-            '하단의 메뉴중 하나를 선택해주세요.',
-            '',
+            '반갑습니다!',
+            '\'트립비토즈\' {}님'.format(user.nickname),
             kakaoForm=kakaoForm
         )
 
