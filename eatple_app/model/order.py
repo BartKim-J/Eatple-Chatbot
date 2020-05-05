@@ -15,7 +15,7 @@ from eatple_app.module_kakao.kakaoPay import *
 from eatple_app.module_iamport.iamport import *
 
 FRIEND_DISCOUNT = 2000
-PERCENT_DISCOUNT = 50
+PERCENT_DISCOUNT = 0
 
 
 def iamportOrderValidation(order):

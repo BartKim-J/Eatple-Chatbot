@@ -12,7 +12,7 @@ DEFAULT_AREA_IN_FLAG = True
 DEFAULT_AREA_CODE = None
 
 FRIEND_DISCOUNT = 2000
-PERCENT_DISCOUNT = 50
+PERCENT_DISCOUNT = 0
 
 SERVICE_AREAS = {
     'yeoksam': {
@@ -61,8 +61,8 @@ def applyDiscount(user, menu):
 
         discount = percent_discount
     elif(user.friend_discount_count > 0):
-            discount = FRIEND_DISCOUNT + \
-                (menu.price_origin - menu.price)
+        discount = FRIEND_DISCOUNT + \
+            (menu.price_origin - menu.price)
     else:
         discount = menu.price_origin - menu.price
 
@@ -321,7 +321,7 @@ def kakaoView_StoreListup(kakaoPayload):
                 header = {
                     "title": "",
                     "thumbnail": {
-                        "imageUrl": '{}{}'.format(HOST_URL, EATPLE_HEADER_LUNCH_EVENT_IMG)
+                        "imageUrl": '{}{}'.format(HOST_URL, EATPLE_HEADER_LUNCH_IMG)
                     }
                 }
 
@@ -383,7 +383,7 @@ def kakaoView_StoreListup(kakaoPayload):
                 header = {
                     "title": "",
                     "thumbnail": {
-                        "imageUrl": '{}{}'.format(HOST_URL, EATPLE_HEADER_DINNER_EVENT_IMG)
+                        "imageUrl": '{}{}'.format(HOST_URL, EATPLE_HEADER_DINNER_IMG)
                     }
                 }
         else:
