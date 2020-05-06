@@ -146,8 +146,8 @@ def kakaoView_FriendInvitation(kakaoPayload):
     )
 
     kakaoForm.BasicCard_Push(
-        '{}'.format(user.get_friend_code()),
-        '',
+        '친구 코드 : {}'.format(user.get_friend_code()),
+        '위 친구 코드를 가입할 때 입력해주세요',
         thumbnail,
         buttons
     )
