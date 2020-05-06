@@ -23,7 +23,7 @@ EATPLE_HEADER_DINNER_EVENT_IMG = '/media/STORE_DB/images/default/headerDinnerDis
 
 EATPLE_SURVEY_IMG = '/media/STORE_DB/images/default/surveyBeta07.png'
 
-EATPLE_FRIEND_INVITATION_IMG = '/media/STORE_DB/images/default/FriendInvitation_01.png'
+EATPLE_FRIEND_INVITATION_IMG = '/media/STORE_DB/images/default/FriendInvitation_02.png'
 
 EATPLE_MENU_PICKUP_ZONE_FF_IMG = '/media/STORE_DB/images/default/PickupZoneStoreFF_05.png'
 EATPLE_MENU_PICKUP_ZONE_FF_SUB_IMG = '/media/STORE_DB/images/default/PickupZoneStoreFF_Sub_03.png'

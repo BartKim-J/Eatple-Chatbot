@@ -44,7 +44,7 @@ def kakaoView_Debug(kakaoPayload):
     buttons = [
         {
             'action': 'block',
-            'label': '웰컴 블록',
+            'label': '가입하기',
             'messageText': KAKAO_EMOJI_LOADING,
             'blockId': KAKAO_BLOCK_USER_WELCOME,
             'extra': {
@@ -52,9 +52,9 @@ def kakaoView_Debug(kakaoPayload):
         },
         {
             'action': 'block',
-            'label': '인증 블록',
+            'label': '친구초대',
             'messageText': KAKAO_EMOJI_LOADING,
-            'blockId': KAKAO_BLOCK_USER_SIGNUP,
+            'blockId': KAKAO_BLOCK_USER_FRIEND_INVITE,
             'extra': {
             }
         },

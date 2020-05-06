@@ -123,12 +123,6 @@ def kakaoView_FriendInvitation(kakaoPayload):
 
     buttons = [
         {
-            'action': 'webLink',
-            'label': '잇플 바로가기',
-            'webLinkUrl': 'http://pf.kakao.com/_xaxlptT/chat',
-            'extra': {},
-        },
-        {
             'action': 'share',
             'label': '공유하기',
             'extra': {},
@@ -146,12 +140,13 @@ def kakaoView_FriendInvitation(kakaoPayload):
     }
 
     KakaoInstantForm().Message(
-        '아래 공유하기 버튼으로 친구에게 전달해주세요.',
+        '친구에게 아래 카드를 공유해주세요.',
+        '공유 시 2,000원 할인혜택',
         kakaoForm=kakaoForm
     )
 
     kakaoForm.BasicCard_Push(
-        '친구 코드 - {}'.format(user.get_friend_code()),
+        '{}'.format(user.get_friend_code()),
         '',
         thumbnail,
         buttons
