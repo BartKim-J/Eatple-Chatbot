@@ -216,7 +216,7 @@ def eatplePassDelegated(order, ownEatplePass, delegatedEatplePassCount, delegate
             buttons.append(
                 {
                     'action': 'block',
-                    'label': '부탁하기 취소',
+                    'label': '부탁 취소하기',
                     'messageText': KAKAO_EMOJI_LOADING,
                     'blockId': KAKAO_BLOCK_USER_ORDER_SHARING_CANCEL,
                     'extra': {

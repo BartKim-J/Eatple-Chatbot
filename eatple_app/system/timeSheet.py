@@ -24,7 +24,7 @@ def dateNowByTimeZone():
     # Time QA DEBUG
     if(ORDER_TIME_CHECK_DEBUG_MODE):
         DEBUG_DAYS = int(datetime.datetime.now().strftime("%d"))
-        DEBUG_HOUR = 15
+        DEBUG_HOUR = 10
         DEBUG_MIN = 00
         DEBUG_SEC = 0
 

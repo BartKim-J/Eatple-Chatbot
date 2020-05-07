@@ -220,6 +220,10 @@ class OrderAdmin(ImportExportMixin, admin.ModelAdmin):
         return obj.menu.price
     price_eatple.short_description = "잇플가"
 
+    def price_order(self, obj):
+        return obj.totalPrice - obj.delivery_fee
+    price_order.short_description = "주문금액"
+
     def pg_fee_margin(self, obj):
         eatple_price = obj.menu.price
 
@@ -250,6 +254,19 @@ class OrderAdmin(ImportExportMixin, admin.ModelAdmin):
         return eatple_sales_vat
     field_sales_vat.short_description = "매출액(잇플 수수료) 부가세"
 
+    def field_delivery_sales(self, obj):
+        eatple_delivery_sales = int(obj.delivery_fee * 3.52/100)
+
+        return eatple_delivery_sales
+    field_delivery_sales.short_description = "매출액(배달료)"
+
+    def field_delivery_sales_vat(self, obj):
+        eatple_delivery_sales = int(obj.delivery_fee * 3.52/100)
+        eatple_delivery_sales_vat = eatple_delivery_sales - \
+            int(eatple_delivery_sales / 1.1)
+        return eatple_delivery_sales_vat
+    field_delivery_sales_vat.short_description = "매출액(배달료) 부가세"
+
     def field_sales_pg_fee_cost(self, obj):
         # PG FEE UPDATE
         if(obj.payment_type == ORDER_PAYMENT_KAKAO_PAY):
@@ -260,11 +277,35 @@ class OrderAdmin(ImportExportMixin, admin.ModelAdmin):
             pg_fee = 0
 
         return pg_fee
-    field_sales_pg_fee_cost.short_description = "PG 수수료"
+    field_sales_pg_fee_cost.short_description = "총 PG 수수료"
 
     def field_sales_discount_cost(self, obj):
         return obj.discount
     field_sales_discount_cost.short_description = "할인액"
+
+    def field_order_pg_fee(self, obj):
+        # PG FEE UPDATE
+        if(obj.payment_type == ORDER_PAYMENT_KAKAO_PAY):
+            pg_fee = int((obj.totalPrice - obj.delivery_fee) * 3.3/100)
+        elif(obj.payment_type == ORDER_PAYMENT_INI_PAY):
+            pg_fee = int((obj.totalPrice - obj.delivery_fee) * 3.52/100)
+        else:
+            pg_fee = 0
+
+        return pg_fee
+    field_order_pg_fee.short_description = "= 주문금액 PG 수수료"
+
+    def field_delivery_pg_fee(self, obj):
+        # PG FEE UPDATE
+        if(obj.payment_type == ORDER_PAYMENT_KAKAO_PAY):
+            pg_fee = int(obj.delivery_fee * 3.3/100)
+        elif(obj.payment_type == ORDER_PAYMENT_INI_PAY):
+            pg_fee = int(obj.delivery_fee * 3.52/100)
+        else:
+            pg_fee = 0
+
+        return pg_fee
+    field_delivery_pg_fee.short_description = "+ 배달료 PG 수수료"
 
     fieldsets = [
         (
@@ -282,20 +323,21 @@ class OrderAdmin(ImportExportMixin, admin.ModelAdmin):
             {
                 'fields': [
                     # 'count',
-                    ('price_origin', 'discount_eatple'),
-                    ('price_eatple', 'discount', 'vat'),
-                    ('totalPrice', 'pg_fee', 'pg_fee_margin', 'delivery_fee'),
+                    ('price_eatple', 'discount'),
+                    ('price_order', 'delivery_fee'),
+                    ('totalPrice'),
+                    ('pg_fee', 'field_order_pg_fee', 'field_delivery_pg_fee'),
                     ('profit'),
                 ]
             }
         ),
         (
-            '정산 내역',
+            '매출 내역',
             {
                 'fields': [
-                    'field_sales',
-                    'field_sales_vat',
-                    ('field_sales_discount_cost', 'field_sales_pg_fee_cost',)
+                    ('field_sales', 'field_sales_vat'),
+                    ('field_delivery_sales', 'field_delivery_sales_vat'),
+                    ('field_sales_discount_cost', 'field_sales_pg_fee_cost',),
                 ]
             }
         ),
@@ -341,18 +383,24 @@ class OrderAdmin(ImportExportMixin, admin.ModelAdmin):
         'update_date',
         'price_origin',
         'price_eatple',
+        'price_order',
         'count',
         'totalPrice',
+        'delivery_fee',
         'discount',
         'discount_eatple',
         'vat',
         'pg_fee',
         'profit',
+        'field_order_pg_fee',
+        'field_delivery_pg_fee',
         'pg_fee_margin',
         'field_sales',
+        'field_sales_vat',
         'field_sales_discount_cost',
         'field_sales_pg_fee_cost',
-        'field_sales_vat',
+        'field_delivery_sales',
+        'field_delivery_sales_vat',
     )
 
     list_editable = (
