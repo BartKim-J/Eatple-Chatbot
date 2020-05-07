@@ -14,6 +14,8 @@ DEFAULT_AREA_CODE = None
 FRIEND_DISCOUNT = 2000
 PERCENT_DISCOUNT = 0
 
+DELIVERY_FEE = 500
+
 SERVICE_AREAS = {
     'yeoksam': {
         'name': '역삼',
@@ -195,6 +197,7 @@ def kakaoView_StoreListup(kakaoPayload):
             store=None,
             pickup_time='00:00',
             totalPrice=0,
+            delivery_fee=0,
             discount=0,
             count=1,
             type=ORDER_TYPE_NORMAL
@@ -657,7 +660,7 @@ def kakaoView_PickupZone_MenuListup(kakaoPayload):
                 buttons = [
                     {
                         'action': 'block',
-                        'label': '🍔  주문하기',
+                        'label': '주문하기',
                         'messageText': KAKAO_EMOJI_LOADING,
                         'blockId': KAKAO_BLOCK_USER_SET_PICKUP_TIME,
                         'extra': {
@@ -871,7 +874,7 @@ def kakaoView_MenuListup(kakaoPayload):
                 buttons = [
                     {
                         'action': 'block',
-                        'label': '🍔  주문하기',
+                        'label': '주문하기',
                         'messageText': KAKAO_EMOJI_LOADING,
                         'blockId': KAKAO_BLOCK_USER_SET_PICKUP_TIME,
                         'extra': {
@@ -1247,7 +1250,7 @@ def kakaoView_PickupTime(kakaoPayload):
             QUICKREPLIES_MAP.append(
                 {
                     'action': 'block',
-                    'label': '{} 주문 하기'.format(dict(SELLING_TIME_CATEGORY)[currentSellingTime]),
+                    'label': '{} 주문하기'.format(dict(SELLING_TIME_CATEGORY)[currentSellingTime]),
                     'messageText': KAKAO_EMOJI_LOADING,
                     'blockId': KAKAO_BLOCK_USER_GET_STORE,
                     'extra': {
@@ -1409,12 +1412,20 @@ def kakaoView_OrderPayment(kakaoPayload):
         return errorView('잘못된 주문 번호', '잘못된 주문 번호입니다.')
     else:
         discount = applyDiscount(user, menu)
+        isPickupZone = menu.tag.filter(name="픽업존").exists()
+
+        # Delivery Fee
+        if(isPickupZone):
+            delivery_fee = DELIVERY_FEE
+        else:
+            delivery_fee = 0
 
         order.user = user
         order.menu = menu
         order.store = store
         order.pickup_time = order.pickupTimeToDateTime(pickup_time)
-        order.totalPrice = menu.price_origin - discount
+        order.totalPrice = menu.price_origin - discount + delivery_fee
+        order.delivery_fee = delivery_fee
         order.discount = discount - (menu.price_origin - menu.price)
         order.count = 1
         order.type = ORDER_TYPE_NORMAL
@@ -1452,12 +1463,11 @@ def kakaoView_OrderPayment(kakaoPayload):
 
         return JsonResponse(kakaoForm.GetForm())
 
-    if(user.friend_discount_count > 0):
-        KakaoInstantForm().Message(
-            '🏷  할인 쿠폰이 적용되었습니다.',
-            '할인 금액 : 2000원 + 잇플 할인',
-            kakaoForm=kakaoForm
-        )
+    KakaoInstantForm().Message(
+        '💳  결제 준비가 완료됬습니다.',
+        '결제 금액을 확인하시고 결제해주세요.',
+        kakaoForm=kakaoForm
+    )
 
     # Menu Carousel Card Add
     thumbnails = [
@@ -1469,13 +1479,19 @@ def kakaoView_OrderPayment(kakaoPayload):
         }
     ]
 
-    isCafe = store.category.filter(name='카페').exists()
-    if(isCafe):
-        description = '픽업 시간 : {pickup_time}'.format(pickup_time=order.pickup_time.strftime(
-            '%-m월 %-d일 오전 11시 30분 ~ 오후 2시'))
+    if(isPickupZone):
+        description = '주문금액 {amount}원 + 배달료 {delivery_fee}원'.format(
+            amount=order.totalPrice,
+            delivery_fee=order.delivery_fee,
+        )
     else:
-        description = '픽업 시간 : {pickup_time}'.format(pickup_time=order.pickup_time.strftime(
-            '%p %-I시 %-M분').replace('AM', '오전').replace('PM', '오후'))
+        isCafe = store.category.filter(name='카페').exists()
+        if(isCafe):
+            description = '픽업 시간 : {pickup_time}'.format(pickup_time=order.pickup_time.strftime(
+                '%-m월 %-d일 오전 11시 30분 ~ 오후 2시'))
+        else:
+            description = '픽업 시간 : {pickup_time}'.format(pickup_time=order.pickup_time.strftime(
+                '%p %-I시 %-M분').replace('AM', '오전').replace('PM', '오후'))
 
     profile = {
         'nickname': '{} - {}'.format(menu.store.name, menu.name),
@@ -1521,8 +1537,8 @@ def kakaoView_OrderPayment(kakaoPayload):
 
     kakaoForm.ComerceCard_Push(
         description,
-        menu.price_origin,
-        discount,
+        order.totalPrice,
+        None,
         thumbnails,
         profile,
         buttons
@@ -1541,7 +1557,7 @@ def kakaoView_OrderPayment(kakaoPayload):
     ]
 
     KakaoInstantForm().Message(
-        '결제 완료 후 주문을 확인해주세요.',
+        '\'결제 완료\' 후 주문을 확인해주세요.',
         buttons=buttons,
         kakaoForm=kakaoForm
     )
@@ -1631,19 +1647,55 @@ def kakaoView_OrderPaymentCheck(kakaoPayload):
     if(order.payment_status == EATPLE_ORDER_STATUS_PAID):
         return kakaoView_EatplePassIssuance(kakaoPayload)
     else:
-        host_url = 'https://www.eatple.com'
+        isPickupZone = menu.tag.filter(name="픽업존").exists()
 
-        oneclick_url = 'kakaotalk://bizplugin?plugin_id={api_id}&oneclick_id={order_id}'.format(
-            api_id=KAKAO_PAY_ONE_CLICK_API_ID,
-            order_id=order.order_id
+        KakaoInstantForm().Message(
+            '🛑  아직 결제가 완료되지 않았어요.',
+            '결제 금액을 확인하시고 결제해주세요.',
+            kakaoForm=kakaoForm
         )
 
-        thumbnail = {
-            'imageUrl': ''.format(),
-            'fixedRatio': 'true',
-            'width': 800,
-            'height': 800,
+        # Menu Carousel Card Add
+        thumbnails = [
+            {
+                'imageUrl': None,
+                'fixedRatio': 'true',
+                'width': 800,
+                'height': 800,
+            }
+        ]
+
+        if(isPickupZone):
+            description = '주문금액 {amount}원 + 배달료 {delivery_fee}원'.format(
+                amount=order.totalPrice,
+                delivery_fee=order.delivery_fee,
+            )
+        else:
+            isCafe = store.category.filter(name='카페').exists()
+            if(isCafe):
+                description = '픽업 시간 : {pickup_time}'.format(pickup_time=order.pickup_time.strftime(
+                    '%-m월 %-d일 오전 11시 30분 ~ 오후 2시'))
+            else:
+                description = '픽업 시간 : {pickup_time}'.format(pickup_time=order.pickup_time.strftime(
+                    '%p %-I시 %-M분').replace('AM', '오전').replace('PM', '오후'))
+
+        profile = {
+            'nickname': '{} - {}'.format(menu.store.name, menu.name),
+            'imageUrl': '{}{}'.format(HOST_URL, store.logoImgURL()),
         }
+
+        host_url = 'https://www.eatple.com'
+
+        if(False and settings.SETTING_ID == 'DEBUG'):
+            oneclick_url = 'kakaotalk://bizplugin?plugin_id={api_id}&product_id={order_id}'.format(
+                api_id=KAKAO_PAY_ONE_CLICK_API_ID,
+                order_id=order.order_id
+            )
+        else:
+            oneclick_url = 'kakaotalk://bizplugin?plugin_id={api_id}&oneclick_id={order_id}'.format(
+                api_id=KAKAO_PAY_ONE_CLICK_API_ID,
+                order_id=order.order_id
+            )
 
         buttons = [
             {
@@ -1667,22 +1719,18 @@ def kakaoView_OrderPaymentCheck(kakaoPayload):
             },
         ]
 
-        if(user.friend_discount_count > 0):
-            KakaoInstantForm().Message(
-                '🏷  할인 쿠폰이 적용되었습니다.',
-                '할인 금액 : 2000원 + 잇플 할인',
-                kakaoForm=kakaoForm
-            )
+        discount = applyDiscount(user, menu)
 
-        KakaoInstantForm().Message(
-            '🛑  아직 결제가 완료되지 않았어요.',
-            '{menu} - {price}원'.format(menu=menu.name,
-                                       price=order.totalPrice),
-            buttons=buttons,
-            thumbnail=thumbnail,
-            kakaoForm=kakaoForm
+        kakaoForm.ComerceCard_Push(
+            description,
+            order.totalPrice,
+            None,
+            thumbnails,
+            profile,
+            buttons
         )
 
+        kakaoForm.ComerceCard_Add()
         buttons = {
             'action': 'block',
             'label': '주문 확인하기',
@@ -1692,7 +1740,7 @@ def kakaoView_OrderPaymentCheck(kakaoPayload):
         },
 
         KakaoInstantForm().Message(
-            '결제 완료 후 주문을 확인해주세요.',
+            '\'결제 완료\' 후 주문을 확인해주세요.',
             buttons=buttons,
             kakaoForm=kakaoForm
         )

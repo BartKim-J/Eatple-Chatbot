@@ -284,7 +284,7 @@ class OrderAdmin(ImportExportMixin, admin.ModelAdmin):
                     # 'count',
                     ('price_origin', 'discount_eatple'),
                     ('price_eatple', 'discount', 'vat'),
-                    ('totalPrice', 'pg_fee', 'pg_fee_margin'),
+                    ('totalPrice', 'pg_fee', 'pg_fee_margin', 'delivery_fee'),
                     ('profit'),
                 ]
             }

@@ -141,7 +141,7 @@ def kakaoView_FriendInvitation(kakaoPayload):
 
     KakaoInstantForm().Message(
         '친구에게 아래 카드를 공유해주세요.',
-        '공유 시 2,000원 할인혜택',
+        '공유 시 2,000원 할인 혜택',
         kakaoForm=kakaoForm
     )
 

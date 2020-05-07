@@ -393,6 +393,11 @@ class PaymentDetails(models.Model):
         verbose_name="할인액"
     )
 
+    delivery_fee = models.IntegerField(
+        default=0,
+        verbose_name="배달료"
+    )
+
     totalPrice = models.IntegerField(
         default=0,
         verbose_name="결제금액"
@@ -820,7 +825,7 @@ class OrderSheet(models.Model):
     def save(self, *args, **kwargs):
         super().save()
 
-    def pushOrder(self, user, store, menu, pickup_time, totalPrice, discount, count, type):
+    def pushOrder(self, user, store, menu, pickup_time, totalPrice, delivery_fee, discount, count, type):
         self.user = user
         super().save()
 
@@ -841,6 +846,7 @@ class OrderSheet(models.Model):
         order.pickup_time = order.pickupTimeToDateTime(pickup_time)
 
         order.totalPrice = totalPrice
+        order.delivery_fee = delivery_fee
         order.discount = discount
         order.count = count
         order.type = type
