@@ -17,61 +17,32 @@ def POST_KAKAO_OPTION_OptionChoice(request):
 
     try:
         data = {
-            "id": "101:10013529",
+            "id": "10013529",
             "name": "윈터펠테스트11",
             "price": 0,
+            "min_quantity": 1,
+            "max_quantity": 1,
+            "default_quantity": 1,
             "option_groups": [
                 {
-                    "id": "사이즈2",
-                    "name": "사이즈2",
+                    "id": "size",
+                    "name": "Size",
                     "option_sub_groups": [
                         {
-                            "id": "사이즈2",
+                            "id": "size",
                             "options": [
                                 {
-                                    "id": "S12",
-                                    "value": "S12",
-                                    "relate_option_groups": [
-                                        {
-                                            "group_id": "색상2",
-                                            "sub_group_id": "S12:색상2"
-                                        }
-                                    ]
+                                    "id": "normal",
+                                    "value": "일반",
                                 },
                                 {
-                                    "id": "S",
-                                    "value": "S",
-                                    "relate_option_groups": [
-                                        {
-                                            "group_id": "색상2",
-                                            "sub_group_id": "S:색상2"
-                                        }
-                                    ]
+                                    "id": "big",
+                                    "value": "사이즈업",
                                 },
-                                {
-                                    "id": "M",
-                                    "value": "M",
-                                    "relate_option_groups": [
-                                        {
-                                            "group_id": "색상2",
-                                            "sub_group_id": "M:색상2"
-                                        }
-                                    ]
-                                },
-                                {
-                                    "id": "L",
-                                    "value": "L",
-                                    "relate_option_groups": [
-                                        {
-                                            "group_id": "색상2",
-                                            "sub_group_id": "L:색상2"
-                                        }
-                                    ]
-                                }
                             ]
                         }
                     ],
-                    "description": "사이즈을 선택해 주세요.",
+                    "description": "사이즈를 선택해 주세요.",
                     "type": "SELECT"
                 },
                 {
