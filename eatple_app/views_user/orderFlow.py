@@ -1484,9 +1484,10 @@ def kakaoView_OrderPayment(kakaoPayload):
 
     host_url = 'https://www.eatple.com'
 
-    oneclick_url = 'kakaotalk://bizplugin?plugin_id={api_id}&oneclick_id={order_id}'.format(
+    oneclick_url = 'kakaotalk://bizplugin?plugin_id={api_id}&product_id={product_id}'.format(
         api_id=KAKAO_PAY_ONE_CLICK_API_ID,
-        order_id=order.order_id
+        #order_id=order.order_id
+        product_id=10013529
     )
 
     buttons = [

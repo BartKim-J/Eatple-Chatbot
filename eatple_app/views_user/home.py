@@ -354,6 +354,26 @@ def kakaoView_Home(user, address):
 
     kakaoForm.BasicCard_Add()
 
+    buttons = [
+        {
+            'action': 'block',
+            'label': '친구 초대하기',
+            'messageText': KAKAO_EMOJI_LOADING,
+            'blockId': KAKAO_BLOCK_USER_FRIEND_INVITE,
+            'extra': {
+                KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_HOME
+            }
+        },
+    ]
+
+    kakaoForm.BasicCard_Push(
+        '🙌  잇플에 친구를 초대해보세요',
+        '친구를 초대하면 2,000원 할인!',
+        {},
+        buttons
+    )
+    kakaoForm.BasicCard_Add()
+
     kakaoForm.QuickReplies_AddWithMap(QUICKREPLIES_MAP)
 
     return JsonResponse(kakaoForm.GetForm())
