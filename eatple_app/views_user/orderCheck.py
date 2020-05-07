@@ -305,6 +305,8 @@ def kakaoView_EatplePass(kakaoPayload):
 
         for order in ownEatplePass:
             if(order.delegate == None):
+                isPickupZone = order.menu.tag.filter(name="픽업존").exists()
+
                 eatplePass(
                     order,
                     ownEatplePass,
@@ -316,8 +318,14 @@ def kakaoView_EatplePass(kakaoPayload):
                 )
                 kakaoForm.BasicCard_Add()
 
+                if(isPickupZone):
+                    place = '픽업존'
+                else:
+                    place = '매장'
+
                 kakaoForm.BasicCard_Push(
-                    '매장 도착 시 이 잇플패스를 매장 직원에게 보여주세요.',
+                    '{place}에서 잇플패스를 직원에게 보여주고 아래 버튼으로 확인받으세요.'.format(
+                        place=place),
                     '',
                     {
                         'imageUrl': None,
@@ -336,7 +344,6 @@ def kakaoView_EatplePass(kakaoPayload):
                     ]
                 )
 
-                isPickupZone = order.menu.tag.filter(name="픽업존").exists()
                 if(isPickupZone):
                     if (order.status == ORDER_STATUS_ORDER_CONFIRM_WAIT or
                         order.status == ORDER_STATUS_ORDER_CONFIRMED or

@@ -105,8 +105,13 @@ class KakaoInstantForm():
         )
         kakaoForm.BasicCard_Add()
 
+        if(isPickupZone):
+            place = '픽업존'
+        else:
+            place = '매장'
+
         kakaoForm.BasicCard_Push(
-            '매장 도착 시 이 잇플패스를 매장 직원에게 보여주세요.',
+            '{place}에서 잇플패스를 직원에게 보여주고 아래 버튼으로 확인받으세요.'.format(place=place),
             '',
             {
                 'imageUrl': None,
