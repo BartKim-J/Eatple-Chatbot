@@ -366,13 +366,16 @@ def kakaoView_Home(user, address):
         },
     ]
 
-    kakaoForm.BasicCard_Push(
-        '🙌  잇플에 친구를 초대해보세요',
-        '친구를 초대하면 2,000원 할인!',
-        {},
-        buttons
-    )
-    kakaoForm.BasicCard_Add()
+    if(settings.SETTING_ID == 'DEBUG'):
+        kakaoForm.BasicCard_Push(
+            '🙌  잇플에 친구를 초대해보세요',
+            '친구를 초대하면 2,000원 할인!',
+            {},
+            buttons
+        )
+        kakaoForm.BasicCard_Add()
+    else:
+        pass
 
     kakaoForm.QuickReplies_AddWithMap(QUICKREPLIES_MAP)
 
