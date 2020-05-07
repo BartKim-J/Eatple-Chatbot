@@ -52,23 +52,30 @@ def eatplePass(order, ownEatplePass, delegatedEatplePassCount, delegatedEatplePa
         'imageUrl': eatplePassImg(order, delegatedEatplePassCount),
     }
 
-    buttons = [
-        {
-            'action': 'block',
-            'label': '사장님께 확인받기',
-            'messageText': KAKAO_EMOJI_LOADING,
-            'blockId': KAKAO_BLOCK_USER_GET_USE_EATPLE_PASS_CONFIRM,
-            'extra': {
-                KAKAO_PARAM_ORDER_ID: order.order_id,
-                KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_EATPLE_PASS
-            }
-        },
-    ]
+    kakaoMapUrl = 'https://map.kakao.com/link/map/{name},{place}'.format(
+        name=order.store.name,
+        place=order.store.place
+    )
 
     if(delegatedEatplePass.count() > 0):
+        buttons = [
+        ]
         # CAN EDIT COUPONS
         if (order.status == ORDER_STATUS_ORDER_CONFIRM_WAIT or
                 order.status == ORDER_STATUS_ORDER_CONFIRMED):
+            buttons.append(
+                {
+                    'action': 'block',
+                    'label': '💳  주문 취소하기',
+                    'messageText': KAKAO_EMOJI_LOADING,
+                    'blockId': KAKAO_BLOCK_USER_POST_ORDER_CANCEL,
+                    'extra': {
+                        KAKAO_PARAM_ORDER_ID: order.order_id,
+                        KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_EATPLE_PASS
+                    }
+                }
+            )
+
             if(order.status == ORDER_STATUS_PICKUP_PREPARE):
                 buttons.append(
                     {
@@ -82,18 +89,6 @@ def eatplePass(order, ownEatplePass, delegatedEatplePassCount, delegatedEatplePa
                         }
                     }
                 )
-            buttons.append(
-                {
-                    'action': 'block',
-                    'label': '주문취소',
-                    'messageText': KAKAO_EMOJI_LOADING,
-                    'blockId': KAKAO_BLOCK_USER_POST_ORDER_CANCEL,
-                    'extra': {
-                        KAKAO_PARAM_ORDER_ID: order.order_id,
-                        KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_EATPLE_PASS
-                    }
-                }
-            )
 
         menuList = Menu.objects.filter(
             Q(store=order.store) &
@@ -131,20 +126,27 @@ def eatplePass(order, ownEatplePass, delegatedEatplePassCount, delegatedEatplePa
         )
 
     else:
+        buttons = [
+            {
+                'action': 'webLink',
+                'label': '📍  매장 위치보기',
+                'webLinkUrl': kakaoMapUrl,
+            },
+        ]
         if(order.status == ORDER_STATUS_ORDER_CONFIRM_WAIT or
                 order.status == ORDER_STATUS_ORDER_CONFIRMED):
-            buttons.append(
-                {
-                    'action': 'block',
-                    'label': '주문취소',
-                    'messageText': KAKAO_EMOJI_LOADING,
-                    'blockId': KAKAO_BLOCK_USER_POST_ORDER_CANCEL,
-                    'extra': {
-                        KAKAO_PARAM_ORDER_ID: order.order_id,
-                        KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_EATPLE_PASS
-                    }
-                }
-            )
+            buttons.insert(0,
+                           {
+                               'action': 'block',
+                               'label': '💳  주문 취소하기',
+                               'messageText': KAKAO_EMOJI_LOADING,
+                               'blockId': KAKAO_BLOCK_USER_POST_ORDER_CANCEL,
+                               'extra': {
+                                   KAKAO_PARAM_ORDER_ID: order.order_id,
+                                   KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_EATPLE_PASS
+                               }
+                           }
+                           )
             if(isCafe == False):
                 pickupTimes = order.menu.pickup_time.filter(
                     selling_time=order.menu.selling_time)
@@ -197,6 +199,19 @@ def eatplePassDelegated(order, ownEatplePass, delegatedEatplePassCount, delegate
     # CAN EDIT COUPONS
     if (order.status == ORDER_STATUS_ORDER_CONFIRM_WAIT or
             order.status == ORDER_STATUS_ORDER_CONFIRMED):
+        buttons.append(
+            {
+                'action': 'block',
+                'label': '💳  주문 취소하기',
+                'messageText': KAKAO_EMOJI_LOADING,
+                'blockId': KAKAO_BLOCK_USER_POST_ORDER_CANCEL,
+                'extra': {
+                    KAKAO_PARAM_ORDER_ID: order.order_id,
+                    KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_EATPLE_PASS
+                }
+            }
+        )
+
         if(order.status == ORDER_STATUS_PICKUP_PREPARE):
             buttons.append(
                 {
@@ -210,19 +225,6 @@ def eatplePassDelegated(order, ownEatplePass, delegatedEatplePassCount, delegate
                     }
                 }
             )
-        buttons.append(
-            {
-                'action': 'block',
-                'label': '주문취소',
-                'messageText': KAKAO_EMOJI_LOADING,
-                'blockId': KAKAO_BLOCK_USER_POST_ORDER_CANCEL,
-                'extra': {
-                    KAKAO_PARAM_ORDER_ID: order.order_id,
-                    KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_EATPLE_PASS
-                }
-            }
-        )
-
     kakaoForm.BasicCard_Push(
         '{}님에게 부탁된 잇플패스 입니다.'.format(order.delegate.nickname),
         '주문번호: {}\n - 소유자: {}({})\n\n - 위임자: {}({})\n\n - 매장: {}\n - 주문 상태: {}\n\n - 픽업 시간: {}'.format(
@@ -314,53 +316,38 @@ def kakaoView_EatplePass(kakaoPayload):
                 )
                 kakaoForm.BasicCard_Add()
 
-                kakaoMapUrl = 'https://map.kakao.com/link/map/{name},{place}'.format(
-                    name=order.store.name,
-                    place=order.store.place
+                kakaoForm.BasicCard_Push(
+                    '매장 도착 시 이 잇플패스를 매장 직원에게 보여주세요.',
+                    '',
+                    {
+                        'imageUrl': None,
+                    },
+                    [
+                        {
+                            'action': 'block',
+                            'label': '사장님께 확인받기',
+                            'messageText': KAKAO_EMOJI_LOADING,
+                            'blockId': KAKAO_BLOCK_USER_GET_USE_EATPLE_PASS_CONFIRM,
+                            'extra': {
+                                KAKAO_PARAM_ORDER_ID: order.order_id,
+                                KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_EATPLE_PASS
+                            }
+                        },
+                    ]
                 )
 
                 isPickupZone = order.menu.tag.filter(name="픽업존").exists()
                 if(isPickupZone):
-                    buttons = []
                     if (order.status == ORDER_STATUS_ORDER_CONFIRM_WAIT or
                         order.status == ORDER_STATUS_ORDER_CONFIRMED or
                             order.status == ORDER_STATUS_PICKUP_PREPARE):
-                        buttons.insert(
-                            0,
+                        kakaoForm.BasicCard_Push(
+                            '직접 픽업이 어려울땐, “픽업 부탁하기”로 함께 주문한 동료에게 부탁해보세요.',
+                            '',
                             {
-                                'action': 'block',
-                                'label': '픽업 부탁하기',
-                                'messageText': KAKAO_EMOJI_LOADING,
-                                'blockId': KAKAO_BLOCK_USER_ORDER_SHARING_START,
-                                'extra': {
-                                    KAKAO_PARAM_ORDER_ID: order.order_id,
-                                    KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_EATPLE_PASS
-                                }
-                            }
-                        )
-                    KakaoInstantForm().Message(
-                        '직접 픽업이 어려울땐, “픽업 부탁하기”로 함께 주문한 동료에게 부탁해보세요',
-                        buttons=buttons,
-                        kakaoForm=kakaoForm
-                    )
-                elif(order.menu.selling_time == SELLING_TIME_LUNCH):
-                    # @B2B
-                    if(isB2BUser(user)):
-                        pass
-                    else:
-                        buttons = [
-                            {
-                                'action': 'webLink',
-                                'label': '📍  매장 위치',
-                                'webLinkUrl': kakaoMapUrl,
-                            }
-                        ]
-
-                        if (order.status == ORDER_STATUS_ORDER_CONFIRM_WAIT or
-                            order.status == ORDER_STATUS_ORDER_CONFIRMED or
-                                order.status == ORDER_STATUS_PICKUP_PREPARE):
-                            buttons.insert(
-                                0,
+                                'imageUrl': None,
+                            },
+                            [
                                 {
                                     'action': 'block',
                                     'label': '픽업 부탁하기',
@@ -371,17 +358,42 @@ def kakaoView_EatplePass(kakaoPayload):
                                         KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_EATPLE_PASS
                                     }
                                 }
-                            )
-
-                        KakaoInstantForm().Message(
-                            '직접 픽업이 어려울땐, “픽업 부탁하기”로 함께 주문한 동료에게 부탁해보세요',
-                            buttons=buttons,
-                            kakaoForm=kakaoForm
+                            ]
                         )
+                elif(order.menu.selling_time == SELLING_TIME_LUNCH):
+                    # @B2B
+                    if(isB2BUser(user)):
+                        pass
+                    else:
+                        if (order.status == ORDER_STATUS_ORDER_CONFIRM_WAIT or
+                            order.status == ORDER_STATUS_ORDER_CONFIRMED or
+                                order.status == ORDER_STATUS_PICKUP_PREPARE):
+                            if(delegatedEatplePass.count() == 0):
+                                kakaoForm.BasicCard_Push(
+                                    '직접 픽업이 어려울땐, “픽업 부탁하기”로 함께 주문한 동료에게 부탁해보세요.',
+                                    '',
+                                    {
+                                        'imageUrl': None,
+                                    },
+                                    [
+                                        {
+                                            'action': 'block',
+                                            'label': '픽업 부탁하기',
+                                            'messageText': KAKAO_EMOJI_LOADING,
+                                            'blockId': KAKAO_BLOCK_USER_ORDER_SHARING_START,
+                                            'extra': {
+                                                KAKAO_PARAM_ORDER_ID: order.order_id,
+                                                KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_EATPLE_PASS
+                                            }
+                                        }
+                                    ]
+                                )
                 elif(order.menu.selling_time == SELLING_TIME_DINNER):
                     pass
                 else:
                     pass
+
+                kakaoForm.BasicCard_Add()
             else:
                 eatplePassDelegated(
                     order,

@@ -299,7 +299,7 @@ def kakaoView_OrderCancel(kakaoPayload):
                 '%-m월 %-d일 %p %-I시 %-M분').replace('AM', '오전').replace('PM', '오후')
 
         KakaoInstantForm().Message(
-            '주문이 취소되었습니다.',
+            '성공적으로 주문이 취소되었습니다.',
             '{}\n\n - 주문자: {}({})\n - 매장: {}\n\n - 픽업 시간: {}'.format(
                 order.menu.name,
                 order.ordersheet.user.nickname,

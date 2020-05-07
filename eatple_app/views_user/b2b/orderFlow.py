@@ -158,6 +158,7 @@ def kakaoView_MenuListup(kakaoPayload):
             store=None,
             pickup_time='00:00',
             totalPrice=0,
+            delivery_fee=0,
             discount=0,
             count=1,
             type=ORDER_TYPE_NORMAL
