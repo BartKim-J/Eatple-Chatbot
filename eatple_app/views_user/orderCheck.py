@@ -333,7 +333,7 @@ def kakaoView_EatplePass(kakaoPayload):
                     [
                         {
                             'action': 'block',
-                            'label': '사장님께 확인받기',
+                            'label': '잇플패스 확인받기',
                             'messageText': KAKAO_EMOJI_LOADING,
                             'blockId': KAKAO_BLOCK_USER_GET_USE_EATPLE_PASS_CONFIRM,
                             'extra': {
