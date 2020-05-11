@@ -328,14 +328,13 @@ def kakaoView_StoreListup(kakaoPayload):
                     }
                 }
 
-                '''
                 thumbnail = {
                     'imageUrl': '{}{}'.format(HOST_URL, EATPLE_MENU_PICKUP_ZONE_FF_IMG),
                     'fixedRatio': 'True',
                     'width': 800,
                     'height': 800,
                 }
-                
+
                 buttons = [
                     {
                         'action': 'block',
@@ -350,14 +349,13 @@ def kakaoView_StoreListup(kakaoPayload):
                         }
                     },
                 ]
-                
+
                 kakaoForm.BasicCard_Push(
                     '픽업존: 패파 신사점 3층',
                     '⏱️  픽업존 운영 시간\n - 오후12:10, 1:10',
                     thumbnail,
                     buttons
                 )
-                '''
 
         elif(SELLING_TIME_DINNER == sellingTime):
             # DINNER HEADER
@@ -1485,7 +1483,7 @@ def kakaoView_OrderPayment(kakaoPayload):
         }
     ]
 
-    if(True or isPickupZone):
+    if(isPickupZone):
         description = '주문금액 {amount}원 + 배달료 {delivery_fee}원'.format(
             amount=order.totalPrice,
             delivery_fee=order.delivery_fee,

@@ -49,6 +49,13 @@ class Location(models.Model):
         verbose_name="주소"
     )
 
+    road_address = models.CharField(
+        default=LOCATION_DEFAULT_ADDR,
+        max_length=STRING_LENGTH,
+        null=True,
+        verbose_name="도로명 주소"
+    )
+
     point = models.PointField(
         null=True,
         blank=True,
@@ -72,6 +79,9 @@ class Location(models.Model):
             super().save()
         else:
             pass
+
+        if(self.road_address == None):
+            self.road_address = self.address
 
     def __str__(self):
         return '{}, {}'.format(self.lat, self.long)

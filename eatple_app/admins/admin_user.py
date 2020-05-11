@@ -144,7 +144,8 @@ class LocationInline(admin.TabularInline):
     readonly_field = (
         'lat',
         'long',
-        'address'
+        'address',
+        'road_address',
     )
 
     formfield_overrides = {

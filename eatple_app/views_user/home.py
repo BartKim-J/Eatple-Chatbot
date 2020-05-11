@@ -143,11 +143,17 @@ def kakaoView_SignUp():
 
 
 def userLocationRegistration(user, locationData):
-
     try:
         user.location.lat = locationData['latitude']
         user.location.long = locationData['longitude']
+        try:
+            user.location.road_address = locationData['road_address']['address_name'] + ' ' + \
+                locationData['road_address']['building_name']
+        except:
+            user.location.road_address = locationData['land_address']['address_name']
+
         user.location.address = locationData['land_address']['address_name']
+
         user.location.point = Point(
             y=float(locationData['latitude']),
             x=float(locationData['longitude']),
@@ -160,9 +166,17 @@ def userLocationRegistration(user, locationData):
             lat=locationData['latitude'],
             long=locationData['longitude'],
             address=locationData['land_address']['address_name'],
+            road_address=locationData['land_address']['address_name'],
             point=Point(float(locationData['latitude']), float(
                 locationData['longitude'])),
         )
+
+        try:
+            location.road_address = locationData['road_address']['address_name'] + ' ' + \
+                locationData['road_address']['building_name']
+        except:
+            location.road_address = locationData['land_address']['address_name']
+
         location.save()
 
         user.location = location
@@ -336,10 +350,19 @@ def kakaoView_Home(user, address):
     # MAP
     addressMap = address.split()
 
+    roadAddress = user.location.road_address
+    if(roadAddress != None and roadAddress != LOCATION_DEFAULT_ADDR):
+        roadAddressMap = roadAddress.split()
+        roadAddressStr = '{}'.format(
+            roadAddress[roadAddress.find(roadAddressMap[1]):len(roadAddress)])
+    else:
+        roadAddressStr = address
+
     kakaoForm.BasicCard_Push(
-        '🗺️  나의 \'잇플\'레이스',
-        '[{} {} {}]  인근'.format(
-            addressMap[0], addressMap[1], addressMap[2]),
+        '🗺️  {}'.format(
+            roadAddressStr
+        ),
+        '',
         {},
         []
     )
