@@ -306,14 +306,14 @@ def kakaoView_DelegateUserRemove(kakaoPayload):
     if(order.delegate == None):
         KakaoInstantForm().Message(
             '부탁하기를 취소 했습니다.',
-            '주문 번호 : {}'.format(order.order_id),
+            '',
             buttons=buttons,
             kakaoForm=kakaoForm
         )
     else:
         KakaoInstantForm().Message(
             '부탁하기를 취소하지 못했습니다.',
-            '주문 번호 : {}'.format(order.order_id),
+            '',
             buttons=buttons,
             kakaoForm=kakaoForm
         )
@@ -390,7 +390,7 @@ def kakaoView_DelegateUserRemoveAll(kakaoPayload):
         if(order.delegate != None):
             KakaoInstantForm().Message(
                 '부탁하기를 취소하지 못했습니다.',
-                '주문 번호 : {}'.format(order.order_id),
+                '',
                 buttons=buttons,
                 kakaoForm=kakaoForm
             )
@@ -411,14 +411,14 @@ def kakaoView_DelegateUserRemoveAll(kakaoPayload):
     if(delegatedEatplePass.count() == 0):
         KakaoInstantForm().Message(
             '받은 부탁하기를 전부 취소 했습니다.',
-            '주문 번호 : {}'.format(order.order_id),
+            '',
             buttons=buttons,
             kakaoForm=kakaoForm
         )
     else:
         KakaoInstantForm().Message(
             '부탁하기를 취소하지 못했습니다.',
-            '주문 번호 : {}'.format(order.order_id),
+            '',
             buttons=buttons,
             kakaoForm=kakaoForm
         )
