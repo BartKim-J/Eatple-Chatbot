@@ -470,8 +470,8 @@ def dashboard(request):
 
     areaDataList = orderChart['data'].split(',')
 
-    userActive = getUserActive()
-    showActiveStatus(orderTimeSheet)
+    # userActive = getUserActive()
+    # showActiveStatus(orderTimeSheet)
 
     log = LogEntry.objects.all()
 

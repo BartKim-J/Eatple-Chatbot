@@ -721,6 +721,12 @@ def kakaoView_PickupZone_MenuListup(kakaoPayload):
 
         kakaoForm.ComerceCard_Add(None)
 
+        KakaoInstantForm().Message(
+            '픽업존은 배달료가 추가됩니다.',
+            '',
+            kakaoForm=kakaoForm
+        )
+
     else:
         KakaoInstantForm().Message(
             '당일 픽업존 이벤트는 종료되었습니다.',
@@ -1479,7 +1485,7 @@ def kakaoView_OrderPayment(kakaoPayload):
         }
     ]
 
-    if(isPickupZone):
+    if(True or isPickupZone):
         description = '주문금액 {amount}원 + 배달료 {delivery_fee}원'.format(
             amount=order.totalPrice,
             delivery_fee=order.delivery_fee,
@@ -1819,6 +1825,7 @@ def kakaoView_EatplePassIssuance(kakaoPayload):
 
         KakaoInstantForm().Message(
             '주문이 확인되었습니다.',
+            '픽업 시간에 잇플패스를 직원에게 건네주세요.',
             kakaoForm=kakaoForm
         )
 
