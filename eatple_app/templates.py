@@ -370,6 +370,8 @@ def getUserActive():
     GetActive = 0
     OnActive = 0
 
+    allActive = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+
     userList = User.objects.all()
 
     userListInService = getUserInService()
@@ -387,23 +389,38 @@ def getUserActive():
         count = orderList.count()
 
         if(count == 0):
-            NotAtive += 1
+            allActive[0] += 1
 
-        if(count == 1):
+        if(count >= 1):
+            allActive[1] += 1
             InActive += 1
-
         if(count >= 2):
+            allActive[2] += 1
             GetActive += 1
-
         if(count >= 3):
+            allActive[3] += 1
             OnActive += 1
+        if(count >= 4):
+            allActive[4] += 1
+        if(count >= 5):
+            allActive[5] += 1
+        if(count >= 6):
+            allActive[6] += 1
+        if(count >= 7):
+            allActive[7] += 1
+        if(count >= 8):
+            allActive[8] += 1
+        if(count >= 9):
+            allActive[9] += 1
 
+    print(allActive)
     data = {
         'userInService': userListInService.count(),
         'notActive': NotAtive,
         'inActive': InActive,
         'getActive': GetActive,
         'onActive': OnActive,
+        'allActive': allActive,
     }
 
     return data
@@ -453,8 +470,8 @@ def dashboard(request):
 
     areaDataList = orderChart['data'].split(',')
 
-    # userActive = getUserActive()
-    # showActiveStatus(orderTimeSheet)
+    userActive = getUserActive()
+    showActiveStatus(orderTimeSheet)
 
     log = LogEntry.objects.all()
 
