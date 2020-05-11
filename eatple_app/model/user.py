@@ -154,8 +154,7 @@ class FriendEvent(models.Model):
     )
 
     def get_friend_code(self):
-        print(len(self.friend_code))
-        if(self.friend_code == None or len(self.friend_code) != 4):
+        if(self.friend_code == None or (len(self.friend_code) - self.friend_code.count(' ')) != 4):
             self.friend_code = '%4x' % random.getrandbits(16*1)
             self.friend_code = self.friend_code.upper()
             self.save()
