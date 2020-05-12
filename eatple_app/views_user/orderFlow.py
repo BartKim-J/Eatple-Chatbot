@@ -688,7 +688,7 @@ def kakaoView_PickupZone_MenuListup(kakaoPayload):
                         }
                     }
                 )
-                takeout_address = '🚚  등록된 사무실: {}호'.format(
+                takeout_address = '🚚  배달 받을 사무실: {}호'.format(
                     user.get_delivery_address())
             else:
                 buttons.append(
