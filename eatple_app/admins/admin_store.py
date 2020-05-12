@@ -373,6 +373,9 @@ class StoreAdmin(ImportExportMixin, admin.GeoModelAdmin):
             else:
                 stock = obj.getDinnerCurrentStock()
 
+        else:
+            return '💤'
+
         if(stock > 0):
             if(obj.is_check_order):
                 return '✔'
