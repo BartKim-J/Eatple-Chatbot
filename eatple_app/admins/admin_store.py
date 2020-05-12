@@ -405,6 +405,7 @@ class StoreAdmin(ImportExportMixin, admin.GeoModelAdmin):
         'status',
         'area',
         'type',
+        'is_check_order',
     )
 
     list_display = (

@@ -300,7 +300,7 @@ class StoreStatus(models.Model):
 
     is_check_order = models.BooleanField(
         default=False,
-        verbose_name="알림톡 확인 여부"
+        verbose_name="주문 확인 여부"
     )
 
 

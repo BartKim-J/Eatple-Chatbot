@@ -54,7 +54,8 @@ def kakaoView_OrderDetails(kakaoPayload):
     ]
 
     if(orderCheckTimeValidation() != None):
-        partner.store.orderChecked()
+        if(partner.is_staff == False):
+            partner.store.orderChecked()
 
         orderManager = PartnerOrderManager(partner)
         orderManager.orderPaidCheck()
