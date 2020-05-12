@@ -349,6 +349,8 @@ def component_DeliveryEvent(user, kakaoForm):
             buttons
         )
     else:
+        pass
+        """
         buttons = [
             {
                 'action': 'block',
@@ -367,6 +369,7 @@ def component_DeliveryEvent(user, kakaoForm):
             {},
             buttons,
         )
+        """
 
     return kakaoForm
 

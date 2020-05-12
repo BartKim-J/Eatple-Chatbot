@@ -647,7 +647,7 @@ def kakaoView_PickupZone_MenuListup(kakaoPayload):
             buttons = [
                 {
                     'action': 'block',
-                    'label': '참가 하러가기',
+                    'label': '등록 하러가기',
                     'messageText': KAKAO_EMOJI_LOADING,
                     'blockId': KAKAO_BLOCK_USER_DELIVERY_ADDRESS_SUBMIT,
                     'extra': {
@@ -657,24 +657,32 @@ def kakaoView_PickupZone_MenuListup(kakaoPayload):
             ]
 
             kakaoForm.BasicCard_Push(
-                '🚚  지금 신사 패스트파이브 배달 이벤트 중',
+                '🚚  사무실 호수를 입력하면 잇플이 가져다 드립니다.',
                 '',
                 {},
                 buttons
             )
-            '''
-            KakaoInstantForm().Message(
-                '🥡  픽업존: 패파 신사점 3층',
-                '픽업시간에 맞춰서 픽업존으로 와주세요.',
-                kakaoForm=kakaoForm
-            )
-            '''
+            kakaoForm.BasicCard_Add()
         else:
-            KakaoInstantForm().Message(
+            buttons = [
+                {
+                    'action': 'block',
+                    'label': '등록된 사무실 변경',
+                    'messageText': KAKAO_EMOJI_LOADING,
+                    'blockId': KAKAO_BLOCK_USER_DELIVERY_ADDRESS_SUBMIT,
+                    'extra': {
+                        KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_HOME
+                    }
+                },
+            ]
+
+            kakaoForm.BasicCard_Push(
                 '🚚  등록된 사무실: {}호'.format(user.get_delivery_address()),
-                '부재시 3층에서 보관 될 수 있습니다.',
-                kakaoForm=kakaoForm
+                '',
+                {},
+                buttons
             )
+            kakaoForm.BasicCard_Add()
 
         # Menu Carousel Card Add
         for menu in menuList:

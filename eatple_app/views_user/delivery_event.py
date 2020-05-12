@@ -54,13 +54,20 @@ def kakaoViewDeliveryAddressSubmit(kakaoPayload):
             kakaoForm=kakaoForm
         )
     else:
-        user.apply_delivery_address(address)
+        if(sellingTimeCheck() == None and sellingTimeCheck(True) == SELLING_TIME_DINNER):
+            KakaoInstantForm().Message(
+                '배달 준비중일때는 등록 및 변경이 불가능합니다.',
+                '오전 11시부터 오후 2시까지 등록 및 변경 불가',
+                kakaoForm=kakaoForm
+            )
+        else:
+            user.apply_delivery_address(address)
 
-        KakaoInstantForm().Message(
-            '사무실 등록이 완료되었습니다.',
-            '등록된 사무실: {}호'.format(address),
-            kakaoForm=kakaoForm
-        )
+            KakaoInstantForm().Message(
+                '사무실 등록이 완료되었습니다.',
+                '등록된 사무실: {}호'.format(address),
+                kakaoForm=kakaoForm
+            )
 
     kakaoForm.QuickReplies_AddWithMap(QUICKREPLIES_MAP)
 
