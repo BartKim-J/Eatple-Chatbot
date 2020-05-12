@@ -37,16 +37,6 @@ def kakaoViewDeliveryAddressSubmit(kakaoPayload):
                 KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_DELIVERY_ADDRESS_SUBMIT
             }
         },
-        {
-            'action': 'block',
-            'label': '주문하러 가기',
-            'messageText': '주문하러 가기',
-            'blockId': KAKAO_BLOCK_USER_GET_STORE,
-            'extra': {
-                KAKAO_PARAM_SELLING_TIME: SELLING_TIME_LUNCH,
-                KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_HOME
-            }
-        },
     ]
 
     # User Validation
@@ -56,6 +46,15 @@ def kakaoViewDeliveryAddressSubmit(kakaoPayload):
 
     address = getDeliveryAddress(kakaoPayload)
     if(address == None):
+        QUICKREPLIES_MAP.append({
+            'action': 'block',
+            'label': '다시 입력하기',
+            'messageText': '다시 입력하기',
+            'blockId': KAKAO_BLOCK_USER_DELIVERY_ADDRESS_SUBMIT,
+            'extra': {
+                KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_DELIVERY_ADDRESS_SUBMIT
+            }
+        })
         KakaoInstantForm().Message(
             '알 수 없는 입력입니다.',
             '입력된 값: {}'.format(
@@ -72,6 +71,17 @@ def kakaoViewDeliveryAddressSubmit(kakaoPayload):
             )
         else:
             user.apply_delivery_address(address)
+
+            QUICKREPLIES_MAP.append({
+                'action': 'block',
+                'label': '주문하러 가기',
+                'messageText': '주문하러 가기',
+                'blockId': KAKAO_BLOCK_USER_GET_STORE,
+                'extra': {
+                    KAKAO_PARAM_SELLING_TIME: SELLING_TIME_LUNCH,
+                    KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_HOME
+                }
+            })
 
             KakaoInstantForm().Message(
                 '사무실 등록이 완료되었습니다.',
