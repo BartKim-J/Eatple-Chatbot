@@ -350,26 +350,6 @@ def component_DeliveryEvent(user, kakaoForm):
         )
     else:
         pass
-        """
-        buttons = [
-            {
-                'action': 'block',
-                'label': '픽업존 주문하러 가기',
-                'messageText': KAKAO_EMOJI_LOADING,
-                'blockId': KAKAO_BLOCK_USER_GET_STORE,
-                'extra': {
-                    KAKAO_PARAM_SELLING_TIME: SELLING_TIME_LUNCH,
-                    KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_HOME
-                }
-            },
-        ]
-        kakaoForm.BasicCard_Push(
-            '🚚  신사 패스트파이브 픽업존 배달 이벤트',
-            '등록된 사무실: {}호'.format(user.get_delivery_address()),
-            {},
-            buttons,
-        )
-        """
 
     return kakaoForm
 

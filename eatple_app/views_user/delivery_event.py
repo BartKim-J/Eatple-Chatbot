@@ -34,7 +34,17 @@ def kakaoViewDeliveryAddressSubmit(kakaoPayload):
             'messageText': '🏠  홈',
             'blockId': KAKAO_BLOCK_USER_HOME,
             'extra': {
-                KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_FRIEND_INVITE
+                KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_DELIVERY_ADDRESS_SUBMIT
+            }
+        },
+        {
+            'action': 'block',
+            'label': '주문하러 가기',
+            'messageText': '주문하러 가기',
+            'blockId': KAKAO_BLOCK_USER_GET_STORE,
+            'extra': {
+                KAKAO_PARAM_SELLING_TIME: SELLING_TIME_LUNCH,
+                KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_HOME
             }
         },
     ]
