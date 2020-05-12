@@ -124,13 +124,20 @@ def kakaoViewDeliveryDisable(kakaoPayload):
     if (user == None):
         return errorView('잘못된 사용자 계정', '찾을 수 없는 사용자 계정 아이디입니다.')
 
-    user.delivery_disable()
+    if(sellingTimeCheck() == None and sellingTimeCheck(True) == SELLING_TIME_DINNER):
+        KakaoInstantForm().Message(
+            '배달 준비중일때는 변경이 불가능합니다.',
+            '오전 11시부터 오후 2시까지 변경 불가',
+            kakaoForm=kakaoForm
+        )
+    else:
+        user.delivery_disable()
 
-    KakaoInstantForm().Message(
-        '직접 픽업으로 변경되었습니다.',
-        '3층 픽업존으로 와서 테이크아웃하세요',
-        kakaoForm=kakaoForm
-    )
+        KakaoInstantForm().Message(
+            '직접 픽업으로 변경되었습니다.',
+            '3층 픽업존으로 와서 테이크아웃하세요',
+            kakaoForm=kakaoForm
+        )
 
     kakaoForm.QuickReplies_AddWithMap(QUICKREPLIES_MAP)
 
@@ -167,13 +174,20 @@ def kakaoViewDeliveryEnable(kakaoPayload):
     if (user == None):
         return errorView('잘못된 사용자 계정', '찾을 수 없는 사용자 계정 아이디입니다.')
 
-    user.delivery_enable()
+    if(sellingTimeCheck() == None and sellingTimeCheck(True) == SELLING_TIME_DINNER):
+        KakaoInstantForm().Message(
+            '배달 준비중일때는 변경이 불가능합니다.',
+            '오전 11시부터 오후 2시까지 변경 불가',
+            kakaoForm=kakaoForm
+        )
+    else:
+        user.delivery_enable()
 
-    KakaoInstantForm().Message(
-        '배달로 변경되었습니다.',
-        '패파 신사점 {}호로 배달 됩니다.'.format(user.get_delivery_address()),
-        kakaoForm=kakaoForm
-    )
+        KakaoInstantForm().Message(
+            '배달로 변경되었습니다.',
+            '패파 신사점 {}호로 배달 됩니다.'.format(user.get_delivery_address()),
+            kakaoForm=kakaoForm
+        )
 
     kakaoForm.QuickReplies_AddWithMap(QUICKREPLIES_MAP)
 

@@ -230,6 +230,7 @@ class UserAdmin(ImportExportMixin, admin.ModelAdmin):
             {
                 'fields': [
                     'delivery_address',
+                    'is_delivery',
                 ]
             }
         ),
