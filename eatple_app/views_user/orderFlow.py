@@ -643,79 +643,11 @@ def kakaoView_PickupZone_MenuListup(kakaoPayload):
     ).order_by(F'price')
 
     if menuList:
-        if(user.get_delivery_address() == None):
-            buttons = [
-                {
-                    'action': 'block',
-                    'label': '등록 하러가기',
-                    'messageText': KAKAO_EMOJI_LOADING,
-                    'blockId': KAKAO_BLOCK_USER_DELIVERY_ADDRESS_SUBMIT,
-                    'extra': {
-                        KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_HOME
-                    }
-                },
-            ]
-
-            kakaoForm.BasicCard_Push(
-                '🚚  사무실 호수를 입력하면 잇플이 가져다 드립니다.',
-                '',
-                {},
-                buttons
-            )
-            kakaoForm.BasicCard_Add()
-        else:
-            buttons = [
-                {
-                    'action': 'block',
-                    'label': '사무실 호수 변경',
-                    'messageText': KAKAO_EMOJI_LOADING,
-                    'blockId': KAKAO_BLOCK_USER_DELIVERY_ADDRESS_SUBMIT,
-                    'extra': {
-                        KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_HOME
-                    }
-                },
-            ]
-
-            if(user.is_delivery):
-                buttons.append(
-                    {
-                        'action': 'block',
-                        'label': '픽업존으로 변경',
-                        'messageText': KAKAO_EMOJI_LOADING,
-                        'blockId': KAKAO_BLOCK_USER_DELIVERY_DISABLE,
-                        'extra': {
-                            KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_HOME
-                        }
-                    }
-                )
-                takeout_address = '🚚  배달 받을 사무실: {}호'.format(
-                    user.get_delivery_address())
-            else:
-                buttons.append(
-                    {
-                        'action': 'block',
-                        'label': '배달로 변경',
-                        'messageText': KAKAO_EMOJI_LOADING,
-                        'blockId': KAKAO_BLOCK_USER_DELIVERY_ENABLE,
-                        'extra': {
-                            KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_HOME
-                        }
-                    }
-                )
-                takeout_address = '🥡  픽업장소: 패파 신사점 3층'
-
-            kakaoForm.BasicCard_Push(
-                takeout_address,
-                '',
-                {
-                    'imageUrl': None,
-                    'fixedRatio': 'true',
-                    'width': 800,
-                    'height': 800,
-                },
-                buttons
-            )
-            kakaoForm.BasicCard_Add()
+        KakaoInstantForm().Message(
+            '픽업존은 배달료가 추가됩니다.',
+            '',
+            kakaoForm=kakaoForm
+        )
 
         # Menu Carousel Card Add
         for menu in menuList:
@@ -798,11 +730,79 @@ def kakaoView_PickupZone_MenuListup(kakaoPayload):
 
         kakaoForm.ComerceCard_Add(None)
 
-        KakaoInstantForm().Message(
-            '픽업존은 배달료가 추가됩니다.',
-            '',
-            kakaoForm=kakaoForm
-        )
+        if(user.get_delivery_address() == None):
+            buttons = [
+                {
+                    'action': 'block',
+                    'label': '등록 하러가기',
+                    'messageText': KAKAO_EMOJI_LOADING,
+                    'blockId': KAKAO_BLOCK_USER_DELIVERY_ADDRESS_SUBMIT,
+                    'extra': {
+                        KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_HOME
+                    }
+                },
+            ]
+
+            kakaoForm.BasicCard_Push(
+                '🚚  사무실 호수를 입력하면 잇플이 가져다 드립니다.',
+                '',
+                {},
+                buttons
+            )
+            kakaoForm.BasicCard_Add()
+        else:
+            buttons = [
+                {
+                    'action': 'block',
+                    'label': '사무실 호수 수정',
+                    'messageText': KAKAO_EMOJI_LOADING,
+                    'blockId': KAKAO_BLOCK_USER_DELIVERY_ADDRESS_SUBMIT,
+                    'extra': {
+                        KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_HOME
+                    }
+                },
+            ]
+
+            if(user.is_delivery):
+                buttons.append(
+                    {
+                        'action': 'block',
+                        'label': '픽업존으로 변경',
+                        'messageText': KAKAO_EMOJI_LOADING,
+                        'blockId': KAKAO_BLOCK_USER_DELIVERY_DISABLE,
+                        'extra': {
+                            KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_HOME
+                        }
+                    }
+                )
+                takeout_address = '🚚  배달 받을 사무실: {}호'.format(
+                    user.get_delivery_address())
+            else:
+                buttons.append(
+                    {
+                        'action': 'block',
+                        'label': '배달로 변경',
+                        'messageText': KAKAO_EMOJI_LOADING,
+                        'blockId': KAKAO_BLOCK_USER_DELIVERY_ENABLE,
+                        'extra': {
+                            KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_HOME
+                        }
+                    }
+                )
+                takeout_address = '🥡  픽업장소: 패파 신사점 3층'
+
+            kakaoForm.BasicCard_Push(
+                takeout_address,
+                '',
+                {
+                    'imageUrl': None,
+                    'fixedRatio': 'true',
+                    'width': 800,
+                    'height': 800,
+                },
+                buttons
+            )
+            kakaoForm.BasicCard_Add()
 
     else:
         KakaoInstantForm().Message(

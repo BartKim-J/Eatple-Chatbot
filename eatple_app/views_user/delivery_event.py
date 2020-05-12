@@ -65,8 +65,8 @@ def kakaoViewDeliveryAddressSubmit(kakaoPayload):
     else:
         if(sellingTimeCheck() == None and sellingTimeCheck(True) == SELLING_TIME_DINNER):
             KakaoInstantForm().Message(
-                '배달 준비중일때는 등록 및 변경이 불가능합니다.',
-                '오전 11시부터 오후 2시까지 등록 및 변경 불가',
+                '배달 준비중일때는 등록 및 수정이 불가능합니다.',
+                '오전 11시부터 오후 2시까지 등록 및 수정 불가',
                 kakaoForm=kakaoForm
             )
         else:
