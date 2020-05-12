@@ -328,7 +328,6 @@ def kakaoView_StoreListup(kakaoPayload):
                     }
                 }
 
-                '''
                 thumbnail = {
                     'imageUrl': '{}{}'.format(HOST_URL, EATPLE_MENU_PICKUP_ZONE_FF_IMG),
                     'fixedRatio': 'True',
@@ -357,7 +356,6 @@ def kakaoView_StoreListup(kakaoPayload):
                     thumbnail,
                     buttons
                 )
-                '''
 
         elif(SELLING_TIME_DINNER == sellingTime):
             # DINNER HEADER
@@ -1487,7 +1485,7 @@ def kakaoView_OrderPayment(kakaoPayload):
 
     if(isPickupZone):
         description = '주문금액 {amount}원 + 배달료 {delivery_fee}원'.format(
-            amount=order.totalPrice,
+            amount=(order.totalPrice - order.delivery_fee),
             delivery_fee=order.delivery_fee,
         )
     else:
@@ -1673,7 +1671,7 @@ def kakaoView_OrderPaymentCheck(kakaoPayload):
 
         if(isPickupZone):
             description = '주문금액 {amount}원 + 배달료 {delivery_fee}원'.format(
-                amount=order.totalPrice,
+                amount=(order.totalPrice - order.delivery_fee),
                 delivery_fee=order.delivery_fee,
             )
         else:

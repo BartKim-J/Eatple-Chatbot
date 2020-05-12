@@ -358,9 +358,9 @@ class StoreAdmin(ImportExportMixin, admin.GeoModelAdmin):
 
     def field_status_flag(self, obj):
         if(obj.status == OC_OPEN):
-            return '✔'
+            return '🙆🏽‍♂️'
         else:
-            return '✖'
+            return '🙅🏽‍♂️'
 
         return False
     field_status_flag.short_description = "상태"

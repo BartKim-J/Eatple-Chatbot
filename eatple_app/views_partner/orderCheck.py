@@ -146,7 +146,7 @@ def kakaoView_OrderDetails(kakaoPayload):
                                     kakaoForm.ListCard_Push(
                                         '{}'.format(menu.name),
                                         '들어온 주문 : {}개 / {}원'.format(
-                                            orderByMenu.count(), format(orderByMenu.first().totalPrice * orderByMenu.count(), ',')),
+                                            orderByMenu.count(), format((orderByMenu.first().totalPrice - orderByMenu.first().delivery_fee) * orderByMenu.count(), ',')),
                                         imageUrl,
                                         None
                                     )
@@ -224,7 +224,7 @@ def kakaoView_OrderDetails(kakaoPayload):
                                     kakaoForm.ListCard_Push(
                                         '{}'.format(menu.name),
                                         '들어온 주문 : {}개 / {}원'.format(
-                                            orderCount, format(orderByPickupTime.first().totalPrice * orderCount, ',')),
+                                            orderCount, format((orderByPickupTime.first().totalPrice - orderByPickupTime.first().delivery_fee) * orderCount, ',')),
                                         imageUrl,
                                         None
                                     )
