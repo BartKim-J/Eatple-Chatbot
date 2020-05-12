@@ -367,7 +367,6 @@ class StoreAdmin(ImportExportMixin, admin.GeoModelAdmin):
 
     def field_check_order_flag(self, obj):
         stock = 0
-
         if(sellingTimeCheck() == None):
             if(sellingTimeCheck(True) == SELLING_TIME_DINNER):
                 stock = obj.getLucnhCurrentStock()
