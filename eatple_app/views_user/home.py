@@ -330,6 +330,30 @@ def component_DinnerHome(kakaoForm, orderManager, user):
     )
 
 
+def component_DeliveryEvent(kakaoForm):
+    buttons = [
+        {
+            'action': 'block',
+            'label': '사무실 정보 입력하기',
+            'messageText': KAKAO_EMOJI_LOADING,
+            'blockId': KAKAO_BLOCK_USER_FRIEND_INVITE,
+            'extra': {
+                KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_HOME
+            }
+        },
+    ]
+
+    kakaoForm.BasicCard_Push(
+        '🚚  신사 패스트파이브 배달 이벤트',
+        '사무실 호수를 입력하면 사무실까지 배달해드립니다.',
+        {},
+        buttons
+    )
+
+
+    return kakaoForm
+
+
 def kakaoView_Home(user, address):
     EatplusSkillLog('Home')
 
@@ -377,6 +401,10 @@ def kakaoView_Home(user, address):
 
     kakaoForm.BasicCard_Add()
 
+    # Delivery Event
+    component_DeliveryEvent(kakaoForm)
+
+    # Friend Invite Event
     buttons = [
         {
             'action': 'block',
