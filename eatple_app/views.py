@@ -31,6 +31,8 @@ from eatple_app.views_user.orderFlow import SET_PickupTime
 from eatple_app.views_user.orderFlow import SET_OrderSheet
 
 # Event
+from eatple_app.views_user.delivery_event import POST_DeliveryEnable
+from eatple_app.views_user.delivery_event import POST_DeliveryDisable
 from eatple_app.views_user.delivery_event import POST_DeliveryAddressSubmit
 
 from eatple_app.views_user.friend_code import GET_FriendInvitation

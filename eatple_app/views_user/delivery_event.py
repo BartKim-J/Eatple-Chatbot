@@ -94,6 +94,92 @@ def kakaoViewDeliveryAddressSubmit(kakaoPayload):
     return JsonResponse(kakaoForm.GetForm())
 
 
+def kakaoViewDeliveryDisable(kakaoPayload):
+    kakaoForm = KakaoForm()
+
+    QUICKREPLIES_MAP = [
+        {
+            'action': 'block',
+            'label': '🏠  홈',
+            'messageText': '🏠  홈',
+            'blockId': KAKAO_BLOCK_USER_HOME,
+            'extra': {
+                KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_DELIVERY_ADDRESS_SUBMIT
+            }
+        },
+        {
+            'action': 'block',
+            'label': '주문하러 가기',
+            'messageText': '주문하러 가기',
+            'blockId': KAKAO_BLOCK_USER_GET_STORE,
+            'extra': {
+                KAKAO_PARAM_SELLING_TIME: SELLING_TIME_LUNCH,
+                KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_HOME
+            }
+        },
+    ]
+
+    # User Validation
+    user = userValidation(kakaoPayload)
+    if (user == None):
+        return errorView('잘못된 사용자 계정', '찾을 수 없는 사용자 계정 아이디입니다.')
+
+    user.delivery_disable()
+
+    KakaoInstantForm().Message(
+        '직접 픽업으로 변경되었습니다.',
+        '3층 픽업존으로 와서 테이크아웃하세요',
+        kakaoForm=kakaoForm
+    )
+
+    kakaoForm.QuickReplies_AddWithMap(QUICKREPLIES_MAP)
+
+    return JsonResponse(kakaoForm.GetForm())
+
+
+def kakaoViewDeliveryEnable(kakaoPayload):
+    kakaoForm = KakaoForm()
+
+    QUICKREPLIES_MAP = [
+        {
+            'action': 'block',
+            'label': '🏠  홈',
+            'messageText': '🏠  홈',
+            'blockId': KAKAO_BLOCK_USER_HOME,
+            'extra': {
+                KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_DELIVERY_ADDRESS_SUBMIT
+            }
+        },
+        {
+            'action': 'block',
+            'label': '주문하러 가기',
+            'messageText': '주문하러 가기',
+            'blockId': KAKAO_BLOCK_USER_GET_STORE,
+            'extra': {
+                KAKAO_PARAM_SELLING_TIME: SELLING_TIME_LUNCH,
+                KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_HOME
+            }
+        },
+    ]
+
+    # User Validation
+    user = userValidation(kakaoPayload)
+    if (user == None):
+        return errorView('잘못된 사용자 계정', '찾을 수 없는 사용자 계정 아이디입니다.')
+
+    user.delivery_enable()
+
+    KakaoInstantForm().Message(
+        '배달로 변경되었습니다.',
+        '패파 신사점 {}호로 배달 됩니다.'.format(user.get_delivery_address()),
+        kakaoForm=kakaoForm
+    )
+
+    kakaoForm.QuickReplies_AddWithMap(QUICKREPLIES_MAP)
+
+    return JsonResponse(kakaoForm.GetForm())
+
+
 # # # # # # # # # # # # # # # # # # # # # # # # #
 #
 # External View
@@ -114,6 +200,42 @@ def POST_DeliveryAddressSubmit(request):
             return GET_UserHome(request)
 
         return kakaoViewDeliveryAddressSubmit(kakaoPayload)
+
+    except (RuntimeError, TypeError, NameError, KeyError) as ex:
+        return errorView('{}'.format(ex))
+
+
+@csrf_exempt
+def POST_DeliveryDisable(request):
+    EatplusSkillLog('POST_DeliveryDisable')
+
+    try:
+        kakaoPayload = KakaoPayLoad(request)
+
+        # User Validation
+        user = userValidation(kakaoPayload)
+        if (user == None):
+            return GET_UserHome(request)
+
+        return kakaoViewDeliveryDisable(kakaoPayload)
+
+    except (RuntimeError, TypeError, NameError, KeyError) as ex:
+        return errorView('{}'.format(ex))
+
+
+@csrf_exempt
+def POST_DeliveryEnable(request):
+    EatplusSkillLog('POST_DeliveryEnable')
+
+    try:
+        kakaoPayload = KakaoPayLoad(request)
+
+        # User Validation
+        user = userValidation(kakaoPayload)
+        if (user == None):
+            return GET_UserHome(request)
+
+        return kakaoViewDeliveryEnable(kakaoPayload)
 
     except (RuntimeError, TypeError, NameError, KeyError) as ex:
         return errorView('{}'.format(ex))

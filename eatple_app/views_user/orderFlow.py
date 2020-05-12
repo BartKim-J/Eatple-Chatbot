@@ -667,7 +667,7 @@ def kakaoView_PickupZone_MenuListup(kakaoPayload):
             buttons = [
                 {
                     'action': 'block',
-                    'label': '등록된 사무실 변경',
+                    'label': '사무실 호수 변경',
                     'messageText': KAKAO_EMOJI_LOADING,
                     'blockId': KAKAO_BLOCK_USER_DELIVERY_ADDRESS_SUBMIT,
                     'extra': {
@@ -676,10 +676,43 @@ def kakaoView_PickupZone_MenuListup(kakaoPayload):
                 },
             ]
 
+            if(user.is_delivery):
+                buttons.append(
+                    {
+                        'action': 'block',
+                        'label': '픽업존으로 변경',
+                        'messageText': KAKAO_EMOJI_LOADING,
+                        'blockId': KAKAO_BLOCK_USER_DELIVERY_DISABLE,
+                        'extra': {
+                            KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_HOME
+                        }
+                    }
+                )
+                takeout_address = '🚚  등록된 사무실: {}호'.format(
+                    user.get_delivery_address())
+            else:
+                buttons.append(
+                    {
+                        'action': 'block',
+                        'label': '배달로 변경',
+                        'messageText': KAKAO_EMOJI_LOADING,
+                        'blockId': KAKAO_BLOCK_USER_DELIVERY_ENABLE,
+                        'extra': {
+                            KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_HOME
+                        }
+                    }
+                )
+                takeout_address = '🥡  픽업장소: 페파 신사점 3층'
+
             kakaoForm.BasicCard_Push(
-                '🚚  등록된 사무실: {}호'.format(user.get_delivery_address()),
+                takeout_address,
                 '',
-                {},
+                {
+                    'imageUrl': None,
+                    'fixedRatio': 'true',
+                    'width': 800,
+                    'height': 800,
+                },
                 buttons
             )
             kakaoForm.BasicCard_Add()
@@ -692,7 +725,7 @@ def kakaoView_PickupZone_MenuListup(kakaoPayload):
                 thumbnail = {
                     'imageUrl': '{}{}'.format(HOST_URL, menu.imgURL()),
                     'fixedRatio': 'true',
-                    'width': 80,
+                    'width': 800,
                     'height': 800,
                 }
 
@@ -912,7 +945,7 @@ def kakaoView_MenuListup(kakaoPayload):
                 thumbnail = {
                     'imageUrl': '{}{}'.format(HOST_URL, menu.imgURL()),
                     'fixedRatio': 'true',
-                    'width': 80,
+                    'width': 800,
                     'height': 800,
                 }
 

@@ -11,6 +11,10 @@ KAKAO_SKILL_USER_URLS = [
     # Event
     path('skill/user/event/delivery_address_submit',
          views.POST_DeliveryAddressSubmit),
+    path('skill/user/event/delivery_enable',
+         views.POST_DeliveryEnable),
+    path('skill/user/event/delivery_disable',
+         views.POST_DeliveryDisable),
 
     path('skill/user/event/friend_invitation', views.GET_FriendInvitation),
     path('skill/user/event/friend_code_submit', views.POST_FriendCodeSubmit),
