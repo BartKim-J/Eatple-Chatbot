@@ -298,6 +298,11 @@ class StoreStatus(models.Model):
         verbose_name='지역코드'
     )
 
+    is_check_order = models.BooleanField(
+        default=False,
+        verbose_name="알림톡 확인 여부"
+    )
+
 
 class StoreSalesInfo(models.Model):
     class Meta:
@@ -417,6 +422,12 @@ class Store(StoreInfo, StoreSetting, StoreStatus, StoreSalesInfo, StoreBankAccou
             return self.cover.url
         except ValueError:
             return DEFAULT_LOGO_IMAGE_PATH
+
+    def orderChecked(self):
+        self.is_check_order = True
+        self.save()
+
+        return self.is_check_order
 
     def getLucnhCurrentStock(self):
         currentStock = 0

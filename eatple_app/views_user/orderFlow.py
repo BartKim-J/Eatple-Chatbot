@@ -328,6 +328,7 @@ def kakaoView_StoreListup(kakaoPayload):
                     }
                 }
 
+                '''
                 thumbnail = {
                     'imageUrl': '{}{}'.format(HOST_URL, EATPLE_MENU_PICKUP_ZONE_FF_IMG),
                     'fixedRatio': 'True',
@@ -352,10 +353,11 @@ def kakaoView_StoreListup(kakaoPayload):
 
                 kakaoForm.BasicCard_Push(
                     '픽업존: 패파 신사점 3층',
-                    '⏱️  픽업존 운영 시간\n - 오후12:10, 1:10',
+                    '⏱️  픽업존 운영 시간\n - 오후12:10',
                     thumbnail,
                     buttons
                 )
+                '''
 
         elif(SELLING_TIME_DINNER == sellingTime):
             # DINNER HEADER
@@ -1468,7 +1470,7 @@ def kakaoView_OrderPayment(kakaoPayload):
         return JsonResponse(kakaoForm.GetForm())
 
     KakaoInstantForm().Message(
-        '💳  결제 준비가 완료됬습니다.',
+        '💳  결제 준비가 완료되었습니다.',
         '결제 금액을 확인하시고 결제해주세요.',
         kakaoForm=kakaoForm
     )

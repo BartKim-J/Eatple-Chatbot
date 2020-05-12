@@ -1,5 +1,5 @@
 # Define
-from eatple_app.define import *
+from eatple_app.views_system.include import *
 
 # Models
 from eatple_app.models import *
@@ -270,7 +270,8 @@ class StoreAdmin(ImportExportMixin, admin.GeoModelAdmin):
                     [
                         'status',
                         'type',
-                        'area'
+                        'area',
+                        'is_check_order'
                     ]
             }
         ),
@@ -312,7 +313,6 @@ class StoreAdmin(ImportExportMixin, admin.GeoModelAdmin):
     ]
 
     def brc_preview(self, obj):
-        print(obj.brc_document_file.url)
         if(obj.brc_document_file.url != 'STORE_DB/images/'):
             return mark_safe('<img src="{url}" width="{width}" height={height} /><a href="{url}" download>다운로드</a>'.format(
                 url=obj.brc_document_file.url,
@@ -325,7 +325,6 @@ class StoreAdmin(ImportExportMixin, admin.GeoModelAdmin):
     brc_preview.short_description = "사업자등록증 미리보기"
 
     def hc_preview(self, obj):
-        print(obj.brc_document_file.url)
         if(obj.brc_document_file.url != 'STORE_DB/images/'):
             return mark_safe('<img src="{url}" width="{width}" height={height} /><a href="{url}" download>다운로드</a>'.format(
                 url=obj.hc_document_file.url,
@@ -359,12 +358,32 @@ class StoreAdmin(ImportExportMixin, admin.GeoModelAdmin):
 
     def field_status_flag(self, obj):
         if(obj.status == OC_OPEN):
-            return 'O'
+            return '✔'
         else:
-            return 'X'
+            return '✖'
 
         return False
     field_status_flag.short_description = "상태"
+
+    def field_check_order_flag(self, obj):
+        stock = 0
+
+        if(sellingTimeCheck() == None):
+            if(sellingTimeCheck(True) == SELLING_TIME_DINNER):
+                stock = obj.getLucnhCurrentStock()
+            else:
+                stock = obj.getDinnerCurrentStock()
+
+        if(stock > 0):
+            if(obj.is_check_order):
+                return '✔'
+            else:
+                return '💬'
+        else:
+            return '✖'
+
+        return False
+    field_check_order_flag.short_description = "주문 확인 여부"
 
     def field_id(self, obj):
         if(obj.crn == None):
@@ -395,6 +414,7 @@ class StoreAdmin(ImportExportMixin, admin.GeoModelAdmin):
         'type',
         'area',
         'field_status_flag',
+        'field_check_order_flag',
     )
 
     search_fields = ['name', 'store_id', 'area', 'menu__name']

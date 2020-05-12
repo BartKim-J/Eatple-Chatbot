@@ -31,7 +31,7 @@ class Command(BaseCommand):
             ).order_by('order_date')
 
         except (Order.DoesNotExist):
-            raise CommandError('Order or Menu does not exist' % poll_id)
+            raise CommandError('Order does not exist' % poll_id)
 
         for order in orderList:
             Order.orderStatusUpdate(order)

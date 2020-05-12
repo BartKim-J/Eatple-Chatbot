@@ -22,9 +22,9 @@ class Command(BaseCommand):
         try:
             menuList = Menu.objects.all()
             stockTableList = StockTable.objects.all()
-            
+
         except (StockTable.DoesNotExist, Menu.DoesNotExist):
-            raise CommandError('Order or Menu does not exist' % poll_id)
+            raise CommandError('Menu does not exist' % poll_id)
 
         for menu in menuList:
             menu.getCurrentStock()

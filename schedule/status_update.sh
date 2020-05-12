@@ -6,5 +6,6 @@ echo Status Update Start
 
 /home/ubuntu/.pyenv/versions/deploy_eatple/bin/python /home/ubuntu/eatple-chatbot/manage.py order --update-all
 /home/ubuntu/.pyenv/versions/deploy_eatple/bin/python /home/ubuntu/eatple-chatbot/manage.py menu --update-all
+/home/ubuntu/.pyenv/versions/deploy_eatple/bin/python /home/ubuntu/eatple-chatbot/manage.py store --update-all
 
 echo Status Update Done!!
