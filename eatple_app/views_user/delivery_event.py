@@ -17,7 +17,7 @@ def getDeliveryAddress(kakaoPayload):
         try:
             address = int(address)
         except:
-            address = kakaoPayload.dataActionParams['address']['origin']
+            address = None
 
         return address
     except (TypeError, AttributeError, KeyError):
@@ -30,14 +30,13 @@ def kakaoViewDeliveryAddressSubmit(kakaoPayload):
     QUICKREPLIES_MAP = [
         {
             'action': 'block',
-            'label': '다시 입력하기',
-            'messageText': KAKAO_EMOJI_LOADING,
-            'blockId': KAKAO_BLOCK_USER_FRIEND_CODE_SUBMIT,
+            'label': '🏠  홈',
+            'messageText': '🏠  홈',
+            'blockId': KAKAO_BLOCK_USER_HOME,
             'extra': {
-                KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_FRIEND_CODE_SUBMIT
+                KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_FRIEND_INVITE
             }
         },
-
     ]
 
     # User Validation
@@ -55,9 +54,11 @@ def kakaoViewDeliveryAddressSubmit(kakaoPayload):
             kakaoForm=kakaoForm
         )
     else:
+        user.apply_delivery_address(address)
+
         KakaoInstantForm().Message(
             '사무실 등록이 완료되었습니다.',
-            '이후 픽업존 메뉴 주문시 사무실로 배달됩니다.',
+            '등록된 사무실: {}호'.format(address),
             kakaoForm=kakaoForm
         )
 

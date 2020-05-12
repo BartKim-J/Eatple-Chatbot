@@ -70,10 +70,8 @@ def kakaoView_SurveyApply(user, type, answer):
     if(
         answer.find(KAKAO_EMOJI_LOADING) != -1 or
         answer.find('🍽  주문하기/주문확인') != -1 or
-        answer.find('📗  매뉴얼') != -1 or
         answer.find('🗺  위치 설정') != -1 or
-        answer.find('📖  공지사항') != -1 or
-        answer.find('📜  소개') != -1
+        answer.find('📖  공지사항') != -1
     ):
         KakaoInstantForm().Message(
             '불편한 점이 아직 입력되지 않았어요.',
@@ -330,26 +328,45 @@ def component_DinnerHome(kakaoForm, orderManager, user):
     )
 
 
-def component_DeliveryEvent(kakaoForm):
-    buttons = [
-        {
-            'action': 'block',
-            'label': '사무실 정보 입력하기',
-            'messageText': KAKAO_EMOJI_LOADING,
-            'blockId': KAKAO_BLOCK_USER_FRIEND_INVITE,
-            'extra': {
-                KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_HOME
-            }
-        },
-    ]
+def component_DeliveryEvent(user, kakaoForm):
+    if(user.get_delivery_address() == None):
+        buttons = [
+            {
+                'action': 'block',
+                'label': '사무실 정보 입력하기',
+                'messageText': KAKAO_EMOJI_LOADING,
+                'blockId': KAKAO_BLOCK_USER_DELIVERY_ADDRESS_SUBMIT,
+                'extra': {
+                    KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_HOME
+                }
+            },
+        ]
 
-    kakaoForm.BasicCard_Push(
-        '🚚  신사 패스트파이브 배달 이벤트',
-        '사무실 호수를 입력하면 사무실까지 배달해드립니다.',
-        {},
-        buttons
-    )
-
+        kakaoForm.BasicCard_Push(
+            '🚚  신사 패스트파이브 픽업존 배달 이벤트',
+            '사무실 호수를 입력하면 사무실까지 배달해드립니다.',
+            {},
+            buttons
+        )
+    else:
+        buttons = [
+            {
+                'action': 'block',
+                'label': '픽업존 주문하러 가기',
+                'messageText': KAKAO_EMOJI_LOADING,
+                'blockId': KAKAO_BLOCK_USER_GET_STORE,
+                'extra': {
+                    KAKAO_PARAM_SELLING_TIME: SELLING_TIME_LUNCH,
+                    KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_HOME
+                }
+            },
+        ]
+        kakaoForm.BasicCard_Push(
+            '🚚  신사 패스트파이브 픽업존 배달 이벤트',
+            '등록된 사무실: {}호'.format(user.get_delivery_address()),
+            {},
+            buttons,
+        )
 
     return kakaoForm
 
@@ -402,7 +419,9 @@ def kakaoView_Home(user, address):
     kakaoForm.BasicCard_Add()
 
     # Delivery Event
-    component_DeliveryEvent(kakaoForm)
+    addressMap = user.location.address.split()
+    if(addressMap[2].find('신사') != -1):
+        component_DeliveryEvent(user, kakaoForm)
 
     # Friend Invite Event
     buttons = [

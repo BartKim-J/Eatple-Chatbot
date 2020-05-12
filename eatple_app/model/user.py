@@ -141,6 +141,33 @@ class KakaoUser(models.Model):
     )
 
 
+class DeliveryEvent(models.Model):
+    class Meta:
+        abstract = True
+
+    delivery_address = models.IntegerField(
+        default=0,
+        verbose_name="사무실 호수"
+    )
+
+    def get_delivery_address(self):
+        if(self.delivery_address == 0):
+            return None
+        else:
+            return self.delivery_address
+
+    def apply_delivery_address(self, address):
+        try:
+            address = int(address)
+        except ValueError:
+            address = self.delivery_address
+
+        self.delivery_address = address
+        self.save()
+
+        return self
+
+
 class FriendEvent(models.Model):
     class Meta:
         abstract = True
@@ -213,7 +240,7 @@ class FriendEvent(models.Model):
         return self.gain_friend_discount()
 
 
-class User(KakaoUser, FriendEvent, models.Model):
+class User(KakaoUser, FriendEvent, DeliveryEvent, models.Model):
     class Meta:
         verbose_name = "유저 - 사용자"
         verbose_name_plural = "유저 - 사용자"

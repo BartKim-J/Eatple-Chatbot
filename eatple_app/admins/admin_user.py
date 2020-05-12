@@ -216,12 +216,20 @@ class UserAdmin(ImportExportMixin, admin.ModelAdmin):
             }
         ),
         (
-            '친구코드',
+            '이벤트 - 친구코드',
             {
                 'fields': [
                     'field_friend_code',
                     'friend_discount_count',
                     'is_apply_friend_code',
+                ]
+            }
+        ),
+        (
+            '이벤트 - 배달',
+            {
+                'fields': [
+                    'delivery_address',
                 ]
             }
         ),
