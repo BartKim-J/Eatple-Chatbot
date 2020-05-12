@@ -123,16 +123,16 @@ def kakaoView_FriendInvitation(kakaoPayload):
 
     buttons = [
         {
+            'action': 'share',
+            'label': '공유하기',
+            'extra': {},
+        },
+        {
             'action': 'webLink',
             'label': '가입하기',
             'messageText': '가입하기',
             'extra': {},
             'webLinkUrl': 'https://plus.kakao.com/talk/bot/@eatple/가입하기'
-        },
-        {
-            'action': 'share',
-            'label': '공유하기',
-            'extra': {},
         },
     ]
 
