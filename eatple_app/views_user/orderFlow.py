@@ -369,7 +369,7 @@ def kakaoView_StoreListup(kakaoPayload):
             dinnerHeaderImg = '{}{}'.format(HOST_URL, EATPLE_HEADER_DINNER_IMG)
 
             thumbnail = {
-                'imageUrl': dinnerHomeImg,
+                'imageUrl': dinnerHeaderImg,
                 'fixedRatio': 'true',
                 'width': 800,
                 'height': 800,

@@ -34,6 +34,30 @@ class KakaoPayInline(admin.StackedInline):
     readonly_fields = ('tid', 'pg_token', )
 
 
+class OrderDelvieryFilter(SimpleListFilter):
+    title = '배달 여부'
+    parameter_name = '배달 여부'
+
+    def lookups(self, request, model_admin):
+        return [
+            ('on', '예'),
+            ('off', '아니오'),
+        ]
+
+    def queryset(self, request, queryset):
+        if self.value() == 'on':
+            return queryset.filter(
+                Q(ordersheet__user__is_delivery=True) &
+                ~Q(ordersheet__user__delivery_address=0)
+            )
+
+        if self.value() == 'off':
+            return queryset.filter(
+                ~Q(ordersheet__user__is_delivery=True) |
+                Q(ordersheet__user__delivery_address=0)
+            )
+
+
 class OrderShareFlagFilter(SimpleListFilter):
     title = '부탁하기'
     parameter_name = '부탁하기 플래그'
@@ -312,6 +336,11 @@ class OrderAdmin(ImportExportMixin, admin.ModelAdmin):
     field_delivery_address.short_description = '배달 호수'
     field_delivery_address.admin_order_field = 'ordersheet__user__delivery_address'
 
+    def field_user_phone_number(self, obj):
+        return obj.ordersheet.user.phone_number.as_national
+    field_user_phone_number.short_description = '전화번호'
+    field_user_phone_number.admin_order_field = 'ordersheet__user__phone_number'
+
     fieldsets = [
         (
             '기본 정보',
@@ -421,7 +450,7 @@ class OrderAdmin(ImportExportMixin, admin.ModelAdmin):
         'payment_status',
         'store',
         'ordersheet__user__is_staff',
-        'ordersheet__user__is_delivery',
+        OrderDelvieryFilter,
     )
 
     actions = ['make_enable']
@@ -439,6 +468,7 @@ class OrderAdmin(ImportExportMixin, admin.ModelAdmin):
         # 'field_delegate_flag',
         'payment_date',
         'field_delivery_address',
+        'field_user_phone_number',
     )
 
     inlines = [KakaoPayInline]
