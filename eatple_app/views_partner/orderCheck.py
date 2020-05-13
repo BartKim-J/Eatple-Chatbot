@@ -53,6 +53,39 @@ def kakaoView_OrderDetails(kakaoPayload):
         },
     ]
 
+    buttons = [
+
+    ]
+
+    """
+    # Test
+    kakaoForm.BasicCard_Push(
+        '3월 15일 오후 12시 10분: 총 13개',
+        '메뉴 이름이름asdfsdafsadf A - 13개\n메뉴 이름이름asdfasdfasf B - 13개\n메뉴 이름이름asdfasdfasf B - 13개',
+        {},
+        buttons
+    )
+    kakaoForm.BasicCard_Add()
+    kakaoForm.BasicCard_Push(
+        '3월 15일 오후 12시 10분: 총 13개',
+        '메뉴 이름이름asdfasdfasf B - 13개\n메뉴 이름이름asdfasdfasf B - 13개\n메뉴 이름이름asdfasdfasf B - 13개\n메뉴 이름이름asdfasdfasf B - 13개\n메뉴 이름이름asdfasdfasf B - 13개\n메뉴 이름이름 A - 13개\n메뉴 이름이름 A - 13개\n메뉴 이름이름 A - 13개\n메뉴 이름이름 A - 13개\n메뉴 이름이름 A - 13개\n메뉴 이름이름 A - 13개\n메뉴 이름이름 A - 13개',
+        {},
+        buttons
+    )
+    kakaoForm.BasicCard_Add()
+    kakaoForm.BasicCard_Push(
+        '3월 15일 오후 12시 10분: 총 13개',
+        '메뉴 이름이름asdfas C - 13개\n메뉴 이름이름asdfasdfasf B - 13개\n메뉴 이름이름asdfasdfasf B - 13개\n메뉴 이름이름asdfasdfasf B - 13개\n메뉴 이름이름asdfasdfasf B - 13개\n메뉴 이름이름 A - 13개\n메뉴 이름이름 A - 13개\n메뉴 이름이름 A - 13개\n메뉴 이름이름 A - 13개\n메뉴 이름이름 A - 13개\n메뉴 이름이름 A - 13개\n메뉴 이름이름 A - 13개\n메뉴 이름이름 A - 13개',
+        {},
+        buttons
+    )
+    kakaoForm.BasicCard_Add()
+    """
+
+    kakaoForm.QuickReplies_AddWithMap(ORDER_LIST_QUICKREPLIES_MAP)
+
+    return JsonResponse(kakaoForm.GetForm())
+
     if(orderCheckTimeValidation() != None):
         if(partner.is_staff == False):
             partner.store.orderChecked()
