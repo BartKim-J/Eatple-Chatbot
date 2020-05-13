@@ -591,9 +591,37 @@ def kakaoView_PickupZone_MenuListup(kakaoPayload):
         return errorView('잘못된 사용자 계정', '찾을 수 없는 사용자 계정 아이디입니다.')
 
     order = orderValidation(kakaoPayload)
-    if(order == None):
-        return errorView('잘못된 주문 번호', '잘못된 주문 번호입니다.')
+    if (order != None):
+        order.store = None
+        order.save()
 
+        # Order Record
+        try:
+            orderRecordSheet = OrderRecordSheet.objects.get(order=order)
+        except OrderRecordSheet.DoesNotExist:
+            orderRecordSheet = OrderRecordSheet()
+
+        if (orderRecordSheet.timeoutValidation()):
+            orderRecordSheet.recordUpdate(user, order, ORDER_RECORD_TIMEOUT)
+            return kakaoView_TimeOut(KAKAO_BLOCK_USER_GET_STORE)
+        else:
+            orderRecordSheet.recordUpdate(user, order, ORDER_RECORD_GET_STORE)
+
+        pass
+    else:
+        orderSheet = OrderSheet()
+        order = orderSheet.pushOrder(
+            user=user,
+            menu=None,
+            store=None,
+            pickup_time='00:00',
+            totalPrice=0,
+            delivery_fee=0,
+            discount=0,
+            count=1,
+            type=ORDER_TYPE_NORMAL
+        )
+        order.save()
     # @BETA Dinner Beta
     sellingTime = sellingTimeValidation(kakaoPayload)
 
@@ -647,7 +675,7 @@ def kakaoView_PickupZone_MenuListup(kakaoPayload):
 
     if menuList:
         KakaoInstantForm().Message(
-            '픽업존은 배달료가 추가됩니다.',
+            '픽업존 서비스는 이용료가 추가됩니다.',
             '',
             kakaoForm=kakaoForm
         )
@@ -1566,7 +1594,7 @@ def kakaoView_OrderPayment(kakaoPayload):
     ]
 
     if(isPickupZone):
-        description = '주문금액 {amount}원 + 배달료 {delivery_fee}원'.format(
+        description = '주문금액 {amount}원 + 이용료 {delivery_fee}원'.format(
             amount=(order.totalPrice - order.delivery_fee),
             delivery_fee=order.delivery_fee,
         )
@@ -1752,7 +1780,7 @@ def kakaoView_OrderPaymentCheck(kakaoPayload):
         ]
 
         if(isPickupZone):
-            description = '주문금액 {amount}원 + 배달료 {delivery_fee}원'.format(
+            description = '주문금액 {amount}원 + 이용료 {delivery_fee}원'.format(
                 amount=(order.totalPrice - order.delivery_fee),
                 delivery_fee=order.delivery_fee,
             )

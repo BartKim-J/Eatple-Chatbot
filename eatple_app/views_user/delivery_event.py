@@ -111,10 +111,11 @@ def kakaoViewDeliveryDisable(kakaoPayload):
             'action': 'block',
             'label': '주문하러 가기',
             'messageText': '주문하러 가기',
-            'blockId': KAKAO_BLOCK_USER_GET_STORE,
+            'blockId': KAKAO_BLOCK_USER_GET_MENU,
             'extra': {
                 KAKAO_PARAM_SELLING_TIME: SELLING_TIME_LUNCH,
-                KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_HOME
+                KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_HOME,
+                'pickupZoneStore': True,
             }
         },
     ]
@@ -161,10 +162,11 @@ def kakaoViewDeliveryEnable(kakaoPayload):
             'action': 'block',
             'label': '주문하러 가기',
             'messageText': '주문하러 가기',
-            'blockId': KAKAO_BLOCK_USER_GET_STORE,
+            'blockId': KAKAO_BLOCK_USER_GET_MENU,
             'extra': {
                 KAKAO_PARAM_SELLING_TIME: SELLING_TIME_LUNCH,
-                KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_HOME
+                KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_HOME,
+                'pickupZoneStore': True,
             }
         },
     ]

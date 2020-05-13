@@ -109,13 +109,13 @@ class OrderRecordSheet(models.Model):
         else:
             deadline = dateByTimeZone(self.update_date) + \
                 datetime.timedelta(minutes=30)
-                
+
         current_date = dateNowByTimeZone()
 
         if (deadline < current_date):
             timeOut = True
 
-        print("Time Out : {}, {} < {}".format(timeOut, deadline, current_date))
+        # print("Time Out : {}, {} < {}".format(timeOut, deadline, current_date))
         return timeOut
 
     # Methods
