@@ -211,7 +211,7 @@ def kakaoView_StoreListup(kakaoPayload):
     distance_condition = DEFAULT_DISTANCE_CONDITION
     area_in_flag = DEFAULT_AREA_IN_FLAG
     area_code = DEFAULT_AREA_CODE
-    """
+    '''
     try:
         distance_condition = kakaoPayload.dataActionExtra['distance_condition']
         area_in_flag = kakaoPayload.dataActionExtra['area_in_flag']
@@ -250,7 +250,7 @@ def kakaoView_StoreListup(kakaoPayload):
                 }
             })
 
-    """
+    '''
 
     storeList = Store.objects.annotate(
         distance=Distance(F('place__point'),
@@ -299,12 +299,21 @@ def kakaoView_StoreListup(kakaoPayload):
         # HEADER
         if(SELLING_TIME_LUNCH == sellingTime):
             # LUNCH HEADER
-            header = {
-                "title": "",
-                "thumbnail": {
-                    "imageUrl": '{}{}'.format(HOST_URL, EATPLE_HEADER_LUNCH_IMG)
-                }
+            lunchHomeImg = '{}{}'.format(HOST_URL, EATPLE_HEADER_LUNCH_IMG)
+
+            thumbnail = {
+                'imageUrl': lunchHomeImg,
+                'fixedRatio': 'true',
+                'width': 800,
+                'height': 800,
             }
+
+            kakaoForm.BasicCard_Push(
+                '점심 주문 가능/취소 시간',
+                '픽업 전날 오후 9시부터 오전 11시까지',
+                thumbnail,
+                [],
+            )
 
             QUICKREPLIES_MAP.insert(1, {
                 'action': 'block',
@@ -321,13 +330,6 @@ def kakaoView_StoreListup(kakaoPayload):
             })
 
             if((area_in_flag and addressMap[2] == '신사동') or (area_code == 'sinsa')):
-                header = {
-                    "title": "",
-                    "thumbnail": {
-                        "imageUrl": '{}{}'.format(HOST_URL, EATPLE_HEADER_LUNCH_IMG)
-                    }
-                }
-
                 thumbnail = {
                     'imageUrl': '{}{}'.format(HOST_URL, EATPLE_MENU_PICKUP_ZONE_FF_IMG),
                     'fixedRatio': 'True',
@@ -364,12 +366,21 @@ def kakaoView_StoreListup(kakaoPayload):
 
         elif(SELLING_TIME_DINNER == sellingTime):
             # DINNER HEADER
-            header = {
-                "title": "",
-                "thumbnail": {
-                    "imageUrl": '{}{}'.format(HOST_URL, EATPLE_HEADER_DINNER_IMG)
-                }
+            dinnerHeaderImg = '{}{}'.format(HOST_URL, EATPLE_HEADER_DINNER_IMG)
+
+            thumbnail = {
+                'imageUrl': dinnerHomeImg,
+                'fixedRatio': 'true',
+                'width': 800,
+                'height': 800,
             }
+
+            kakaoForm.BasicCard_Push(
+                '저녁 주문 가능/취소 시간',
+                '픽업 당일 오후 2시부터 오후 6시까지',
+                thumbnail,
+                [],
+            )
 
             QUICKREPLIES_MAP.insert(1, {
                 'action': 'block',
@@ -384,14 +395,6 @@ def kakaoView_StoreListup(kakaoPayload):
                     'area_in_flag': True,
                 }
             })
-
-            if((area_in_flag and addressMap[2] == '신사동') or (area_code == 'sinsa')):
-                header = {
-                    "title": "",
-                    "thumbnail": {
-                        "imageUrl": '{}{}'.format(HOST_URL, EATPLE_HEADER_DINNER_IMG)
-                    }
-                }
         else:
             pass
 
@@ -497,7 +500,7 @@ def kakaoView_StoreListup(kakaoPayload):
                 []
             )
 
-        kakaoForm.BasicCard_Add(header)
+        kakaoForm.BasicCard_Add()
 
         if(weekendTimeCheck(sellingTime)):
             KakaoInstantForm().Message(
@@ -1495,7 +1498,7 @@ def kakaoView_OrderPayment(kakaoPayload):
         return errorView('잘못된 주문 번호', '잘못된 주문 번호입니다.')
     else:
         discount = applyDiscount(user, menu)
-        isPickupZone = menu.tag.filter(name="픽업존").exists()
+        isPickupZone = menu.tag.filter(name='픽업존').exists()
 
         # Delivery Fee
         if(isPickupZone):
@@ -1730,7 +1733,7 @@ def kakaoView_OrderPaymentCheck(kakaoPayload):
     if(order.payment_status == EATPLE_ORDER_STATUS_PAID):
         return kakaoView_EatplePassIssuance(kakaoPayload)
     else:
-        isPickupZone = menu.tag.filter(name="픽업존").exists()
+        isPickupZone = menu.tag.filter(name='픽업존').exists()
 
         KakaoInstantForm().Message(
             '🛑  아직 결제가 완료되지 않았어요.',

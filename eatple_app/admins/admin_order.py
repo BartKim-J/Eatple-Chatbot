@@ -307,6 +307,11 @@ class OrderAdmin(ImportExportMixin, admin.ModelAdmin):
         return pg_fee
     field_delivery_pg_fee.short_description = "+ 배달료 PG 수수료"
 
+    def field_delivery_address(self, obj):
+        return obj.ordersheet.user.delivery_address
+    field_delivery_address.short_description = '배달 호수'
+    field_delivery_address.admin_order_field = 'ordersheet__user__delivery_address'
+
     fieldsets = [
         (
             '기본 정보',
@@ -416,6 +421,7 @@ class OrderAdmin(ImportExportMixin, admin.ModelAdmin):
         'payment_status',
         'store',
         'ordersheet__user__is_staff',
+        'ordersheet__user__is_delivery',
     )
 
     actions = ['make_enable']
@@ -432,6 +438,7 @@ class OrderAdmin(ImportExportMixin, admin.ModelAdmin):
         'field_totalPrice',
         # 'field_delegate_flag',
         'payment_date',
+        'field_delivery_address',
     )
 
     inlines = [KakaoPayInline]
