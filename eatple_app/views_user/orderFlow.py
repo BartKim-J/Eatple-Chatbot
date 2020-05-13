@@ -622,6 +622,7 @@ def kakaoView_PickupZone_MenuListup(kakaoPayload):
             type=ORDER_TYPE_NORMAL
         )
         order.save()
+
     # @BETA Dinner Beta
     sellingTime = sellingTimeValidation(kakaoPayload)
 
