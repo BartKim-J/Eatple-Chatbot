@@ -197,6 +197,13 @@ class FriendEvent(models.Model):
         verbose_name="친구코드"
     )
 
+    inviter_code = models.CharField(
+        default=None,
+        max_length=WORD_LENGTH,
+        null=True,
+        verbose_name="초대자코드"
+    )
+
     friend_discount_count = models.IntegerField(
         default=0,
         verbose_name="할인쿠폰(개)"
@@ -223,7 +230,8 @@ class FriendEvent(models.Model):
         if(self.is_apply_friend_code == False):
             try:
                 invitationUser = User.objects.get(friend_code=friend_code)
-                invitationUser.gain_friend_discount()
+                self.inviter_code = invitationUser.friend_code
+                self.save()
 
                 self.gain_friend_discount()
                 self.is_apply_friend_code = True
@@ -234,6 +242,23 @@ class FriendEvent(models.Model):
                 pass
         else:
             # ALREADY APPLIED
+            pass
+
+        return status
+
+    def gain_friend_discount_to_inviter(self):
+        status = False
+
+        if(self.is_apply_friend_code == True):
+            try:
+                invitationUser = User.objects.get(friend_code=friend_code)
+                invitationUser.gain_friend_discount()
+
+                status = True
+            except Exception as ex:
+                print(ex)
+                pass
+        else:
             pass
 
         return status

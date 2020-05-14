@@ -567,6 +567,9 @@ class Order(PaymentDetails, models.Model):
         return orderUpdate(self)
 
     def orderPay(self):
+        if(Order.objects.filter(payment_status=EATPLE_ORDER_STATUS_PAID).count() == 1):
+            self.ordersheet.user.gain_friend_discount_to_inviter()
+
         self.payment_status = EATPLE_ORDER_STATUS_PAID
         self.payment_date = dateNowByTimeZone()
 
