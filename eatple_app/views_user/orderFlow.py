@@ -353,7 +353,7 @@ def kakaoView_StoreListup(kakaoPayload):
                 ]
 
                 if(user.get_delivery_address() == None or (user.is_delivery == False)):
-                    delivery_address_str = '🥡  픽업장소: 패파 신사점 3층 픽업존'
+                    delivery_address_str = '🥡  픽업장소: 패파 신사점 3층 라운지'
                 else:
                     delivery_address_str = '🚚  픽업장소: 패파 신사점 {}호'.format(
                         user.get_delivery_address())
@@ -821,7 +821,7 @@ def kakaoView_PickupZone_MenuListup(kakaoPayload):
                         }
                     }
                 )
-                takeout_address = '🥡  픽업장소: 패파 신사점 3층 픽업존'
+                takeout_address = '🥡  픽업장소: 패파 신사점 3층 라운지'
 
             kakaoForm.BasicCard_Push(
                 takeout_address,

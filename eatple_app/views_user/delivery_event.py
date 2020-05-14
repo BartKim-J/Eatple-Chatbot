@@ -136,7 +136,7 @@ def kakaoViewDeliveryDisable(kakaoPayload):
         user.delivery_disable()
 
         KakaoInstantForm().Message(
-            '직접 픽업으로 변경되었습니다.',
+            '픽업장소가 3층 라운지로 변경되었습니다.',
             '3층 픽업존으로 와서 테이크아웃하세요',
             kakaoForm=kakaoForm
         )
