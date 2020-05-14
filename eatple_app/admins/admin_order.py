@@ -229,6 +229,7 @@ class OrderAdmin(ImportExportMixin, admin.ModelAdmin):
         else:
             return '선택중'
     field_menu.short_description = "메뉴"
+    field_menu.admin_order_field = "menu__name"
 
     def b2b_name(self, obj):
         if(obj.ordersheet.user.company != None and obj.type == ORDER_TYPE_B2B):

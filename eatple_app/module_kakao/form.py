@@ -110,7 +110,7 @@ class KakaoInstantForm():
         )
         kakaoForm.BasicCard_Add()
 
-        if(order.ordersheet.user.is_delivery):
+        if(order.ordersheet.user.is_delivery and order.ordersheet.user.delivery_address != 0):
             kakaoForm.BasicCard_Push(
                 '픽업 시간에 맞춰 배달이 도착할 예정입니다.',
                 '부재시 3층 픽업존에 보관됩니다.',
