@@ -52,11 +52,6 @@ def eatplePass(order, ownEatplePass, delegatedEatplePassCount, delegatedEatplePa
         'imageUrl': eatplePassImg(order, delegatedEatplePassCount),
     }
 
-    kakaoMapUrl = 'https://map.kakao.com/link/map/{name},{place}'.format(
-        name=order.store.name,
-        place=order.store.place
-    )
-
     if(delegatedEatplePass.count() > 0):
         buttons = [
         ]
@@ -126,13 +121,25 @@ def eatplePass(order, ownEatplePass, delegatedEatplePassCount, delegatedEatplePa
         )
 
     else:
-        buttons = [
-            {
-                'action': 'webLink',
-                'label': '📍  매장 위치보기',
-                'webLinkUrl': kakaoMapUrl,
-            },
-        ]
+        buttons = []
+
+        isPickupZone = order.menu.tag.filter(name="픽업존").exists()
+
+        if(isPickupZone):
+            pass
+        else:
+            kakaoMapUrl = 'https://map.kakao.com/link/map/{name},{place}'.format(
+                name=order.store.name,
+                place=order.store.place
+            )
+            buttons.append(
+                {
+                    'action': 'webLink',
+                    'label': '📍  매장 위치보기',
+                    'webLinkUrl': kakaoMapUrl,
+                }
+            )
+
         if(order.status == ORDER_STATUS_ORDER_CONFIRM_WAIT or
                 order.status == ORDER_STATUS_ORDER_CONFIRMED):
             buttons.insert(0,
@@ -318,87 +325,93 @@ def kakaoView_EatplePass(kakaoPayload):
                 )
                 kakaoForm.BasicCard_Add()
 
-                if(isPickupZone):
-                    place = '픽업존'
+                if(order.ordersheet.user.is_delivery):
+                    kakaoForm.BasicCard_Push(
+                        '픽업 시간에 맞춰 배달이 도착할 예정입니다.',
+                        '부재시 3층 픽업존에 보관됩니다.',
+                        {},
+                        []
+                    )
                 else:
-                    place = '매장'
-
-                kakaoForm.BasicCard_Push(
-                    '{place}에서 잇플패스를 직원에게 보여주고 아래 버튼으로 확인받으세요.'.format(
-                        place=place),
-                    '',
-                    {
-                        'imageUrl': None,
-                    },
-                    [
-                        {
-                            'action': 'block',
-                            'label': '잇플패스 확인받기',
-                            'messageText': KAKAO_EMOJI_LOADING,
-                            'blockId': KAKAO_BLOCK_USER_GET_USE_EATPLE_PASS_CONFIRM,
-                            'extra': {
-                                KAKAO_PARAM_ORDER_ID: order.order_id,
-                                KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_EATPLE_PASS
-                            }
-                        },
-                    ]
-                )
-
-                if(isPickupZone):
-                    if (order.status == ORDER_STATUS_ORDER_CONFIRM_WAIT or
-                        order.status == ORDER_STATUS_ORDER_CONFIRMED or
-                            order.status == ORDER_STATUS_PICKUP_PREPARE):
-                        kakaoForm.BasicCard_Push(
-                            '직접 픽업이 어려울땐, “픽업 부탁하기”로 함께 주문한 동료에게 부탁해보세요.',
-                            '',
-                            {
-                                'imageUrl': None,
-                            },
-                            [
-                                {
-                                    'action': 'block',
-                                    'label': '픽업 부탁하기',
-                                    'messageText': KAKAO_EMOJI_LOADING,
-                                    'blockId': KAKAO_BLOCK_USER_ORDER_SHARING_START,
-                                    'extra': {
-                                        KAKAO_PARAM_ORDER_ID: order.order_id,
-                                        KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_EATPLE_PASS
-                                    }
-                                }
-                            ]
-                        )
-                elif(order.menu.selling_time == SELLING_TIME_LUNCH):
-                    # @B2B
-                    if(isB2BUser(user)):
-                        pass
+                    if(isPickupZone):
+                        place = '픽업존'
                     else:
+                        place = '매장'
+
+                    kakaoForm.BasicCard_Push(
+                        '{place}에서 잇플패스를 직원에게 보여주고 아래 버튼으로 확인받으세요.'.format(
+                            place=place),
+                        '',
+                        {},
+                        [
+                            {
+                                'action': 'block',
+                                'label': '잇플패스 확인받기',
+                                'messageText': KAKAO_EMOJI_LOADING,
+                                'blockId': KAKAO_BLOCK_USER_GET_USE_EATPLE_PASS_CONFIRM,
+                                'extra': {
+                                    KAKAO_PARAM_ORDER_ID: order.order_id,
+                                    KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_EATPLE_PASS
+                                }
+                            },
+                        ]
+                    )
+
+                    if(isPickupZone):
                         if (order.status == ORDER_STATUS_ORDER_CONFIRM_WAIT or
                             order.status == ORDER_STATUS_ORDER_CONFIRMED or
                                 order.status == ORDER_STATUS_PICKUP_PREPARE):
-                            if(delegatedEatplePass.count() == 0):
-                                kakaoForm.BasicCard_Push(
-                                    '직접 픽업이 어려울땐, “픽업 부탁하기”로 함께 주문한 동료에게 부탁해보세요.',
-                                    '',
+                            kakaoForm.BasicCard_Push(
+                                '직접 픽업이 어려울땐, “픽업 부탁하기”로 함께 주문한 동료에게 부탁해보세요.',
+                                '',
+                                {
+                                    'imageUrl': None,
+                                },
+                                [
                                     {
-                                        'imageUrl': None,
-                                    },
-                                    [
-                                        {
-                                            'action': 'block',
-                                            'label': '픽업 부탁하기',
-                                            'messageText': KAKAO_EMOJI_LOADING,
-                                            'blockId': KAKAO_BLOCK_USER_ORDER_SHARING_START,
-                                            'extra': {
-                                                KAKAO_PARAM_ORDER_ID: order.order_id,
-                                                KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_EATPLE_PASS
-                                            }
+                                        'action': 'block',
+                                        'label': '픽업 부탁하기',
+                                        'messageText': KAKAO_EMOJI_LOADING,
+                                        'blockId': KAKAO_BLOCK_USER_ORDER_SHARING_START,
+                                        'extra': {
+                                            KAKAO_PARAM_ORDER_ID: order.order_id,
+                                            KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_EATPLE_PASS
                                         }
-                                    ]
-                                )
-                elif(order.menu.selling_time == SELLING_TIME_DINNER):
-                    pass
-                else:
-                    pass
+                                    }
+                                ]
+                            )
+                    elif(order.menu.selling_time == SELLING_TIME_LUNCH):
+                        # @B2B
+                        if(isB2BUser(user)):
+                            pass
+                        else:
+                            if (order.status == ORDER_STATUS_ORDER_CONFIRM_WAIT or
+                                order.status == ORDER_STATUS_ORDER_CONFIRMED or
+                                    order.status == ORDER_STATUS_PICKUP_PREPARE):
+                                if(delegatedEatplePass.count() == 0):
+                                    kakaoForm.BasicCard_Push(
+                                        '직접 픽업이 어려울땐, “픽업 부탁하기”로 함께 주문한 동료에게 부탁해보세요.',
+                                        '',
+                                        {
+                                            'imageUrl': None,
+                                        },
+                                        [
+                                            {
+                                                'action': 'block',
+                                                'label': '픽업 부탁하기',
+                                                'messageText': KAKAO_EMOJI_LOADING,
+                                                'blockId': KAKAO_BLOCK_USER_ORDER_SHARING_START,
+                                                'extra': {
+                                                    KAKAO_PARAM_ORDER_ID: order.order_id,
+                                                    KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_EATPLE_PASS
+                                                }
+                                            }
+                                        ]
+                                    )
+                    elif(order.menu.selling_time == SELLING_TIME_DINNER):
+                        pass
+                    else:
+                        pass
 
                 kakaoForm.BasicCard_Add()
             else:

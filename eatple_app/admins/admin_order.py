@@ -224,7 +224,8 @@ class OrderAdmin(ImportExportMixin, admin.ModelAdmin):
 
     def field_menu(self, obj):
         if(obj.menu != None):
-            return '{}-{}'.format(obj.store.name, obj.menu.name)
+
+            return '{}-{}'.format(obj.menu.store.name, obj.menu.name)
         else:
             return '선택중'
     field_menu.short_description = "메뉴"

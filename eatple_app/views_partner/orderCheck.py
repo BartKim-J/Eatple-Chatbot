@@ -79,12 +79,13 @@ def kakaoView_OrderDetails(kakaoPayload):
         {},
         buttons
     )
+    
     kakaoForm.BasicCard_Add()
-    """
 
     kakaoForm.QuickReplies_AddWithMap(ORDER_LIST_QUICKREPLIES_MAP)
 
     return JsonResponse(kakaoForm.GetForm())
+    """
 
     if(orderCheckTimeValidation() != None):
         if(partner.is_staff == False):
