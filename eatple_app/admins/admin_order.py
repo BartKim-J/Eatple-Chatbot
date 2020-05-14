@@ -452,6 +452,7 @@ class OrderAdmin(ImportExportMixin, admin.ModelAdmin):
         'payment_status',
         'store',
         'ordersheet__user__is_staff',
+        'ordersheet__user__company',
         OrderDelvieryFilter,
     )
 

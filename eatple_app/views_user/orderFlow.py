@@ -359,7 +359,7 @@ def kakaoView_StoreListup(kakaoPayload):
                         user.get_delivery_address())
                 kakaoForm.BasicCard_Push(
                     delivery_address_str,
-                    '⏱️  픽업존 운영 시간\n - 오후12:10',
+                    '픽업존 서비스는 이용료가 추가됩니다.',
                     thumbnail,
                     buttons
                 )
