@@ -353,9 +353,9 @@ def kakaoView_StoreListup(kakaoPayload):
                 ]
 
                 if(user.get_delivery_address() == None or (user.is_delivery == False)):
-                    delivery_address_str = '픽업존: 패파 신사점 3층'
+                    delivery_address_str = '🥡  픽업장소: 패파 신사점 3층 픽업존'
                 else:
-                    delivery_address_str = '배달위치: 패파 신사점 {}호'.format(
+                    delivery_address_str = '🚚  픽업장소: 패파 신사점 {}호'.format(
                         user.get_delivery_address())
                 kakaoForm.BasicCard_Push(
                     delivery_address_str,
@@ -799,7 +799,7 @@ def kakaoView_PickupZone_MenuListup(kakaoPayload):
                 buttons.append(
                     {
                         'action': 'block',
-                        'label': '픽업존으로 변경',
+                        'label': '3층 라운지로 변경',
                         'messageText': KAKAO_EMOJI_LOADING,
                         'blockId': KAKAO_BLOCK_USER_DELIVERY_DISABLE,
                         'extra': {
@@ -807,13 +807,13 @@ def kakaoView_PickupZone_MenuListup(kakaoPayload):
                         }
                     }
                 )
-                takeout_address = '🚚  배달 받을 사무실: {}호'.format(
+                takeout_address = '🚚  픽업장소: 패파 신사점 {}호'.format(
                     user.get_delivery_address())
             else:
                 buttons.append(
                     {
                         'action': 'block',
-                        'label': '배달로 변경',
+                        'label': '내 사무실로 변경',
                         'messageText': KAKAO_EMOJI_LOADING,
                         'blockId': KAKAO_BLOCK_USER_DELIVERY_ENABLE,
                         'extra': {
@@ -821,7 +821,7 @@ def kakaoView_PickupZone_MenuListup(kakaoPayload):
                         }
                     }
                 )
-                takeout_address = '🥡  픽업장소: 패파 신사점 3층'
+                takeout_address = '🥡  픽업장소: 패파 신사점 3층 픽업존'
 
             kakaoForm.BasicCard_Push(
                 takeout_address,

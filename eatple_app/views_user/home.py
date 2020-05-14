@@ -343,8 +343,8 @@ def component_DeliveryEvent(user, kakaoForm):
         ]
 
         kakaoForm.BasicCard_Push(
-            '🚚  신사 패스트파이브 픽업존 배달 이벤트',
-            '사무실 호수를 입력하면 사무실까지 배달해드립니다.',
+            '🚚  사무실 픽업존 배달 이벤트',
+            '사무실 호수를 입력하면 3층으로 오지 않아도 픽업 할 수 있어요.',
             {},
             buttons
         )

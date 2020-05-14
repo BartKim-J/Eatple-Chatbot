@@ -65,7 +65,7 @@ def kakaoViewDeliveryAddressSubmit(kakaoPayload):
     else:
         if(sellingTimeCheck() == None and sellingTimeCheck(True) == SELLING_TIME_DINNER):
             KakaoInstantForm().Message(
-                '배달 준비중일때는 등록 및 수정이 불가능합니다.',
+                '음식 준비중일때는 등록 및 수정이 불가능합니다.',
                 '오전 11시부터 오후 2시까지 등록 및 수정 불가',
                 kakaoForm=kakaoForm
             )
@@ -128,7 +128,7 @@ def kakaoViewDeliveryDisable(kakaoPayload):
 
     if(sellingTimeCheck() == None and sellingTimeCheck(True) == SELLING_TIME_DINNER):
         KakaoInstantForm().Message(
-            '배달 준비중일때는 변경이 불가능합니다.',
+            '음식 준비중일때는 변경이 불가능합니다.',
             '오전 11시부터 오후 2시까지 변경 불가',
             kakaoForm=kakaoForm
         )
@@ -179,7 +179,7 @@ def kakaoViewDeliveryEnable(kakaoPayload):
 
     if(sellingTimeCheck() == None and sellingTimeCheck(True) == SELLING_TIME_DINNER):
         KakaoInstantForm().Message(
-            '배달 준비중일때는 변경이 불가능합니다.',
+            '음식 준비중일때는 변경이 불가능합니다.',
             '오전 11시부터 오후 2시까지 변경 불가',
             kakaoForm=kakaoForm
         )
@@ -187,8 +187,8 @@ def kakaoViewDeliveryEnable(kakaoPayload):
         user.delivery_enable()
 
         KakaoInstantForm().Message(
-            '배달로 변경되었습니다.',
-            '패파 신사점 {}호로 배달 됩니다.'.format(user.get_delivery_address()),
+            '픽업장소가 내 사무실로 변경되었습니다.',
+            '패파 신사점 {}호에서 기다려주세요.'.format(user.get_delivery_address()),
             kakaoForm=kakaoForm
         )
 
