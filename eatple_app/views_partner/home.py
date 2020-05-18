@@ -73,7 +73,6 @@ def kakaoView_Home(partner):
     kakaoForm = KakaoForm()
 
     QUICKREPLIES_MAP = []
-
     if(partner.is_staff):
         QUICKREPLIES_MAP.append(
             {
@@ -87,49 +86,57 @@ def kakaoView_Home(partner):
             },
         )
 
-    buttons = [
-        {
-            'action': 'block',
-            'label': '주문 확인하기',
-            'messageText': KAKAO_EMOJI_LOADING,
-            'blockId': KAKAO_BLOCK_PARTNER_GET_ORDER_DETAILS,
-            'extra': {
-                KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_PARTNER_HOME
-            }
-        },
-        {
-            'action': 'block',
-            'label': ' 정산일정 조회',
-            'messageText': KAKAO_EMOJI_LOADING,
-            'blockId': KAKAO_BLOCK_PARTNER_CALCULATE,
-            'extra': {
-                KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_PARTNER_HOME
-            }
-        },
-    ]
+    print(partner.store.crn.CRN_id)
+    storeList = Store.objects.filter(crn__CRN_id=partner.store.crn.CRN_id)
+    for store in storeList:
+        print(store, store.crn.CRN_id)
 
-    if(partner.store.coverImgURL().find('default') == -1):
-        thumbnail = {
-            'imageUrl': '{}{}'.format(HOST_URL, partner.store.coverImgURL()),
-            'fixedRatio': 'True',
-            'width': 800,
-            'height': 800,
-        }
-    else:
-        thumbnail = {
-            'imageUrl': '{}{}'.format(HOST_URL, partner.store.logoImgURL()),
-            'fixedRatio': 'true',
-            'width': 800,
-            'height': 800,
-        }
+        buttons = [
+            {
+                'action': 'block',
+                'label': '주문 확인하기',
+                'messageText': KAKAO_EMOJI_LOADING,
+                'blockId': KAKAO_BLOCK_PARTNER_GET_ORDER_DETAILS,
+                'extra': {
+                    KAKAO_PARAM_STORE_ID: store.store_id,
+                    KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_PARTNER_HOME
+                }
+            },
+            {
+                'action': 'block',
+                'label': ' 정산일정 조회',
+                'messageText': KAKAO_EMOJI_LOADING,
+                'blockId': KAKAO_BLOCK_PARTNER_CALCULATE,
+                'extra': {
+                    KAKAO_PARAM_STORE_ID: store.store_id,
+                    KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_PARTNER_HOME
+                }
+            },
+        ]
 
-    kakaoForm.BasicCard_Push(
-        '매장 : {store}'.format(store=partner.store.name),
-        '조회 시간 : {}'.format(datetime.datetime.now().strftime(
-            '%-m월 %-d일 %p %-I시 %-M분').replace('AM', '오전').replace('PM', '오후')),
-        thumbnail,
-        buttons
-    )
+        if(store.coverImgURL().find('default') == -1):
+            thumbnail = {
+                'imageUrl': '{}{}'.format(HOST_URL, store.coverImgURL()),
+                'fixedRatio': 'True',
+                'width': 800,
+                'height': 800,
+            }
+        else:
+            thumbnail = {
+                'imageUrl': '{}{}'.format(HOST_URL, store.logoImgURL()),
+                'fixedRatio': 'true',
+                'width': 800,
+                'height': 800,
+            }
+
+        kakaoForm.BasicCard_Push(
+            '매장 : {store}'.format(store=store.name),
+            '조회 시간 : {}'.format(datetime.datetime.now().strftime(
+                '%-m월 %-d일 %p %-I시 %-M분').replace('AM', '오전').replace('PM', '오후')),
+            thumbnail,
+            buttons
+        )
+
     kakaoForm.BasicCard_Add()
 
     kakaoForm.QuickReplies_AddWithMap(QUICKREPLIES_MAP)

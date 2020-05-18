@@ -41,6 +41,10 @@ def kakaoView_OrderDetails(kakaoPayload):
     if (partner == None):
         return errorView('잘못된 사용자 계정', '찾을 수 없는 사용자 계정 아이디입니다.')
 
+    store = storeValidation(kakaoPayload)
+    if (store == None):
+        return errorView('잘못된 주문 경로', '처음부터 다시 주문해주세요.')
+
     ORDER_LIST_QUICKREPLIES_MAP = [
         {
             'action': 'block',
@@ -89,7 +93,7 @@ def kakaoView_OrderDetails(kakaoPayload):
 
     if(orderCheckTimeValidation() != None):
         if(partner.is_staff == False):
-            partner.store.orderChecked()
+            store.orderChecked()
 
         orderManager = PartnerOrderManager(partner)
         orderManager.orderPaidCheck()
@@ -100,17 +104,17 @@ def kakaoView_OrderDetails(kakaoPayload):
         currentTime = dateNowByTimeZone()
 
         if(availableOrders.exists() == True):
-            isCafe = partner.store.category.filter(name="카페").exists()
+            isCafe = store.category.filter(name="카페").exists()
             isPickupZone = Menu.objects.filter(
-                store=partner.store).filter(tag__name="픽업존").exists()
+                store=store).filter(tag__name="픽업존").exists()
             isNormalMenu = Menu.objects.filter(
-                store=partner.store).filter(
+                store=store).filter(
                     ~Q(tag__name="픽업존") and
                     ~Q(tag__name="카페")
             ).exists()
 
             pickupZoneMenu = Menu.objects.filter(
-                store=partner.store).filter(tag__name="픽업존")
+                store=store).filter(tag__name="픽업존")
             pickupTimes = PickupTime.objects.all()
 
             if(isPickupZone):
@@ -119,7 +123,7 @@ def kakaoView_OrderDetails(kakaoPayload):
                 for pickupTime in pickupTimes:
                     menuList = Menu.objects.filter(
                         tag__name="픽업존",
-                        store=partner.store,
+                        store=store,
                         pickup_time=pickupTime,
                         status=OC_OPEN
                     )
@@ -133,14 +137,14 @@ def kakaoView_OrderDetails(kakaoPayload):
                         microsecond=0
                     )
 
-                    if(partner.store.name == '봉된장'):
+                    if(store.name == '봉된장'):
                         time = datetime.timedelta(minutes=30)
                     else:
-                        if(partner.store.area == STORE_AREA_C_1 or
-                                partner.store.area == STORE_AREA_C_2 or
-                                partner.store.area == STORE_AREA_C_3):
+                        if(store.area == STORE_AREA_C_1 or
+                                store.area == STORE_AREA_C_2 or
+                                store.area == STORE_AREA_C_3):
                             time = datetime.timedelta(minutes=40)
-                        elif(partner.store.area == STORE_AREA_C_5):
+                        elif(store.area == STORE_AREA_C_5):
                             time = datetime.timedelta(minutes=20)
                         else:
                             time = datetime.timedelta(minutes=0)
@@ -150,11 +154,6 @@ def kakaoView_OrderDetails(kakaoPayload):
                         pickupTime=delivery_pickup_time.strftime(
                             '%-m월 %-d일 %p %-I시 %-M분').replace('AM', '오전').replace('PM', '오후')
                     )
-
-                    header = {
-                        'title': title,
-                        'imageUrl': '{}{}'.format(HOST_URL, PARTNER_ORDER_SHEET_IMG),
-                    }
 
                     if(menuList):
                         totalCount = 0
@@ -174,24 +173,13 @@ def kakaoView_OrderDetails(kakaoPayload):
                             totalCount += orderByMenu.count()
 
                             if(orderByMenu.count() > 0):
-                                imageUrl = '{}{}'.format(
-                                    HOST_URL, menu.imgURL())
-                                if(partner.store.name == '마치래빗샐러드'):
-                                    kakaoForm.ListCard_Push(
-                                        '{}'.format(menu.name),
-                                        '들어온 주문 : {}개 / {}원'.format(
-                                            orderByMenu.count(), format((orderByMenu.first().totalPrice - orderByMenu.first().delivery_fee) * orderByMenu.count(), ',')),
-                                        imageUrl,
-                                        None
-                                    )
-                                else:
-                                    kakaoForm.ListCard_Push(
-                                        '{}'.format(menu.name),
-                                        '들어온 주문 : {}개'.format(
-                                            orderByMenu.count()),
-                                        imageUrl,
-                                        None
-                                    )
+                                kakaoForm.ListCard_Push(
+                                    '{}'.format(menu.name),
+                                    '들어온 주문 : {}개 / {}원'.format(
+                                        orderByMenu.count(), format((orderByMenu.first().totalPrice - orderByMenu.first().delivery_fee) * orderByMenu.count(), ',')),
+                                    imageUrl,
+                                    None
+                                )
                             else:
                                 pass
 
@@ -208,7 +196,7 @@ def kakaoView_OrderDetails(kakaoPayload):
             if(isNormalMenu):
                 for pickupTime in pickupTimes:
                     menuList = Menu.objects.filter(
-                        store=partner.store, pickup_time=pickupTime, status=OC_OPEN).filter(
+                        store=store, pickup_time=pickupTime, status=OC_OPEN).filter(
                             ~Q(tag__name="픽업존") &
                             ~Q(tag__name="카페")
                     )
@@ -254,7 +242,7 @@ def kakaoView_OrderDetails(kakaoPayload):
                                 imageUrl = '{}{}'.format(
                                     HOST_URL, menu.imgURL())
 
-                                if(partner.store.name == '마치래빗샐러드'):
+                                if(store.name == '마치래빗샐러드'):
                                     kakaoForm.ListCard_Push(
                                         '{}'.format(menu.name),
                                         '들어온 주문 : {}개 / {}원'.format(

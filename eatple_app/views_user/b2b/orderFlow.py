@@ -135,6 +135,7 @@ def kakaoView_MenuListup(kakaoPayload):
     order = orderValidation(kakaoPayload)
     if (order != None):
         order.store = None
+        order.menu = None
         order.save()
 
         # Order Record
