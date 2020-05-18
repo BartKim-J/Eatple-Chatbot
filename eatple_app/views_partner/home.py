@@ -87,54 +87,104 @@ def kakaoView_Home(partner):
         )
 
     storeList = Store.objects.filter(crn__CRN_id=partner.store.crn.CRN_id)
-    for store in storeList:
+    if(storeList.count() == 1):
+        kakaoForm.BasicCard_Push(
+            '조회 시간 : {}'.format(datetime.datetime.now().strftime(
+                '%-m/%-d %p %-I시 %-M분').replace('AM', '오전').replace('PM', '오후')),
+            '',
+            {},
+            []
+        )
+        kakaoForm.BasicCard_Add()
+
         buttons = [
             {
                 'action': 'block',
-                'label': '주문 확인하기',
+                'label': '🧾  주문 확인하기',
                 'messageText': KAKAO_EMOJI_LOADING,
                 'blockId': KAKAO_BLOCK_PARTNER_GET_ORDER_DETAILS,
                 'extra': {
-                    KAKAO_PARAM_STORE_ID: store.store_id,
-                    KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_PARTNER_HOME
-                }
-            },
-            {
-                'action': 'block',
-                'label': ' 정산일정 조회',
-                'messageText': KAKAO_EMOJI_LOADING,
-                'blockId': KAKAO_BLOCK_PARTNER_CALCULATE,
-                'extra': {
-                    KAKAO_PARAM_STORE_ID: store.store_id,
+                    KAKAO_PARAM_STORE_ID: partner.store.store_id,
                     KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_PARTNER_HOME
                 }
             },
         ]
 
-        if(store.coverImgURL().find('default') == -1):
+        if(partner.store.coverImgURL().find('default') == -1):
             thumbnail = {
-                'imageUrl': '{}{}'.format(HOST_URL, store.coverImgURL()),
+                'imageUrl': '{}{}'.format(HOST_URL, partner.store.coverImgURL()),
                 'fixedRatio': 'True',
                 'width': 800,
                 'height': 800,
             }
         else:
             thumbnail = {
-                'imageUrl': '{}{}'.format(HOST_URL, store.logoImgURL()),
+                'imageUrl': '{}{}'.format(HOST_URL, partner.store.logoImgURL()),
                 'fixedRatio': 'true',
                 'width': 800,
                 'height': 800,
             }
 
         kakaoForm.BasicCard_Push(
-            '매장 : {store}'.format(store=store.name),
-            '조회 시간 : {}'.format(datetime.datetime.now().strftime(
-                '%-m월 %-d일 %p %-I시 %-M분').replace('AM', '오전').replace('PM', '오후')),
+            '매장 : {store}'.format(store=partner.store.name),
+            '',
             thumbnail,
             buttons
         )
+        kakaoForm.BasicCard_Add()
+    else:
+        kakaoForm.BasicCard_Push(
+            '조회 시간 : {}'.format(datetime.datetime.now().strftime(
+                '%-m/%-d %p %-I시 %-M분').replace('AM', '오전').replace('PM', '오후')),
+            '',
+            {},
+            []
+        )
+        kakaoForm.BasicCard_Add()
 
-    kakaoForm.BasicCard_Add()
+        for store in storeList:
+            buttons = [
+                {
+                    'action': 'block',
+                    'label': '🧾  주문 확인하기',
+                    'messageText': KAKAO_EMOJI_LOADING,
+                    'blockId': KAKAO_BLOCK_PARTNER_GET_ORDER_DETAILS,
+                    'extra': {
+                        KAKAO_PARAM_STORE_ID: store.store_id,
+                        KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_PARTNER_HOME
+                    }
+                },
+            ]
+
+            if(store.coverImgURL().find('default') == -1):
+                thumbnail = {
+                    'imageUrl': '{}{}'.format(HOST_URL, store.coverImgURL()),
+                    'fixedRatio': 'True',
+                    'width': 800,
+                    'height': 800,
+                }
+            else:
+                thumbnail = {
+                    'imageUrl': '{}{}'.format(HOST_URL, store.logoImgURL()),
+                    'fixedRatio': 'true',
+                    'width': 800,
+                    'height': 800,
+                }
+
+            if(True):
+                pass
+                stock = store.getLucnhCurrentStock()
+            else:
+                stock = 0
+
+            kakaoForm.BasicCard_Push(
+                '매장 : {store}'.format(store=store.name),
+                '총 주문수 : {}개'.format(stock),
+                thumbnail,
+                buttons
+            )
+
+        kakaoForm.BasicCard_Add()
 
     kakaoForm.QuickReplies_AddWithMap(QUICKREPLIES_MAP)
 
@@ -171,8 +221,6 @@ def GET_PartnerHome(request):
                     if(storeListCount == 1):
                         partner.storeRegistration(storeList.first())
                     elif(storeListCount > 1):
-                        for store in storeList:
-                            print(store.name)
                         partner.storeRegistration(storeList.first())
                     else:
                         return errorView('잘못된 사업자 등록번호', '잇플에 등록되지 않은 사업자 번호입니다.')
