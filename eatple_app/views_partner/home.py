@@ -86,11 +86,8 @@ def kakaoView_Home(partner):
             },
         )
 
-    print(partner.store.crn.CRN_id)
     storeList = Store.objects.filter(crn__CRN_id=partner.store.crn.CRN_id)
     for store in storeList:
-        print(store, store.crn.CRN_id)
-
         buttons = [
             {
                 'action': 'block',

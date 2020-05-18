@@ -8,6 +8,8 @@ from eatple_app.views_system.debugger import *
 #
 # # # # # # # # # # # # # # # # # # # # # # # # #
 
+CONTEXT_LINE = '―――――――――――――\n'
+
 
 def orderCheckTimeValidation():
     orderTimeSheet = OrderTimeSheet()
@@ -58,38 +60,7 @@ def kakaoView_OrderDetails(kakaoPayload):
     ]
 
     buttons = [
-
     ]
-
-    """
-    # Test
-    kakaoForm.BasicCard_Push(
-        '3월 15일 오후 12시 10분: 총 13개',
-        '메뉴 이름이름asdfsdafsadf A - 13개\n메뉴 이름이름asdfasdfasf B - 13개\n메뉴 이름이름asdfasdfasf B - 13개',
-        {},
-        buttons
-    )
-    kakaoForm.BasicCard_Add()
-    kakaoForm.BasicCard_Push(
-        '3월 15일 오후 12시 10분: 총 13개',
-        '메뉴 이름이름asdfasdfasf B - 13개\n메뉴 이름이름asdfasdfasf B - 13개\n메뉴 이름이름asdfasdfasf B - 13개\n메뉴 이름이름asdfasdfasf B - 13개\n메뉴 이름이름asdfasdfasf B - 13개\n메뉴 이름이름 A - 13개\n메뉴 이름이름 A - 13개\n메뉴 이름이름 A - 13개\n메뉴 이름이름 A - 13개\n메뉴 이름이름 A - 13개\n메뉴 이름이름 A - 13개\n메뉴 이름이름 A - 13개',
-        {},
-        buttons
-    )
-    kakaoForm.BasicCard_Add()
-    kakaoForm.BasicCard_Push(
-        '3월 15일 오후 12시 10분: 총 13개',
-        '메뉴 이름이름asdfas C - 13개\n메뉴 이름이름asdfasdfasf B - 13개\n메뉴 이름이름asdfasdfasf B - 13개\n메뉴 이름이름asdfasdfasf B - 13개\n메뉴 이름이름asdfasdfasf B - 13개\n메뉴 이름이름 A - 13개\n메뉴 이름이름 A - 13개\n메뉴 이름이름 A - 13개\n메뉴 이름이름 A - 13개\n메뉴 이름이름 A - 13개\n메뉴 이름이름 A - 13개\n메뉴 이름이름 A - 13개\n메뉴 이름이름 A - 13개',
-        {},
-        buttons
-    )
-    
-    kakaoForm.BasicCard_Add()
-
-    kakaoForm.QuickReplies_AddWithMap(ORDER_LIST_QUICKREPLIES_MAP)
-
-    return JsonResponse(kakaoForm.GetForm())
-    """
 
     if(orderCheckTimeValidation() != None):
         if(partner.is_staff == False):
@@ -155,8 +126,11 @@ def kakaoView_OrderDetails(kakaoPayload):
                             '%-m월 %-d일 %p %-I시 %-M분').replace('AM', '오전').replace('PM', '오후')
                     )
 
+                    context = CONTEXT_LINE
+
                     if(menuList):
                         totalCount = 0
+                        totalAmount = 0
 
                         for menu in menuList:
                             orderByMenu = Order.objects.filter(menu=menu).filter(
@@ -170,21 +144,36 @@ def kakaoView_OrderDetails(kakaoPayload):
                                 Q(pickup_time=datetime_pickup_time)
                             )
 
-                            totalCount += orderByMenu.count()
-
                             if(orderByMenu.count() > 0):
-                                kakaoForm.ListCard_Push(
-                                    '{}'.format(menu.name),
-                                    '들어온 주문 : {}개 / {}원'.format(
-                                        orderByMenu.count(), format((orderByMenu.first().totalPrice - orderByMenu.first().delivery_fee) * orderByMenu.count(), ',')),
-                                    imageUrl,
-                                    None
+                                amount = (orderByMenu.first(
+                                ).totalPrice - orderByMenu.first().delivery_fee) * orderByMenu.count()
+
+                                totalCount += orderByMenu.count()
+                                totalAmount += amount
+
+                                context += '{menu} - {count}개 / {amount}원\n'.format(
+                                    menu=menu.name,
+                                    count=orderByMenu.count(),
+                                    amount=format(amount, ',')
                                 )
                             else:
                                 pass
 
                         if(totalCount > 0):
-                            kakaoForm.ListCard_Add(header)
+                            total_context = '총 {totalCount}개 - {totalAmount}원\n'.format(
+                                totalCount=totalCount,
+                                totalAmount=format(totalAmount, ','),
+                            )
+
+                            total_context += context
+
+                            kakaoForm.BasicCard_Push(
+                                title,
+                                total_context,
+                                {},
+                                [],
+                            )
+                            kakaoForm.BasicCard_Add()
                         else:
                             pass
                 else:
@@ -213,16 +202,17 @@ def kakaoView_OrderDetails(kakaoPayload):
                         microsecond=0
                     )
 
-                    header = {
-                        'title': '{pickupTime}'.format(
-                            pickupTime=datetime_pickup_time.strftime(
-                                '%-m월 %-d일 %p %-I시 %-M분').replace('AM', '오전').replace('PM', '오후'),
-                        ),
-                        'imageUrl': '{}{}'.format(HOST_URL, PARTNER_ORDER_SHEET_IMG),
-                    }
+                    title = '{pickupTime}'.format(
+                        pickupTime=datetime_pickup_time.strftime(
+                            '%-m월 %-d일 %p %-I시 %-M분').replace('AM', '오전').replace('PM', '오후')
+                    )
+
+                    context = CONTEXT_LINE
 
                     if(menuList):
                         totalCount = 0
+                        totalAmount = 0
+
                         for menu in menuList:
                             orderByPickupTime = Order.objects.filter(menu=menu).filter(
                                 (
@@ -234,34 +224,39 @@ def kakaoView_OrderDetails(kakaoPayload):
                                 ) &
                                 Q(pickup_time=datetime_pickup_time)
                             )
-                            orderCount = orderByPickupTime.count()
 
-                            totalCount += orderCount
+                            if(orderByPickupTime.count() > 0):
+                                amount = (orderByPickupTime.first(
+                                ).totalPrice - orderByPickupTime.first().delivery_fee) * orderByPickupTime.count()
 
-                            if(orderCount > 0):
-                                imageUrl = '{}{}'.format(
-                                    HOST_URL, menu.imgURL())
+                                totalCount += orderByPickupTime.count()
+                                totalAmount += amount
 
-                                if(store.name == '마치래빗샐러드'):
-                                    kakaoForm.ListCard_Push(
-                                        '{}'.format(menu.name),
-                                        '들어온 주문 : {}개 / {}원'.format(
-                                            orderCount, format((orderByPickupTime.first().totalPrice - orderByPickupTime.first().delivery_fee) * orderCount, ',')),
-                                        imageUrl,
-                                        None
-                                    )
-                                else:
-                                    kakaoForm.ListCard_Push(
-                                        '{}'.format(menu.name),
-                                        '들어온 주문 : {}개'.format(orderCount),
-                                        imageUrl,
-                                        None
-                                    )
+                                context += '{menu} - {count}개 / {amount}원\n'.format(
+                                    menu=menu.name,
+                                    count=orderByPickupTime.count(),
+                                    amount=format(amount, ',')
+                                )
                             else:
                                 pass
 
                         if(totalCount > 0):
-                            kakaoForm.ListCard_Add(header)
+                            total_context = '총 {totalCount}개 - {totalAmount}원\n'.format(
+                                totalCount=totalCount,
+                                totalAmount=format(totalAmount, ','),
+                            )
+
+                            total_context += context
+
+                            kakaoForm.BasicCard_Push(
+                                title,
+                                total_context,
+                                {},
+                                [],
+                            )
+                            kakaoForm.BasicCard_Add()
+                        else:
+                            pass
         else:
             kakaoForm.BasicCard_Push(
                 '오늘은 들어온 주문이 없어요.',
