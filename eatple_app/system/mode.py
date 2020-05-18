@@ -3,7 +3,7 @@ from django.conf import settings
 
 ###########################################################################################
 # DEBUG MODE FLAG
-DEBUG_USER_ID = 1357204421
+DEBUG_USER_ID = 1227287084
 
 if(settings.SETTING_ID == 'DEPLOY'):
     ORDER_TIME_CHECK_DEBUG_MODE = False
