@@ -425,6 +425,38 @@ def getUserActive():
 
     return data
 
+
+def getOrderDelegated():
+    count = 0
+
+    count = Order.objects.filter(
+        Q(payment_status=EATPLE_ORDER_STATUS_PAID) &
+        ~Q(delegate=None) &
+        ~Q(ordersheet__user__is_staff=True)
+    ).count()
+
+    return count
+
+
+def userPersenalData():
+    userList = User.objects.all()
+    age = 0
+    man = 0
+    woman = 0
+
+    for user in userList:
+        age += 2020 - int(user.birthyear)
+        if(user.gender == 'female'):
+            woman += 1
+
+    age = age/userList.count()
+    woman = woman/userList.count() * 100
+    man = 100 - woman
+
+    print('평균나이', age)
+    print('여성 비율', woman)
+    print('남성 비율', man)
+
 ########################################################################
 # TEMPLATES
 
@@ -472,6 +504,8 @@ def dashboard(request):
 
     # userActive = getUserActive()
     # showActiveStatus(orderTimeSheet)
+    # print('부탁하기된 주문수', getOrderDelegated())
+    # userPersenalData()
 
     log = LogEntry.objects.all()
 

@@ -279,6 +279,10 @@ def kakaoView_OrderDetails(kakaoPayload):
     if (partner == None):
         return errorView('잘못된 사용자 계정', '찾을 수 없는 사용자 계정 아이디입니다.')
 
+    storeList = Store.objects.filter(
+        Q(crn__CRN_id=partner.store.crn.CRN_id)
+    )
+
     store = storeValidation(kakaoPayload)
 
     ORDER_LIST_QUICKREPLIES_MAP = [
@@ -304,7 +308,6 @@ def kakaoView_OrderDetails(kakaoPayload):
         availableOrders = orderManager.getAvailableOrders()
 
         if(availableOrders.exists() == True):
-
             if (store == None):
                 storeList = Store.objects.filter(
                     Q(crn__CRN_id=partner.store.crn.CRN_id)
@@ -323,7 +326,6 @@ def kakaoView_OrderDetails(kakaoPayload):
                             ~Q(tag__name="픽업존") and
                             ~Q(tag__name="카페")
                     ).exists()
-
             else:
                 isCafe = store.category.filter(name="카페").exists()
                 isPickupZone = Menu.objects.filter(
@@ -342,9 +344,14 @@ def kakaoView_OrderDetails(kakaoPayload):
             if(isNormalMenu):
                 normal_component(partner, store, kakaoForm)
         else:
+            if(store != None and storeList.count() > 1):
+                storeName = '매장 : {}'.format(store.name)
+            else:
+                storeName = ''
+
             kakaoForm.BasicCard_Push(
                 '오늘은 들어온 주문이 없어요.',
-                '',
+                storeName,
                 {},
                 []
             )
@@ -370,23 +377,25 @@ def kakaoView_OrderDetails(kakaoPayload):
             ~Q(name=store.name)
         )
     else:
-        storeList = Store.objects.filter(
-            Q(crn__CRN_id=partner.store.crn.CRN_id)
-        )
-
-    for storeEntry in storeList:
-        ORDER_LIST_QUICKREPLIES_MAP.insert(0,
-                                           {
-                                               'action': 'block',
-                                               'label': storeEntry.name,
-                                               'messageText': KAKAO_EMOJI_LOADING,
-                                               'blockId': KAKAO_BLOCK_PARTNER_GET_ORDER_DETAILS,
-                                               'extra': {
-                                                   KAKAO_PARAM_STORE_ID: storeEntry.store_id,
-                                                   KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_PARTNER_GET_ORDER_DETAILS
-                                               }
-                                           },
-                                           )
+        if(storeList.count() > 1):
+            storeList = Store.objects.filter(
+                Q(crn__CRN_id=partner.store.crn.CRN_id)
+            )
+            for storeEntry in storeList:
+                ORDER_LIST_QUICKREPLIES_MAP.insert(0,
+                                                   {
+                                                       'action': 'block',
+                                                       'label': storeEntry.name,
+                                                       'messageText': KAKAO_EMOJI_LOADING,
+                                                       'blockId': KAKAO_BLOCK_PARTNER_GET_ORDER_DETAILS,
+                                                       'extra': {
+                                                           KAKAO_PARAM_STORE_ID: storeEntry.store_id,
+                                                           KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_PARTNER_GET_ORDER_DETAILS
+                                                       }
+                                                   },
+                                                   )
+        else:
+            pass
 
     kakaoForm.QuickReplies_AddWithMap(ORDER_LIST_QUICKREPLIES_MAP)
 
