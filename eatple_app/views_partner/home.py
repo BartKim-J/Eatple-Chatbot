@@ -171,15 +171,9 @@ def kakaoView_Home(partner):
                     'height': 800,
                 }
 
-            if(True):
-                pass
-                stock = store.getLucnhCurrentStock()
-            else:
-                stock = 0
-
             kakaoForm.BasicCard_Push(
                 '매장 : {store}'.format(store=store.name),
-                '총 주문수 : {}개'.format(stock),
+                '',
                 thumbnail,
                 buttons
             )
