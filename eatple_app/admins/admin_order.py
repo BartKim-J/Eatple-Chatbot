@@ -334,12 +334,21 @@ class OrderAdmin(ImportExportMixin, admin.ModelAdmin):
     field_delivery_pg_fee.short_description = "+ 배달료 PG 수수료"
 
     def field_delivery_address(self, obj):
-        delivery_address = obj.get_delivery_address()
+        if(obj.menu != None):
+            isPickupZone = obj.menu.tag.filter(name='픽업존').exists()
+            delivery_address = obj.get_delivery_address()
 
-        if(delivery_address == None):
-            return '픽업존'
+            if(isPickupZone):
+                if(delivery_address == None):
+                    return '픽업존'
+
+                else:
+                    return delivery_address
+            else:
+                return '테이크아웃'
         else:
-            return delivery_address
+            return '테이크아웃'
+
     field_delivery_address.short_description = '배달 호수'
     field_delivery_address.admin_order_field = 'ordersheet__user__delivery_address'
 
