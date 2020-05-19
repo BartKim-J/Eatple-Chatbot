@@ -16,10 +16,6 @@ def orderCheckTimeValidation():
     currentDate = orderTimeSheet.GetCurrentDate()
     currentDateWithoutTime = orderTimeSheet.GetCurrentDateWithoutTime()
 
-    # DEBUG
-    if(True):
-        return True
-
     lunchCheckTimeStart = orderTimeSheet.GetPrevLunchOrderTimeEnd()
     lunchCheckTimeEnd = orderTimeSheet.GetLunchOrderPickupTimeEnd()
 
