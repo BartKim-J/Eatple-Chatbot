@@ -58,7 +58,6 @@ packaging==20.1
 pep8==1.7.1
 phonenumbers==8.11.0
 Pillow==6.2.1
-pkg-resources==0.0.0
 pyasn1==0.4.8
 pyasn1-modules==0.2.8
 pycountry==19.8.18
