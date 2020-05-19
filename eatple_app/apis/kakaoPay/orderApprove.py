@@ -2,7 +2,7 @@
 from eatple_app.views_system.include import *
 from eatple_app.views_system.debugger import *
 
-from eatple_app.apis.slack.slack_logger import SlackLogFollow, SlackLogUnfollow
+from eatple_app.apis.slack.slack_logger import Slack_LogFollow, Slack_LogUnfollow
 from eatple_app.apis.rest.api.user.validation import *
 
 

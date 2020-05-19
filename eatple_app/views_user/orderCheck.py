@@ -5,6 +5,8 @@ from eatple_app.views_system.debugger import *
 from eatple_app.views import GET_UserHome
 from eatple_app.views_user.b2b.orderCheck import GET_B2B_OrderDetails, GET_B2B_EatplePass
 
+from eatple_app.apis.pixel.pixel_logger import Pixel_eatplePassCheck
+
 # STATIC EP_define
 ORDER_LIST_LENGTH = 8
 
@@ -509,6 +511,8 @@ def GET_OrderDetails(request):
         if (user == None):
             return GET_UserHome(request)
 
+        Pixel_eatplePassCheck(user)
+
         if(isB2BUser(user)):
             return GET_B2B_OrderDetails(request)
         else:
@@ -529,6 +533,8 @@ def GET_EatplePass(request):
         user = userValidation(kakaoPayload)
         if (user == None):
             return GET_UserHome(request)
+
+        Pixel_eatplePassCheck(user)
 
         if(isB2BUser(user)):
             return GET_B2B_EatplePass(request)

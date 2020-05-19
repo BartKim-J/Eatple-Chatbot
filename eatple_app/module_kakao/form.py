@@ -2,7 +2,7 @@
 from eatple_app.views_system.include import *
 from eatple_app.views_system.debugger import *
 
-from eatple_app.apis.slack.slack_logger import SlackLogSignUp
+from eatple_app.apis.slack.slack_logger import Slack_LogSignUp
 
 
 class KakaoInstantForm():

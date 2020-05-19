@@ -2,7 +2,7 @@
 from eatple_app.views_system.include import *
 from eatple_app.views_system.debugger import *
 
-from eatple_app.apis.slack.slack_logger import SlackLogFollow, SlackLogUnfollow
+from eatple_app.apis.slack.slack_logger import Slack_LogFollow, Slack_LogUnfollow
 from eatple_app.apis.rest.api.user.validation import *
 
 
@@ -50,11 +50,12 @@ def GET_KAKAO_PAY_OrderSheet(request):
             print(message)
             return JsonResponse({'status': 300, 'message': message})
 
+        '''
         # Time Check
         sellingTime = order.menu.selling_time
         currentSellingTime = sellingTimeCheck()
         isClosedDay = weekendTimeCheck(SELLING_TIME_LUNCH)
-
+    
         if(currentSellingTime != sellingTime or isClosedDay == True):
             message = '현재 주문 가능시간이 아닙니다.'
             return JsonResponse({'status': 301, 'message': message})
@@ -62,6 +63,7 @@ def GET_KAKAO_PAY_OrderSheet(request):
         if(order.store.status != OC_OPEN or order.menu.status != OC_OPEN):
             message = '현재 주문 가능시간이 아닙니다.'
             return JsonResponse({'status': 301, 'message': message})
+        '''
 
         order.payment_type = ORDER_PAYMENT_KAKAO_PAY
         order.save()

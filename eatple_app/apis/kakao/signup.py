@@ -2,7 +2,7 @@
 from eatple_app.views_system.include import *
 from eatple_app.views_system.debugger import *
 
-from eatple_app.apis.slack.slack_logger import SlackLogFollow, SlackLogUnfollow, SlackLogSignUp
+from eatple_app.apis.slack.slack_logger import Slack_LogFollow, Slack_LogUnfollow, Slack_LogSignUp
 
 
 def userSignUp(userProfile):
@@ -125,7 +125,7 @@ def GET_KAKAO_SignupSetup(request):
         user = userSignUp(kakaoResponse.json())
 
         # @SLACK LOGGER
-        SlackLogSignUp(user)
+        Slack_LogSignUp(user)
     else:
         pass
 

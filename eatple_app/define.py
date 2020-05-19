@@ -23,6 +23,7 @@ from eatple_app.system.urls import *
 from eatple_app.system.model_type import *
 from eatple_app.system.timeSheet import *
 from eatple_app.system.slack import *
+from eatple_app.system.pixel import *
 from eatple_app.system.kakao import *
 from eatple_app.system.library import *
 

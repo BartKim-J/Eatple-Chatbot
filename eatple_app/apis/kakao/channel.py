@@ -16,8 +16,8 @@ def POST_KAKAO_ChannelLog(request):
     event = received_json_data['event']
 
     if(event == 'added'):
-        SlackLogFollow(received_json_data['id'])
+        Slack_LogFollow(received_json_data['id'])
     else:
-        SlackLogUnfollow(received_json_data['id'])
+        Slack_LogUnfollow(received_json_data['id'])
 
     return JsonResponse({'event': 'Eatple Channel Follow'}, status=201)

@@ -1,7 +1,8 @@
 # Define
 from eatple_app.define import *
 
-from eatple_app.apis.slack.slack_logger import SlackLogPayOrder, SlackLogCancelOrder, SlackLogUsedOrder
+from eatple_app.apis.slack.slack_logger import Slack_LogPayOrder, Slack_LogCancelOrder, Slack_LogUsedOrder
+from eatple_app.apis.pixel.pixel_logger import Pixel_Purchase, Pixel_PurchaseCancel, Pixel_eatplePassUsed
 
 # Django Library
 from django.urls import reverse
@@ -13,6 +14,7 @@ from eatple_app.model.orderRecord import OrderRecordSheet, OrderRecord
 
 from eatple_app.module_kakao.kakaoPay import *
 from eatple_app.module_iamport.iamport import *
+
 
 FRIEND_DISCOUNT = 2000
 PERCENT_DISCOUNT = 0
@@ -610,8 +612,11 @@ class Order(PaymentDetails, OrderInfo, models.Model):
 
         self.save()
 
+        # Pixel
+        Pixel_Purchase(self.ordersheet.user, self)
+
         # @SLACK LOGGER
-        SlackLogPayOrder(self)
+        Slack_LogPayOrder(self)
 
         return self
 
@@ -645,8 +650,11 @@ class Order(PaymentDetails, OrderInfo, models.Model):
             orderRecordSheet.recordUpdate(
                 orderRecordSheet.user, orderRecordSheet.order, ORDER_RECORD_PAYMENT_CANCELED)
 
+            # Pixel
+            Pixel_PurchaseCancel(self.ordersheet.user, self)
+
             # @SLACK LOGGER
-            SlackLogCancelOrder(self)
+            Slack_LogCancelOrder(self)
 
         return isCancelled
 
@@ -667,8 +675,11 @@ class Order(PaymentDetails, OrderInfo, models.Model):
         orderRecordSheet.recordUpdate(
             orderRecordSheet.user, orderRecordSheet.order, ORDER_RECORD_PAYMENT_COMPLETED)
 
+        # Pixel
+        Pixel_eatplePassUsed(self)
+
         # @SLACK LOGGER
-        SlackLogUsedOrder(self)
+        Slack_LogUsedOrder(self)
 
         return self
 
@@ -801,8 +812,11 @@ class UserOrderManager(OrderManager):
 
 
 class PartnerOrderManager(OrderManager):
-    def __init__(self, partner, selling_time=None):
-        self.orderList = Order.objects.filter(store=partner.store)
+    def __init__(self, partner, selling_time=None, store=None):
+        if(store == None):
+            self.orderList = Order.objects.filter(store=partner.store)
+        else:
+            self.orderList = Order.objects.filter(store=store)
 
         if(selling_time != None):
             self.orderList = self.orderList.filter(

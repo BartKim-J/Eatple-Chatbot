@@ -7,7 +7,7 @@ from django.shortcuts import render
 from django.views.decorators.csrf import csrf_exempt
 from django.http import JsonResponse
 
-from eatple_app.apis.slack.slack_logger import SlackLogFollow, SlackLogUnfollow
+from eatple_app.apis.slack.slack_logger import Slack_LogFollow, Slack_LogUnfollow
 
 # Models
 from eatple_app.models import *
@@ -25,4 +25,3 @@ from eatple_app.module_kakao.kakaoPay import *
 from eatple_app.module_kakao.kakao import *
 from eatple_app.module_kakao.form import *
 from eatple_app.module_kakao.validation import *
-

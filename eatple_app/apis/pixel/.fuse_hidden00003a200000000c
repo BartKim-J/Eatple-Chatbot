@@ -1,0 +1,124 @@
+# Define
+from eatple_app.define import *
+
+import time
+
+
+def Pixel_userRegister(user):
+    user_data = UserData(
+        email=user.email,
+        phone=user.phone_number.as_national,
+        external_id=user.app_user_id,
+    )
+
+    event = Event(
+        event_name='CompleteRegistration',
+        event_time=int(time.time()),
+        user_data=user_data,
+    )
+
+    events = [event]
+
+    event_request = EventRequest(
+        events=events,
+        pixel_id=PIXEL_ID
+    )
+
+    event_response = event_request.execute()
+    return event_response
+
+
+def Pixel_viewStore(user):
+    user_data = UserData(
+        email=user.email,
+        phone=user.phone_number.as_national,
+        external_id=user.app_user_id,
+    )
+
+    event = Event(
+        event_name='상점보기',
+        event_time=int(time.time()),
+        user_data=user_data,
+    )
+
+    events = [event]
+
+    event_request = EventRequest(
+        events=events,
+        pixel_id=PIXEL_ID
+    )
+
+    event_response = event_request.execute()
+    return event_response
+
+
+def Pixel_viewMenu(user):
+    user_data = UserData(
+        email=user.email,
+        phone=user.phone_number.as_national,
+        external_id=user.app_user_id,
+    )
+
+    event = Event(
+        event_name='메뉴 선택중',
+        event_time=int(time.time()),
+        user_data=user_data,
+    )
+
+    events = [event]
+
+    event_request = EventRequest(
+        events=events,
+        pixel_id=PIXEL_ID
+    )
+
+    event_response = event_request.execute()
+    return event_response
+
+
+def Pixel_setPickupTime(user):
+    user_data = UserData(
+        email=user.email,
+        phone=user.phone_number.as_national,
+        external_id=user.app_user_id,
+    )
+
+    event = Event(
+        event_name='픽업시간 설정',
+        event_time=int(time.time()),
+        user_data=user_data,
+    )
+
+    events = [event]
+
+    event_request = EventRequest(
+        events=events,
+        pixel_id=PIXEL_ID
+    )
+
+    event_response = event_request.execute()
+    return event_response
+
+
+def Pixel_orderSheet(user):
+    user_data = UserData(
+        email=user.email,
+        phone=user.phone_number.as_national,
+        external_id=user.app_user_id,
+    )
+
+    event = Event(
+        event_name='주문내역 확인',
+        event_time=int(time.time()),
+        user_data=user_data,
+    )
+
+    events = [event]
+
+    event_request = EventRequest(
+        events=events,
+        pixel_id=PIXEL_ID
+    )
+
+    event_response = event_request.execute()
+    return event_response

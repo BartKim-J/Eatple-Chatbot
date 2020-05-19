@@ -3,7 +3,7 @@
 from eatple_app.define import *
 
 
-def SlackLogFollow(nickname):
+def Slack_LogFollow(nickname):
     res = client.chat_postMessage(
         channel=SLACK_CHANNEL_EATPLE_LOG,
         text="{name}님이 잇플 채널을 팔로우햇쥐:mouse:".format(
@@ -14,7 +14,7 @@ def SlackLogFollow(nickname):
     return res
 
 
-def SlackLogUnfollow(nickname):
+def Slack_LogUnfollow(nickname):
     res = client.chat_postMessage(
         channel=SLACK_CHANNEL_EATPLE_LOG,
         text="{name}님이 잇플 채널을 언팔로우햇..쥐:mouse:".format(
@@ -25,7 +25,7 @@ def SlackLogUnfollow(nickname):
     return res
 
 
-def SlackLogSignUp(user):
+def Slack_LogSignUp(user):
     res = client.chat_postMessage(
         channel=SLACK_CHANNEL_EATPLE_LOG,
         text="{name}님이 잇플에 들어옴, 흥폭발:face_with_hand_over_mouth:".format(
@@ -36,7 +36,7 @@ def SlackLogSignUp(user):
     return res
 
 
-def SlackLogUsedOrder(order):
+def Slack_LogUsedOrder(order):
     if(settings.SETTING_ID == 'DEPLOY'):
         HOST_URL = 'https://eapi.eatple.com'
         DEV_LOG = ''
@@ -92,7 +92,7 @@ def SlackLogUsedOrder(order):
         return res
 
 
-def SlackLogPayOrder(order):
+def Slack_LogPayOrder(order):
     if(settings.SETTING_ID == 'DEPLOY'):
         HOST_URL = 'https://eapi.eatple.com'
         DEV_LOG = ''
@@ -239,7 +239,7 @@ def SlackLogPayOrder(order):
         return res
 
 
-def SlackLogCancelOrder(order):
+def Slack_LogCancelOrder(order):
     if(settings.SETTING_ID == 'DEPLOY'):
         HOST_URL = 'https://eapi.eatple.com'
         DEV_LOG = ''

@@ -17,7 +17,7 @@ def orderCheckTimeValidation():
     currentDateWithoutTime = orderTimeSheet.GetCurrentDateWithoutTime()
 
     # DEBUG
-    if(VALIDATION_DEBUG_MODE):
+    if(True):
         return True
 
     lunchCheckTimeStart = orderTimeSheet.GetPrevLunchOrderTimeEnd()
@@ -301,7 +301,7 @@ def kakaoView_OrderDetails(kakaoPayload):
         if(partner.is_staff == False):
             partner.store.orderChecked()
 
-        orderManager = PartnerOrderManager(partner)
+        orderManager = PartnerOrderManager(partner, store=store)
         orderManager.orderPaidCheck()
         orderManager.orderPenddingCleanUp()
 

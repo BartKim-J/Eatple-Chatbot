@@ -5,6 +5,8 @@ from eatple_app.views_system.debugger import *
 from eatple_app.views import GET_UserHome, GET_EatplePass
 from eatple_app.views_user.b2b.orderFlow import GET_B2B_Store, GET_B2B_Menu, SET_B2B_PickupTime, SET_B2B_OrderSheet
 
+from eatple_app.apis.pixel.pixel_logger import Pixel_viewStore, Pixel_viewMenu, Pixel_setPickupTime, Pixel_orderSheet
+
 # STATIC CONFIG
 MENU_LIST_LENGTH = 20
 DEFAULT_DISTANCE_CONDITION = 800
@@ -1514,9 +1516,14 @@ def kakaoView_OrderPayment(kakaoPayload):
     if(store == None or menu == None or pickup_time == None):
         return errorView('잘못된 주문 내역', '잘못된 주문 정보입니다.')
 
-    delivery_address = deliveryAddressValidation(kakaoPayload)
-    if(delivery_address == None):
-        return errorView('잘못된 주문 내역', '잘못된 주문 정보입니다.')
+    isPickupZone = menu.tag.filter(name='픽업존').exists()
+    if(isPickupZone):
+        delivery_address = deliveryAddressValidation(kakaoPayload)
+        if(delivery_address == None):
+            return errorView('잘못된 주문 내역', '잘못된 주문 정보입니다.')
+    else:
+        delivery_address = 0
+        pass
 
     order = orderValidation(kakaoPayload)
     if(order == None):
@@ -1969,6 +1976,8 @@ def GET_Store(request):
     if (user == None):
         return GET_UserHome(request)
 
+    Pixel_viewStore(user)
+
     # User Case
     if(isB2BUser(user)):
         return GET_B2B_Store(request)
@@ -1989,6 +1998,8 @@ def GET_Menu(request):
     user = userValidation(kakaoPayload)
     if (user == None):
         return GET_UserHome(request)
+
+    Pixel_viewMenu(user)
 
     # User Case
     if(isB2BUser(user)):
@@ -2012,6 +2023,8 @@ def SET_PickupTime(request):
         if (user == None):
             return GET_UserHome(request)
 
+        Pixel_setPickupTime(user)
+
         if(isB2BUser(user)):
             return SET_B2B_PickupTime(request)
         else:
@@ -2032,6 +2045,8 @@ def SET_OrderSheet(request):
         user = userValidation(kakaoPayload)
         if (user == None):
             return GET_UserHome(request)
+
+        Pixel_orderSheet(user)
 
         if(isB2BUser(user)):
             return SET_B2B_OrderSheet(request)
