@@ -47,14 +47,14 @@ class OrderDelvieryFilter(SimpleListFilter):
     def queryset(self, request, queryset):
         if self.value() == 'on':
             return queryset.filter(
-                Q(ordersheet__user__is_delivery=True) &
-                ~Q(ordersheet__user__delivery_address=0)
+                Q(is_delivery=True) &
+                ~Q(delivery_address=0)
             )
 
         if self.value() == 'off':
             return queryset.filter(
-                ~Q(ordersheet__user__is_delivery=True) |
-                Q(ordersheet__user__delivery_address=0)
+                ~Q(is_delivery=True) |
+                Q(delivery_address=0)
             )
 
 
@@ -334,7 +334,12 @@ class OrderAdmin(ImportExportMixin, admin.ModelAdmin):
     field_delivery_pg_fee.short_description = "+ 배달료 PG 수수료"
 
     def field_delivery_address(self, obj):
-        return obj.ordersheet.user.delivery_address
+        delivery_address = obj.get_delivery_address()
+
+        if(delivery_address == None):
+            return '픽업존'
+        else:
+            return delivery_address
     field_delivery_address.short_description = '배달 호수'
     field_delivery_address.admin_order_field = 'ordersheet__user__delivery_address'
 
@@ -378,7 +383,7 @@ class OrderAdmin(ImportExportMixin, admin.ModelAdmin):
             }
         ),
         (
-            '상태',
+            '주문 상태',
             {
                 'fields': [
                     ('payment_type', 'payment_status', 'status'),
@@ -386,9 +391,12 @@ class OrderAdmin(ImportExportMixin, admin.ModelAdmin):
             }
         ),
         (
-            '부탁하기',
+            '주문 정보',
             {
                 'fields': [
+                    'is_delivery',
+                    'delivery_address',
+                    'is_friend_code',
                     'delegate',
                 ]
             }

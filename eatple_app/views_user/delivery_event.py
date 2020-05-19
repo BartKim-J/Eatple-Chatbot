@@ -72,7 +72,7 @@ def kakaoViewDeliveryAddressSubmit(kakaoPayload):
         else:
             user.apply_delivery_address(address)
 
-            QUICKREPLIES_MAP.append({
+            QUICKREPLIES_MAP.insert(0, {
                 'action': 'block',
                 'label': '주문하러 가기',
                 'messageText': '주문하러 가기',

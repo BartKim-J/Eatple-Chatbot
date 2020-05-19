@@ -150,11 +150,6 @@ class DeliveryEvent(models.Model):
         verbose_name="사무실 호수"
     )
 
-    is_delivery = models.BooleanField(
-        default=True,
-        verbose_name="배달 여부"
-    )
-
     def get_delivery_address(self):
         if(self.delivery_address == 0):
             return None
@@ -168,18 +163,6 @@ class DeliveryEvent(models.Model):
             address = self.delivery_address
 
         self.delivery_address = address
-        self.save()
-
-        return self
-
-    def delivery_disable(self):
-        self.is_delivery = False
-        self.save()
-
-        return self
-
-    def delivery_enable(self):
-        self.is_delivery = True
         self.save()
 
         return self

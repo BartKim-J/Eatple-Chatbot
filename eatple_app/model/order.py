@@ -443,7 +443,36 @@ class PaymentDetails(models.Model):
         return self
 
 
-class Order(PaymentDetails, models.Model):
+class OrderInfo(models.Model):
+    class Meta:
+        verbose_name = "주문 정보"
+        verbose_name_plural = "주문 정보"
+
+        abstract = True
+
+    delivery_address = models.IntegerField(
+        default=0,
+        verbose_name="사무실 호수"
+    )
+
+    is_delivery = models.BooleanField(
+        default=False,
+        verbose_name="배달 여부"
+    )
+
+    is_friend_code = models.BooleanField(
+        default=False,
+        verbose_name="친구초대 할인 사용 여부"
+    )
+
+    def get_delivery_address(self):
+        if(self.delivery_address == 0):
+            return None
+        else:
+            return self.delivery_address
+
+
+class Order(PaymentDetails, OrderInfo, models.Model):
     class Meta:
         verbose_name = "주문 내역"
         verbose_name_plural = "주문 내역"

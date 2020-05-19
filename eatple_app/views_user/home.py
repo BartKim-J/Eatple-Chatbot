@@ -328,32 +328,6 @@ def component_DinnerHome(kakaoForm, orderManager, user):
     )
 
 
-def component_DeliveryEvent(user, kakaoForm):
-    if(user.get_delivery_address() == None):
-        buttons = [
-            {
-                'action': 'block',
-                'label': '사무실 정보 입력하기',
-                'messageText': KAKAO_EMOJI_LOADING,
-                'blockId': KAKAO_BLOCK_USER_DELIVERY_ADDRESS_SUBMIT,
-                'extra': {
-                    KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_HOME
-                }
-            },
-        ]
-
-        kakaoForm.BasicCard_Push(
-            '🚚  사무실 픽업존 배달 이벤트',
-            '사무실 호수를 입력하면 3층으로 오지 않아도 픽업 할 수 있어요.',
-            {},
-            buttons
-        )
-    else:
-        pass
-
-    return kakaoForm
-
-
 def kakaoView_Home(user, address):
     EatplusSkillLog('Home')
 
@@ -400,11 +374,6 @@ def kakaoView_Home(user, address):
     component_DinnerHome(kakaoForm, orderManager, user)
 
     kakaoForm.BasicCard_Add()
-
-    # Delivery Event
-    addressMap = user.location.address.split()
-    if(addressMap[2].find('신사') != -1):
-        component_DeliveryEvent(user, kakaoForm)
 
     # Friend Invite Event
     buttons = [

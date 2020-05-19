@@ -353,13 +353,8 @@ def kakaoView_StoreListup(kakaoPayload):
                     },
                 ]
 
-                if(user.get_delivery_address() == None or (user.is_delivery == False)):
-                    delivery_address_str = '🥡  픽업장소: 패파 신사점 3층 라운지'
-                else:
-                    delivery_address_str = '🚚  픽업장소: 패파 신사점 {}호'.format(
-                        user.get_delivery_address())
                 kakaoForm.BasicCard_Push(
-                    delivery_address_str,
+                    '🔥  픽업존 시즌 2  🔥',
                     '픽업존 서비스는 이용료가 추가됩니다.',
                     thumbnail,
                     buttons
@@ -764,79 +759,11 @@ def kakaoView_PickupZone_MenuListup(kakaoPayload):
 
         kakaoForm.ComerceCard_Add(None)
 
-        if(user.get_delivery_address() == None):
-            buttons = [
-                {
-                    'action': 'block',
-                    'label': '등록 하러가기',
-                    'messageText': KAKAO_EMOJI_LOADING,
-                    'blockId': KAKAO_BLOCK_USER_DELIVERY_ADDRESS_SUBMIT,
-                    'extra': {
-                        KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_HOME
-                    }
-                },
-            ]
-
-            kakaoForm.BasicCard_Push(
-                '🚚  사무실 호수를 입력하면 잇플이 가져다 드립니다.',
-                '',
-                {},
-                buttons
-            )
-            kakaoForm.BasicCard_Add()
-        else:
-            buttons = [
-                {
-                    'action': 'block',
-                    'label': '사무실 호수 수정',
-                    'messageText': KAKAO_EMOJI_LOADING,
-                    'blockId': KAKAO_BLOCK_USER_DELIVERY_ADDRESS_SUBMIT,
-                    'extra': {
-                        KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_HOME
-                    }
-                },
-            ]
-
-            if(user.is_delivery):
-                buttons.append(
-                    {
-                        'action': 'block',
-                        'label': '3층 라운지로 변경',
-                        'messageText': KAKAO_EMOJI_LOADING,
-                        'blockId': KAKAO_BLOCK_USER_DELIVERY_DISABLE,
-                        'extra': {
-                            KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_HOME
-                        }
-                    }
-                )
-                takeout_address = '🚚  픽업장소: 패파 신사점 {}호'.format(
-                    user.get_delivery_address())
-            else:
-                buttons.append(
-                    {
-                        'action': 'block',
-                        'label': '내 사무실로 변경',
-                        'messageText': KAKAO_EMOJI_LOADING,
-                        'blockId': KAKAO_BLOCK_USER_DELIVERY_ENABLE,
-                        'extra': {
-                            KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_HOME
-                        }
-                    }
-                )
-                takeout_address = '🥡  픽업장소: 패파 신사점 3층 라운지'
-
-            kakaoForm.BasicCard_Push(
-                takeout_address,
-                '',
-                {
-                    'imageUrl': None,
-                    'fixedRatio': 'true',
-                    'width': 800,
-                    'height': 800,
-                },
-                buttons
-            )
-            kakaoForm.BasicCard_Add()
+        KakaoInstantForm().Message(
+            '픽업 시간은 오후 12시 10분입니다.',
+            '',
+            kakaoForm=kakaoForm
+        )
 
     else:
         KakaoInstantForm().Message(
@@ -1412,6 +1339,8 @@ def kakaoView_PickupTime(kakaoPayload):
 
     order = orderValidation(kakaoPayload)
 
+    isPickupZone = menu.tag.filter(name='픽업존').exists()
+
     isCafe = store.category.filter(name='카페').exists()
     if(isCafe):
         KakaoInstantForm().Message(
@@ -1419,6 +1348,8 @@ def kakaoView_PickupTime(kakaoPayload):
             '오전 11시 30분 부터 오후 2시 까지 언제든 방문하여 메뉴를 픽업할 수 있습니다.',
             kakaoForm=kakaoForm
         )
+    elif(isPickupZone):
+        pass
     else:
         if(pickupTimes.count() < 2):
             KakaoInstantForm().Message(
@@ -1427,59 +1358,118 @@ def kakaoView_PickupTime(kakaoPayload):
                 kakaoForm=kakaoForm
             )
 
-    KakaoInstantForm().Message(
-        '픽업 시간을 선택 해주세요.',
-        '{} - {}'.format(menu.store.name, menu.name),
-        kakaoForm=kakaoForm
-    )
+    if(isPickupZone):
+        pickupZone_PickupTime = '12:10'
 
-    orderTimeTable = OrderTimeSheet()
-
-    if(isCafe):
-        dataActionExtra = {
-            KAKAO_PARAM_SELLING_TIME: sellingTime,
-            KAKAO_PARAM_STORE_ID: menu.store.store_id,
-            KAKAO_PARAM_MENU_ID: menu.menu_id,
-            KAKAO_PARAM_ORDER_ID: order.order_id,
-            KAKAO_PARAM_PICKUP_TIME: orderTimeTable.GetLunchOrderPickupTimeStart().strftime('%H:%M'),
-            KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_SET_PICKUP_TIME
-        }
+        KakaoInstantForm().Message(
+            '픽업 할 장소를 선택해주세요.',
+            kakaoForm=kakaoForm
+        )
 
         kakaoForm.QuickReplies_Add(
             'block',
-            '오전 11시 30분 ~ 오후 2시',
+            '3층 픽업존',
             KAKAO_EMOJI_LOADING,
             KAKAO_BLOCK_USER_SET_ORDER_SHEET,
-            dataActionExtra
+            {
+                KAKAO_PARAM_SELLING_TIME: sellingTime,
+                KAKAO_PARAM_STORE_ID: menu.store.store_id,
+                KAKAO_PARAM_MENU_ID: menu.menu_id,
+                KAKAO_PARAM_ORDER_ID: order.order_id,
+                KAKAO_PARAM_PICKUP_TIME: pickupZone_PickupTime,
+                KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_SET_PICKUP_TIME,
+                KAKAO_PARAM_DELIVERY_ADDRESS: 0,
+            }
         )
+
+        delivery_address = user.get_delivery_address()
+        if(delivery_address == None):
+            kakaoForm.QuickReplies_Add(
+                'block',
+                '사무실 호수 입력',
+                KAKAO_EMOJI_LOADING,
+                KAKAO_BLOCK_USER_DELIVERY_ADDRESS_SUBMIT,
+                {
+                    KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_SET_PICKUP_TIME,
+                }
+            )
+        else:
+            kakaoForm.QuickReplies_Add(
+                'block',
+                '내 사무실({}호)'.format(delivery_address),
+                KAKAO_EMOJI_LOADING,
+                KAKAO_BLOCK_USER_SET_ORDER_SHEET,
+                {
+                    KAKAO_PARAM_SELLING_TIME: sellingTime,
+                    KAKAO_PARAM_STORE_ID: menu.store.store_id,
+                    KAKAO_PARAM_MENU_ID: menu.menu_id,
+                    KAKAO_PARAM_ORDER_ID: order.order_id,
+                    KAKAO_PARAM_PICKUP_TIME: pickupZone_PickupTime,
+                    KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_SET_PICKUP_TIME,
+                    KAKAO_PARAM_DELIVERY_ADDRESS: delivery_address,
+                }
+            )
+            kakaoForm.QuickReplies_Add(
+                'block',
+                '사무실 변경',
+                KAKAO_EMOJI_LOADING,
+                KAKAO_BLOCK_USER_DELIVERY_ADDRESS_SUBMIT,
+                {}
+            )
     else:
-        for pickupTime in pickupTimes:
+        KakaoInstantForm().Message(
+            '픽업 시간을 선택 해주세요.',
+            '{} - {}'.format(menu.store.name, menu.name),
+            kakaoForm=kakaoForm
+        )
+
+        orderTimeTable = OrderTimeSheet()
+
+        if(isCafe):
             dataActionExtra = {
                 KAKAO_PARAM_SELLING_TIME: sellingTime,
                 KAKAO_PARAM_STORE_ID: menu.store.store_id,
                 KAKAO_PARAM_MENU_ID: menu.menu_id,
                 KAKAO_PARAM_ORDER_ID: order.order_id,
-                KAKAO_PARAM_PICKUP_TIME: pickupTime.time.strftime('%H:%M'),
+                KAKAO_PARAM_PICKUP_TIME: orderTimeTable.GetLunchOrderPickupTimeStart().strftime('%H:%M'),
                 KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_SET_PICKUP_TIME
             }
 
-            if(order != None):
-                dataActionExtra[KAKAO_PARAM_ORDER_ID] = order.order_id
-
-            if(pickupTime.time.minute == 0):
-                pickupTimeQR = '{}'.format(pickupTime.time.strftime(
-                    '%p %-I시').replace('AM', '오전').replace('PM', '오후'))
-            else:
-                pickupTimeQR = '{}'.format(pickupTime.time.strftime(
-                    '%p %-I시 %M분').replace('AM', '오전').replace('PM', '오후'))
-
             kakaoForm.QuickReplies_Add(
                 'block',
-                pickupTimeQR,
+                '오전 11시 30분 ~ 오후 2시',
                 KAKAO_EMOJI_LOADING,
                 KAKAO_BLOCK_USER_SET_ORDER_SHEET,
                 dataActionExtra
             )
+        else:
+            for pickupTime in pickupTimes:
+                dataActionExtra = {
+                    KAKAO_PARAM_SELLING_TIME: sellingTime,
+                    KAKAO_PARAM_STORE_ID: menu.store.store_id,
+                    KAKAO_PARAM_MENU_ID: menu.menu_id,
+                    KAKAO_PARAM_ORDER_ID: order.order_id,
+                    KAKAO_PARAM_PICKUP_TIME: pickupTime.time.strftime('%H:%M'),
+                    KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_SET_PICKUP_TIME
+                }
+
+                if(order != None):
+                    dataActionExtra[KAKAO_PARAM_ORDER_ID] = order.order_id
+
+                if(pickupTime.time.minute == 0):
+                    pickupTimeQR = '{}'.format(pickupTime.time.strftime(
+                        '%p %-I시').replace('AM', '오전').replace('PM', '오후'))
+                else:
+                    pickupTimeQR = '{}'.format(pickupTime.time.strftime(
+                        '%p %-I시 %M분').replace('AM', '오전').replace('PM', '오후'))
+
+                kakaoForm.QuickReplies_Add(
+                    'block',
+                    pickupTimeQR,
+                    KAKAO_EMOJI_LOADING,
+                    KAKAO_BLOCK_USER_SET_ORDER_SHEET,
+                    dataActionExtra
+                )
 
     return JsonResponse(kakaoForm.GetForm())
 
@@ -1524,6 +1514,10 @@ def kakaoView_OrderPayment(kakaoPayload):
     if(store == None or menu == None or pickup_time == None):
         return errorView('잘못된 주문 내역', '잘못된 주문 정보입니다.')
 
+    delivery_address = deliveryAddressValidation(kakaoPayload)
+    if(delivery_address == None):
+        return errorView('잘못된 주문 내역', '잘못된 주문 정보입니다.')
+
     order = orderValidation(kakaoPayload)
     if(order == None):
         return errorView('잘못된 주문 번호', '잘못된 주문 번호입니다.')
@@ -1543,6 +1537,13 @@ def kakaoView_OrderPayment(kakaoPayload):
         order.pickup_time = order.pickupTimeToDateTime(pickup_time)
         order.totalPrice = menu.price_origin - discount + delivery_fee
         order.delivery_fee = delivery_fee
+        if(delivery_address == 0):
+            order.delivery_address = 0
+            order.is_delivery = False
+        else:
+            order.delivery_address = delivery_address
+            order.is_delivery = True
+
         order.discount = discount - (menu.price_origin - menu.price)
         order.count = 1
         order.type = ORDER_TYPE_NORMAL

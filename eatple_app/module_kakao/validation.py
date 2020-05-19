@@ -84,6 +84,14 @@ def pickupTimeValidation(kakaoPayload):
         return None
 
 
+def deliveryAddressValidation(kakaoPayload):
+    try:
+        deliveryAddress = kakaoPayload.dataActionExtra[KAKAO_PARAM_DELIVERY_ADDRESS]
+        return deliveryAddress
+    except (TypeError, AttributeError, KeyError):
+        return None
+
+
 def prevBlockValidation(kakaoPayload):
     try:
         prev_block_id = kakaoPayload.dataActionExtra[KAKAO_PARAM_PREV_BLOCK_ID]
