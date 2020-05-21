@@ -676,7 +676,7 @@ class Order(PaymentDetails, OrderInfo, models.Model):
             orderRecordSheet.user, orderRecordSheet.order, ORDER_RECORD_PAYMENT_COMPLETED)
 
         # Pixel
-        Pixel_eatplePassUsed(self)
+        Pixel_eatplePassUsed(self.ordersheet.user)
 
         # @SLACK LOGGER
         Slack_LogUsedOrder(self)
