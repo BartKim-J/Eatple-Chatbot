@@ -78,12 +78,12 @@ def pickupZone_component(partner, store, kakaoForm):
                 time = datetime.timedelta(minutes=0)
 
         if(store != None):
-            storeName = store.name
+            storeName = ' - {}'.format(store.name)
         else:
-            storeName = '매장'
+            storeName = ''
 
         delivery_pickup_time = datetime_pickup_time - time
-        title = '{pickupTime} - {store}'.format(
+        title = '{pickupTime}{store}'.format(
             store=storeName,
             pickupTime=delivery_pickup_time.strftime(
                 '%-m/%-d %p %-I시 %-M분').replace('AM', '오전').replace('PM', '오후')
@@ -115,7 +115,7 @@ def pickupZone_component(partner, store, kakaoForm):
                     totalAmount += amount
 
                     if(menu.store.name == '마치래빗샐러드'):
-                        context += '{menu} - {count}개 / {amount}원\n'.format(
+                        context += '{menu} {count}개 / {amount}원\n'.format(
                             store=menu.store.name,
                             menu=menu.name,
                             count=orderByMenu.count(),
@@ -127,7 +127,7 @@ def pickupZone_component(partner, store, kakaoForm):
                         else:
                             storeName = '{} / '.format(menu.store.name)
 
-                        context += '{store}{menu} - {count}개\n'.format(
+                        context += '{store}{menu} {count}개\n'.format(
                             store=storeName,
                             menu=menu.name,
                             count=orderByMenu.count(),
@@ -192,11 +192,11 @@ def normal_component(partner, store, kakaoForm):
         )
 
         if(store != None):
-            storeName = store.name
+            storeName = ' - {}'.format(store.name)
         else:
-            storeName = '매장'
+            storeName = ''
 
-        title = '{pickupTime} - {store}'.format(
+        title = '{pickupTime}{store}'.format(
             store=storeName,
             pickupTime=datetime_pickup_time.strftime(
                 '%-m/%-d %p %-I시 %-M분').replace('AM', '오전').replace('PM', '오후')
@@ -228,7 +228,7 @@ def normal_component(partner, store, kakaoForm):
                     totalAmount += amount
 
                     if(menu.store.name == '마치래빗샐러드'):
-                        context += '{menu} - {count}개 / {amount}원\n'.format(
+                        context += '{menu} {count}개 / {amount}원\n'.format(
                             store=menu.store.name,
                             menu=menu.name,
                             count=orderByPickupTime.count(),
@@ -240,7 +240,7 @@ def normal_component(partner, store, kakaoForm):
                         else:
                             storeName = '{} / '.format(menu.store.name)
 
-                        context += '{store}{menu} - {count}개\n'.format(
+                        context += '{store}{menu} {count}개\n'.format(
                             store=storeName,
                             menu=menu.name,
                             count=orderByPickupTime.count(),
@@ -381,21 +381,21 @@ def kakaoView_OrderDetails(kakaoPayload):
             storeList = Store.objects.filter(
                 Q(crn__CRN_id=partner.store.crn.CRN_id)
             )
-            for storeEntry in storeList:
-                ORDER_LIST_QUICKREPLIES_MAP.insert(0,
-                                                   {
-                                                       'action': 'block',
-                                                       'label': storeEntry.name,
-                                                       'messageText': KAKAO_EMOJI_LOADING,
-                                                       'blockId': KAKAO_BLOCK_PARTNER_GET_ORDER_DETAILS,
-                                                       'extra': {
-                                                           KAKAO_PARAM_STORE_ID: storeEntry.store_id,
-                                                           KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_PARTNER_GET_ORDER_DETAILS
-                                                       }
-                                                   },
-                                                   )
         else:
             pass
+    for storeEntry in storeList:
+        ORDER_LIST_QUICKREPLIES_MAP.insert(0,
+                                           {
+                                               'action': 'block',
+                                               'label': storeEntry.name,
+                                               'messageText': KAKAO_EMOJI_LOADING,
+                                               'blockId': KAKAO_BLOCK_PARTNER_GET_ORDER_DETAILS,
+                                               'extra': {
+                                                   KAKAO_PARAM_STORE_ID: storeEntry.store_id,
+                                                   KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_PARTNER_GET_ORDER_DETAILS
+                                               }
+                                           },
+                                           )
 
     kakaoForm.QuickReplies_AddWithMap(ORDER_LIST_QUICKREPLIES_MAP)
 

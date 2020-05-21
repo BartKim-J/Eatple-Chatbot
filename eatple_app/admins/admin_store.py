@@ -387,6 +387,7 @@ class StoreAdmin(ImportExportMixin, admin.GeoModelAdmin):
 
         return False
     field_check_order_flag.short_description = "주문 확인 여부"
+    field_check_order_flag.admin_order_field = 'is_check_order'
 
     def field_id(self, obj):
         if(obj.crn == None):
