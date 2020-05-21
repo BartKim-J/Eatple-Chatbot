@@ -156,7 +156,8 @@ class MenuAdmin(ImportExportMixin, admin.GeoModelAdmin):
                 'fields':
                     [
                         'menu_id',
-                        'store'
+                        'store',
+                        'index',
                     ]
             }
         ),

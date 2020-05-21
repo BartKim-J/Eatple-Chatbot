@@ -8,7 +8,6 @@ def getUserData(user):
     return UserData(
         email=user.email,
         phone=user.phone_number.as_national,
-        external_id=user.app_user_id,
     )
 
 

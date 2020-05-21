@@ -163,6 +163,11 @@ class MenuInfo(models.Model):
         verbose_name="메뉴명"
     )
 
+    index = models.models.IntegerField(
+        default=0,
+        verbose_name="우선순위"
+    )
+
     class Meta:
         abstract = True
 

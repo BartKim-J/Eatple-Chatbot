@@ -105,6 +105,7 @@ class MenuInline(CompactInline):
                 'fields': [
                     'menu_id',
                     'store',
+                    'index',
                 ]
             }
         ),
