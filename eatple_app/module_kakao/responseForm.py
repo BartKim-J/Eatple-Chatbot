@@ -19,6 +19,9 @@ class KakaoForm():
 
         self.items = []
 
+    def Reset(self):
+        self.__init__()
+        
     def GetForm(self):
         retForm = {
             'version':  self.version,

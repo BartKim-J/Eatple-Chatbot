@@ -490,6 +490,8 @@ def kakaoView_StoreListup(kakaoPayload):
                 pass
 
         if(onDisplayStore < 1):
+            kakaoForm.Reset()
+
             kakaoForm.BasicCard_Push(
                 '근처에 제휴된 {} 매장이 없습니다..'.format(
                     dict(SELLING_TIME_CATEGORY)[sellingTime]),
