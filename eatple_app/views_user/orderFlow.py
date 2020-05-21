@@ -671,7 +671,7 @@ def kakaoView_PickupZone_MenuListup(kakaoPayload):
             Q(type=MENU_TYPE_B2B_AND_NORMAL) |
             Q(type=MENU_TYPE_NORMAL)
         )
-    ).order_by(F'price')
+    ).order_by(F'-index', F'price', F'name')
 
     if menuList:
         KakaoInstantForm().Message(
@@ -877,7 +877,7 @@ def kakaoView_MenuListup(kakaoPayload):
             Q(store__status=OC_OPEN) |
             Q(store__status=STORE_OC_VACATION)
         )
-    ).order_by(F'price')
+    ).order_by(F'-index', F'price', F'name')
 
     sellingOutList = []
 
@@ -1068,7 +1068,7 @@ def kakaoView_MenuListupWithAreaOut(kakaoPayload):
             Q(store__status=OC_OPEN) |
             Q(store__status=STORE_OC_VACATION)
         )
-    ).order_by(F'distance')
+    ).order_by(F'distance', F'price')
 
     if menuList:
         KakaoInstantForm().Message(
