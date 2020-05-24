@@ -166,6 +166,7 @@ class MenuAdmin(ImportExportMixin, admin.GeoModelAdmin):
             {
                 'fields': [
                     'name',
+                    'name_partner',
                     'selling_time',
                     'pickup_time',
                     'tag',

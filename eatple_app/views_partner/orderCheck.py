@@ -114,10 +114,16 @@ def pickupZone_component(partner, store, kakaoForm):
                     totalCount += orderByMenu.count()
                     totalAmount += amount
 
+                    print(menu.name_partner)
+                    if(menu.name_partner != None):
+                        menuName = menu.name_partner
+                    else:
+                        menuName = menu.name
+                        
                     if(menu.store.name == '마치래빗샐러드'):
                         context += '{menu} {count}개 / {amount}원\n'.format(
                             store=menu.store.name,
-                            menu=menu.name,
+                            menu=menuName,
                             count=orderByMenu.count(),
                             amount=format(amount, ',')
                         )
@@ -129,7 +135,7 @@ def pickupZone_component(partner, store, kakaoForm):
 
                         context += '{store}{menu} {count}개\n'.format(
                             store=storeName,
-                            menu=menu.name,
+                            menu=menuName,
                             count=orderByMenu.count(),
                         )
                 else:
@@ -227,10 +233,16 @@ def normal_component(partner, store, kakaoForm):
                     totalCount += orderByPickupTime.count()
                     totalAmount += amount
 
+                    print(menu.name_partner)
+                    if(menu.name_partner != None):
+                        menuName = menu.name_partner
+                    else:
+                        menuName = menu.name
+
                     if(menu.store.name == '마치래빗샐러드'):
                         context += '{menu} {count}개 / {amount}원\n'.format(
                             store=menu.store.name,
-                            menu=menu.name,
+                            menu=menuName,
                             count=orderByPickupTime.count(),
                             amount=format(amount, ',')
                         )
@@ -242,7 +254,7 @@ def normal_component(partner, store, kakaoForm):
 
                         context += '{store}{menu} {count}개\n'.format(
                             store=storeName,
-                            menu=menu.name,
+                            menu=menuName,
                             count=orderByPickupTime.count(),
                         )
                 else:

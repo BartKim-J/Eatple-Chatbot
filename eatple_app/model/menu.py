@@ -163,6 +163,12 @@ class MenuInfo(models.Model):
         verbose_name="메뉴명"
     )
 
+    name_partner = models.CharField(
+        max_length=STRING_LENGTH,
+        null=True,
+        verbose_name="점주 표기용 메뉴명"
+    )
+
     index = models.IntegerField(
         default=0,
         verbose_name="우선순위"

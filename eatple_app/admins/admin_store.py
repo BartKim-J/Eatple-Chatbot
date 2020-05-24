@@ -114,6 +114,7 @@ class MenuInline(CompactInline):
             {
                 'fields': [
                     'name',
+                    'name_partner',
                     'selling_time',
                     'pickup_time',
                     'tag',
