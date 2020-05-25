@@ -424,7 +424,7 @@ class PaymentDetails(models.Model):
         if(self.totalPrice == 0 and self.menu != None):
             self.totalPrice = self.menu.price
 
-        if((self.totalPrice > 0) and (self.payment_status == EATPLE_ORDER_STATUS_PAID)):
+        if((self.totalPrice > 0) and (self.payment_status == EATPLE_ORDER_STATUS_PAID) and (self.menu != None)):
             self.discount_eatple = self.menu.price_origin - self.menu.price
             self.vat = self.menu.price - int(self.menu.price / 1.1)
 

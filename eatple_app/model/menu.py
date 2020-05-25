@@ -166,6 +166,7 @@ class MenuInfo(models.Model):
     name_partner = models.CharField(
         max_length=STRING_LENGTH,
         null=True,
+        blank=True,
         verbose_name="점주 표기용 메뉴명"
     )
 
