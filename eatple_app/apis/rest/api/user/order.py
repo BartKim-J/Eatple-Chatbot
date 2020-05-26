@@ -84,20 +84,23 @@ class OrderValidation(viewsets.ModelViewSet):
             response['error_msg'] = PAYMENT_202_MULTI_ORDER.message
             return Response(response)
 
-        # Time Check
-        currentSellingTime = sellingTimeCheck()
-        isClosedDay = weekendTimeCheck(SELLING_TIME_LUNCH)
+        if(PAYMENT_TIME_CHECK_DEBUG_MODE):
+            pass
+        else:
+            # Time Check
+            currentSellingTime = sellingTimeCheck()
+            isClosedDay = weekendTimeCheck(SELLING_TIME_LUNCH)
 
-        if(currentSellingTime != order.menu.selling_time or isClosedDay == True):
-            response['error_code'] = PAYMENT_206_SELLING_TIME_INVALID.code
-            response['error_msg'] = PAYMENT_206_SELLING_TIME_INVALID.message
-            return Response(response)
+            if(currentSellingTime != order.menu.selling_time or isClosedDay == True):
+                response['error_code'] = PAYMENT_206_SELLING_TIME_INVALID.code
+                response['error_msg'] = PAYMENT_206_SELLING_TIME_INVALID.message
+                return Response(response)
 
-        # Store Check
-        if(order.store.status != OC_OPEN or order.menu.status != OC_OPEN):
-            response['error_code'] = PAYMENT_206_SELLING_TIME_INVALID.code
-            response['error_msg'] = PAYMENT_206_SELLING_TIME_INVALID.message
-            return Response(response)
+            # Store Check
+            if(order.store.status != OC_OPEN or order.menu.status != OC_OPEN):
+                response['error_code'] = PAYMENT_206_SELLING_TIME_INVALID.code
+                response['error_msg'] = PAYMENT_206_SELLING_TIME_INVALID.message
+                return Response(response)
 
         response['error_code'] = PAYMENT_200_VALID.code
         response['error_msg'] = PAYMENT_200_VALID.message
