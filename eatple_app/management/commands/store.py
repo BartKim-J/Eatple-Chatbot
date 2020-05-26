@@ -37,5 +37,8 @@ class Command(BaseCommand):
         if((hour == 14 and min == 0) or (hour == 21 and min == 0)):
             for store in storeList:
                 store.is_check_order == False
+                store.save()
+        else:
+            pass
 
         self.stdout.write(self.style.SUCCESS(json.dumps(get_hw_idle_info())))
