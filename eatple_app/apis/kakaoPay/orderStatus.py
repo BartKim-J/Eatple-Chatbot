@@ -32,7 +32,6 @@ def GET_KAKAO_PAY_OrderStatus(request):
 
             approveResponse = json.loads(response.text)
 
-            print(approveResponse)
         except Exception as ex:
             print(ex)
             return JsonResponse({'status': 400, })
@@ -44,7 +43,6 @@ def GET_KAKAO_PAY_OrderStatus(request):
 
     try:
         kakaoPayStatus = json.loads(response.text)['status']
-        print(json.loads(response.text))
 
         if(
             kakaoPayStatus == 'READY' or

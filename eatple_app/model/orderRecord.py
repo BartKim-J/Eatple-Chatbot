@@ -92,7 +92,7 @@ class OrderRecordSheet(models.Model):
             if(self.order.menu == None):
                 isVertification = False
 
-        print("Order Record : {}".format(dict(ORDER_RECORD)[status]))
+        # print("Order Record : {}".format(dict(ORDER_RECORD)[status]))
 
         self.status = isVertification
         self.save()

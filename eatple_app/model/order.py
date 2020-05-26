@@ -74,7 +74,6 @@ def kakaoPayOrderValidation(order):
         return order
 
     kakaoPayStatus = json.loads(response.text)['status']
-    print("카카오 주문 상태 : ", kakaoPayStatus)
     if(
         kakaoPayStatus == 'READY' or
         kakaoPayStatus == 'SEND_TMS' or
@@ -132,8 +131,6 @@ def eatplePayPassOrderCancel(order):
 
 
 def orderUpdate(order):
-    print('주문 상태 =>')
-
     # Normal User Pass
     if(order.menu == None or order.store == None):
         order.payment_status = EATPLE_ORDER_STATUS_NOT_PUSHED
@@ -161,25 +158,24 @@ def orderUpdate(order):
 
         order.status = ORDER_STATUS_ORDER_CANCELED
         order.save()
-        print('주문 취소됨')
+        orderStatusStr = '주문 취소됨'
 
     if(order.payment_status == EATPLE_ORDER_STATUS_READY):
         order.status = ORDER_STATUS_MENU_CHOCIED
         order.save()
-        print('주문 미결제 또는 진행중')
+        orderStatusStr = '주문 미결제'
 
     if(order.payment_status == EATPLE_ORDER_STATUS_FAILED):
         order.status = ORDER_STATUS_ORDER_FAILED
         order.save()
-        print('주문 실패')
+        orderStatusStr = '주문 실패'
 
     if(order.payment_status == EATPLE_ORDER_STATUS_NOT_PUSHED):
         order.status = ORDER_STATUS_MENU_CHOCIED
         order.save()
-        print('메뉴 선택중')
+        orderStatusStr = '메뉴 선택중'
 
     if(order.payment_status == EATPLE_ORDER_STATUS_PAID):
-        print(order.status, ORDER_STATUS_MENU_CHOCIED)
         if(order.status == ORDER_STATUS_MENU_CHOCIED or order.status == ORDER_STATUS_ORDER_CONFIRM_WAIT):
             order.status = ORDER_STATUS_ORDER_CONFIRMED
             order.save()
@@ -187,12 +183,13 @@ def orderUpdate(order):
             order.orderPay()
             order.paymentDetailUpdate()
 
-            print('주문 결제됨')
-
         # @PROMOTION
         if(order.type == ORDER_TYPE_PROMOTION):
             order.ordersheet.user.applyPromotion()
-            print('주문 결제됨')
+
+        orderStatusStr = '주문 결제됨'
+
+    print('주문 상태 => {}'.format(orderStatusStr))
 
     if(order.payment_status != EATPLE_ORDER_STATUS_PAID):
         return order
@@ -242,9 +239,6 @@ def orderUpdate(order):
     dinnerOrderPickupTimeStart = orderTimeSheet.GetDinnerOrderPickupTimeStart()
     dinnerOrderPickupTimeEnd = orderTimeSheet.GetDinnerOrderPickupTimeEnd()
 
-    print(menu.selling_time)
-    print(paymentDate)
-    print((paymentDateWithoutTime == TODAY), paymentDateWithoutTime, TODAY, )
     # Lunch Order
     if (SELLING_TIME_LUNCH == menu.selling_time) and \
         ((PICKUP_YESTER_DAY <= paymentDateWithoutTime) and

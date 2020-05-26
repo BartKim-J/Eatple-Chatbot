@@ -1,5 +1,6 @@
 # Define
 from eatple_app.define import *
+from eatple_app.management.commands.utils import *
 
 from django.core.management.base import BaseCommand, CommandError
 
@@ -37,4 +38,4 @@ class Command(BaseCommand):
             for store in storeList:
                 store.is_check_order == False
 
-        self.stdout.write(self.style.SUCCESS('Successfully update order'))
+        self.stdout.write(self.style.SUCCESS(json.dumps(get_hw_idle_info())))

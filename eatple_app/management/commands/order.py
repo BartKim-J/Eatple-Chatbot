@@ -1,5 +1,6 @@
 # Define
 from eatple_app.define import *
+from eatple_app.management.commands.utils import *
 
 from django.core.management.base import BaseCommand, CommandError
 
@@ -27,7 +28,8 @@ class Command(BaseCommand):
             orderList = Order.objects.filter(
                 Q(payment_date__gte=expireDate) &
                 ~Q(store=None) &
-                ~Q(menu=None)
+                ~Q(menu=None) &
+                Q(payment_status=EATPLE_ORDER_STATUS_PAID)
             ).order_by('order_date')
 
         except (Order.DoesNotExist):
@@ -36,4 +38,4 @@ class Command(BaseCommand):
         for order in orderList:
             Order.orderStatusUpdate(order)
 
-        self.stdout.write(self.style.SUCCESS('Successfully update order'))
+        self.stdout.write(self.style.SUCCESS(json.dumps(get_hw_idle_info())))

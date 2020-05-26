@@ -73,7 +73,6 @@ def GET_KAKAO_PAY_OrderSheet(request):
         approval_url = '{}{}'.format(EATPLE_KAKAO_API_URL, '/payment/approve')
         encoded_approval_url = urllib.parse.quote(approval_url)
 
-        print(approval_url)
         data = {
             'rest_api_key': KAKAO_REST_API_KEY,
             'cid': KAKAO_PAY_CID,

@@ -22,7 +22,6 @@ class SurveyAdmin(ImportExportMixin, admin.ModelAdmin):
     field_app_user_id.short_description = '계정 고유 번호'
 
     def field_phonenumber(self, obj):
-        print(obj.user)
         if(obj.user.phone_number != None):
             return obj.user.phone_number.as_national
         else:

@@ -32,9 +32,4 @@ class KakaoBiz():
         kakaoResponse = requests.post(
             apiURL, data=json.dumps(data), headers=headers)
 
-        print('Header : ', kakaoResponse.headers)
-        print('URL : ', kakaoResponse.url)
-        print('STATUS : ', kakaoResponse.status_code)
-        print('TEXT : ', kakaoResponse.text)
-
         return kakaoResponse
