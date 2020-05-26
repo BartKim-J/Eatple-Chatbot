@@ -360,7 +360,7 @@ class OrderAdmin(ImportExportMixin, admin.ModelAdmin):
                     return '픽업존'
 
                 else:
-                    if(delivery_address > 14):
+                    if(delivery_address > 99):
                         locationStr = '호'
                     else:
                         locationStr = '층'

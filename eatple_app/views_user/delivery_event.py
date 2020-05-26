@@ -84,7 +84,7 @@ def kakaoViewDeliveryAddressSubmit(kakaoPayload):
                 }
             })
 
-            if(address > 14):
+            if(address > 99):
                 locationStr = '호'
             else:
                 locationStr = '층'
@@ -194,7 +194,7 @@ def kakaoViewDeliveryEnable(kakaoPayload):
     else:
         user.delivery_enable()
 
-        if(user.get_delivery_address() > 14):
+        if(user.get_delivery_address() > 99):
             locationStr = '호'
         else:
             locationStr = '층'

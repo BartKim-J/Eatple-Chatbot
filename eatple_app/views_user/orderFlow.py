@@ -1415,7 +1415,7 @@ def kakaoView_PickupTime(kakaoPayload):
                 }
             )
         else:
-            if(delivery_address > 14):
+            if(delivery_address > 99):
                 locationStr = '호'
             else:
                 locationStr = '층'
