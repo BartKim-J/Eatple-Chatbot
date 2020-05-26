@@ -1373,9 +1373,15 @@ def kakaoView_PickupTime(kakaoPayload):
         )
 
         delivery_address = user.get_delivery_address()
+
+        if(delivery_address > 100):
+            delivery_floor = int(delivery_address / 100)
+        else:
+            delivery_floor = int(delivery_address % 100)
+
         isFastFiveFloor = False
         for floor in FAST_FIVE_FLOOR:
-            if(delivery_address == floor):
+            if(delivery_floor == floor):
                 isFastFiveFloor = True
                 break
 
