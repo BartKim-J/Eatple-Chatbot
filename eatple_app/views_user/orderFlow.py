@@ -1374,18 +1374,21 @@ def kakaoView_PickupTime(kakaoPayload):
 
         delivery_address = user.get_delivery_address()
 
-        if(delivery_address > 100):
-            delivery_floor = int(delivery_address / 100)
+        if(delivery_address != None):
+            if(delivery_address > 100):
+                delivery_floor = int(delivery_address / 100)
+            else:
+                delivery_floor = int(delivery_address % 100)
+
+            isFastFiveFloor = False
+            for floor in FAST_FIVE_FLOOR:
+                if(delivery_floor == floor):
+                    isFastFiveFloor = True
+                    break
         else:
-            delivery_floor = int(delivery_address % 100)
+            isFastFiveFloor = False
 
-        isFastFiveFloor = False
-        for floor in FAST_FIVE_FLOOR:
-            if(delivery_floor == floor):
-                isFastFiveFloor = True
-                break
-
-        if(isFastFiveFloor):
+        if(isFastFiveFloor or delivery_address == None):
             kakaoForm.QuickReplies_Add(
                 'block',
                 '3층 픽업존',
