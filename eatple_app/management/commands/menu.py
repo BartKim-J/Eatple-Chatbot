@@ -7,15 +7,16 @@ from django.core.management.base import BaseCommand, CommandError
 # Models
 from eatple_app.models import *
 
+
 class Command(BaseCommand):
-    help = 'Order Control Pannel'
+    help = 'Menu Control Pannel'
 
     def add_arguments(self, parser):
         #     parser.add_argument('poll_ids', nargs='+', type=int)
         parser.add_argument(
             '--update-all',
             action='store_true',
-            help='Update All Orders',
+            help='Update All Menus',
         )
 
     def handle(self, *args, **options):

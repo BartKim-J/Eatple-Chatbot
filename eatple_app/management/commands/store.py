@@ -9,14 +9,14 @@ from eatple_app.models import *
 
 
 class Command(BaseCommand):
-    help = 'Order Control Pannel'
+    help = 'Store Control Pannel'
 
     def add_arguments(self, parser):
         #     parser.add_argument('poll_ids', nargs='+', type=int)
         parser.add_argument(
             '--update-all',
             action='store_true',
-            help='Update All Orders',
+            help='Update All Stores',
         )
 
     def handle(self, *args, **options):
