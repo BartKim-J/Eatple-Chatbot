@@ -84,9 +84,17 @@ def kakaoViewDeliveryAddressSubmit(kakaoPayload):
                 }
             })
 
+            if(address > 14):
+                locationStr = '호'
+            else:
+                locationStr = '층'
+
             KakaoInstantForm().Message(
                 '사무실 등록이 완료되었습니다.',
-                '등록된 사무실: {}호'.format(address),
+                '등록된 사무실: {}{}'.format(
+                    address,
+                    locationStr
+                ),
                 kakaoForm=kakaoForm
             )
 
@@ -186,9 +194,17 @@ def kakaoViewDeliveryEnable(kakaoPayload):
     else:
         user.delivery_enable()
 
+        if(user.get_delivery_address() > 14):
+            locationStr = '호'
+        else:
+            locationStr = '층'
+
         KakaoInstantForm().Message(
             '픽업장소가 내 사무실로 변경되었습니다.',
-            '패파 신사점 {}호에서 기다려주세요.'.format(user.get_delivery_address()),
+            '패파 신사점 {}{}에서 기다려주세요.'.format(
+                user.get_delivery_address(),
+                locationStr,
+            ),
             kakaoForm=kakaoForm
         )
 

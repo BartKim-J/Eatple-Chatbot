@@ -343,13 +343,18 @@ class OrderAdmin(ImportExportMixin, admin.ModelAdmin):
                     return '픽업존'
 
                 else:
-                    return delivery_address
+                    if(delivery_address > 14):
+                        locationStr = '호'
+                    else:
+                        locationStr = '층'
+
+                    return '{}{}'.format(delivery_address, locationStr)
             else:
                 return '테이크아웃'
         else:
             return '테이크아웃'
 
-    field_delivery_address.short_description = '배달 호수'
+    field_delivery_address.short_description = '배달 위치'
     field_delivery_address.admin_order_field = 'ordersheet__user__delivery_address'
 
     def field_user_phone_number(self, obj):

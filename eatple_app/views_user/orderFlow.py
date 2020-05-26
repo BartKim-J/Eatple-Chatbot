@@ -18,6 +18,8 @@ PERCENT_DISCOUNT = 0
 
 DELIVERY_FEE = 500
 
+FAST_FIVE_FLOOR = [3, 4, 5, 9, 11, 12, 13]
+
 SERVICE_AREAS = {
     'yeoksam': {
         'name': '역삼',
@@ -1370,27 +1372,36 @@ def kakaoView_PickupTime(kakaoPayload):
             kakaoForm=kakaoForm
         )
 
-        kakaoForm.QuickReplies_Add(
-            'block',
-            '3층 픽업존',
-            KAKAO_EMOJI_LOADING,
-            KAKAO_BLOCK_USER_SET_ORDER_SHEET,
-            {
-                KAKAO_PARAM_SELLING_TIME: sellingTime,
-                KAKAO_PARAM_STORE_ID: menu.store.store_id,
-                KAKAO_PARAM_MENU_ID: menu.menu_id,
-                KAKAO_PARAM_ORDER_ID: order.order_id,
-                KAKAO_PARAM_PICKUP_TIME: pickupZone_PickupTime,
-                KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_SET_PICKUP_TIME,
-                KAKAO_PARAM_DELIVERY_ADDRESS: 0,
-            }
-        )
-
         delivery_address = user.get_delivery_address()
+        isFastFiveFloor = False
+        for floor in FAST_FIVE_FLOOR:
+            if(delivery_address == floor):
+                isFastFiveFloor = True
+                break
+
+        if(isFastFiveFloor):
+            kakaoForm.QuickReplies_Add(
+                'block',
+                '3층 픽업존',
+                KAKAO_EMOJI_LOADING,
+                KAKAO_BLOCK_USER_SET_ORDER_SHEET,
+                {
+                    KAKAO_PARAM_SELLING_TIME: sellingTime,
+                    KAKAO_PARAM_STORE_ID: menu.store.store_id,
+                    KAKAO_PARAM_MENU_ID: menu.menu_id,
+                    KAKAO_PARAM_ORDER_ID: order.order_id,
+                    KAKAO_PARAM_PICKUP_TIME: pickupZone_PickupTime,
+                    KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_SET_PICKUP_TIME,
+                    KAKAO_PARAM_DELIVERY_ADDRESS: 0,
+                }
+            )
+        else:
+            pass
+
         if(delivery_address == None):
             kakaoForm.QuickReplies_Add(
                 'block',
-                '사무실 호수 입력',
+                '사무실 등록',
                 KAKAO_EMOJI_LOADING,
                 KAKAO_BLOCK_USER_DELIVERY_ADDRESS_SUBMIT,
                 {
@@ -1398,9 +1409,17 @@ def kakaoView_PickupTime(kakaoPayload):
                 }
             )
         else:
+            if(delivery_address > 14):
+                locationStr = '호'
+            else:
+                locationStr = '층'
+
             kakaoForm.QuickReplies_Add(
                 'block',
-                '내 사무실({}호)'.format(delivery_address),
+                '내 사무실({}{})'.format(
+                    delivery_address,
+                    locationStr
+                ),
                 KAKAO_EMOJI_LOADING,
                 KAKAO_BLOCK_USER_SET_ORDER_SHEET,
                 {

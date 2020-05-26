@@ -448,7 +448,7 @@ class OrderInfo(models.Model):
 
     delivery_address = models.IntegerField(
         default=0,
-        verbose_name="사무실 호수"
+        verbose_name="사무실 위치"
     )
 
     is_delivery = models.BooleanField(
