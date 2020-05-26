@@ -213,7 +213,7 @@ class OrderAdmin(ImportExportMixin, admin.ModelAdmin):
     field_delegate_flag.short_description = "부탁하기"
 
     def field_totalPrice(self, obj):
-        if(obj.totalPrice > 0):
+        if(obj.totalPrice > 0 and obj.menu != None):
             if((obj.discount - (obj.menu.price_origin - obj.menu.price)) > 0):
                 return '{}원 - {}원 할인됨'.format(obj.totalPrice, obj.discount)
             else:
