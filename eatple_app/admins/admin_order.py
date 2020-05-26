@@ -158,6 +158,8 @@ class OrderResource(resources.ModelResource):
     b2b_name = Field(column_name='B2B')
     payment_status = Field(column_name='결제 상태')
     totalPrice = Field(attribute='totalPrice', column_name='총 결제금액')
+    menuPrice = Field(attribute='menu__price', column_name='잇플가')
+    delivery_fee = Field(attribute='delivery_fee', column_name='배달비')
     discount = Field(attribute='discount', column_name='할인액')
     field_phone_number = Field(column_name='전화번호')
     order_date = Field(column_name='주문 시간')
@@ -168,8 +170,23 @@ class OrderResource(resources.ModelResource):
 
     class Meta:
         model = Order
-        exclude = ('id', 'ordersheet', 'count', 'status',
-                   'delegate', 'update_date', 'pickup_time')
+        exclude = (
+            'id',
+            'ordersheet',
+            'count',
+            'status',
+            'delegate',
+            'update_date',
+            'pickup_time',
+            'discount',
+            'discount_eatple',
+            'vat',
+            'pg_fee',
+            'profit',
+            'delivery_address',
+            'is_delivery',
+            'is_friend_code',
+        )
 
 
 class OrderAdmin(ImportExportMixin, admin.ModelAdmin):
