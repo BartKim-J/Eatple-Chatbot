@@ -291,8 +291,8 @@ def getWAS(orderTimeSheet):
 
 def showActiveStatus(orderTimeSheet):
 
-    MONTH = 4
-    DAY = 14
+    MONTH = 5
+    DAY = 12
 
     # Test
     test_start_date = dateNowByTimeZone().replace(year=2020, month=MONTH, day=DAY,
