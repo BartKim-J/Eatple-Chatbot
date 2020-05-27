@@ -311,18 +311,21 @@ def kakaoView_OrderDetails(kakaoPayload):
                 for storeEntry in storeList:
                     storeEntry.orderChecked()
 
-        orderManager = PartnerOrderManager(partner, store=store)
-        orderManager.orderPaidCheck()
-        orderManager.orderPenddingCleanUp()
+        storeList = Store.objects.filter(
+            Q(crn__CRN_id=partner.store.crn.CRN_id)
+        )
+        availableOrders = 0
 
-        availableOrders = orderManager.getAvailableOrders()
+        for storeEntry in storeList:
+            orderManager = PartnerOrderManager(partner, store=storeEntry)
+            orderManager.orderPaidCheck()
+            orderManager.orderPenddingCleanUp()
 
-        if(availableOrders.exists() == True):
+            availableOrders += orderManager.getAvailableOrders().count()
+
+        print(availableOrders)
+        if(availableOrders > 0):
             if (store == None):
-                storeList = Store.objects.filter(
-                    Q(crn__CRN_id=partner.store.crn.CRN_id)
-                )
-
                 isCafe = False
                 isPickupZone = False
                 isNormalMenu = False
