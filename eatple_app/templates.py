@@ -443,9 +443,19 @@ def userPersenalData():
     age = 0
     man = 0
     woman = 0
+    friend_discount = 0
+    friend_discount_apply = 0
 
     for user in userList:
         age += 2020 - int(user.birthyear)
+        if(user.is_apply_friend_code):
+            friend_discount_apply += 1
+
+        if(user.friend_discount_count > 0):
+            print(user.nickname, user.friend_discount_count,
+                  user.is_apply_friend_code)
+        friend_discount += user.friend_discount_count
+
         if(user.gender == 'female'):
             woman += 1
 
@@ -456,6 +466,8 @@ def userPersenalData():
     print('평균나이', age)
     print('여성 비율', woman)
     print('남성 비율', man)
+    print('발급된 친구 할인쿠폰', friend_discount)
+    print('가입해서 발급받은 할인 쿠폰', friend_discount_apply)
 
 ########################################################################
 # TEMPLATES
@@ -505,7 +517,7 @@ def dashboard(request):
     # userActive = getUserActive()
     # showActiveStatus(orderTimeSheet)
     # print('부탁하기된 주문수', getOrderDelegated())
-    # userPersenalData()
+    userPersenalData()
 
     log = LogEntry.objects.all()
 

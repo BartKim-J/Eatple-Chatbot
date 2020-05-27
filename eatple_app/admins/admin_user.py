@@ -181,6 +181,7 @@ class UserAdmin(ImportExportMixin, admin.ModelAdmin):
         'nickname',
         'field_phone_number',
         'field_friend_code',
+        'inviter_code',
         'email',
         'birthyear',
         'birthday',
@@ -219,6 +220,7 @@ class UserAdmin(ImportExportMixin, admin.ModelAdmin):
             '이벤트 - 친구코드',
             {
                 'fields': [
+                    'inviter_code',
                     'field_friend_code',
                     'friend_discount_count',
                     'is_apply_friend_code',

@@ -203,30 +203,33 @@ class KakaoInstantForm():
         if(kakaoForm == None):
             kakaoForm = KakaoForm()
 
-        thumbnail = {
-            'imageUrl': '{}{}'.format(HOST_URL, order.menu.imgURL()),
-            'fixedRatio': 'true',
-            'width': 800,
-            'height': 800,
-        }
+        if(order.menu != None):
+            thumbnail = {
+                'imageUrl': '{}{}'.format(HOST_URL, order.menu.imgURL()),
+                'fixedRatio': 'true',
+                'width': 800,
+                'height': 800,
+            }
 
-        isCafe = order.store.category.filter(name="카페").exists()
-        if(isCafe):
-            pickupTimeStr = dateByTimeZone(order.pickup_time).strftime(
-                '%-m월 %-d일 오전 11시 30분 ~ 오후 2시')
+            isCafe = order.store.category.filter(name="카페").exists()
+            if(isCafe):
+                pickupTimeStr = dateByTimeZone(order.pickup_time).strftime(
+                    '%-m월 %-d일 오전 11시 30분 ~ 오후 2시')
+            else:
+                pickupTimeStr = dateByTimeZone(order.pickup_time).strftime(
+                    '%-m월 %-d일 %p %-I시 %-M분').replace('AM', '오전').replace('PM', '오후')
+
+            kakaoForm.BasicCard_Push(
+                '{}'.format(order.menu.name),
+                '픽업 시간: {}\n주문 상태: {}'.format(
+                    pickupTimeStr,
+                    dict(ORDER_STATUS)[order.status]
+                ),
+                thumbnail,
+                []
+            )
         else:
-            pickupTimeStr = dateByTimeZone(order.pickup_time).strftime(
-                '%-m월 %-d일 %p %-I시 %-M분').replace('AM', '오전').replace('PM', '오후')
-
-        kakaoForm.BasicCard_Push(
-            '{}'.format(order.menu.name),
-            '픽업 시간: {}\n주문 상태: {}'.format(
-                pickupTimeStr,
-                dict(ORDER_STATUS)[order.status]
-            ),
-            thumbnail,
-            []
-        )
+            pass
 
     def MenuList(self, menu, subText='', discount=0, thumbnail={}, buttons=[], kakaoForm=None, prev_block_id=None):
         if(kakaoForm == None):

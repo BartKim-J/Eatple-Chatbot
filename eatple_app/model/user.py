@@ -214,10 +214,10 @@ class FriendEvent(models.Model):
             try:
                 invitationUser = User.objects.get(friend_code=friend_code)
                 self.inviter_code = invitationUser.friend_code
-                self.save()
 
                 self.gain_friend_discount()
                 self.is_apply_friend_code = True
+                self.save()
 
                 status = True
             except Exception as ex:
