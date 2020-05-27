@@ -166,6 +166,7 @@ class OrderResource(resources.ModelResource):
     payment_date = Field(column_name='결제 완료 시간')
     pickup_complete_date = Field(column_name='픽업 완료 시간')
     payment_type = Field(column_name='결제 타입')
+    'delivery_address', = Field(attribute='delivery_address', column_name='배달위치')
     tid = Field(attribute='order_kakaopay__tid', column_name='카카오 고유 주문번호')
 
     class Meta:
@@ -183,7 +184,6 @@ class OrderResource(resources.ModelResource):
             'vat',
             'pg_fee',
             'profit',
-            'delivery_address',
             'is_delivery',
             'is_friend_code',
         )

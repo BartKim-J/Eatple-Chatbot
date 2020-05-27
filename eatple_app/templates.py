@@ -517,7 +517,7 @@ def dashboard(request):
     # userActive = getUserActive()
     # showActiveStatus(orderTimeSheet)
     # print('부탁하기된 주문수', getOrderDelegated())
-    userPersenalData()
+    # userPersenalData()
 
     log = LogEntry.objects.all()
 
