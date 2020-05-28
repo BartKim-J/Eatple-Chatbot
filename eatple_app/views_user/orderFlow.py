@@ -45,7 +45,10 @@ SERVICE_AREAS = {
 
 
 def isServiceArea(user):
-    addressMap = user.location.address.split()
+    try:
+        addressMap = user.location.address.split()
+    except User.location.RelatedObjectDoesNotExist:
+        return False
 
     try:
         for code, area in SERVICE_AREAS.items():

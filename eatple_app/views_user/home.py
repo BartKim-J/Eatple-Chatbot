@@ -348,6 +348,7 @@ def kakaoView_Home(user, address):
     ]
 
     # MAP
+    buttons = []
     addressMap = address.split()
 
     roadAddress = user.location.road_address
@@ -356,7 +357,21 @@ def kakaoView_Home(user, address):
         roadAddressStr = '{}'.format(
             roadAddress[roadAddress.find(roadAddressMap[1]):len(roadAddress)])
     else:
-        roadAddressStr = address
+        if(address == LOCATION_DEFAULT_ADDR):
+            roadAddressStr = '위치가 등록되지 않았습니다.'
+            buttons.append(
+                {
+                    'action': 'block',
+                    'label': '위치 등록하기',
+                    'messageText': KAKAO_EMOJI_LOADING,
+                    'blockId': KAKAO_BLOCK_USER_EDIT_LOCATION,
+                    'extra': {
+                        KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_GET_STORE
+                    }
+                }
+            )
+        else:
+            roadAddressStr = address
 
     kakaoForm.BasicCard_Push(
         '🗺️  {}'.format(
@@ -364,7 +379,7 @@ def kakaoView_Home(user, address):
         ),
         '',
         {},
-        []
+        buttons
     )
     kakaoForm.BasicCard_Add()
 
