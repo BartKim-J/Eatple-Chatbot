@@ -316,14 +316,20 @@ def kakaoView_OrderDetails(kakaoPayload):
         )
         availableOrders = 0
 
-        for storeEntry in storeList:
-            orderManager = PartnerOrderManager(partner, store=storeEntry)
+        if(store == None):
+            for storeEntry in storeList:
+                orderManager = PartnerOrderManager(partner, store=storeEntry)
+                orderManager.orderPaidCheck()
+                orderManager.orderPenddingCleanUp()
+
+                availableOrders += orderManager.getAvailableOrders().count()
+        else:
+            orderManager = PartnerOrderManager(partner, store=store)
             orderManager.orderPaidCheck()
             orderManager.orderPenddingCleanUp()
 
             availableOrders += orderManager.getAvailableOrders().count()
 
-        print(availableOrders)
         if(availableOrders > 0):
             if (store == None):
                 isCafe = False
