@@ -47,11 +47,14 @@ SERVICE_AREAS = {
 def isServiceArea(user):
     addressMap = user.location.address.split()
 
-    for code, area in SERVICE_AREAS.items():
-        if(addressMap[2].find(area['name']) != -1):
-            return True
-        else:
-            pass
+    try:
+        for code, area in SERVICE_AREAS.items():
+            if(addressMap[2].find(area['name']) != -1):
+                return True
+            else:
+                pass
+    except IndexError:
+        return False
 
     return False
 

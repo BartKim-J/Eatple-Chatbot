@@ -175,6 +175,8 @@ def userLocationRegistration(user, locationData):
         except:
             location.road_address = locationData['land_address']['address_name']
 
+        location.address = locationData['land_address']['address_name']
+
         location.save()
 
         user.location = location
