@@ -1,8 +1,11 @@
 import psutil
+import datetime
 
 
 def get_hw_idle_info():
     """CPU, 메모리, 디스크의 예비율 정보를 구한다 """
+    print('TIME :', datetime.datetime.now())
+
     rst = dict()  # 반환값 초기화
 
     cp = psutil.cpu_times_percent(interval=None, percpu=False)  # CPU 데이터
