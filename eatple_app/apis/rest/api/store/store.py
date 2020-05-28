@@ -12,22 +12,31 @@ class StoreViewSet(viewsets.ModelViewSet):
         crn = request.query_params.get('crn')
         id = request.query_params.get('id')
         name = request.query_params.get('name')
-        filter = Q()
         if(crn != None):
             crn = crn.replace('-', '')
-            filter.add(Q(crn__CRN_id=crn), filter.AND)
+
+            crnFilter = Q()
+            if(crn == ADMIN_CRN):
+                crnFilter.add(
+                    Q(store__crn__CRN_id=crn), crnFilter.AND)
         else:
             response['error_code'] = PARTNER_LOGIN_300_INVALID_CRN.code
             response['error_msg'] = PARTNER_LOGIN_300_INVALID_CRN.message
 
+        infoFilter = Q()
+
+        infoFilter.add(~Q(name__contains='잇플'), infoFilter.AND)
+
         if(param_valid(id)):
-            filter.add(Q(store_id=id), filter.OR)
+            infoFilter.add(Q(store_id=id), infoFilter.OR)
 
         if(param_valid(name)):
-            filter.add(Q(name_contains=name), filter.OR)
+            infoFilter.add(Q(name__contains=name), infoFilter.OR)
 
-        storeList = Store.objects.filter(filter)
-
+        storeList = Store.objects.filter(
+            crnFilter |
+            infoFilter
+        )
 
         response['stores'] = StoreSerializer(storeList, many=True).data
         response['error_code'] = 200

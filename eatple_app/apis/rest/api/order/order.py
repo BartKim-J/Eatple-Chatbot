@@ -15,6 +15,8 @@ from eatple_app.apis.rest.serializer.order import OrderSerializer
 
 """
 
+ADMIN_CRN = 2558701463
+
 
 def getAdjustment(orderList, date_range):
     orderList = orderList.order_by('payment_date')
@@ -304,6 +306,12 @@ class OrderViewSet(viewsets.ModelViewSet):
 
         if(crn != None):
             crn = crn.replace('-', '')
+
+            crnFilter = Q()
+            if(crn == ADMIN_CRN):
+                crnFilter.add(
+                    Q(store__crn__CRN_id=crn), crnFilter.AND)
+
         else:
             response['error_code'] = PARTNER_LOGIN_300_INVALID_CRN.code
             response['error_msg'] = PARTNER_LOGIN_300_INVALID_CRN.message
@@ -311,7 +319,7 @@ class OrderViewSet(viewsets.ModelViewSet):
             return Response(response)
 
         orderList = Order.objects.filter(
-            Q(store__crn__CRN_id=crn) &
+            crnFilter &
             ~Q(store=None) &
             ~Q(menu=None) &
             (
@@ -412,13 +420,18 @@ class OrderViewSet(viewsets.ModelViewSet):
 
             return Response(response)
 
+        infoFilter = Q()
+        if(param_valid(store)):
+            infoFilter.add(Q(store__name__contains=store), infoFilter.AND)
+
         orderList = Order.objects.filter(
             Q(store__crn__CRN_id=crn) &
             ~Q(store=None) &
             ~Q(menu=None) &
             (
                 Q(payment_status=EATPLE_ORDER_STATUS_PAID)
-            )
+            ) &
+            infoFilter
         )
 
         if(date_range and len(date_range) >= 2):
