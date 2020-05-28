@@ -196,6 +196,13 @@ def kakaoView_StoreListup(kakaoPayload):
     except:
         pass
 
+    try:
+        distance_condition = kakaoPayload.dataActionExtra['distance_condition']
+        area_in_flag = kakaoPayload.dataActionExtra['area_in_flag']
+        area_code = kakaoPayload.dataActionExtra['area']
+    except:
+        pass
+
     '''
     try:
         distance_condition = kakaoPayload.dataActionExtra['distance_condition']
@@ -408,7 +415,8 @@ def kakaoView_StoreListup(kakaoPayload):
         else:
             pass
 
-        if((is_take_out == False) and ((area_in_flag and addressMap[2] == '신사동') or (area_code == 'sinsa'))):
+        if((SELLING_TIME_LUNCH == sellingTime) and (is_take_out == False) and
+                ((area_in_flag and addressMap[2] == '신사동') or (area_code == 'sinsa'))):
             kakaoForm.BasicCard_Add()
         else:
             onDisplayStore = 0
