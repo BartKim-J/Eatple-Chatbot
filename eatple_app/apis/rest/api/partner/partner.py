@@ -70,16 +70,16 @@ class PartnerViewSet(viewsets.ModelViewSet):
         try:
             partner = Partner.objects.get(
                 phone_number=partnerStore.phone_number)
-            print(partner.nickname)
         except Partner.DoesNotExist as ex:
-            partner = Partner.objects.filter(store=partnerStore).first()
-                
+            partnerList = Partner.objects.filter(
+                store__crn__CRN_id=partnerStore.crn.CRN_id)
+            partner = partnerList.first()
+
         response['token'] = partner.ci
         response['token_at'] = partner.ci_authenticated_at
         response['error_code'] = PARTNER_LOGIN_200_SUCCESS.code
         response['error_msg'] = PARTNER_LOGIN_200_SUCCESS.message
 
-        print(response)
         return Response(response)
 
     @action(detail=False, methods=['post'])
@@ -96,9 +96,6 @@ class PartnerViewSet(viewsets.ModelViewSet):
             print(ex)
             return JsonResponse({'status': 400, })
 
-        print(token)
-        print(token_at)
-
         try:
             partner = Partner.objects.filter(
                 ci=token,
@@ -106,7 +103,7 @@ class PartnerViewSet(viewsets.ModelViewSet):
             ).first()
 
             print(partner)
-            
+
         except Partner.DoesNotExist as ex:
             response['error_code'] = PARTNER_LOGIN_301_INVALID_TOKEN.code
             response['error_msg'] = PARTNER_LOGIN_301_INVALID_TOKEN.message

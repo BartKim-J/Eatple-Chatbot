@@ -15,8 +15,6 @@ from eatple_app.apis.rest.serializer.order import OrderSerializer
 
 """
 
-ADMIN_CRN = 2558701463
-
 
 def getAdjustment(orderList, date_range):
     orderList = orderList.order_by('payment_date')
@@ -308,7 +306,7 @@ class OrderViewSet(viewsets.ModelViewSet):
             crn = crn.replace('-', '')
 
             crnFilter = Q()
-            if(crn == ADMIN_CRN):
+            if(crn != ADMIN_CRN):
                 crnFilter.add(
                     Q(store__crn__CRN_id=crn), crnFilter.AND)
 

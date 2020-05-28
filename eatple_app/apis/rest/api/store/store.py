@@ -16,9 +16,9 @@ class StoreViewSet(viewsets.ModelViewSet):
             crn = crn.replace('-', '')
 
             crnFilter = Q()
-            if(crn == ADMIN_CRN):
+            if(crn != ADMIN_CRN):
                 crnFilter.add(
-                    Q(store__crn__CRN_id=crn), crnFilter.AND)
+                    Q(crn__CRN_id=crn), crnFilter.AND)
         else:
             response['error_code'] = PARTNER_LOGIN_300_INVALID_CRN.code
             response['error_msg'] = PARTNER_LOGIN_300_INVALID_CRN.message
@@ -28,13 +28,13 @@ class StoreViewSet(viewsets.ModelViewSet):
         infoFilter.add(~Q(name__contains='잇플'), infoFilter.AND)
 
         if(param_valid(id)):
-            infoFilter.add(Q(store_id=id), infoFilter.OR)
+            infoFilter.add(Q(store_id=id), infoFilter.AND)
 
         if(param_valid(name)):
-            infoFilter.add(Q(name__contains=name), infoFilter.OR)
+            infoFilter.add(Q(name__contains=name), infoFilter.AND)
 
         storeList = Store.objects.filter(
-            crnFilter |
+            crnFilter &
             infoFilter
         )
 
