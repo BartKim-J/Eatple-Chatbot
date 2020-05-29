@@ -11,29 +11,6 @@ DEFAULT_DISTANCE_CONDITION = 800
 DEFAULT_AREA_IN_FLAG = True
 DEFAULT_AREA_CODE = None
 
-SERVICE_AREAS = {
-    'yeoksam': {
-        'name': '역삼',
-        'y': 37.500682,
-        'x': 127.036598
-    },
-    'sinsa': {
-        'name': '신사',
-        'y': 37.516433,
-        'x': 127.020389
-    },
-    'samsung': {
-        'name': '삼성',
-        'y': 37.508845,
-        'x': 127.063132
-    },
-    'gangnam': {
-        'name': '강남',
-        'y': 37.497899,
-        'x': 127.027670
-    },
-}
-
 
 def isServiceArea(user):
     addressMap = user.location.address.split()

@@ -119,13 +119,12 @@ TEMPLATES = [
 WSGI_APPLICATION = 'config.wsgi.debug.application'
 
 
-# Database
+# @SERVER - Database
 # https://docs.djangoproject.com/en/2.2/ref/settings/#databases
-
 DATABASES = {
     'default': {
         'ENGINE': 'django.contrib.gis.db.backends.mysql',
-        'NAME': 'eatple_DB',
+        'NAME': 'eatple_DB_Test',
         'USER': 'eatple',
         'PASSWORD': 'eatple0000',
         'HOST': 'localhost',

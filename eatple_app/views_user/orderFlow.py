@@ -283,11 +283,18 @@ def kakaoView_StoreListup(kakaoPayload):
                 kakaoForm=kakaoForm
             )
         else:
-            KakaoInstantForm().Message(
-                '\'메뉴판 보기\'에서 메뉴를 확인하세요',
-                '',
-                kakaoForm=kakaoForm
-            )
+            if((is_take_out == False) and (area_in_flag and addressMap[2] == '신사동') or (area_code == 'sinsa')):
+                KakaoInstantForm().Message(
+                    '\'픽업존 주문하기\'에서 메뉴를 확인하세요',
+                    '',
+                    kakaoForm=kakaoForm
+                )
+            else:
+                KakaoInstantForm().Message(
+                    '\'메뉴판 보기\'에서 메뉴를 확인하세요',
+                    '',
+                    kakaoForm=kakaoForm
+                )
 
         # HEADER
         if(SELLING_TIME_LUNCH == sellingTime):
