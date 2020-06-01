@@ -500,22 +500,32 @@ def kakaoView_StoreListup(kakaoPayload):
                         },
                     ]
 
-                    pickupTimeList = '⏱️  매장 방문 픽업가능 시간\n - '
+                    if(store.status == STORE_OC_VACATION):
+                        descriptionStr = '내부사정으로 휴무중입니다.\n'
 
-                    for pickup_time in menu.pickup_time.all():
-                        if(menu.pickup_time.first() != pickup_time):
-                            pickupTimeList += ', '
-
-                            pickupTimeList += pickup_time.time.strftime(
-                                '%-I:%M')
+                        if(store.name == '행복한만두 가로수길점'):
+                            descriptionStr += '2020월 6월 1일 ~2020년 6월 7일'
                         else:
-                            pickupTimeList += pickup_time.time.strftime(
-                                '%p %-I:%M').replace('AM', '오전').replace('PM', '오후')
+                            descriptionStr = '메뉴판 보기는 가능합니다.'
+                    else:
+                        pickupTimeList = '⏱️  매장 방문 픽업가능 시간\n - '
+
+                        for pickup_time in menu.pickup_time.all():
+                            if(menu.pickup_time.first() != pickup_time):
+                                pickupTimeList += ', '
+
+                                pickupTimeList += pickup_time.time.strftime(
+                                    '%-I:%M')
+                            else:
+                                pickupTimeList += pickup_time.time.strftime(
+                                    '%p %-I:%M').replace('AM', '오전').replace('PM', '오후')
+
+                            descriptionStr = pickupTimeList
 
                     KakaoInstantForm().StoreList(
                         store,
                         walkTime,
-                        pickupTimeList,
+                        descriptionStr,
                         thumbnail,
                         buttons,
                         kakaoForm
@@ -917,6 +927,7 @@ def kakaoView_MenuListup(kakaoPayload):
     ).order_by(F'-index', F'price', F'name')
 
     sellingOutList = []
+    vacationList = []
 
     if menuList:
         if(user.friend_discount_count > 0):
@@ -929,7 +940,9 @@ def kakaoView_MenuListup(kakaoPayload):
         for menu in menuList:
             currentStock = menu.getCurrentStock()
 
-            if(menu.max_stock > menu.current_stock):
+            if(menu.store.status == STORE_OC_VACATION):
+                vacationList.extend(list(Menu.objects.filter(id=menu.id)))
+            elif(menu.max_stock > menu.current_stock):
                 distance = menu.distance
                 walkTime = round((distance / 100) * 1.2)
 
@@ -981,21 +994,15 @@ def kakaoView_MenuListup(kakaoPayload):
                     kakaoForm
                 )
 
-            else:  # selling out
+            else:
                 sellingOutList.extend(list(Menu.objects.filter(id=menu.id)))
 
-        for menu in sellingOutList:
-            delivery = menu.tag.filter(name='픽업존').exists()
-
-            if(delivery):
-                status = '픽업존'
-            else:
-                status = '매진'
-
+        for menu in (sellingOutList + vacationList):
             kakaoMapUrl = 'https://map.kakao.com/link/map/{name},{place}'.format(
                 name=menu.store.name,
                 place=menu.store.place
             )
+
             if(menu.store.status == STORE_OC_VACATION):
                 thumbnail = {
                     'imageUrl': '{}{}'.format(HOST_URL, menu.imgURL()),
@@ -1017,6 +1024,13 @@ def kakaoView_MenuListup(kakaoPayload):
                     kakaoForm
                 )
             else:
+                delivery = menu.tag.filter(name='픽업존').exists()
+
+                if(delivery):
+                    status = '픽업존'
+                else:
+                    status = '매진'
+
                 thumbnail = {
                     'imageUrl': '{}{}'.format(HOST_URL, menu.soldOutImgURL()),
                     'fixedRatio': 'true',
