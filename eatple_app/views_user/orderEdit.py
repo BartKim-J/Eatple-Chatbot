@@ -87,8 +87,8 @@ def kakaoView_UseEatplePass(kakaoPayload):
         )
     else:
         KakaoInstantForm().Message(
-            '사용 가능한 픽업 시간이 아닙니다.',
-            '잇플패스의 픽업 시간을 확인해주세요.',
+            '잇플 패스 확인은 픽업시간 15분 전부터 가능합니다.',
+            '',
             kakaoForm=kakaoForm
         )
 
