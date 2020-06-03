@@ -38,6 +38,21 @@ def isServiceArea(user):
     return False
 
 
+def isPickupZoneArea(addressMap):
+    # Sinsa Area
+    if(addressMap[2] == '신사동' and (
+        (addressMap[3] == '539-10') or
+        (addressMap[3] == '539-11') or
+        (addressMap[3] == '539-12') or
+        (addressMap[3] == '539-13') or
+        (addressMap[3] == '539-14') or
+        (addressMap[3] == '501-5')
+    )):
+        return True
+    else:
+        return False
+
+
 def applyDiscount(user, menu):
     addressMap = user.location.address.split()
 
@@ -283,7 +298,7 @@ def kakaoView_StoreListup(kakaoPayload):
                 kakaoForm=kakaoForm
             )
         else:
-            if((is_take_out == False) and (area_in_flag and addressMap[2] == '신사동') or (area_code == 'sinsa')):
+            if((is_take_out == False) and (area_in_flag and isPickupZoneArea(addressMap)) or (area_code == 'sinsa')):
                 KakaoInstantForm().Message(
                     '\'픽업존 주문하기\'에서 메뉴를 확인하세요',
                     '',
@@ -308,7 +323,7 @@ def kakaoView_StoreListup(kakaoPayload):
                 'height': 800,
             }
 
-            if((is_take_out == False) and (area_in_flag and addressMap[2] == '신사동') or (area_code == 'sinsa')):
+            if((is_take_out == False) and (area_in_flag and isPickupZoneArea(addressMap)) or (area_code == 'sinsa')):
                 pass
             else:
                 kakaoForm.BasicCard_Push(
@@ -332,7 +347,7 @@ def kakaoView_StoreListup(kakaoPayload):
                 }
             })
 
-            if((area_in_flag and addressMap[2] == '신사동') or (area_code == 'sinsa')):
+            if(area_in_flag and isPickupZoneArea(addressMap) or (area_code == 'sinsa')):
                 if(is_take_out):
                     QUICKREPLIES_MAP.insert(0, {
                         'action': 'block',
@@ -427,7 +442,7 @@ def kakaoView_StoreListup(kakaoPayload):
             pass
 
         if((SELLING_TIME_LUNCH == sellingTime) and (is_take_out == False) and
-                ((area_in_flag and addressMap[2] == '신사동') or (area_code == 'sinsa'))):
+                (area_in_flag and isPickupZoneArea(addressMap)) or (area_code == 'sinsa')):
             kakaoForm.BasicCard_Add()
         else:
             onDisplayStore = 0

@@ -30,11 +30,11 @@ class Command(BaseCommand):
         currentDate = orderTimeSheet.GetCurrentDate()
 
         hour = currentDate.hour
-        min = currentDate.min
+        minute = currentDate.minute
 
         # Check Order Flag To False
         # 2:00 PM and AM 9:00 PM
-        if((hour == 14 and min == 0) or (hour == 21 and min == 0)):
+        if((hour == 14 and minute == 0) or (hour == 21 and minute == 0)):
             for store in storeList:
                 store.is_check_order = False
                 store.save()
