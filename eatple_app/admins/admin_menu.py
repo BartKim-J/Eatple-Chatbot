@@ -70,7 +70,37 @@ class StockTableInline(CompactInline):
     readonly_fields = ('pickuped_stock', 'current_stock',)
 
 
+class MenuResource(resources.ModelResource):
+    store = Field(attribute='store__name', column_name='상점')
+    name = Field(attribute='name', column_name='메뉴')
+
+    pickuped_stock = Field(attribute='pickuped_stock', column_name='픽업된 주문')
+    current_stock = Field(attribute='current_stock', column_name='들어온 주문')
+    max_stock = Field(attribute='max_stock', column_name='매장 재고량')
+    status = Field(attribute='status', column_name='영업 여부')
+
+    class Meta:
+        model = Menu
+
+        exclude = (
+            'id',
+            'menu_id',
+            'index',
+            'description',
+            'image',
+            'soldout_image',
+            'tag',
+            'type',
+            'price',
+            'price_origin',
+            'selling_time',
+            'name_partner',
+            'pickup_time',
+        )
+
+
 class MenuAdmin(ImportExportMixin, admin.GeoModelAdmin):
+    resource_class = MenuResource
     verbose_name = "메뉴"
     verbose_name_plural = "메뉴"
 
