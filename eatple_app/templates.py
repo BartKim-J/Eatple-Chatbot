@@ -521,18 +521,24 @@ def dashboard(request):
 
     log = LogEntry.objects.all()
 
+    storeByMonth = filter(lambda i: i.getMontlyStock()[0] > 0, storeList)
+
     return render(request, 'dashboard/dashboard.html', {
         'log': log[:5],
         'currentDate': '{}'.format(currentDate.strftime(
             '%Y년 %-m월 %-d일 %p %-I시 %-M분 %S초').replace('AM', '오전').replace('PM', '오후')),
         'menus': menuList,
 
-        'storesOrderByPrevPrevMonth': sorted(storeList, key=(lambda i: -i.getPrevPrevMonthStock()[0])),
-        'storesOrderByPrevMonth': sorted(storeList, key=(lambda i: -i.getPrevMonthStock()[0])),
-        'stores': sorted(storeList, key=(lambda i: -i.getMontlyStock()[0])),
+        'stores': sorted(storeByMonth, key=(lambda i: -i.getMontlyStock()[0])),
 
-        'storesLunch': filter(lambda i: i.getLucnhCurrentStock() > 0, sorted(storeList, key=(lambda i: -i.getLucnhCurrentStock()))),
-        'storesDinner': filter(lambda i: i.getDinnerCurrentStock() > 0, sorted(storeList, key=(lambda i: -i.getDinnerCurrentStock()))),
+        'storesLunch': storeList.filter(
+            Q(menu__selling_time=SELLING_TIME_LUNCH) &
+            Q(menu__current_stock__gt=0)
+        ),
+        'storesDinner': storeList.filter(
+            Q(menu__selling_time=SELLING_TIME_DINNER) &
+            Q(menu__current_stock__gt=0)
+        ),
 
         'totalStockIncrease': dailyOrder.count() - dailyOrderPrev.count(),
         'totalStock': dailyOrder.count(),

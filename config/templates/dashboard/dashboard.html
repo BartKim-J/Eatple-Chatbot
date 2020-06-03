@@ -228,137 +228,8 @@
                     </div>
                 </div>
             </div>
-
             <div class="row">
-                <div class="col-md-12 col-lg-4 col-xl-4 mb-4">
-                    <div class="card bg-dark m-b-30">
-                        <div class="card-header">                                
-                            <div class="row align-items-center">
-                                <div class="col-8">
-                                    <h5 class="m-0 font-weight-bold text-primary">전전달 업체별 주문건</h5>
-                                </div>
-                                <div class="col-4">
-                                    <ul class="list-inline-group text-right mt-1 mb-0 pl-0">
-                                        <li class="list-inline-item mr-0 font-12"><i class="feather icon-more-vertical- font-20 text-primary"></i></li>
-                                    </ul>                                        
-                                </div>
-                            </div>
-                        </div>
-                        <div class="card-body">
-                            <div class="table-responsive dash-flag-icon">
-                                <table class="table table-borderless mb-2">
-                                <thead>
-                                    <tr>
-                                    <th class="m-0 font-weight-bold text-primary" scope="col">순위</th>
-                                    <th class="m-0 font-weight-bold text-primary" scope="col "></th>
-                                    <th class="m-0 font-weight-bold text-primary" scope="col">매장</th>
-                                    <th class="m-0 font-weight-bold text-primary" scope="col">월 주문건 수</th>
-                                    <th class="m-0 font-weight-bold text-primary" scope="col">차지 비율</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {% for store in storesOrderByPrevPrevMonth|slice:":10" %}
-                                        <tr>
-                                            <th scope="row">{{ forloop.counter }}</th>
-                                            <td><img class="store-logo" src="{{ store.logo.url }}""></td>
-                                            <td>{{ store.name }}</td>
-                                            <td>
-                                                <div class="row">
-                                                    <div class="col-6">
-                                                    {{ store.getPrevPrevMonthStock.0 }} 건
-                                                    </div>
-                                                    <div class="col-6">
-                                                        <p>
-                                                            {% if  store.getPrevPrevIncreaseStock > 0 %}
-                                                            <span class="badge badge-success-inverse font-16">
-                                                                +{{ store.getPrevPrevIncreaseStock }}
-                                                                <i class="fas fa-angle-double-up"></i>
-                                                            </span>
-                                                            {% else %}
-                                                            <span class="badge badge-danger-inverse font-16">
-                                                                {{ store.getPrevPrevIncreaseStock }}
-                                                                <i class="fas fa-angle-double-down"></i>
-                                                            </span>
-                                                            {% endif %}
-                                                        </p>
-                                                    </div>
-                                                </row>
-                                            </td>
-                                            <td>{{ store.getPrevPrevMonthStock.0|div:store.getPrevPrevMonthStock.1 }}%</td>
-                                        </tr>
-                                    {% endfor %}
-                                </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="col-md-12 col-lg-4 col-xl-4 mb-4">
-                    <div class="card bg-dark m-b-30">
-                        <div class="card-header">                                
-                            <div class="row align-items-center">
-                                <div class="col-8">
-                                    <h5 class="m-0 font-weight-bold text-primary">이전달 업체별 주문건</h5>
-                                </div>
-                                <div class="col-4">
-                                    <ul class="list-inline-group text-right mt-1 mb-0 pl-0">
-                                        <li class="list-inline-item mr-0 font-12"><i class="feather icon-more-vertical- font-20 text-primary"></i></li>
-                                    </ul>                                        
-                                </div>
-                            </div>
-                        </div>
-                        <div class="card-body">
-                            <div class="table-responsive dash-flag-icon">
-                                <table class="table table-borderless mb-2">
-                                <thead>
-                                    <tr>
-                                    <th class="m-0 font-weight-bold text-primary" scope="col">순위</th>
-                                    <th class="m-0 font-weight-bold text-primary" scope="col"></th>
-                                    <th class="m-0 font-weight-bold text-primary" scope="col">매장</th>
-                                    <th class="m-0 font-weight-bold text-primary" scope="col">월 주문건 수</th>
-                                    <th class="m-0 font-weight-bold text-primary" scope="col">차지 비율</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {% for store in storesOrderByPrevMonth|slice:":10" %}
-                                        <tr>
-                                            <th scope="row">{{ forloop.counter }}</th>
-                                            <td><img class="store-logo" src="{{ store.logo.url }}""></td>
-                                            <td>{{ store.name }}</td>
-                                            <td>
-                                                <div class="row">
-                                                    <div class="col-6">
-                                                    {{ store.getPrevMonthStock.0 }} 건
-                                                    </div>
-                                                    <div class="col-2">
-                                                        <p>
-                                                            {% if  store.getPrevIncreaseStock > 0 %}
-                                                            <span class="badge badge-success-inverse font-16">
-                                                                +{{ store.getPrevIncreaseStock }}
-                                                                <i class="fas fa-angle-double-up"></i>
-                                                            </span>
-                                                            {% else %}
-                                                            <span class="badge badge-danger-inverse font-16">
-                                                                {{ store.getPrevIncreaseStock }}
-                                                                <i class="fas fa-angle-double-down"></i>
-                                                            </span>
-                                                            {% endif %}
-                                                        </p>
-                                                    </div>
-                                                </row>
-                                            </td>
-                                            <td>{{ store.getPrevMonthStock.0|div:store.getPrevMonthStock.1 }}%</td>
-                                        </tr>
-                                    {% endfor %}
-                                </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col-md-12 col-lg-4 col-xl-4 mb-4">
+                <div class="col-md-12 col-lg-6 col-xl-6 mb-6">
                     <div class="card bg-dark m-b-30">
                         <div class="card-header">                                
                             <div class="row align-items-center">
@@ -387,6 +258,7 @@
                                 <tbody>
                                     {% for store in stores|slice:":10" %}
                                         <tr>
+
                                             <th scope="row">{{ forloop.counter }}</th>
                                             <td><img class="store-logo" src="{{ store.logo.url }}""></td>
                                             <td>{{ store.name }}</td>
