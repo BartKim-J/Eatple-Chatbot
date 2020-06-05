@@ -492,6 +492,7 @@ class OrderAdmin(ImportExportMixin, admin.ModelAdmin):
         'store',
         'ordersheet__user__is_staff',
         'ordersheet__user__company',
+        'menu__selling_time',
         OrderDelvieryFilter,
     )
 
