@@ -261,7 +261,9 @@ class UserAdmin(ImportExportMixin, admin.ModelAdmin):
         'nickname',
         'app_user_id',
         'phone_number',
-        'location__address'
+        'location__address',
+        'friend_code',
+        'inviter_code',
     ]
 
     list_filter = (
