@@ -291,8 +291,8 @@ def getWAS(orderTimeSheet):
 
 def showActiveStatus(orderTimeSheet):
 
-    MONTH = 5
-    DAY = 12
+    MONTH = 1
+    DAY = 1
 
     # Test
     test_start_date = dateNowByTimeZone().replace(year=2020, month=MONTH, day=DAY,
@@ -319,17 +319,17 @@ def showActiveStatus(orderTimeSheet):
         WAU = getWAU(test_timeSheet)
         MAU = getMAU(test_timeSheet)
 
-        print('DAU D -', DAU, test_start_date)
+        # print('DAU D -', DAU, test_start_date)
         if(bestDAU < DAU):
             bestDAU = DAU
             bestDAUDate = test_start_date
 
-        # print('WAU D -', WAU, test_start_date)
+        print('WAU D -', WAU, test_start_date)
         if(bestWAU < WAU and test_start_date > WAU_Condition_Date):
             bestWAU = WAU
             bestWAUDate = test_start_date
 
-        # print('MAU D -', MAU, test_start_date)
+        print('MAU D -', MAU, test_start_date)
         if(bestMAU < MAU and test_start_date > MAU_Condition_Date):
             bestMAU = MAU
             bestMAUDate = test_start_date
@@ -370,7 +370,7 @@ def getUserActive():
     GetActive = 0
     OnActive = 0
 
-    allActive = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+    allActive = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
 
     userList = User.objects.all()
 
@@ -412,6 +412,28 @@ def getUserActive():
             allActive[8] += 1
         if(count >= 9):
             allActive[9] += 1
+        if(count >= 10):
+            allActive[10] += 1
+        if(count >= 11):
+            allActive[11] += 1
+        if(count >= 12):
+            allActive[12] += 1
+        if(count >= 13):
+            allActive[13] += 1
+        if(count >= 14):
+            allActive[14] += 1
+        if(count >= 15):
+            allActive[15] += 1
+        if(count >= 20):
+            allActive[16] += 1
+        if(count >= 25):
+            allActive[17] += 1
+        if(count >= 30):
+            allActive[18] += 1
+        if(count >= 35):
+            allActive[19] += 1
+        if(count >= 40):
+            allActive[20] += 1
 
     print(allActive)
     data = {
@@ -423,6 +445,7 @@ def getUserActive():
         'allActive': allActive,
     }
 
+    print(data)
     return data
 
 

@@ -1441,6 +1441,7 @@ def kakaoView_PickupTime(kakaoPayload):
         else:
             isFastFiveFloor = False
 
+        '''
         if(isFastFiveFloor or delivery_address == None):
             kakaoForm.QuickReplies_Add(
                 'block',
@@ -1459,6 +1460,7 @@ def kakaoView_PickupTime(kakaoPayload):
             )
         else:
             pass
+        '''
 
         if(delivery_address == None):
             kakaoForm.QuickReplies_Add(
