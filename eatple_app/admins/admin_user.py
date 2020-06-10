@@ -169,7 +169,10 @@ class UserAdmin(ImportExportMixin, admin.ModelAdmin):
     address.short_description = "주소"
 
     def field_phone_number(self, obj):
-        return obj.phone_number.as_national
+        if(obj.phone_number != None):
+            return obj.phone_number.as_national
+        else:
+            return '미등록'
     field_phone_number.short_description = "전화번호"
 
     def field_friend_code(self, obj):
