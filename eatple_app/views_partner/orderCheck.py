@@ -108,8 +108,8 @@ def pickupZone_component(partner, store, kakaoForm):
                 )
 
                 if(orderByMenu.count() > 0):
-                    amount = (orderByMenu.first(
-                    ).totalPrice - orderByMenu.first().delivery_fee) * orderByMenu.count()
+                    amount = orderByMenu.first().menu.price * \
+                        orderByMenu.count()
 
                     totalCount += orderByMenu.count()
                     totalAmount += amount
@@ -226,8 +226,7 @@ def normal_component(partner, store, kakaoForm):
                 )
 
                 if(orderByPickupTime.count() > 0):
-                    amount = (orderByPickupTime.first(
-                    ).totalPrice - orderByPickupTime.first().delivery_fee) * orderByPickupTime.count()
+                    amount = orderByMenu.first().menu.price * orderByPickupTime.count()
 
                     totalCount += orderByPickupTime.count()
                     totalAmount += amount
