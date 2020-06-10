@@ -164,6 +164,7 @@ class OrderResource(resources.ModelResource):
     field_phone_number = Field(column_name='전화번호')
     order_date = Field(column_name='주문 시간')
     payment_date = Field(column_name='결제 완료 시간')
+    pickup_time = Field(attribute='pickup_time', column_name='픽업 시간')
     pickup_complete_date = Field(column_name='픽업 완료 시간')
     payment_type = Field(column_name='결제 타입')
     delivery_address = Field(attribute='delivery_address', column_name='배달위치')
@@ -178,7 +179,6 @@ class OrderResource(resources.ModelResource):
             'status',
             'delegate',
             'update_date',
-            'pickup_time',
             'discount',
             'discount_eatple',
             'vat',
