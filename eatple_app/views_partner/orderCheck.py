@@ -226,7 +226,7 @@ def normal_component(partner, store, kakaoForm):
                 )
 
                 if(orderByPickupTime.count() > 0):
-                    amount = orderByMenu.first().menu.price * orderByPickupTime.count()
+                    amount = orderByPickupTime.first().menu.price * orderByPickupTime.count()
 
                     totalCount += orderByPickupTime.count()
                     totalAmount += amount
@@ -329,6 +329,9 @@ def kakaoView_OrderDetails(kakaoPayload):
 
             availableOrders += orderManager.getAvailableOrders().count()
 
+
+        print(availableOrders)
+        
         if(availableOrders > 0):
             if (store == None):
                 isCafe = False
