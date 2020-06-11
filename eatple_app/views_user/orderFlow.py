@@ -298,7 +298,8 @@ def kakaoView_StoreListup(kakaoPayload):
                 kakaoForm=kakaoForm
             )
         else:
-            if((is_take_out == False) and (area_in_flag and isPickupZoneArea(addressMap)) or (area_code == 'sinsa')):
+            if((SELLING_TIME_LUNCH == sellingTime) and (is_take_out == False) and
+                (area_in_flag and isPickupZoneArea(addressMap)) or (area_code == 'sinsa')):
                 KakaoInstantForm().Message(
                     '\'픽업존 주문하기\'에서 메뉴를 확인하세요',
                     '',
