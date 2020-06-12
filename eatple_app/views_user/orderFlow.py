@@ -299,9 +299,9 @@ def kakaoView_StoreListup(kakaoPayload):
             )
         else:
             if((SELLING_TIME_LUNCH == sellingTime) and (is_take_out == False) and
-                (area_in_flag and isPickupZoneArea(addressMap)) or (area_code == 'sinsa')):
+                    (area_in_flag and isPickupZoneArea(addressMap)) or (area_code == 'sinsa')):
                 KakaoInstantForm().Message(
-                    '\'픽업존 주문하기\'에서 메뉴를 확인하세요',
+                    '\'메뉴판 보기\'에서 메뉴를 확인하세요',
                     '',
                     kakaoForm=kakaoForm
                 )
@@ -352,7 +352,7 @@ def kakaoView_StoreListup(kakaoPayload):
                 if(is_take_out):
                     QUICKREPLIES_MAP.insert(0, {
                         'action': 'block',
-                        'label': '픽업존 메뉴 보러가기',
+                        'label': '배달 메뉴 보러가기',
                         'messageText': KAKAO_EMOJI_LOADING,
                         'blockId': KAKAO_BLOCK_USER_GET_STORE,
                         'extra': {
@@ -389,7 +389,7 @@ def kakaoView_StoreListup(kakaoPayload):
                     buttons = [
                         {
                             'action': 'block',
-                            'label': '📋 픽업존 주문하기',
+                            'label': '📋 메뉴판 보기',
                             'messageText': KAKAO_EMOJI_LOADING,
                             'blockId': KAKAO_BLOCK_USER_GET_MENU,
                             'extra': {
@@ -402,8 +402,8 @@ def kakaoView_StoreListup(kakaoPayload):
                     ]
 
                     kakaoForm.BasicCard_Push(
-                        '🔥  픽업존 시즌 2  🔥',
-                        '픽업존 서비스는 이용료가 추가됩니다.',
+                        '배달 메뉴는 이용료가 추가됩니다.',
+                        '',
                         thumbnail,
                         buttons
                     )
@@ -571,9 +571,9 @@ def kakaoView_StoreListup(kakaoPayload):
             )
         elif(currentSellingTime == sellingTime):
             if(sellingTime == SELLING_TIME_LUNCH):
-                subtext = '픽업 전날 오후 9시부터 오전 11시까지'
+                subtext = '픽업/배달 전날 오후 9시부터 오전 11시까지'
             else:
-                subtext = '픽업 당일 오후 2시부터 오후 6시까지'
+                subtext = '픽업/배달 당일 오후 2시부터 오후 6시까지'
 
             KakaoInstantForm().Message(
                 '🟢  주문 가능 시간입니다.',
@@ -738,7 +738,7 @@ def kakaoView_PickupZone_MenuListup(kakaoPayload):
 
     if menuList:
         KakaoInstantForm().Message(
-            '픽업존 서비스는 이용료가 추가됩니다.',
+            '배달 메뉴는 이용료가 추가됩니다.',
             '',
             kakaoForm=kakaoForm
         )
@@ -780,7 +780,7 @@ def kakaoView_PickupZone_MenuListup(kakaoPayload):
 
                 KakaoInstantForm().MenuList(
                     menu,
-                    '픽업존',
+                    '배달 가능',
                     discount,
                     thumbnail,
                     buttons,
@@ -825,7 +825,7 @@ def kakaoView_PickupZone_MenuListup(kakaoPayload):
         kakaoForm.ComerceCard_Add(None)
 
         KakaoInstantForm().Message(
-            '픽업 시간은 오후 12시 10분입니다.',
+            '배달 예정 시간은 오후 12시 10분입니다.',
             '',
             kakaoForm=kakaoForm
         )
@@ -1422,7 +1422,7 @@ def kakaoView_PickupTime(kakaoPayload):
         pickupZone_PickupTime = '12:10'
 
         KakaoInstantForm().Message(
-            '픽업 할 장소를 선택해주세요.',
+            '배달받을 장소를 선택해주세요.',
             kakaoForm=kakaoForm
         )
 
