@@ -195,7 +195,7 @@ def eatplePass(order, ownEatplePass, delegatedEatplePassCount, delegatedEatplePa
                 str(order.ordersheet.user.phone_number)[9:13],
                 order.store.name,
                 dict(ORDER_STATUS)[order.status],
-
+                pickupTimeStr
             ),
             thumbnail,
             buttons
@@ -348,7 +348,7 @@ def kakaoView_EatplePass(kakaoPayload):
                     )
                 else:
                     if(isPickupZone):
-                        place = '픽업존'
+                        place = '사무실'
                     else:
                         place = '매장'
 

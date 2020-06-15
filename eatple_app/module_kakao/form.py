@@ -114,7 +114,7 @@ class KakaoInstantForm():
                 str(order.ordersheet.user.phone_number)[9:13],
                 order.store.name,
                 dict(ORDER_STATUS)[order.status],
-
+                pickupTimeStr
             ),
             thumbnail,
             buttons
