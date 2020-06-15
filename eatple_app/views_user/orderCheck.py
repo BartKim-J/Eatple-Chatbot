@@ -130,13 +130,22 @@ def eatplePass(order, ownEatplePass, delegatedEatplePassCount, delegatedEatplePa
         if(isPickupZone):
             if(order.is_delivery == True and order.ordersheet.user.get_delivery_address() != None):
                 takeOutTypeStr = '배달 예정'
+                takeOutStr = '{} 시간: {}'.format(
+                    takeOutTypeStr,
+                    '오후 12시 10분',
+                )
             else:
                 takeOutTypeStr = '픽업'
+                takeOutStr = '{} 시간: {}'.format(
+                    takeOutTypeStr,
+                    pickupTimeStr,
+                )
         else:
             kakaoMapUrl = 'https://map.kakao.com/link/map/{name},{place}'.format(
                 name=order.store.name,
                 place=order.store.place
             )
+
             buttons.append(
                 {
                     'action': 'webLink',
@@ -180,14 +189,13 @@ def eatplePass(order, ownEatplePass, delegatedEatplePassCount, delegatedEatplePa
 
         kakaoForm.BasicCard_Push(
             '{}'.format(order.menu.name),
-            '주문번호: {}\n - 주문자: {}({})\n\n - 매장: {}\n - 주문 상태: {}\n\n - {} 시간: {}'.format(
+            '주문번호: {}\n - 주문자: {}({})\n\n - 매장: {}\n - 주문 상태: {}\n\n - {}'.format(
                 order.order_id,
                 order.ordersheet.user.nickname,
                 str(order.ordersheet.user.phone_number)[9:13],
                 order.store.name,
                 dict(ORDER_STATUS)[order.status],
-                takeOutTypeStr,
-                pickupTimeStr,
+
             ),
             thumbnail,
             buttons

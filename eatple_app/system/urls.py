@@ -25,7 +25,7 @@ EATPLE_SURVEY_IMG = '/media/STORE_DB/images/default/surveyBeta07.png'
 
 EATPLE_FRIEND_INVITATION_IMG = '/media/STORE_DB/images/default/FriendInvitation_04.png'
 
-EATPLE_MENU_PICKUP_ZONE_FF_IMG = '/media/STORE_DB/images/default/PickupZoneStoreFF_06.png'
+EATPLE_MENU_PICKUP_ZONE_FF_IMG = '/media/STORE_DB/images/default/PickupZoneStoreFF_07.png'
 EATPLE_MENU_PICKUP_ZONE_FF_SUB_IMG = '/media/STORE_DB/images/default/PickupZoneStoreFF_Sub_03.png'
 
 EATPLE_PASS_IMG_01 = '/media/STORE_DB/images/default/EatplePass_01.png'

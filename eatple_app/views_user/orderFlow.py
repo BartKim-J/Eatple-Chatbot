@@ -825,7 +825,7 @@ def kakaoView_PickupZone_MenuListup(kakaoPayload):
         kakaoForm.ComerceCard_Add(None)
 
         KakaoInstantForm().Message(
-            '배달 예정 시간은 오후 12시 10분입니다.',
+            '배달 예정 시간은 오후 12시 15분입니다.',
             '',
             kakaoForm=kakaoForm
         )
