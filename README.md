@@ -12,11 +12,6 @@
 
 - [Visual Studio](https://code.visualstudio.com/)
 
-# Command
-```
-pip install requirements
-```
-
 # **Features**
 ---
 
