@@ -36,7 +36,7 @@ facebook-business==7.0.1
 feedparser==5.2.1
 Flask==1.1.1
 google-api-python-client==1.4.1
-httplib2==0.17.0
+httplib2==0.18.0
 idna==2.9
 idna-ssl==1.1.0
 inflection==0.3.1
