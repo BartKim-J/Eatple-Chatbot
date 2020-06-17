@@ -319,17 +319,17 @@ def showActiveStatus(orderTimeSheet):
         WAU = getWAU(test_timeSheet)
         MAU = getMAU(test_timeSheet)
 
-        # print('DAU D -', DAU, test_start_date)
+        print('DAU D -', DAU, test_start_date)
         if(bestDAU < DAU):
             bestDAU = DAU
             bestDAUDate = test_start_date
 
-        print('WAU D -', WAU, test_start_date)
+        # print('WAU D -', WAU, test_start_date)
         if(bestWAU < WAU and test_start_date > WAU_Condition_Date):
             bestWAU = WAU
             bestWAUDate = test_start_date
 
-        print('MAU D -', MAU, test_start_date)
+        # print('MAU D -', MAU, test_start_date)
         if(bestMAU < MAU and test_start_date > MAU_Condition_Date):
             bestMAU = MAU
             bestMAUDate = test_start_date
@@ -538,7 +538,7 @@ def dashboard(request):
     areaDataList = orderChart['data'].split(',')
 
     # userActive = getUserActive()
-    # showActiveStatus(orderTimeSheet)
+    showActiveStatus(orderTimeSheet)
     # print('부탁하기된 주문수', getOrderDelegated())
     # userPersenalData()
 

@@ -341,7 +341,7 @@ def kakaoView_EatplePass(kakaoPayload):
 
                 if(isPickupZone and order.is_delivery and order.ordersheet.user.get_delivery_address() != None):
                     kakaoForm.BasicCard_Push(
-                        '배달 예정 시간에 맞정 음식이 도착할 예정입니다.',
+                        '배달 예정 시간에 맞춰 음식이 도착할 예정입니다.',
                         '',
                         {},
                         []
