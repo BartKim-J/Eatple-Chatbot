@@ -1,7 +1,7 @@
 
 # **Eatple**
 
-[![build](https://img.shields.io/badge/build-passing-brightgreen.svg)](https://bitbucket.org/xengiennering/sn3d-project)  [![platform](https://img.shields.io/badge/platform-linux-lightgrey.svg)]()
+[![build](https://img.shields.io/badge/build-passing-brightgreen.svg)](https://bitbucket.org/xengiennering/sn3d-project)
 ### **Base Library**
 [![Django](https://img.shields.io/badge/django-2.2.10-brightgreen.svg)]() [![mySQL](https://img.shields.io/badge/mySQL-5.7.30-brightgreen.svg)]() [![python](https://img.shields.io/badge/python-3.6.9-brightgreen.svg)](https://github.com/pyenv/pyenv)
 
