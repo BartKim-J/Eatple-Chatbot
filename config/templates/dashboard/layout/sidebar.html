@@ -1,0 +1,99 @@
+{% load static %}
+
+<!-- Sidebar -->
+<ul
+    class="visible-md visible-lg navbar-nav bg-dark sidebar sidebar-dark accordion fixed-left"
+    id="accordionSidebar"
+>
+    <div class="side-nav m-2">
+    <!-- Sidebar - Brand -->
+    <a
+        class="sidebar-brand d-flex align-items-center justify-content-center"
+        href="/"
+    >
+        <div class="sidebar-brand-text">EATPLE<sup> 2.0.2V</sup></div>
+    </a>
+
+    <div class="profilebar text-center">
+        <img src="{% static 'dashboard/assets/images/users/profile.svg' %}" class="img-fluid" alt="profile">
+        <div class="profilename">
+            <h5 class="text-white">{{ user.get_full_name }}</h5>
+            <p>{{ user.email }}</p>
+        </div>
+        <div class="userbox">
+            <ul class="list-inline mb-0">
+                <li class="list-inline-item"><a href="#" class="profile-icon"><img src="{% static 'dashboard/assets/images/svg-icon/user.svg' %}" class="img-fluid" alt="user"></a></li>
+                <li class="list-inline-item"><a href="#" class="profile-icon"><img src="{% static 'dashboard/assets/images/svg-icon/email.svg' %}" class="img-fluid" alt="email"></a></li>
+                <li class="list-inline-item"><a href="/admin/api/auth/logout" class="profile-icon"><img src="{% static 'dashboard/assets/images/svg-icon/logout.svg' %}" class="img-fluid" alt="logout"></a></li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Divider -->
+    <hr class="sidebar-divider" />
+
+    <!-- Nav Item - Pages Collapse Menu -->
+    <li class="nav-item">
+        <a
+        class="nav-link collapsed"
+        href="#"
+        data-toggle="collapse"
+        data-target="#collapseOne"
+        aria-expanded="true"
+        aria-controls="collapseTwo"
+        >
+        <i class="fas fa-fw fa-cog"></i>
+        <span>관리자</span>
+        </a>
+        <div
+        id="collapseOne"
+        class="collapse"
+        aria-labelledby="headingTwo"
+        data-parent="#accordionSidebar"
+        >
+        <div class="bg-dark-gray py-2 collapse-inner rounded">
+            <a class="collapse-item" href="/admin">관리자 툴</a>
+        </div>
+        </div>
+
+        <a
+        class="nav-link collapsed"
+        href="#"
+        data-toggle="collapse"
+        data-target="#collapseTwo"
+        aria-expanded="true"
+        aria-controls="collapseTwo"
+        >
+        <i class="fas fa-fw fa-list-alt"></i>
+        <span>세일즈</span>
+        </a>
+        <div
+        id="collapseTwo"
+        class="collapse"
+        aria-labelledby="headingTwo"
+        data-parent="#accordionSidebar"
+        >
+        <div class="bg-dark-gray py-2 collapse-inner rounded">
+            <a class="collapse-item" href="/sales"
+            >메뉴 실시간 현황</a
+            >
+            <a class="collapse-item" href="/sales/menu_list"
+            >메뉴 리스트</a
+            >
+        </div>
+        </div>
+    </li>
+
+    <!-- Divider -->
+    <hr class="sidebar-divider d-none d-md-block" />
+
+    <!-- Sidebar Toggler (Sidebar) -->
+    <div class="text-center w-100">
+        <button
+        class="rounded-circle border-0 p-0"
+        id="sidebarToggle"
+        ></button>
+    </div>
+    </div>
+</ul>
+<!-- End of Sidebar -->

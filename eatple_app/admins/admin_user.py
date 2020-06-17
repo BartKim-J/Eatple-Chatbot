@@ -15,6 +15,7 @@ from django.utils.safestring import mark_safe
 
 from django.contrib.admin import SimpleListFilter
 
+
 class UserServiceLocationFilter(SimpleListFilter):
     title = '지역'
     parameter_name = 'service area'
@@ -23,34 +24,57 @@ class UserServiceLocationFilter(SimpleListFilter):
         return [
             ('all', '전체 지역'),
             ('service', '서비스 지역'),
+            ('fastfive_sinsa_1', '패파 신사점'),
             ('fastfive_gangnam_1', '패파 강남 1호점'),
             ('fastfive_gangnam_2', '패파 강남 2호점'),
             ('fastfive_gangnam_3', '패파 강남 3호점'),
-        ] 
+        ]
 
     def queryset(self, request, queryset):
         if self.value() == 'all':
             return queryset
-        
+
         if self.value() == 'service':
             distance = 500
             ref_gangnam = Point(y=37.497907, x=127.027635, srid=4326)
             ref_yeoksam = Point(y=37.500787, x=127.036919, srid=4326)
-            
+            ref_samsung = Point(y=37.508852, x=127.063145, srid=4326)
+            ref_sinsa = Point(y=37.518487, x=127.024381, srid=4326)
+
             queryset = queryset.annotate(
-                distance_gangnam=Distance(F('location__point'), ref_gangnam) * 100 * 1000,
-                distance_yeoksam=Distance(F('location__point'), ref_yeoksam) * 100 * 1000,
+                distance_gangnam=Distance(
+                    F('location__point'), ref_gangnam) * 100 * 1000,
+                distance_yeoksam=Distance(
+                    F('location__point'), ref_yeoksam) * 100 * 1000,
+                distance_samsung=Distance(
+                    F('location__point'), ref_samsung) * 100 * 1000,
+                distance_sinsa=Distance(
+                    F('location__point'), ref_sinsa) * 100 * 1000,
             ).filter(
                 (Q(distance_gangnam__lte=distance) &
-                Q(distance_gangnam__gt=0)) |
-                Q(distance_yeoksam__lte=distance)
+                 Q(distance_gangnam__gte=0)) |
+                Q(distance_yeoksam__lte=distance) |
+                Q(distance_samsung__lte=distance) |
+                Q(distance_sinsa__lte=distance)
+            )
+            return queryset
+
+        if self.value() == 'fastfive_sinsa_1':
+            distance = 50
+            ref_location = Point(y=37.518487, x=127.024381, srid=4326)
+
+            queryset = queryset.annotate(
+                distance=Distance(
+                    F('location__point'), ref_location) * 100 * 1000,
+            ).filter(
+                Q(distance__lte=distance)
             )
             return queryset
 
         if self.value() == 'fastfive_gangnam_1':
             distance = 50
             ref_location = Point(y=37.496949, x=127.028679, srid=4326)
-            
+
             queryset = queryset.annotate(
                 distance=Distance(
                     F('location__point'), ref_location) * 100 * 1000,
@@ -62,7 +86,7 @@ class UserServiceLocationFilter(SimpleListFilter):
         if self.value() == 'fastfive_gangnam_2':
             distance = 50
             ref_location = Point(y=37.495536, x=127.029352, srid=4326)
-            
+
             queryset = queryset.annotate(
                 distance=Distance(
                     F('location__point'), ref_location) * 100 * 1000,
@@ -70,7 +94,7 @@ class UserServiceLocationFilter(SimpleListFilter):
                 Q(distance__lte=distance)
             )
             return queryset
-        
+
         if self.value() == 'fastfive_gangnam_3':
             distance = 50
             ref_location = Point(y=37.496608, x=127.025092, srid=4326)
@@ -82,17 +106,36 @@ class UserServiceLocationFilter(SimpleListFilter):
                 Q(distance__lte=distance)
             )
             return queryset
-        
+
+
 class UserResource(resources.ModelResource):
-    
-    def latlng(self,obj):
-        return "{}, {}".format(obj.location.lat, obj.location.long)
+
+    def dehydrate_latlng(self, obj):
+        try:
+            return "{}, {}".format(obj.location.lat, obj.location.long)
+        except Exception:
+            return "{}, {}".format(LOCATION_DEFAULT_LAT, LOCATION_DEFAULT_LNG)
+
+    def dehydrate_phone_number(self, obj):
+        if(obj.phone_number != None):
+            return obj.phone_number.as_national
+        else:
+            return ''
+
+    nickname = Field(attribute='nickname', column_name='닉네임')
+    app_user_id = Field(attribute='app_user_id', column_name='계정 ID')
+    latlng = Field(column_name='위도/경도')
+    phone_number = Field(column_name='연락처')
+
     class Meta:
         model = User
         fields = (
             'nickname',
-            'phone_number'
+            'phone_number',
+            'app_user_id',
+            'latlng'
         )
+
 
 class LocationInline(admin.TabularInline):
     model = Location
@@ -101,7 +144,8 @@ class LocationInline(admin.TabularInline):
     readonly_field = (
         'lat',
         'long',
-        'address'
+        'address',
+        'road_address',
     )
 
     formfield_overrides = {
@@ -115,49 +159,140 @@ class UserAdmin(ImportExportMixin, admin.ModelAdmin):
     list_per_page = 50
 
     def address(self, obj):
-        if(obj.location.address == LOCATION_DEFAULT_ADDR or 
-           (obj.location.lat == LOCATION_DEFAULT_LAT and obj.location.long == LOCATION_DEFAULT_LNG)
-        ):
+        if(obj.location.address == LOCATION_DEFAULT_ADDR or
+           (obj.location.lat == LOCATION_DEFAULT_LAT and obj.location.long ==
+            LOCATION_DEFAULT_LNG)
+           ):
             return "위치 미등록"
         else:
             return obj.location.address
     address.short_description = "주소"
-    
-    def phonenumber(self, obj):
-        return obj.phone_number.as_national
-    phonenumber.short_description = "전화번호"
-    
+
+    def field_phone_number(self, obj):
+        if(obj.phone_number != None):
+            return obj.phone_number.as_national
+        else:
+            return '미등록'
+    field_phone_number.short_description = "전화번호"
+
+    def field_friend_code(self, obj):
+        return obj.get_friend_code()
+    field_friend_code.short_description = "친구코드"
+
     readonly_fields = (
         'app_user_id',
         'nickname',
-        'phonenumber',
+        'field_phone_number',
+        'field_friend_code',
+        'inviter_code',
         'email',
         'birthyear',
         'birthday',
         'gender',
         'ci',
         'ci_authenticated_at',
-        'flag_promotion',
+        'create_date',
     )
 
-    search_fields = ['nickname', 'app_user_id', 'phone_number', 'location__address']
+    fieldsets = [
+        (
+            '기본 정보',
+            {
+                'fields': [
+                    'app_user_id',
+                    'nickname',
+                    'field_phone_number',
+                    'email',
+                    'create_date',
+                ]
+            }
+        ),
+        (
+            '사용자 플래그',
+            {
+                'fields': [
+                    'type',
+                    'is_inactive',
+                    'is_staff',
+                    'is_beta_tester',
+                    'flag_promotion',
+                ]
+            }
+        ),
+        (
+            '이벤트 - 친구코드',
+            {
+                'fields': [
+                    'inviter_code',
+                    'field_friend_code',
+                    'friend_discount_count',
+                    'is_apply_friend_code',
+                ]
+            }
+        ),
+        (
+            '이벤트 - 배달',
+            {
+                'fields': [
+                    'delivery_address',
+                ]
+            }
+        ),
+        (
+            '카카오 연동 정보',
+            {
+                'fields': [
+                    'birthyear',
+                    'birthday',
+                    'gender',
+                    'ci',
+                    'ci_authenticated_at',
+                ]
+            }
+        ),
+        (
+            'B2B',
+            {
+                'fields': [
+                    'company',
+                ]
+            }
+        ),
+    ]
+
+    search_fields = [
+        'nickname',
+        'app_user_id',
+        'phone_number',
+        'location__address',
+        'friend_code',
+        'inviter_code',
+    ]
 
     list_filter = (
         ('create_date', DateRangeFilter),
         UserServiceLocationFilter,
-        'gender',
-        'flag_promotion',
-        'type',
+        'is_staff',
+        'is_beta_tester',
+    )
+
+    list_editable = (
+        'is_beta_tester',
+        'is_staff',
+        'is_inactive',
     )
 
     list_display = (
-        'app_user_id',
         'nickname',
-        'phonenumber',
+        'app_user_id',
+        'type',
+        'field_phone_number',
         'email',
-        'gender',
-        'flag_promotion',
+        'create_date',
         'address',
+        'is_staff',
+        'is_beta_tester',
+        'is_inactive',
     )
 
     inlines = [LocationInline]

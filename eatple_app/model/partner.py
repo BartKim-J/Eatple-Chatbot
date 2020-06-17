@@ -40,12 +40,12 @@ class KakaoUser(models.Model):
     birthyear = models.CharField(
         max_length=WORD_LENGTH, 
         null=True,
-        verbose_name = "생일년도"
+        verbose_name = "생년"
     )
     birthday = models.CharField(
         max_length=WORD_LENGTH, 
         null=True,
-        verbose_name = "생일날짜"
+        verbose_name = "생일"
     )
     
     gender = models.CharField(
@@ -65,6 +65,7 @@ class KakaoUser(models.Model):
     
     class Meta:
         abstract = True
+        
 class Partner(KakaoUser, models.Model):
     class Meta:
         verbose_name = "유저 - 파트너"
@@ -83,7 +84,17 @@ class Partner(KakaoUser, models.Model):
         max_length=WORD_LENGTH, 
         default=PARTNER_TYPE_NORMAL,
         choices=PARTNER_TYPE,
-        verbose_name = "제휴 유형"
+        verbose_name = "권한"
+    )
+
+    is_inactive = models.BooleanField(
+        default=False,
+        verbose_name="비활성화"
+    )
+
+    is_staff = models.BooleanField(
+        default=False,
+        verbose_name="스태프"
     )
 
     create_date = models.DateTimeField(

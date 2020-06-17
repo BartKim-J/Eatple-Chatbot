@@ -1,0 +1,331 @@
+{% extends 'dashboard/base.html' %} 
+{% load static %} 
+{% load humanize %} 
+{% load compress %} 
+{% load eatple_app_extras %} 
+
+{% block content %}
+    <div class="container-fluid">
+        <div class="card-body">
+            <div class="row">
+                <!-- Area Chart -->
+                <div class="col-xl-12 col-md-12 col-lg-12">
+                    <div class="card bg-dark text-white mb-4">
+                        <!-- Card Header - Dropdown -->
+                        <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                            <h6 class="m-0 font-weight-bold text-primary">주문 현황<small class="blockquote-footer">{{ currentDate }}</small></h6>
+                        </div>
+                        <!-- Card Body -->
+                        <div class="card-body">
+                            <div class="chart-area">
+                                <canvas id="myAreaChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-xl-6 col-md-6 col-lg-6 mb-4">
+                    <div class="card bg-dark m-b-30">
+                        <div class="card-header">                                
+                            <div class="row align-items-center">
+                                <div class="col-8">
+                                    <h5 class="m-0 font-weight-bold text-primary">일일 점심 주문</h5>
+                                </div>
+                                <div class="col-4">
+                                    <ul class="list-inline-group text-right mt-1 mb-0 pl-0">
+                                        <li class="list-inline-item mr-0 font-12"><i class="feather icon-more-vertical- font-20 text-primary"></i></li>
+                                    </ul>                                        
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive dash-flag-icon">
+                                <table class="table table-borderless mb-2">
+                                <thead>
+                                    <tr>
+                                    <th class="m-0 font-weight-bold text-primary" scope="col">순위</th>
+                                    <th class="m-0 font-weight-bold text-primary" scope="col"></th>
+                                    <th class="m-0 font-weight-bold text-primary" scope="col">매장</th>
+                                    <th class="m-0 font-weight-bold text-primary" scope="col">일일 주문건 수</th>
+                                    <th class="m-0 font-weight-bold text-primary" scope="col">전체 주문건 수</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for store in storesLunch|slice:":10" %}
+                                        <tr>
+                                            <th scope="row">{{ forloop.counter }}</th>
+                                            <td><img class="store-logo" src="{{ store.logo.url }}""></td>
+                                            <td>{{ store.name }}</td>
+                                            <td>{{ store.getLucnhCurrentStock }}</td>
+                                            <td>{{ store.getTotalStock }}</td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xl-6 col-md-6 col-lg-6 mb-4">
+                    <div class="card bg-dark m-b-30">
+                        <div class="card-header">                                
+                            <div class="row align-items-center">
+                                <div class="col-8">
+                                    <h5 class="m-0 font-weight-bold text-primary">일일 저녁 주문</h5>
+                                </div>
+                                <div class="col-4">
+                                    <ul class="list-inline-group text-right mt-1 mb-0 pl-0">
+                                        <li class="list-inline-item mr-0 font-12"><i class="feather icon-more-vertical- font-20 text-primary"></i></li>
+                                    </ul>                                        
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive dash-flag-icon">
+                                <table class="table table-borderless mb-2">
+                                <thead>
+                                    <tr>
+                                    <th class="m-0 font-weight-bold text-primary" scope="col">순위</th>
+                                    <th class="m-0 font-weight-bold text-primary" scope="col"></th>
+                                    <th class="m-0 font-weight-bold text-primary" scope="col">매장</th>
+                                    <th class="m-0 font-weight-bold text-primary" scope="col">일일 주문건 수</th>
+                                    <th class="m-0 font-weight-bold text-primary" scope="col">전체 주문건 수</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for store in storesDinner|slice:":10" %}
+                                        <tr>
+                                            <th scope="row">{{ forloop.counter }}</th>
+                                            <td><img class="store-logo" src="{{ store.logo.url }}""></td>
+                                            <td>{{ store.name }}</td>
+                                            <td>{{ store.getDinnerCurrentStock }}</td>
+                                            <td>{{ store.getTotalStock }}</td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <!-- Total User Counter Card -->
+                <div class="col-xl-3 col-md-3 col-lg-3 mb-4">
+                    <div class="card bg-dark text-white py-2">
+                        <div class="card-body">
+                            <div class="row no-gutters align-items-center">
+                                <div class="col mr-2">
+                                    <div class="text-xs font-weight-bold text-secondary text-uppercase mb-1">총 가입자 수</div>
+
+                                    {% if totalUserIncrease >= 0 %}
+                                    <div class="h6 font-weight-bold text-success"><i class="fas fa-angle-up"></i> {{ totalUserIncrease }}</div>
+                                    {% else %}
+                                    <div class="h6 font-weight-bold text-danger"><i class="fas fa-angle-down"></i> {{ totalUserIncrease }}</div>
+                                    {% endif %}
+
+                                    <div class="h5 mb-0 font-weight-bold text-gray-100">{{ totalUser }} 명</div>
+                                </div>
+                                <div class="col-auto">
+                                    <i class="fas fa-users fa-2x text-white"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Toal Eatplepass Card  -->
+                <div class="col-xl-3 col-md-3 col-lg-3 mb-4">
+                    <div class="card bg-dark text-white py-2">
+                        <div class="card-body">
+                            <div class="row no-gutters align-items-center">
+                                <div class="col mr-2">
+                                    <div class="text-xs font-weight-bold text-secondary text-uppercase mb-1">총 발급된 패스</div>
+
+                                    {% if totalStockIncrease >= 0 %}
+                                    <div class="h6 font-weight-bold text-success"><i class="fas fa-angle-up"></i> {{ totalStockIncrease }}</div>
+                                    {% else %}
+                                    <div class="h6 font-weight-bold text-danger"><i class="fas fa-angle-down"></i> {{ totalStockIncrease }}</div>
+                                    {% endif %}
+
+                                    <div class="h5 mb-0 font-weight-bold text-gray-100">{{ totalOrder }} 패스</div>
+                                </div>
+                                <div class="col-auto">
+                                    <i class="fas fa-ticket-alt fa-2x text-white"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Daily Selled Card -->
+                <div class="col-xl-2 col-md-2 col-lg-2 mb-4">
+                    <div class="card bg-dark text-white py-2">
+                        <div class="card-body">
+                            <div class="row no-gutters align-items-center">
+                                <div class="col mr-2">
+                                    <div class="text-xs font-weight-bold text-secondary text-uppercase mb-1">일일 주문건</div>
+
+                                    {% if totalStockIncrease >= 0 %}
+                                    <div class="h6 font-weight-bold text-success"><i class="fas fa-angle-up"></i> {{ totalStockIncrease }}</div>
+                                    {% else %}
+                                    <div class="h6 font-weight-bold text-danger"><i class="fas fa-angle-down"></i> {{ totalStockIncrease }}</div>
+                                    {% endif %}
+
+                                    <div class="h5 mb-0 font-weight-bold text-gray-100">{{ totalStock }} 개</div>
+                                </div>
+                                <div class="col-auto">
+                                    <i class="fas fa-boxes fa-2x text-white"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Daily Selled Card -->
+                <div class="col-xl-2 col-md-2 col-lg-2 mb-4">
+                    <div class="card bg-dark text-white py-2">
+                        <div class="card-body">
+                            <div class="row no-gutters align-items-center">
+                                <div class="col mr-2">
+                                    <div class="text-xs font-weight-bold text-secondary text-uppercase mb-1">점심 주문건</div>
+
+                                    {% if lunchStockIncrease >= 0 %}
+                                    <div class="h6 font-weight-bold text-success"><i class="fas fa-angle-up"></i> {{ lunchStockIncrease }}</div>
+                                    {% else %}
+                                    <div class="h6 font-weight-bold text-danger"><i class="fas fa-angle-down"></i> {{ lunchStockIncrease }}</div>
+                                    {% endif %}
+
+                                    <div class="h5 mb-0 font-weight-bold text-gray-100">{{ lunchStock }} 개</div>
+                                </div>
+                                <div class="col-auto">
+                                    <i class="fas fa-boxes fa-2x text-white"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Daily Selled Card -->
+                <div class="col-xl-2 col-md-2 col-lg-2 mb-4">
+                    <div class="card bg-dark text-white py-2">
+                        <div class="card-body">
+                            <div class="row no-gutters align-items-center">
+                                <div class="col mr-2">
+                                    <div class="text-xs font-weight-bold text-secondary text-uppercase mb-1">저녁 주문건</div>
+
+                                    {% if dinnerStockIncrease >= 0 %}
+                                    <div class="h6 font-weight-bold text-success"><i class="fas fa-angle-up"></i> {{ dinnerStockIncrease }}</div>
+                                    {% else %}
+                                    <div class="h6 font-weight-bold text-danger"><i class="fas fa-angle-down"></i> {{ dinnerStockIncrease }}</div>
+                                    {% endif %}
+
+                                    <div class="h5 mb-0 font-weight-bold text-gray-100">{{ dinnerStock }} 개</div>
+                                </div>
+                                <div class="col-auto">
+                                    <i class="fas fa-boxes fa-2x text-white"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12 col-lg-6 col-xl-6 mb-6">
+                    <div class="card bg-dark m-b-30">
+                        <div class="card-header">                                
+                            <div class="row align-items-center">
+                                <div class="col-8">
+                                    <h5 class="m-0 font-weight-bold text-primary">이번달 업체별 주문건</h5>
+                                </div>
+                                <div class="col-4">
+                                    <ul class="list-inline-group text-right mt-1 mb-0 pl-0">
+                                        <li class="list-inline-item mr-0 font-12"><i class="feather icon-more-vertical- font-20 text-primary"></i></li>
+                                    </ul>                                        
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive dash-flag-icon">
+                                <table class="table table-borderless mb-2">
+                                <thead>
+                                    <tr>
+                                    <th class="m-0 font-weight-bold text-primary" scope="col">순위</th>
+                                    <th class="m-0 font-weight-bold text-primary" scope="col"></th>
+                                    <th class="m-0 font-weight-bold text-primary" scope="col">매장</th>
+                                    <th class="m-0 font-weight-bold text-primary" scope="col">월 주문건 수</th>
+                                    <th class="m-0 font-weight-bold text-primary" scope="col">차지 비율</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for store in stores|slice:":10" %}
+                                        <tr>
+
+                                            <th scope="row">{{ forloop.counter }}</th>
+                                            <td><img class="store-logo" src="{{ store.logo.url }}""></td>
+                                            <td>{{ store.name }}</td>
+                                            <td>
+                                                <div class="row">
+                                                    <div class="col-6">
+                                                        {{ store.getMontlyStock.0 }} 건
+                                                    </div>
+                                                    <div class="col-2">
+                                                        <p>
+                                                            {% if  store.getCurrentIncreaseStock > 0 %}
+                                                            <span class="badge badge-success-inverse font-16">
+                                                                +{{ store.getCurrentIncreaseStock }}
+                                                                <i class="fas fa-angle-double-up"></i>
+                                                            </span>
+                                                            {% else %}
+                                                            <span class="badge badge-danger-inverse font-16">
+                                                                {{ store.getCurrentIncreaseStock }}
+                                                                <i class="fas fa-angle-double-down"></i>
+                                                            </span>
+                                                            {% endif %}
+                                                        </p>
+                                                    </div>
+                                            </td>
+                                            <td>{{ store.getMontlyStock.0|div:store.getMontlyStock.1 }}%</td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %} 
+
+{% block content_js %}
+    <!-- Bootstrap core JavaScript-->
+    <script type="text/javascript" src="{% static 'dashboard/vendor/jquery/jquery.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'dashboard/vendor/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+
+    <!-- Core plugin JavaScript-->
+    <script type="text/javascript" src="{% static 'dashboard/vendor/jquery-easing/jquery.easing.min.js' %}"></script>
+
+    <!-- Page level plugins -->
+    <script type="text/javascript" src="{% static 'dashboard/vendor/chart.js/Chart.min.js' %}"></script>
+
+    <!-- Page level javascript -->
+    {% compress js %}
+    <script>
+        areaData = '{{ areaData }}';
+        areaData = areaData.split(",");
+
+        areaDataStaff = '{{ areaDataStaff }}';
+        areaDataStaff = areaDataStaff.split(",");
+
+        areaLabel = '{{ areaLabel }}';
+        areaLabel = areaLabel.split(",");
+    </script>
+    
+    <script type="text/javascript" src="{% static 'dashboard/js/base.js' %}"></script>
+    <script type="text/javascript" src="{% static 'dashboard/js/scroll-to-top.js' %}"></script>
+    <script type="text/javascript" src="{% static 'dashboard/js/sb-admin-2.js' %}"></script>
+    <script type="text/javascript" src="{% static 'dashboard/js/datatables.init.js' %}"></script>
+    <script type="text/javascript" src="{% static 'dashboard/js/card-status.init.js' %}"></script>
+    <script type="text/javascript" src="{% static 'dashboard/js/chart-area.js' %}"></script>
+    {% endcompress %} 
+{% endblock %}

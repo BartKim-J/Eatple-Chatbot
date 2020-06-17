@@ -1,34 +1,6 @@
-# Django Library
-from django.shortcuts import render
-from django.views.decorators.csrf import csrf_exempt
-from django.http import JsonResponse
-
-# Models
-from eatple_app.models import *
-
-# Define
-from eatple_app.define import *
-
-# Modules
-from eatple_app.module_kakao.reponseForm import *
-from eatple_app.module_kakao.requestForm import *
-from eatple_app.module_kakao.validation import *
-
 # View-System
+from eatple_app.views_system.include import *
 from eatple_app.views_system.debugger import *
-
-from eatple_app.views import *
-
-
-DEFAULT_QUICKREPLIES_MAP = [
-    {
-        'action': 'block',
-        'label': '홈으로 돌아가기',
-        'messageText': '로딩중..',
-        'blockId': KAKAO_BLOCK_USER_HOME,
-        'extra': {}
-    },
-]
 
 # # # # # # # # # # # # # # # # # # # # # # # # #
 #
@@ -36,51 +8,293 @@ DEFAULT_QUICKREPLIES_MAP = [
 #
 # # # # # # # # # # # # # # # # # # # # # # # # #
 
+CONTEXT_LINE = '―――――――――――――\n'
+
+
 def orderCheckTimeValidation():
-    currentDate = dateNowByTimeZone()
-    currentDateWithoutTime = currentDate.replace(hour=0, minute=0, second=0, microsecond=0)
+    orderTimeSheet = OrderTimeSheet()
+    currentDate = orderTimeSheet.GetCurrentDate()
+    currentDateWithoutTime = orderTimeSheet.GetCurrentDateWithoutTime()
 
-    # Time QA DEBUG
-    # currentDate = currentDate.replace(hour=13, minute=31, second=0, microsecond=0)
-    # currentDateWithoutTime = currentDate.replace(hour=0, minute=0, second=0, microsecond=0)
+    lunchCheckTimeStart = orderTimeSheet.GetPrevLunchOrderTimeEnd()
+    lunchCheckTimeEnd = orderTimeSheet.GetLunchOrderPickupTimeEnd()
 
-    # Prev Lunch Order Time 10:30 ~ 14:00
-    lunchCheckTimeStart = currentDateWithoutTime + datetime.timedelta(hours=10, minutes=30, days=-1)
-    lunchCheckTimeEnd = currentDateWithoutTime + datetime.timedelta(hours=14, minutes=0)
+    dinnerCheckTimeStart = orderTimeSheet.GetDinnerOrderTimeEnd()
+    dinnerCheckTimeEnd = orderTimeSheet.GetNextLunchOrderEditTimeStart()
 
-    # Dinner Order Time 17:30 ~ 21:0
-    dinnerCheckTimeStart = currentDateWithoutTime + datetime.timedelta(hours=17, minutes=30)
-    dinnerCheckTimeEnd = currentDateWithoutTime + datetime.timedelta(hours=21, minutes=0)
-    
     if(lunchCheckTimeStart < currentDate) and (currentDate < lunchCheckTimeEnd):
-        return True
+        return SELLING_TIME_LUNCH
 
     if(dinnerCheckTimeStart < currentDate) and (currentDate < dinnerCheckTimeEnd):
-        # return True
-        return False
-    
-    return False
+        return SELLING_TIME_DINNER
+
+    return None
+
+
+def pickupZone_component(partner, store, kakaoForm):
+    currentTime = dateNowByTimeZone()
+
+    pickupTimes = PickupTime.objects.all()
+
+    for pickupTime in pickupTimes:
+        if(store != None):
+            menuList = Menu.objects.filter(
+                tag__name="픽업존",
+                store=store,
+                pickup_time=pickupTime,
+                status=OC_OPEN
+            )
+        else:
+            storeList = Store.objects.filter(
+                crn__CRN_id=partner.store.crn.CRN_id)
+            menuList = Menu.objects.none()
+            for storeEntry in storeList:
+                menuList |= Menu.objects.filter(
+                    tag__name="픽업존",
+                    store=storeEntry,
+                    pickup_time=pickupTime,
+                    status=OC_OPEN
+                )
+
+        refPickupTime = [x.strip()
+                         for x in str(pickupTime.time).split(':')]
+        datetime_pickup_time = currentTime.replace(
+            hour=int(refPickupTime[0]),
+            minute=int(refPickupTime[1]),
+            second=0,
+            microsecond=0
+        )
+
+        if(partner.store.name == '봉된장'):
+            time = datetime.timedelta(minutes=30)
+        else:
+            if(partner.store.area == STORE_AREA_C_1 or
+                    partner.store.area == STORE_AREA_C_2 or
+                    partner.store.area == STORE_AREA_C_3):
+                time = datetime.timedelta(minutes=40)
+            elif(partner.store.area == STORE_AREA_C_5):
+                time = datetime.timedelta(minutes=20)
+            else:
+                time = datetime.timedelta(minutes=0)
+
+        if(store != None):
+            storeName = ' - {}'.format(store.name)
+        else:
+            storeName = ''
+
+        delivery_pickup_time = datetime_pickup_time - time
+        title = '{pickupTime}{store}'.format(
+            store=storeName,
+            pickupTime=delivery_pickup_time.strftime(
+                '%-m/%-d %p %-I시 %-M분').replace('AM', '오전').replace('PM', '오후')
+        )
+
+        context = CONTEXT_LINE
+
+        if(menuList):
+            totalCount = 0
+            totalAmount = 0
+
+            for menu in menuList:
+                orderByMenu = Order.objects.filter(menu=menu).filter(
+                    (
+                        Q(status=ORDER_STATUS_PICKUP_COMPLETED) |
+                        Q(status=ORDER_STATUS_PICKUP_WAIT) |
+                        Q(status=ORDER_STATUS_PICKUP_PREPARE) |
+                        Q(status=ORDER_STATUS_ORDER_CONFIRM_WAIT) |
+                        Q(status=ORDER_STATUS_ORDER_CONFIRMED)
+                    ) &
+                    Q(pickup_time=datetime_pickup_time)
+                )
+
+                if(orderByMenu.count() > 0):
+                    amount = orderByMenu.first().menu.price * \
+                        orderByMenu.count()
+
+                    totalCount += orderByMenu.count()
+                    totalAmount += amount
+
+                    if(menu.name_partner != None):
+                        menuName = menu.name_partner
+                    else:
+                        menuName = menu.name
+
+                    if(menu.store.name == '마치래빗샐러드'):
+                        context += '{menu} {count}개 / {amount}원\n'.format(
+                            store=menu.store.name,
+                            menu=menuName,
+                            count=orderByMenu.count(),
+                            amount=format(amount, ',')
+                        )
+                    else:
+                        if(store != None):
+                            storeName = ''
+                        else:
+                            storeName = '{} / '.format(menu.store.name)
+
+                        context += '{store}{menu} {count}개\n'.format(
+                            store=storeName,
+                            menu=menuName,
+                            count=orderByMenu.count(),
+                        )
+                else:
+                    pass
+
+            if(totalCount > 0):
+                total_context = '총 {totalCount}개 - {totalAmount}원\n'.format(
+                    totalCount=totalCount,
+                    totalAmount=format(totalAmount, ','),
+                )
+
+                total_context += context
+
+                kakaoForm.BasicCard_Push(
+                    title,
+                    total_context,
+                    {},
+                    [],
+                )
+                kakaoForm.BasicCard_Add()
+            else:
+                pass
+    else:
+        pass
+
+
+def normal_component(partner, store, kakaoForm):
+    currentTime = dateNowByTimeZone()
+
+    pickupTimes = PickupTime.objects.all()
+
+    for pickupTime in pickupTimes:
+        if(store != None):
+            menuList = Menu.objects.filter(
+                store=store, pickup_time=pickupTime, status=OC_OPEN).filter(
+                    ~Q(tag__name="픽업존") &
+                    ~Q(tag__name="카페")
+            )
+        else:
+            storeList = Store.objects.filter(
+                crn__CRN_id=partner.store.crn.CRN_id)
+            menuList = Menu.objects.none()
+            for storeEntry in storeList:
+                menuList |= Menu.objects.filter(
+                    store=storeEntry, pickup_time=pickupTime, status=OC_OPEN).filter(
+                    ~Q(tag__name="픽업존") &
+                    ~Q(tag__name="카페")
+                )
+
+        if(menuList.exists() == False):
+            continue
+
+        refPickupTime = [x.strip()
+                         for x in str(pickupTime.time).split(':')]
+        datetime_pickup_time = currentTime.replace(
+            hour=int(refPickupTime[0]),
+            minute=int(refPickupTime[1]),
+            second=0,
+            microsecond=0
+        )
+
+        if(store != None):
+            storeName = ' - {}'.format(store.name)
+        else:
+            storeName = ''
+
+        title = '{pickupTime}{store}'.format(
+            store=storeName,
+            pickupTime=datetime_pickup_time.strftime(
+                '%-m/%-d %p %-I시 %-M분').replace('AM', '오전').replace('PM', '오후')
+        )
+
+        context = CONTEXT_LINE
+
+        if(menuList):
+            totalCount = 0
+            totalAmount = 0
+
+            for menu in menuList:
+                orderByPickupTime = Order.objects.filter(menu=menu).filter(
+                    (
+                        Q(status=ORDER_STATUS_PICKUP_COMPLETED) |
+                        Q(status=ORDER_STATUS_PICKUP_WAIT) |
+                        Q(status=ORDER_STATUS_PICKUP_PREPARE) |
+                        Q(status=ORDER_STATUS_ORDER_CONFIRM_WAIT) |
+                        Q(status=ORDER_STATUS_ORDER_CONFIRMED)
+                    ) &
+                    Q(pickup_time=datetime_pickup_time)
+                )
+
+                if(orderByPickupTime.count() > 0):
+                    amount = orderByPickupTime.first().menu.price * orderByPickupTime.count()
+
+                    totalCount += orderByPickupTime.count()
+                    totalAmount += amount
+
+                    if(menu.name_partner != None):
+                        menuName = menu.name_partner
+                    else:
+                        menuName = menu.name
+
+                    if(menu.store.name == '마치래빗샐러드'):
+                        context += '{menu} {count}개 / {amount}원\n'.format(
+                            store=menu.store.name,
+                            menu=menuName,
+                            count=orderByPickupTime.count(),
+                            amount=format(amount, ',')
+                        )
+                    else:
+                        if(store != None):
+                            storeName = ''
+                        else:
+                            storeName = '{} / '.format(menu.store.name)
+
+                        context += '{store}{menu} {count}개\n'.format(
+                            store=storeName,
+                            menu=menuName,
+                            count=orderByPickupTime.count(),
+                        )
+                else:
+                    pass
+
+            if(totalCount > 0):
+                total_context = '총 {totalCount}개 - {totalAmount}원\n'.format(
+                    totalCount=totalCount,
+                    totalAmount=format(totalAmount, ','),
+                )
+
+                total_context += context
+
+                kakaoForm.BasicCard_Push(
+                    title,
+                    total_context,
+                    {},
+                    [],
+                )
+                kakaoForm.BasicCard_Add()
+            else:
+                pass
+
 
 def kakaoView_OrderDetails(kakaoPayload):
+    kakaoForm = KakaoForm()
+
     # Partner Validation
     partner = partnerValidation(kakaoPayload)
     if (partner == None):
-        return errorView('Invalid Block Access', '정상적이지 않은 경로거나, 잘못된 계정입니다.')
+        return errorView('잘못된 사용자 계정', '찾을 수 없는 사용자 계정 아이디입니다.')
+
+    storeList = Store.objects.filter(
+        Q(crn__CRN_id=partner.store.crn.CRN_id)
+    )
+
+    store = storeValidation(kakaoPayload)
 
     ORDER_LIST_QUICKREPLIES_MAP = [
         {
             'action': 'block',
-            'label': '새로고침',
-            'messageText': '로딩중..',
-            'blockId': KAKAO_BLOCK_PARTNER_GET_ORDER_DETAILS,
-            'extra': {
-                KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_PARTNER_GET_ORDER_DETAILS
-            }
-        },
-        {
-            'action': 'block',
-            'label': '홈으로 돌아가기',
-            'messageText': '로딩중..',
+            'label': '🏠  홈',
+            'messageText': '🏠  홈',
             'blockId': KAKAO_BLOCK_PARTNER_HOME,
             'extra': {
                 KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_PARTNER_GET_ORDER_DETAILS
@@ -88,79 +302,132 @@ def kakaoView_OrderDetails(kakaoPayload):
         },
     ]
 
-    if(orderCheckTimeValidation()):
-        
-        orderManager = PartnerOrderManager(partner)
-        orderManager.orderPaidCheck()
-        
-        availableOrders = orderManager.getAvailableOrders()
-        
-        if availableOrders:        
-            totalOrder = 0
-            kakaoForm = KakaoForm()
-            
-            refOrder = availableOrders[0]
-            totalCount = availableOrders.count()
-            
-            pickupTimes = refOrder.menu.pickup_time.all()
-            
-            header = {
-                'title': '총 {sellingTime} 주문량은 {count}개 입니다.'.format(
-                    sellingTime=dict(SELLING_TIME_CATEGORY)[refOrder.menu.selling_time], 
-                    count=totalCount
-                ),
-                'imageUrl': '{}{}'.format(HOST_URL, '/media/STORE_DB/images/default/partnerOrderSheet.png'),
-            }
-            
-            
-            imageUrl = '{}{}'.format(HOST_URL, refOrder.menu.imgURL())
+    if(orderCheckTimeValidation() != None):
+        if(partner.is_staff == False):
+            if(store != None):
+                store.orderChecked()
+            else:
+                for storeEntry in storeList:
+                    storeEntry.orderChecked()
 
-            for pickupTime in pickupTimes:
-                refPickupTime = refOrder.pickupTimeToDateTime(str(pickupTime.time))
-                
-                orderByPickupTime = availableOrders.filter(pickup_time=refPickupTime)
-                orderCount = orderByPickupTime.count()
-                
-                if(orderCount > 0):
-                    kakaoForm.ListCard_Push(
-                        '{pickupTime} - [ {count}개 ]'.format(
-                            pickupTime=refPickupTime.strftime('%p %I시 %M분').replace('AM','오전').replace('PM','오후'),
-                            count=orderCount
-                        ),
-                        '{menu}'.format(menu=refOrder.menu.name),
-                        imageUrl, 
-                        None
-                    )
-                
-            kakaoForm.ListCard_Add(header)
-                
+        storeList = Store.objects.filter(
+            Q(crn__CRN_id=partner.store.crn.CRN_id)
+        )
+        availableOrders = 0
+
+        if(store == None):
+            for storeEntry in storeList:
+                orderManager = PartnerOrderManager(partner, store=storeEntry)
+                orderManager.orderPaidCheck()
+                orderManager.orderPenddingCleanUp()
+
+                availableOrders += orderManager.getAvailableOrders().count()
         else:
-            kakaoForm = KakaoForm()
+            orderManager = PartnerOrderManager(partner, store=store)
+            orderManager.orderPaidCheck()
+            orderManager.orderPenddingCleanUp()
 
-            kakaoForm.SimpleText_Add('오늘은 들어온 주문이 없어요!')
+            availableOrders += orderManager.getAvailableOrders().count()
+
+
+        print(availableOrders)
+        
+        if(availableOrders > 0):
+            if (store == None):
+                isCafe = False
+                isPickupZone = False
+                isNormalMenu = False
+
+                for storeEntry in storeList:
+                    isCafe |= storeEntry.category.filter(name="카페").exists()
+                    isPickupZone |= Menu.objects.filter(
+                        store=storeEntry).filter(tag__name="픽업존").exists()
+                    isNormalMenu |= Menu.objects.filter(
+                        store=storeEntry).filter(
+                            ~Q(tag__name="픽업존") and
+                            ~Q(tag__name="카페")
+                    ).exists()
+            else:
+                isCafe = store.category.filter(name="카페").exists()
+                isPickupZone = Menu.objects.filter(
+                    store=store).filter(tag__name="픽업존").exists()
+                isNormalMenu = Menu.objects.filter(
+                    store=store).filter(
+                        ~Q(tag__name="픽업존") and
+                        ~Q(tag__name="카페")
+                ).exists()
+
+            if(isPickupZone):
+                pickupZone_component(partner, store, kakaoForm)
+            elif(isCafe):
+                pass
+
+            if(isNormalMenu):
+                normal_component(partner, store, kakaoForm)
+        else:
+            if(store != None and storeList.count() > 1):
+                storeName = '매장 : {}'.format(store.name)
+            else:
+                storeName = ''
+
+            kakaoForm.BasicCard_Push(
+                '오늘은 들어온 주문이 없어요.',
+                storeName,
+                {},
+                []
+            )
+            kakaoForm.BasicCard_Add()
     else:
-        kakaoForm = KakaoForm()
+        if(dateNowByTimeZone() <= dateNowByTimeZone().replace(hour=12)):
+            subtext = ' 점심 주문조회 가능시간\n - 오전 11시 ~ 오후 2시'
+        else:
+            subtext = ' 저녁 주문조회 가능시간\n - 오후 6시 ~ 오후 9시'
 
         kakaoForm.BasicCard_Push(
-            '아직 주문조회 가능시간이 아닙니다.', 
-            ' 점심 주문조회 가능시간\n - 오전 10시 30분 ~ 오후 2시', 
-            {}, 
+            '아직 주문조회 가능시간이 아닙니다.',
+            subtext,
+            {},
             []
         )
-        
+
         kakaoForm.BasicCard_Add()
-        
+
+    if(store != None):
+        storeList = Store.objects.filter(
+            Q(crn__CRN_id=partner.store.crn.CRN_id) &
+            ~Q(name=store.name)
+        )
+    else:
+        if(storeList.count() > 1):
+            storeList = Store.objects.filter(
+                Q(crn__CRN_id=partner.store.crn.CRN_id)
+            )
+        else:
+            pass
+    for storeEntry in storeList:
+        ORDER_LIST_QUICKREPLIES_MAP.insert(0,
+                                           {
+                                               'action': 'block',
+                                               'label': storeEntry.name,
+                                               'messageText': KAKAO_EMOJI_LOADING,
+                                               'blockId': KAKAO_BLOCK_PARTNER_GET_ORDER_DETAILS,
+                                               'extra': {
+                                                   KAKAO_PARAM_STORE_ID: storeEntry.store_id,
+                                                   KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_PARTNER_GET_ORDER_DETAILS
+                                               }
+                                           },
+                                           )
+
     kakaoForm.QuickReplies_AddWithMap(ORDER_LIST_QUICKREPLIES_MAP)
-    
+
     return JsonResponse(kakaoForm.GetForm())
 
-# @TODO
+
 def kakaoView_CalculateDetails(kakaoPaylaod):
-    
     # Partner Validation
     partner = partnerValidation(kakaoPayload)
     if (partner == None):
-        return errorView('Invalid Block Access', '정상적이지 않은 경로거나, 잘못된 계정입니다.')
+        return errorView('잘못된 사용자 계정', '찾을 수 없는 사용자 계정 아이디입니다.')
 
     return errorView('{}'.format(ex))
 
@@ -176,32 +443,30 @@ def GET_ParnterOrderDetails(request):
     EatplusSkillLog('GET_ParnterOrderDetails')
     try:
         kakaoPayload = KakaoPayLoad(request)
-        
+
         # User Validation
         partner = partnerValidation(kakaoPayload)
         if (partner == None):
             return GET_PartnerHome(request)
-        
+
         return kakaoView_OrderDetails(kakaoPayload)
 
     except (RuntimeError, TypeError, NameError, KeyError) as ex:
         return errorView('{} '.format(ex))
+
 
 @csrf_exempt
 def GET_CalculateDetails(request):
     EatplusSkillLog('GET_CalculateDetails')
     try:
         kakaoPayload = KakaoPayLoad(request)
-        
+
         # User Validation
         partner = partnerValidation(kakaoPayload)
         if (partner == None):
             return GET_PartnerHome(request)
-        
+
         return kakaoView_CalculateDetails(kakaoPayload)
 
     except (RuntimeError, TypeError, NameError, KeyError) as ex:
         return errorView('{} '.format(ex))
-
-
-

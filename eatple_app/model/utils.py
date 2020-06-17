@@ -1,3 +1,4 @@
+
 # define
 from eatple_app.define import *
 # Django Library
@@ -10,6 +11,7 @@ from django.core.validators import MaxValueValidator, MinValueValidator
 from django import forms
 
 DEFAULT_IMAGE_PATH = 'STORE_DB/images/default/defaultImg.png'
+
 
 class OverwriteStorage(FileSystemStorage):
     def get_available_name(self, name, max_length=None):
@@ -37,6 +39,17 @@ def menu_directory_path(instance, filename):
     return path
 
 
+def menu_soldout_directory_path(instance, filename):
+    path = 'STORE_DB/images/{storename}/{menuname}/{number}{filename}'.format(
+        storename=instance.store.name,
+        menuname=instance.name,
+        filename=set_filename_format(instance, filename, 'menuSoldOutImg'),
+        number=dateNowByTimeZone().strftime("%f"),
+    )
+
+    return path
+
+
 def logo_directory_path(instance, filename):
     path = 'STORE_DB/images/{storename}/{number}{filename}'.format(
         storename=instance.name,
@@ -45,6 +58,26 @@ def logo_directory_path(instance, filename):
     )
 
     return path
+
+def cover_directory_path(instance, filename):
+    path = 'STORE_DB/images/{storename}/{number}{filename}'.format(
+        storename=instance.name,
+        filename=set_filename_format(instance, filename, 'coverImg'),
+        number=dateNowByTimeZone().strftime('%f'),
+    )
+
+    return path
+
+def store_directory_path(instance, filename):
+    path = 'STORE_DB/images/{storename}/{number}{filename}'.format(
+        storename=instance.name,
+        filename=set_filename_format(instance, filename, ''),
+        number=dateNowByTimeZone().strftime('%f'),
+    )
+
+    return path
+
+
 
 def b2b_logo_directory_path(instance, filename):
     path = 'B2B_DB/images/{b2b_name}/{number}{filename}'.format(
@@ -69,23 +102,23 @@ class DefaultImage(models.Model):
     class Meta:
         verbose_name = "디폴트 이미지"
         verbose_name_plural = "디폴트 이미지"
-        
+
         ordering = ['-name']
 
     name = models.CharField(
-        default='', 
-        max_length=WORD_LENGTH, 
+        default='',
+        max_length=WORD_LENGTH,
         help_text='subject name'
     )
 
     filename = models.CharField(
-        max_length=WORD_LENGTH, 
+        max_length=WORD_LENGTH,
         help_text='filename'
     )
-    
+
     image = models.ImageField(
-        blank=False, 
-        upload_to=default_directory_path, 
+        blank=False,
+        upload_to=default_directory_path,
         storage=OverwriteStorage()
     )
 

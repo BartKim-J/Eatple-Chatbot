@@ -1,48 +1,53 @@
 # User
-## Home
+from eatple_app.views_user.debug import GET_Debug
+
+# Home
 from eatple_app.views_user.home import GET_UserHome
 
-## Ordeirng
-from eatple_app.views_user.ordering import GET_Menu
-from eatple_app.views_user.ordering import SET_PickupTime
-from eatple_app.views_user.ordering import SET_OrderSheet
-
-## Check
+# Check
 from eatple_app.views_user.orderCheck import GET_EatplePass
 from eatple_app.views_user.orderCheck import GET_OrderDetails
 
-## Edit
+# Edit
 from eatple_app.views_user.orderEdit import GET_ConfirmUseEatplePass
 from eatple_app.views_user.orderEdit import POST_UseEatplePass
 
-## Order Cancel
+# Order Cancel
 from eatple_app.views_user.orderEdit import POST_OrderCancel
 
-## Order Share
+# Order Share
 from eatple_app.views_user.orderShare import GET_DelegateUserRemove
 from eatple_app.views_user.orderShare import GET_DelegateUserRemoveAll
 from eatple_app.views_user.orderShare import GET_DelegateUser
 
-## Edit Pickup Time
+# Order Edit Pickup Time
 from eatple_app.views_user.orderEdit import GET_EditPickupTime
 from eatple_app.views_user.orderEdit import SET_ConfirmEditPickupTime
 
-# User Promotion
-## Home
-from eatple_app.views_user_promotion.home import GET_ProMotionHome
+# Order Flow
+from eatple_app.views_user.orderFlow import GET_Store
+from eatple_app.views_user.orderFlow import GET_Menu
+from eatple_app.views_user.orderFlow import SET_PickupTime
+from eatple_app.views_user.orderFlow import SET_OrderSheet
+
+# Event
+from eatple_app.views_user.delivery_event import POST_DeliveryEnable
+from eatple_app.views_user.delivery_event import POST_DeliveryDisable
+from eatple_app.views_user.delivery_event import POST_DeliveryAddressSubmit
+
+from eatple_app.views_user.friend_code import GET_FriendInvitation
+from eatple_app.views_user.friend_code import POST_FriendCodeSubmit
+
+# Notify
+from eatple_app.views_user.notify import GET_UserNotify
 
 # Partner
 from eatple_app.views_partner.home import GET_PartnerHome
 
-## Check
+# Check
 from eatple_app.views_partner.orderCheck import GET_ParnterOrderDetails
 
-# Kakao 
-from eatple_app.views_kakao.channel import POST_KAKAO_ChannelLog
+# Admin
 
-# Slack
-from eatple_app.views_slack.slack_api import Events
-
-# Rest Framework
-from eatple_app.rest_api.validation import OrderValidation
-from eatple_app.rest_api.validation import OrderInformation
+from eatple_app.views_admin.login import POST_AdminLogin
+from eatple_app.views_admin.logout import POST_AdminLogout

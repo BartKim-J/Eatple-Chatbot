@@ -1,112 +1,121 @@
-# Django Library
-from django.shortcuts import render
-from django.views.decorators.csrf import csrf_exempt
-from django.http import JsonResponse
-
-# Models
-from eatple_app.models import *
-
-# Define
-from eatple_app.define import *
-
-# Modules
-from eatple_app.module_kakao.reponseForm import *
-from eatple_app.module_kakao.requestForm import *
-from eatple_app.module_kakao.validation import *
-
 # View-System
+from eatple_app.views_system.include import *
 from eatple_app.views_system.debugger import *
 
-def isLocationParam(kakaoPayload):
+from eatple_app.views_user.b2b.home import kakaoView_B2B_Home
+# # # # # # # # # # # # # # # # # # # # # # # # #
+#
+# Static View
+#
+# # # # # # # # # # # # # # # # # # # # # # # # #
+
+
+def surveyForm(kakaoForm):
+    # HEADER
+    surveyImg = '{}{}'.format(HOST_URL, EATPLE_SURVEY_IMG)
+
+    thumbnail = {
+        'imageUrl': surveyImg,
+        'fixedRatio': 'true',
+        'width': 800,
+        'height': 800,
+    }
+
+    buttons = [
+        {
+            'action': 'block',
+            'label': '잇플 불편사항',
+            'messageText': KAKAO_EMOJI_LOADING,
+            'blockId': KAKAO_BLOCK_USER_SURVEY_IMPROVEMENTS,
+            'extra': {
+                KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_HOME
+            }
+        },
+        {
+            'action': 'block',
+            'label': '주변식당 추천',
+            'messageText': KAKAO_EMOJI_LOADING,
+            'blockId': KAKAO_BLOCK_USER_SURVEY_STORE,
+            'extra': {
+                KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_HOME
+            }
+        },
+    ]
+
+    kakaoForm.BasicCard_Push(
+        '사용하시는데 불편함이 있으신가요?',
+        '말씀해주시면 반영해드릴게요.',
+        thumbnail,
+        buttons
+    )
+
+
+def kakaoView_SurveyApply(user, type, answer):
+    EatplusSkillLog('Survey Apply')
+
+    kakaoForm = KakaoForm()
+
+    buttons = [
+        {
+            'action': 'block',
+            'label': '확인',
+            'messageText': KAKAO_EMOJI_LOADING,
+            'blockId': KAKAO_BLOCK_USER_HOME,
+            'extra': {
+                KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_HOME
+            }
+        },
+    ]
+
+    if(
+        answer.find(KAKAO_EMOJI_LOADING) != -1 or
+        answer.find('🍽  주문하기/주문확인') != -1 or
+        answer.find('🗺  위치 설정') != -1 or
+        answer.find('📖  공지사항') != -1
+    ):
+        KakaoInstantForm().Message(
+            '불편한 점이 아직 입력되지 않았어요.',
+            '홈으로 돌아갈려면 확인을 눌러주세요.',
+            buttons=buttons,
+            kakaoForm=kakaoForm,
+        )
+    elif(Survey().apply(user, type, answer)):
+        KakaoInstantForm().Message(
+            '좋은 의견 감사합니다.',
+            '전달된 내용 - 「 {} 」'.format(answer),
+            buttons=buttons,
+            kakaoForm=kakaoForm,
+        )
+    else:
+        pass
+
+    return JsonResponse(kakaoForm.GetForm())
+
+
+def isSurveyStoreParam(kakaoPayload):
     try:
-        param = kakaoPayload.dataActionParams['location']['origin']
+        param = kakaoPayload.dataActionParams['survey_store']['origin']
         return True
     except (TypeError, AttributeError, KeyError):
         return False
 
-        
-def userSignUp(userProfile):
-    
-    nickname = userProfile['nickname']
-    phone_number = userProfile['phone_number']
-    email = userProfile['email']
-    birthyear = userProfile['birthyear']
-    birthday = userProfile['birthday']
-    gender = userProfile['gender']
-    ci = userProfile['ci']
-    ci_ci_authenticated_at = userProfile['ci_authenticated_at']
-    app_user_id = userProfile['app_user_id']
-    
-    if(nickname == None):
-        nickname = "N/A"
 
-    if(phone_number == None):
-        phone_number = "N/A"
-
-    if(email == None):
-        email = "N/A"
-        
-    if(birthyear == None):
-        birthyear = "N/A"
-        
-    if(birthday == None):
-        birthday = "N/A"
-        
-    if(gender == None):
-        gender = "N/A"
-        
-    if(ci == None):
-        ci = "N/A"
-
-    if(ci_ci_authenticated_at == None):
-        ci_ci_authenticated_at = "N/A"
-        
-    if(app_user_id == None):
-        app_user_id = "N/A"
-    
-    user = User.signUp(
-        app_user_id=app_user_id,
-        nickname=nickname,
-        phone_number=phone_number,
-        email=email,
-        birthyear=birthyear,
-        birthday=birthday,
-        gender=gender,
-        ci=ci,
-        ci_authenticated_at=ci_ci_authenticated_at,
-    )
-
-    return user
-
-def userLocationRegistration(user, locationData):
-
+def isSurveyCategoryParam(kakaoPayload):
     try:
-        user.location.lat = locationData['latitude']
-        user.location.long = locationData['longitude']
-        user.location.address = locationData['address']
-        # @TODO will update kakao location api
-        # user.location.address = locationData['road_address']['address_name']
-        user.location.point = Point(
-            y=float(locationData['latitude']), 
-            x=float(locationData['longitude']),
-        )
-        user.location.save()
-        
-    except User.location.RelatedObjectDoesNotExist:
-        location = Location(
-            user = user,
-            lat = locationData['latitude'],
-            long = locationData['longitude'],
-            address = locationData['address'],
-            point = Point(float(locationData['latitude']), float(locationData['longitude'])),
-        )
-        location.save()
-        
-        user.location = location
-        user.save()        
+        param = kakaoPayload.dataActionParams['survey_category']['origin']
+        return True
+    except (TypeError, AttributeError, KeyError):
+        return False
 
-    return user
-    
+
+def isSurveyImprovementsParam(kakaoPayload):
+    try:
+        param = kakaoPayload.dataActionParams['survey_improvements']['origin']
+        return True
+    except (TypeError, AttributeError, KeyError):
+        return False
+
+
 def kakaoView_SignUp():
     EatplusSkillLog('Sign Up')
 
@@ -115,8 +124,8 @@ def kakaoView_SignUp():
     buttons = [
         {
             'action': 'block',
-            'label': '연동하러 가기',
-            'messageText': '로딩중..',
+            'label': '가입을 시작해볼까요?',
+            'messageText': KAKAO_EMOJI_LOADING,
             'blockId': KAKAO_BLOCK_USER_SIGNUP,
             'extra': {
                 KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_HOME
@@ -124,17 +133,57 @@ def kakaoView_SignUp():
         },
     ]
 
-    thumbnail = {'imageUrl': ''}
-
-    kakaoForm.BasicCard_Push(
-        '아직 잇플 서비스에 연동되지 않은 카카오 계정입니다.',
-        '잇플 서비스에 연동하러 가볼까요?',
-        thumbnail,
-        buttons
+    return KakaoInstantForm().Message(
+        '아직 잇플에 가입하지 않은 계정입니다.',
+        '',
+        buttons=buttons,
     )
-    kakaoForm.BasicCard_Add()
 
-    return JsonResponse(kakaoForm.GetForm())
+
+def userLocationRegistration(user, locationData):
+    try:
+        user.location.lat = locationData['latitude']
+        user.location.long = locationData['longitude']
+        try:
+            user.location.road_address = locationData['road_address']['address_name'] + ' ' + \
+                locationData['road_address']['building_name']
+        except:
+            user.location.road_address = locationData['land_address']['address_name']
+
+        user.location.address = locationData['land_address']['address_name']
+
+        user.location.point = Point(
+            y=float(locationData['latitude']),
+            x=float(locationData['longitude']),
+        )
+        user.location.save()
+
+    except User.location.RelatedObjectDoesNotExist:
+        location = Location(
+            user=user,
+            lat=locationData['latitude'],
+            long=locationData['longitude'],
+            address=locationData['land_address']['address_name'],
+            road_address=locationData['land_address']['address_name'],
+            point=Point(float(locationData['latitude']), float(
+                locationData['longitude'])),
+        )
+
+        try:
+            location.road_address = locationData['road_address']['address_name'] + ' ' + \
+                locationData['road_address']['building_name']
+        except:
+            location.road_address = locationData['land_address']['address_name']
+
+        location.address = locationData['land_address']['address_name']
+
+        location.save()
+
+        user.location = location
+        user.save()
+
+    return user
+
 
 def kakaoView_LocationRegistration():
     EatplusSkillLog('Location Registration')
@@ -144,43 +193,275 @@ def kakaoView_LocationRegistration():
     buttons = [
         {
             'action': 'block',
-            'label': '등록하러 가기',
-            'messageText': '로딩중..',
+            'label': '위치 등록하기',
+            'messageText': KAKAO_EMOJI_LOADING,
             'blockId': KAKAO_BLOCK_USER_EDIT_LOCATION,
+            'extra': {
+                KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_HOME
+            }
+        },
+        {
+            'action': 'block',
+            'label': '나중에 하기',
+            'messageText': KAKAO_EMOJI_LOADING,
+            'blockId': KAKAO_BLOCK_USER_HOME,
             'extra': {
                 KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_HOME
             }
         },
     ]
 
-    thumbnail = {'imageUrl': ''}
+    return KakaoInstantForm().Message(
+        '잇플은 위치 기반으로 주변 맛집을 추천해드리고 있습니다.',
+        '자주 사용할 위치를 등록해주세요.\n(패스트파이브 신사점의 경우, 인우빌딩으로 등록해주세요)',
+        buttons=buttons,
+    )
+
+
+def isLocationParam(kakaoPayload):
+    try:
+        param = kakaoPayload.dataActionParams['location']['origin']
+        return True
+    except (TypeError, AttributeError, KeyError):
+        return False
+
+
+def component_LunchHome(kakaoForm, orderManager, user):
+    orderList = orderManager.getAvailableOrders().filter(Q(ordersheet__user=user))
+    orderCount = orderList.count()
+    order = orderList.first()
+
+    lunchPurchaed = orderManager.getAvailableLunchOrder().filter(
+        Q(ordersheet__user=user)).exists()
+
+    if(lunchPurchaed):
+        buttons = [
+            {
+                'action': 'block',
+                'label': '주문내역 확인',
+                'messageText': KAKAO_EMOJI_LOADING,
+                'blockId': KAKAO_BLOCK_USER_EATPLE_PASS,
+                'extra': {
+                    KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_HOME
+                }
+            },
+        ]
+    else:
+        buttons = [
+            {
+                'action': 'block',
+                'label': '🌤️  점심 주문하기',
+                'messageText': KAKAO_EMOJI_LOADING,
+                'blockId': KAKAO_BLOCK_USER_GET_STORE,
+                'extra': {
+                    KAKAO_PARAM_SELLING_TIME: SELLING_TIME_LUNCH,
+                    KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_HOME
+                }
+            },
+        ]
+
+    # LUNCH HEADER
+    lunchHomeImg = '{}{}'.format(HOST_URL, EATPLE_HOME_LUNCH_IMG)
+
+    thumbnail = {
+        'imageUrl': lunchHomeImg,
+        'fixedRatio': 'true',
+        'width': 800,
+        'height': 800,
+    }
 
     kakaoForm.BasicCard_Push(
-        '보다 정확한 메뉴를 불러오기 위해 사용자의 위치 정보가 필요해요!',
-        '현재 위치를 등록하러 가볼까요?',
+        '점심 주문 가능/취소 시간',
+        '픽업 전날 오후 9시부터 오전 11시까지',
         thumbnail,
         buttons
     )
-    kakaoForm.BasicCard_Add()
 
-    return JsonResponse(kakaoForm.GetForm())
 
-def kakaoView_Home(user):
+def component_DinnerHome(kakaoForm, orderManager, user):
+    orderList = orderManager.getAvailableOrders().filter(Q(ordersheet__user=user))
+    orderCount = orderList.count()
+    order = orderList.first()
+
+    dinnerPurchaced = orderManager.getAvailableDinnerOrder().filter(
+        Q(ordersheet__user=user)).exists()
+
+    if(dinnerPurchaced):
+        buttons = [
+            {
+                'action': 'block',
+                'label': '주문내역 확인',
+                'messageText': KAKAO_EMOJI_LOADING,
+                'blockId': KAKAO_BLOCK_USER_EATPLE_PASS,
+                'extra': {
+                    KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_HOME
+                }
+            },
+        ]
+    else:
+        buttons = [
+            {
+                'action': 'block',
+                'label': '🌙  저녁 주문하기',
+                'messageText': KAKAO_EMOJI_LOADING,
+                'blockId': KAKAO_BLOCK_USER_GET_STORE,
+                'extra': {
+                    KAKAO_PARAM_SELLING_TIME: SELLING_TIME_DINNER,
+                    KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_HOME
+                }
+            },
+        ]
+
+    # DINNER HEADER
+    dinnerHomeImg = '{}{}'.format(HOST_URL, EATPLE_HOME_DINNER_IMG)
+
+    thumbnail = {
+        'imageUrl': dinnerHomeImg,
+        'fixedRatio': 'true',
+        'width': 800,
+        'height': 800,
+    }
+
+    kakaoForm.BasicCard_Push(
+        '저녁 주문 가능/취소 시간',
+        '픽업 당일 오후 2시부터 오후 6시까지',
+        thumbnail,
+        buttons
+    )
+
+
+def kakaoView_Home(user, address):
     EatplusSkillLog('Home')
 
     kakaoForm = KakaoForm()
 
+    QUICKREPLIES_MAP = [
+        {
+            'action': 'block',
+            'label': '최근 주문내역',
+            'messageText': KAKAO_EMOJI_LOADING,
+            'blockId': KAKAO_BLOCK_USER_ORDER_DETAILS,
+            'extra': {
+                KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_HOME
+            }
+        },
+    ]
+
+    # MAP
+    buttons = []
+    addressMap = address.split()
+
+    roadAddress = user.location.road_address
+    if(roadAddress != None and roadAddress != LOCATION_DEFAULT_ADDR):
+        roadAddressMap = roadAddress.split()
+        roadAddressStr = '{}'.format(
+            roadAddress[roadAddress.find(roadAddressMap[1]):len(roadAddress)])
+    else:
+        if(address == LOCATION_DEFAULT_ADDR):
+            roadAddressStr = '위치가 등록되지 않았습니다.'
+            buttons.append(
+                {
+                    'action': 'block',
+                    'label': '위치 등록하기',
+                    'messageText': KAKAO_EMOJI_LOADING,
+                    'blockId': KAKAO_BLOCK_USER_EDIT_LOCATION,
+                    'extra': {
+                        KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_GET_STORE
+                    }
+                }
+            )
+        else:
+            roadAddressStr = address
+
+    kakaoForm.BasicCard_Push(
+        '🗺️  {}'.format(
+            roadAddressStr
+        ),
+        '',
+        {},
+        buttons
+    )
+    kakaoForm.BasicCard_Add()
+
     orderManager = UserOrderManager(user)
-    orderManager.orderPanddingCleanUp()
+    orderManager.orderPenddingCleanUp()
     orderManager.availableOrderStatusUpdate()
 
-    orderList = orderManager.getAvailableOrders().filter(Q(ordersheet__user=user))
-    orderCount = orderList.count()
-    order = orderList.first()
-    
-    isOrderEnable = (orderCount != 0)
-    
-    #@PROMOTION
+    component_LunchHome(kakaoForm, orderManager, user)
+    component_DinnerHome(kakaoForm, orderManager, user)
+
+    kakaoForm.BasicCard_Add()
+
+    # Friend Invite Event
+    buttons = [
+        {
+            'action': 'block',
+            'label': '친구 초대하기',
+            'messageText': KAKAO_EMOJI_LOADING,
+            'blockId': KAKAO_BLOCK_USER_FRIEND_INVITE,
+            'extra': {
+                KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_HOME
+            }
+        },
+    ]
+
+    kakaoForm.BasicCard_Push(
+        '🙌  잇플에 친구를 초대해보세요',
+        '친구를 초대하면 2,000원 할인!',
+        {},
+        buttons
+    )
+    kakaoForm.BasicCard_Add()
+
+    kakaoForm.QuickReplies_AddWithMap(QUICKREPLIES_MAP)
+
+    return JsonResponse(kakaoForm.GetForm())
+
+
+def kakaoView_FriendCode(user):
+    kakaoForm = KakaoForm()
+
+    KakaoInstantForm().Message(
+        '모든 가입이 완료되었습니다.',
+        kakaoForm=kakaoForm
+    )
+
+    buttons = [
+        {
+            'action': 'block',
+            'label': '입력하기',
+            'messageText': KAKAO_EMOJI_LOADING,
+            'blockId': KAKAO_BLOCK_USER_FRIEND_CODE_SUBMIT,
+            'extra': {
+                KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_HOME
+            }
+        },
+        {
+            'action': 'block',
+            'label': '건너뛰기',
+            'messageText': KAKAO_EMOJI_LOADING,
+            'blockId': KAKAO_BLOCK_USER_GET_STORE,
+            'extra': {
+                KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_HOME
+            }
+        },
+    ]
+
+    kakaoForm.BasicCard_Push(
+        '친구 코드가 있다면 입력하기를 눌러 입력해주세요.',
+        '',
+        thumbnail,
+        buttons
+    )
+
+    kakaoForm.BasicCard_Add()
+
+    kakaoForm.QuickReplies_AddWithMap(QUICKREPLIES_MAP)
+
+    return JsonResponse(kakaoForm.GetForm())
+
+
+def kakaoView_Route_Home(user):
     try:
         address = user.location.address
     except User.location.RelatedObjectDoesNotExist:
@@ -195,229 +476,67 @@ def kakaoView_Home(user):
 
         user.location = location
         user.save()
-        
+
         address = user.location.address
-    
 
-
-    QUICKREPLIES_MAP = [
-        {
-            'action': 'block',
-            'label': '최근 주문내역',
-            'messageText': '로딩중..',
-            'blockId': KAKAO_BLOCK_USER_ORDER_DETAILS,
-            'extra': {
-                KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_HOME
-            }
-        },
-        {
-            'action': 'block',
-            'label': '잇플 소개',
-            'messageText': '로딩중..',
-            'blockId': KAKAO_BLOCK_USER_INTRO,
-            'extra': {
-                KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_HOME
-            }
-        },
-    ]
-
-    buttons = [
-        {
-            'action': 'block',
-            'label': '주문하러 가기',
-            'messageText': '로딩중..',
-            'blockId': KAKAO_BLOCK_USER_GET_MENU,
-            'extra': {
-                KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_HOME
-            }
-        },
-        {
-            'action': 'block',
-            'label': '사용 메뉴얼',
-            'messageText': '로딩중..',
-            'blockId': KAKAO_BLOCK_USER_MANUAL,
-            'extra': {
-                KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_HOME
-            }
-        },
-    ]
-    
-    if(isOrderEnable):
-        thumbnail = {
-            'imageUrl': '{}{}'.format(HOST_URL, order.menu.imgURL()),
-            'fixedRatio': 'true',
-            'width': 800,
-            'height': 800,
-        }
-            
-        buttons[0] = {
-            'action': 'block',
-            'label': '잇플패스 확인',
-            'messageText': '로딩중..',
-            'blockId': KAKAO_BLOCK_USER_EATPLE_PASS,
-            'extra': {
-                KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_HOME
-            }
-        }
-        
-        description = '픽업은 {} 입니다'.format(
-            dateByTimeZone(order.pickup_time).strftime(
-                '%-m월 %-d일 %p %-I시 %-M분').replace('AM', '오전').replace('PM', '오후'),
-        )
-        
-        kakaoForm.BasicCard_Push(
-            '안녕하세요!! {}님'.format(user.nickname),
-            '{}'.format(description),
-            thumbnail,
-            buttons
-        )
-    else: 
-        if(isB2BUser(user)):
-            thumbnail = {
-                'imageUrl': '{}{}'.format(HOST_URL, user.company.logoImgURL()),
-                'fixedRatio': 'true',
-                'width': 800,
-                'height': 800,
-            }
-            
-            kakaoForm.BasicCard_Push(
-                '{} 홈 화면입니다.'.format(user.company.name, user.nickname),
-                '반갑습니다. {}님'.format(user.nickname),
-                thumbnail,
-                buttons
-            )
-        else:
-            thumbnail = {
-                'imageUrl': '{}{}'.format(HOST_URL, '/media/STORE_DB/images/default/homeHead.png'),
-                'fixedRatio': 'true',
-                'width': 800,
-                'height': 800,
-            }
-            
-            description = '\'주변 맛집에서 갓 만든 도시락, 잇플\' 입니다.'
-                
-            kakaoForm.BasicCard_Push(
-                '안녕하세요!! {}님'.format(user.nickname),
-                '{}'.format(description),
-                thumbnail,
-                buttons
-            )
-    
-    if(isOrderEnable):
-        kakaoMapUrl = 'https://map.kakao.com/link/map/{},{}'.format(
-            order.store.name,
-            order.store.place
-        )
-        
-        thumbnail = {
-            'imageUrl': 'https://maps.googleapis.com/maps/api/staticmap?center={lat},{long}&maptype=mobile&zoom={zoom}&markers=size:mid%7C{lat},{long}&size=800x800&key={apiKey}'.format(
-                zoom=18,
-                lat=order.store.place.lat,
-                long=order.store.place.long,
-                apiKey='AIzaSyDRhnn4peSzEfKzQ_WjwDqDF9pzDiuVRhM',
-            ),
-            'fixedRatio': 'true',
-            'width': 800,
-            'height': 800,
-        }
-        buttons = [
-            {
-                'action': 'webLink',
-                'label': '위치보기',
-                'webLinkUrl': kakaoMapUrl
-            },
-        ]
-        
-        kakaoForm.BasicCard_Push(
-            '{}'.format(order.store.name),
-            '{}'.format(order.store.addr),
-            thumbnail,
-            buttons
-        )
+    if(isB2BUser(user)):
+        return kakaoView_B2B_Home(user, address)
     else:
-        thumbnail = {
-            'imageUrl': 'https://maps.googleapis.com/maps/api/staticmap?center={lat},{long}&maptype=mobile&zoom={zoom}&markers=size:mid%7C{lat},{long}&size=800x800&key={apiKey}'.format(
-                zoom=18,
-                lat=user.location.lat,
-                long=user.location.long,
-                apiKey='AIzaSyDRhnn4peSzEfKzQ_WjwDqDF9pzDiuVRhM',
-            ),
-            'fixedRatio': 'true',
-            'width': 800,
-            'height': 800,
-        }
-        buttons = [
-            {
-                'action': 'block',
-                'label': '현 위치 변경',
-                'messageText': '로딩중..',
-                'blockId': KAKAO_BLOCK_USER_EDIT_LOCATION,
-                'extra': {
-                    KAKAO_PARAM_PREV_BLOCK_ID: KAKAO_BLOCK_USER_HOME
-                }
-            },
-        ]
+        return kakaoView_Home(user, address)
 
-        kakaoForm.BasicCard_Push(
-            '등록된 주소',
-            '{}'.format(address),
-            thumbnail,
-            buttons
-        )
-    
-    kakaoForm.BasicCard_Add()
+# # # # # # # # # # # # # # # # # # # # # # # # #
+#
+# External View
+#
+# # # # # # # # # # # # # # # # # # # # # # # # #
 
-    kakaoForm.QuickReplies_AddWithMap(QUICKREPLIES_MAP)
-    
-    return JsonResponse(kakaoForm.GetForm())
-    
+
 @csrf_exempt
 def GET_UserHome(request):
+    EatplusSkillLog('GET_UserHome')
+
     try:
         kakaoPayload = KakaoPayLoad(request)
-        
+
         user = userValidation(kakaoPayload)
         location = userLocationValidation(user)
-        
+
+        # Sign Up
         if(user == None):
-            try:
-                otpURL = kakaoPayload.dataActionParams['user_profile']['origin']
-                
-                kakaoResponse = requests.get('{url}?rest_api_key={rest_api_key}'.format(
-                    url=otpURL, rest_api_key=KAKAO_REST_API_KEY))
-
-                if(kakaoResponse.status_code == 200):
-                    print(kakaoResponse.json())
-                    
-                    user = userSignUp(kakaoResponse.json())
-            
-                        
-                    #@SLACK LOGGER
-                    SlackLogSignUp(user)
-                    
-                    return kakaoView_LocationRegistration()
-
-                return kakaoView_SignUp()
-
-            except (RuntimeError, TypeError, NameError, KeyError):
-                return kakaoView_SignUp()
+            return kakaoView_SignUp()
+        # Location Register
         elif(isLocationParam(kakaoPayload)):
-            try: 
+            try:
                 otpURL = kakaoPayload.dataActionParams['location']['origin']
 
-                kakaoResponse = requests.get('{url}?rest_api_key={rest_api_key}'.format(
-                    url=otpURL, rest_api_key=KAKAO_REST_API_KEY))
-                
+                kakaoResponse = requests.get('{url}?rest_api_key={rest_api_key}&version={version}'.format(
+                    url=otpURL, rest_api_key=KAKAO_REST_API_KEY, version="v2"))
+
                 if(kakaoResponse.status_code == 200):
                     user = userLocationRegistration(user, kakaoResponse.json())
 
-                    return kakaoView_Home(user)
+                    return kakaoView_Route_Home(user)
 
+                return kakaoView_Route_Home(user)
+            except (RuntimeError, TypeError, NameError, KeyError) as ex:
+                print(ex)
                 return kakaoView_LocationRegistration()
-            except (RuntimeError, TypeError, NameError, KeyError):
-                return kakaoView_LocationRegistration()                     
+        # Survey
+        elif(isSurveyStoreParam(kakaoPayload)):
+            answer = kakaoPayload.dataActionParams['survey_store']['origin']
+            return kakaoView_SurveyApply(user, SURVEY_TYPE_STORE, answer)
+        elif(isSurveyCategoryParam(kakaoPayload)):
+            answer = kakaoPayload.dataActionParams['survey_category']['origin']
+            return kakaoView_SurveyApply(user, SURVEY_TYPE_CATEGORY, answer)
+        elif(isSurveyImprovementsParam(kakaoPayload)):
+            answer = kakaoPayload.dataActionParams['survey_improvements']['origin']
+            return kakaoView_SurveyApply(user, SURVEY_TYPE_IMPROVEMENTS, answer)
         else:
-            return kakaoView_Home(user)
+            # Get user profile data from Kakao server
+            kakao = Kakao()
+            user = kakao.getProfile(user)
+
+            return kakaoView_Route_Home(user)
 
     except (RuntimeError, TypeError, NameError, KeyError) as ex:
         return errorView('{}'.format(ex))

@@ -14,6 +14,7 @@ from eatple_app.model.utils import b2b_logo_directory_path
 
 DEFAULT_LOGO_IMAGE_PATH = 'STORE_DB/images/default/logo.png'
 
+
 class CompanyPlace(models.Model):
     class Meta:
         verbose_name = "위치"
@@ -68,65 +69,69 @@ class CompanyPlace(models.Model):
     def __str__(self):
         return '{}, {}'.format(self.lat, self.long)
 
+
 class CompanyCRN(models.Model):
+    class Meta:
+        verbose_name = "사업자 등록번호"
+        verbose_name_plural = "사업자 등록번호"
+
     company = models.OneToOneField(
-        'Company', 
-        on_delete=models.CASCADE, 
-        unique=True, 
+        'Company',
+        on_delete=models.CASCADE,
+        unique=True,
         null=True,
         verbose_name="상점"
     )
 
     CRN_id = models.CharField(
-        max_length=10, 
+        max_length=10,
         help_text='Unique ID',
         blank=True,
         null=True,
-        verbose_name="CRN"
+        verbose_name="사업자 등록번호"
     )
-    
+
     UID = models.CharField(
-        max_length=3, 
+        max_length=3,
         help_text='Unique ID',
         verbose_name="UID"
     )
 
     CC = models.CharField(
-        max_length=2, 
+        max_length=2,
         help_text='Corporation Classification Code',
         verbose_name="CC"
     )
 
     SN = models.CharField(
-        max_length=4, 
+        max_length=4,
         help_text='Serial Number',
         verbose_name="SN"
     )
 
     VN = models.CharField(
-        max_length=1, 
+        max_length=1,
         help_text='Vertification Number',
         verbose_name="VN"
     )
 
     def __init__(self, *args, **kwargs):
         super(CompanyCRN, self).__init__(*args, **kwargs)
-        
+
         self.CRN_id = '{}{}{}{}'.format(
             self.UID,
             self.CC,
             self.SN,
             self.VN
         )
-        
+
         super(CompanyCRN, self).save()
 
-    
     def __str__(self):
         return '{UID}-{CC}-{SN}{VN}'.format(
-            UID=self.UID, 
-            CC=self.CC, 
-            SN=self.SN, 
+            UID=self.UID,
+            CC=self.CC,
+            SN=self.SN,
             VN=self.VN
         )
 
@@ -155,7 +160,7 @@ class CompanyInfo(models.Model):
         blank=True,
         verbose_name="담당자 전화번호"
     )
-    
+
     class Meta:
         abstract = True
 
@@ -167,17 +172,17 @@ class CompanySetting(models.Model):
 
         abstract = True
 
-    description = models.TextField(
-        blank=True,
-        verbose_name="가게 설명"
-    )
-
     logo = models.ImageField(
         default=DEFAULT_LOGO_IMAGE_PATH,
         blank=True,
         upload_to=b2b_logo_directory_path,
         storage=OverwriteStorage(),
         verbose_name="로고 이미지"
+    )
+
+    notice = models.TextField(
+        blank=True,
+        verbose_name="공지사항"
     )
 
 

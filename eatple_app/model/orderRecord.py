@@ -12,6 +12,8 @@ from eatple_app.define import *
 class OrderRecord(models.Model):
     class Meta:
         ordering = ['record_date']
+        verbose_name = "레코드"
+        verbose_name_plural = "레코드"
 
     order_record_sheet = models.ForeignKey(
         'OrderRecordSheet',
@@ -43,36 +45,57 @@ class OrderRecordSheet(models.Model):
     user = models.ForeignKey(
         'User',
         on_delete=models.CASCADE,
-        null=True
+        null=True,
+        verbose_name="사용자"
     )
 
-    menu = models.ForeignKey(
-        'Menu',
+    order = models.ForeignKey(
+        'Order',
         on_delete=models.CASCADE,
-        null=True
+        null=True,
+        verbose_name="주문 번호"
     )
 
-    paid = models.BooleanField(default=False)
+    paid = models.BooleanField(
+        default=False,
+        verbose_name="결제 완료 여부"
+    )
 
-    status = models.BooleanField(default=False)
+    status = models.BooleanField(
+        default=False,
+        verbose_name="메뉴 선택 여부"
+    )
 
-    update_date = models.DateTimeField(auto_now=True)
-    created_date = models.DateTimeField(auto_now_add=True)
+    update_date = models.DateTimeField(
+        auto_now=True,
+        verbose_name="마지막 기록 시간"
+    )
 
-    def save(self, *args, **kwargs):
-        super().save()
+    created_date = models.DateTimeField(
+        auto_now_add=True,
+        verbose_name="주문 시작 시간"
+    )
 
-    def recordUpdate(self, status, *args, **kwargs):
+    def recordUpdate(self, user, order, status, *args, **kwargs):
         isVertification = True
+
+        if(user != None and order != None):
+            self.user = user
+            self.order = order
+        else:
+            isVertification = False
 
         if(self.user == None):
             isVertification = False
 
-        elif(self.menu == None):
-            isVertification = False
+        elif(self.order == None):
+            if(self.order.menu == None):
+                isVertification = False
+
+        # print("Order Record : {}".format(dict(ORDER_RECORD)[status]))
 
         self.status = isVertification
-        super().save()
+        self.save()
 
         orderRecord = OrderRecord(order_record_sheet=self, status=status)
         orderRecord.save()
@@ -81,15 +104,18 @@ class OrderRecordSheet(models.Model):
         timeOut = False
 
         if(ORDER_TIME_CHECK_DEBUG_MODE):
-            latest_date = dateNowByTimeZone()
+            deadline = dateNowByTimeZone() + \
+                datetime.timedelta(minutes=30)
         else:
-            latest_date = dateByTimeZone(self.update_date)
+            deadline = dateByTimeZone(self.update_date) + \
+                datetime.timedelta(minutes=30)
 
         current_date = dateNowByTimeZone()
 
-        if (latest_date + datetime.timedelta(minutes=30) < current_date):
+        if (deadline < current_date):
             timeOut = True
 
+        # print("Time Out : {}, {} < {}".format(timeOut, deadline, current_date))
         return timeOut
 
     # Methods

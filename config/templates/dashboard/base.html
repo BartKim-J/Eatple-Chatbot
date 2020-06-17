@@ -1,0 +1,47 @@
+{% extends 'dashboard/layout/layout.html' %} 
+
+{% load static %} 
+{% load humanize %} 
+{% load compress %} 
+{% load eatple_app_extras %}
+
+{% block body %}
+    <main role="main">
+        <!-- Page Wrapper -->
+        <div id="wrapper">            
+            {% if user.is_authenticated %}
+                {% block sidebar %}
+                    {% include 'dashboard/layout/sidebar.html' %} 
+                {% endblock %}
+                <!-- Content Wrapper -->
+                <div id="content-wrapper" class="d-flex flex-column">
+                    <!-- Main Content -->
+                    <div id="content" class="bg-very-dark">
+                        {% block navbar %}
+                            {% include 'dashboard/layout/navbar.html' %} 
+                        {% endblock %}
+
+                        {% block content %} 
+                        {% endblock %}
+                    </div>
+                    <!-- End of Main Content -->
+
+                    <!-- Footer -->
+                    <footer class="text-muted bg-very-dark">
+                        <a id="scroll-to-top" href="#" class="btn btn-primary btn-lg scroll-to-top-btn" role="button"><i class="fas fa-chevron-up"></i></a>
+                    </footer>
+                    <!-- End of Footer -->
+                </div>
+            <!-- End of Content Wrapper -->
+            {% else %}
+                {% block login %}
+                    {% include 'dashboard/page/login.html' %} 
+                {% endblock %}
+            {% endif %}
+        </div>
+        <!-- End of Page Wrapper -->
+    </main>
+
+    {% block content_js %} 
+    {% endblock %}
+{% endblock %}

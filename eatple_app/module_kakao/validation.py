@@ -1,218 +1,9 @@
-# Django Library
-from django.shortcuts import render
-from django.views.decorators.csrf import csrf_exempt
-from django.http import JsonResponse
-
 # Models
 from eatple_app.models import *
 
 # Define
 from eatple_app.define import *
 
-# Modules
-from eatple_app.module_kakao.reponseForm import *
-from eatple_app.module_kakao.requestForm import *
-
-# View-System
-from eatple_app.views_system.debugger import *
-
-
-from eatple_app.views import *
-
-DEFAULT_QUICKREPLIES_MAP = [
-    {
-        'action': 'block',
-        'label': '홈으로 돌아가기',
-        'messageText': '로딩중..',
-        'blockId': KAKAO_BLOCK_USER_HOME,
-        'extra': {}
-    },
-    {
-        'action': 'block',
-        'label': '잇플패스 확인하기',
-        'messageText': '로딩중..',
-        'blockId': KAKAO_BLOCK_USER_EATPLE_PASS,
-        'extra': {}
-    },
-]
-
-
-def isB2BUser(user):
-    try:
-        B2BUser = UserB2B.objects.get(phone_number=user.phone_number)
-        
-        if(user.type != USER_TYPE_B2B or user.company == None or (user.company != Company.objects.get(id=int(B2BUser.company.id)))):
-            user.company = Company.objects.get(id=int(B2BUser.company.id))
-            user.type = USER_TYPE_B2B
-            user.save()
-        
-        if(user.company.status != OC_OPEN):
-            return False
-        
-        return True
-    except UserB2B.DoesNotExist:
-        user.company = None
-        user.type = USER_TYPE_NORMAL
-        user.save()
-        return False
-
-    return False
-    
-def sellingTimeCheck():
-    currentDate = dateNowByTimeZone()
-    currentDateWithoutTime = currentDate.replace(
-        hour=0, minute=0, second=0, microsecond=0)
-
-    # DEBUG
-    if(VALIDATION_DEBUG_MODE):
-        return SELLING_TIME_LUNCH
-
-        #currentDate = currentDate.replace(hour=10, minute=35, second=0, microsecond=0)
-        #currentDateWithoutTime = currentDate.replace(hour=0, minute=0, second=0, microsecond=0)
-
-    # Prev Lunch Order Time 16:30 ~ 10:30
-    prevlunchOrderTimeStart = currentDateWithoutTime + \
-        datetime.timedelta(hours=16, minutes=30, days=-1)
-    prevlunchOrderTimeEnd = currentDateWithoutTime + \
-        datetime.timedelta(hours=10, minutes=30)
-
-    # Dinner Order Time 10:30 ~ 16:30
-    dinnerOrderTimeStart = currentDateWithoutTime + \
-        datetime.timedelta(hours=10, minutes=30)
-    dinnerOrderTimeEnd = currentDateWithoutTime + \
-        datetime.timedelta(hours=16, minutes=30)
-
-    # Next Lunch Order Time 16:30 ~ 10:30
-    nextlunchOrderTimeStart = currentDateWithoutTime + \
-        datetime.timedelta(hours=16, minutes=30)
-    nextlunchOrderTimeEnd = currentDateWithoutTime + \
-        datetime.timedelta(hours=10, minutes=30, days=1)
-
-    if(dinnerOrderTimeStart <= currentDate) and (currentDate <= dinnerOrderTimeEnd):
-        return SELLING_TIME_DINNER
-    elif(prevlunchOrderTimeStart < currentDate) and (currentDate < prevlunchOrderTimeEnd):
-        return SELLING_TIME_LUNCH
-    elif(nextlunchOrderTimeStart < currentDate) and (currentDate < nextlunchOrderTimeEnd):
-        return SELLING_TIME_LUNCH
-    else:
-        return None
-
-def weekendTimeCheck():
-    currentDate = dateNowByTimeZone()
-    currentDateWithoutTime = currentDate.replace(
-        hour=0, minute=0, second=0, microsecond=0)
-
-    # Time QA DEBUG
-    #currentDate = currentDate.replace(day=19, hour=9, minute=28, second=0, microsecond=0)
-    #currentDateWithoutTime = currentDate.replace(hour=0, minute=0, second=0, microsecond=0)
-
-    # DEBUG
-    if(VALIDATION_DEBUG_MODE):
-        return False
-
-    closedDateStart = currentDateWithoutTime + \
-        datetime.timedelta(hours=10, minutes=30)
-    closedDateEnd = currentDateWithoutTime + \
-        datetime.timedelta(hours=16, minutes=30)
-
-    if(currentDate.strftime('%A') == 'Friday'):
-        if(currentDate >= closedDateStart):
-            return True
-        else:
-            return False
-    elif(currentDate.strftime('%A') == 'Saturday'):
-        return True
-    elif(currentDate.strftime('%A') == 'Sunday'):
-        if(currentDate <= closedDateEnd):
-            return True
-        else:
-            return False
-    else:
-        return False
-    
-def vacationTimeCheck():
-    currentDate = dateNowByTimeZone()
-    currentDateWithoutTime = currentDate.replace(
-        hour=0, minute=0, second=0, microsecond=0)
-
-    vacationMap = [
-        {
-            'from_month': 1,
-            'from_days': 1,
-            'to_month': 1,
-            'to_days': 1
-        },
-        {
-            'from_month': 1,
-            'from_days': 24,
-            'to_month': 1,
-            'to_days': 27
-        },
-    ]
-     
-    # Time QA DEBUG
-    #currentDate = currentDate.replace(month=1, day=26, hour=9, minute=28, second=0, microsecond=0)
-    #currentDateWithoutTime = currentDate.replace(hour=0, minute=0, second=0, microsecond=0)
-    #print(currentDate)
-    
-    for vacation in vacationMap:
-        closedDateStart = currentDate.replace(month=vacation['from_month'], day=vacation['from_days'], hour=0, minute=0, second=0, microsecond=0)
-        closedDateEnd = currentDate.replace(
-            month=vacation['to_month'], day=vacation['to_days'], hour=23, minute=59, second=59, microsecond=0)
-
-        if(closedDateStart <= currentDate and currentDate <= closedDateEnd):
-            return True
-    
-    return False
-
-def eatplePassValidation(user):
-    orderManager = UserOrderManager(user)
-    orderManager.orderPaidCheck()
-    
-    orderManager.availableOrderStatusUpdate();
-
-    lunchPurchaed = orderManager.getAvailableLunchOrderPurchased().exists()
-    dinnerPurchaced = orderManager.getAvailableDinnerOrderPurchased().exists()    
-    
-    kakaoForm = KakaoForm()
-
-    kakaoForm.QuickReplies_AddWithMap(DEFAULT_QUICKREPLIES_MAP)
-
-    if (lunchPurchaed and dinnerPurchaced):
-        kakaoForm.BasicCard_Push(
-            '아직 사용하지 않은 잇플패스가 있어요.',
-            '발급된 잇플패스를 먼저 사용해주세요.',
-            {}, 
-            []
-        )
-        kakaoForm.BasicCard_Add()
-        
-        return JsonResponse(kakaoForm.GetForm())
-                
-    elif (lunchPurchaed):
-        kakaoForm.BasicCard_Push(
-            '아직 사용하지 않은 잇플패스가 있어요.',
-            '발급된 잇플패스를 먼저 사용해주세요.',
-            {}, 
-            []
-        )
-        kakaoForm.BasicCard_Add()
-        
-        return JsonResponse(kakaoForm.GetForm())
-    
-    elif (dinnerPurchaced):
-        kakaoForm.BasicCard_Push(
-            '아직 사용하지 않은 잇플패스가 있어요.',
-            '발급된 잇플패스를 먼저 사용해주세요.',
-            {}, 
-            []
-        )
-        kakaoForm.BasicCard_Add()
-        
-        return JsonResponse(kakaoForm.GetForm())
-        
-
-    return None
 
 def partnerValidation(kakaoPayload):
     try:
@@ -225,9 +16,13 @@ def partnerValidation(kakaoPayload):
     except (TypeError, AttributeError, KeyError):
         return None
 
+
 def userValidation(kakaoPayload):
     try:
-        app_user_id = kakaoPayload.user_properties['app_user_id']
+        if(USER_ID_DEBUG_MODE):
+            app_user_id = DEBUG_USER_ID
+        else:
+            app_user_id = kakaoPayload.user_properties['app_user_id']
         try:
             user = User.objects.get(app_user_id=app_user_id)
             return user
@@ -236,17 +31,7 @@ def userValidation(kakaoPayload):
     except (TypeError, AttributeError, KeyError):
         return None
 
-def userLocationValidation(user):
-    try:
-        try:
-            location = Location.objects.get(user=user)
-        except AttributeError:
-            location = Location.objects.filter(user=user)[:1]
-            
-        return location
-    except Location.DoesNotExist:
-        return None
-    
+
 def menuValidation(kakaoPayload):
     try:
         menu_id = kakaoPayload.dataActionExtra[KAKAO_PARAM_MENU_ID]
@@ -257,7 +42,8 @@ def menuValidation(kakaoPayload):
             return None
     except (TypeError, AttributeError, KeyError):
         return None
-    
+
+
 def storeValidation(kakaoPayload):
     try:
         store_id = kakaoPayload.dataActionExtra[KAKAO_PARAM_STORE_ID]
@@ -269,16 +55,26 @@ def storeValidation(kakaoPayload):
     except (TypeError, AttributeError, KeyError):
         return None
 
+
+def sellingTimeValidation(kakaoPayload):
+    try:
+        sellingTime = kakaoPayload.dataActionExtra[KAKAO_PARAM_SELLING_TIME]
+        return sellingTime
+    except (TypeError, AttributeError, KeyError):
+        return None
+
+
 def orderValidation(kakaoPayload):
     try:
         order_id = kakaoPayload.dataActionExtra[KAKAO_PARAM_ORDER_ID]
         try:
-            order = Order.objects.get(order_id=order_id)            
+            order = Order.objects.get(order_id=order_id)
             return order
         except Order.DoesNotExist:
             return None
     except (TypeError, AttributeError, KeyError):
         return None
+
 
 def pickupTimeValidation(kakaoPayload):
     try:
@@ -286,6 +82,15 @@ def pickupTimeValidation(kakaoPayload):
         return pickupTime
     except (TypeError, AttributeError, KeyError):
         return None
+
+
+def deliveryAddressValidation(kakaoPayload):
+    try:
+        deliveryAddress = kakaoPayload.dataActionExtra[KAKAO_PARAM_DELIVERY_ADDRESS]
+        return deliveryAddress
+    except (TypeError, AttributeError, KeyError):
+        return None
+
 
 def prevBlockValidation(kakaoPayload):
     try:

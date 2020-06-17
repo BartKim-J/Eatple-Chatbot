@@ -1,0 +1,182 @@
+{% extends 'dashboard/base.html' %} 
+
+{% load static %}
+{% load humanize %}
+{% load compress %}
+{% load eatple_app_extras %}
+
+{% block content %}
+    <div class="card-body">
+
+        <!-- 4 Card -->
+        <div class="row">
+            <!-- Daily Selled Card -->
+            <div class="col-xl-3 col-md-3 col-lg-3 mb-4">
+                <div class="card bg-dark text-white py-2">
+                    <div class="card-body">
+                        <div class="row no-gutters align-items-center">
+                            <div class="col mr-2">
+                                <div class="text-xs font-weight-bold text-secondary text-uppercase mb-1">일일 주문건</div>
+
+                                {% if totalStockIncrease >= 0 %}
+                                <div class="h6 font-weight-bold text-success"><i class="fas fa-angle-up"></i> {{ totalStockIncrease }}</div>
+                                {% else %}
+                                <div class="h6 font-weight-bold text-danger"><i class="fas fa-angle-down"></i> {{ totalStockIncrease }}</div>
+                                {% endif %}
+
+                                <div class="h5 mb-0 font-weight-bold text-gray-100">{{ totalStock }} 개</div>
+                            </div>
+                            <div class="col-auto">
+                                <i class="fas fa-boxes fa-2x text-white"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Daily Selled Card -->
+            <div class="col-xl-3 col-md-3 col-lg-3 mb-4">
+                <div class="card bg-dark text-white py-2">
+                    <div class="card-body">
+                        <div class="row no-gutters align-items-center">
+                            <div class="col mr-2">
+                                <div class="text-xs font-weight-bold text-secondary text-uppercase mb-1">점심 주문건</div>
+
+                                {% if lunchStockIncrease >= 0 %}
+                                <div class="h6 font-weight-bold text-success"><i class="fas fa-angle-up"></i> {{ lunchStockIncrease }}</div>
+                                {% else %}
+                                <div class="h6 font-weight-bold text-danger"><i class="fas fa-angle-down"></i> {{ lunchStockIncrease }}</div>
+                                {% endif %}
+
+                                <div class="h5 mb-0 font-weight-bold text-gray-100">{{ lunchStock }} 개</div>
+                            </div>
+                            <div class="col-auto">
+                                <i class="fas fa-boxes fa-2x text-white"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Daily Selled Card -->
+            <div class="col-xl-3 col-md-3 col-lg-3 mb-4">
+                <div class="card bg-dark text-white py-2">
+                    <div class="card-body">
+                        <div class="row no-gutters align-items-center">
+                            <div class="col mr-2">
+                                <div class="text-xs font-weight-bold text-secondary text-uppercase mb-1">저녁 주문건</div>
+
+                                {% if dinnerStockIncrease >= 0 %}
+                                <div class="h6 font-weight-bold text-success"><i class="fas fa-angle-up"></i> {{ dinnerStockIncrease }}</div>
+                                {% else %}
+                                <div class="h6 font-weight-bold text-danger"><i class="fas fa-angle-down"></i> {{ dinnerStockIncrease }}</div>
+                                {% endif %}
+
+                                <div class="h5 mb-0 font-weight-bold text-gray-100">{{ dinnerStock }} 개</div>
+                            </div>
+                            <div class="col-auto">
+                                <i class="fas fa-boxes fa-2x text-white"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Daily Earning Card -->
+            <div class="col-xl-3 col-md-3 col-lg-3 mb-4">
+                <div class="card bg-dark text-white py-2">
+                    <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-secondary text-uppercase mb-1">활성화된 매장</div>
+                        <div class="h6 font-weight-bold" id="WASStatus"><i id="WASStatusIcon" class="fas"></i> {{ WASIncrease }}</div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-100">
+                            {{ WAS }} 매장
+                        </div>
+                        </div>
+                        <div class="col-auto">
+                        <i class="fas fa-store fa-2x text-white"></i>
+                        </div>
+                    </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        
+        <!-- Menu Card List -->
+        <div class="row">
+        {% for menu in menus %}
+            <div class="col-lg-2 col-md-5 col-sm-6">
+            <div class="card bg-dark text-white mb-3 shadow-sm">
+                {% if menu.current_stock == menu.max_stock %}
+                    <img src={{ menu.soldout_image.url }} class="card-img-top" text="Thumbnail" />
+                {% else %}
+                    <img src={{ menu.image.url }} class="card-img-top" text="Thumbnail" />
+                {% endif %}
+                
+                <div class="card-body">
+                <blockquote class="blockquote">
+                    <h6 class="mb-0">{{ menu.name }}</h6>
+                    <small class="blockquote-footer text-right">{{ menu.store.name}}</small>
+                </blockquote>
+
+                <div class="d-flex justify-content-between align-items-center">
+                    <a href="{{ site.url }}/admin/eatple_app/store/{{ menu.store.id }}/#/tab/inline_1/">
+                        <button type="button" class="btn btn-sm btn-outline-secondary">수정</button>
+                    </a>
+                    <div class="btn-group">
+                        {% if menu.current_stock == menu.max_stock%}
+                        <button type="button" class="btn btn-sm btn-danger text-white">매진</button>
+                        {% endif %}
+                        {% if menu.status == "open" and menu.store.status == "open" %}
+                        <button type="button" class="btn btn-sm btn-success text-white">열림</button>
+                        {% elif menu.status == "open" and menu.store.status == "vacation" %}
+                        <button type="button" class="btn btn-sm btn-info text-white">휴무</button>
+                        {% else %}
+                        <button type="button" class="btn btn-sm btn-secondary text-white">닫힘</button>
+                        {% endif %}
+                    </div>
+                </div>
+                </div>
+
+                <div class="card-footer bg-dark text-white d-flex justify-content-between align-items-center text-muted">
+                <small class="text-muted">주문 상태</small>
+                <small class="text-muted">{{ menu.current_stock }}/{{ menu.max_stock }}</small>
+                </div>
+
+            </div>
+            </div>
+        {% endfor %}
+        </div>
+    </div>
+{% endblock %} 
+
+{% block content_js %}
+    <!-- Bootstrap core JavaScript-->
+    <script type="text/javascript" src="{% static 'dashboard/vendor/jquery/jquery.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'dashboard/vendor/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+
+
+    <!-- Core plugin JavaScript-->
+    <script type="text/javascript" src="{% static 'dashboard/vendor/jquery-easing/jquery.easing.min.js' %}"></script>
+    
+    <!-- Page level plugins -->
+    <script type="text/javascript" src="{% static 'dashboard/vendor/chart.js/Chart.min.js' %}"></script>
+
+    <script type="text/javascript" src="{% static 'dashboard/vendor/datatables/jquery.dataTables.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'dashboard/vendor/datatables/dataTables.bootstrap4.min.js' %}"></script>
+
+    <!-- Page level javascript -->
+    {% compress js %}
+        <script>
+            totalStockIncrease = '{{ totalStockIncrease }}'
+            
+            WASIncrease = '{{ WASIncrease }}'        
+        </script>
+        <script type="text/javascript" src="{% static 'dashboard/js/base.js' %}"></script>
+        <script type="text/javascript" src="{% static 'dashboard/js/scroll-to-top.js' %}"></script>
+        <script type="text/javascript" src="{% static 'dashboard/js/sb-admin-2.js' %}"></script>
+        <script type="text/javascript" src="{% static 'dashboard/js/datatables.init.js' %}"></script>
+        <script type="text/javascript" src="{% static 'dashboard/js/card-status.init.js' %}"></script>
+    {% endcompress %}
+{% endblock %} 

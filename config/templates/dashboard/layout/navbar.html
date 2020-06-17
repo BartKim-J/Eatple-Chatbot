@@ -1,0 +1,37 @@
+<!-- Topbar -->
+<nav class="navbar navbar-expand navbar-light bg-dark topbar mb-4 static-top">
+
+    <!-- Topbar Navbar -->
+    <ul class="navbar-nav ml-auto">
+
+        <!-- Nav Item - Alerts -->
+        <li class="nav-item dropdown no-arrow mx-1">
+            <a class="nav-link dropdown-toggle" href="#" id="alertsDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <i class="fas fa-bell fa-fw"></i>
+            <!-- Counter - Alerts -->
+            <!-- <span class="badge badge-danger badge-counter">3+</span> -->
+            </a>
+            <!-- Dropdown - Alerts -->
+            <div class="dropdown-list dropdown-menu dropdown-menu-right animated--grow-in" aria-labelledby="alertsDropdown">
+                <h6 class="dropdown-header">
+                    활동 기록
+                </h6>
+                {% for l in log %}
+                    <a class="dropdown-item bg-dark d-flex align-items-center" href='admin/'>
+                        <div class="mr-3">
+                            <div class="icon-circle bg-primary">
+                                <i class="fas fa-file-alt text-white"></i>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="small text-gray-400">{{ l.action_time }}
+                        </div>
+                            <span class="text-white font-weight-bold">{{ l.object_repr }}이(가) 수정되었습니다.</span>
+                        </div>
+                    </a>
+                {% endfor %}
+        </li>
+    </ul>
+
+</nav>
+<!-- End of Topbar -->
