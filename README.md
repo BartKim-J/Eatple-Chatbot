@@ -1,5 +1,5 @@
 
-# **Eatple**
+# **Eatple Chatbot**
 
 [![build](https://img.shields.io/badge/build-passing-brightgreen.svg)](https://bitbucket.org/xengiennering/sn3d-project)
 ### **Base Library**
@@ -12,9 +12,10 @@
 
 - [Visual Studio](https://code.visualstudio.com/)
 
+![ezgif-3-641c8ef30a7c](https://user-images.githubusercontent.com/36470472/110171313-e3367080-7e3e-11eb-849c-d2f39bf2fe60.gif)
+
 # **Features**
 ---
-
 > This README.md uses the [Markdown](http://daringfireball.net/projects/markdown/) syntax. The [MarkDownDemo tutorial](https://bitbucket.org/tutorials/markdowndemo) shows how various elements are rendered. The [Bitbucketdocumentation](https://confluence.atlassian.com/bitbucket/readme-content-221449772.html) has more information about using a README.md.
 
 # **Reference**
@@ -33,4 +34,5 @@
 
 
 #### BUG List
+
 - [X] Not Yet
